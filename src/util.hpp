@@ -3,15 +3,33 @@
 
 namespace Khopper {
 
-	enum InputFormat {
-		APE,
-		WAV
-	};
+	/**
+	 * @namespace Input
+	 * @brief input formats
+	 */
+	namespace Input {
+		/**
+		 * @enum Format
+		 * @brief contains all posiable formats
+		 */
+		enum Format {
+			APE
+		};
+	}
 
-	enum OutputFormat {
-		MP3,
-		WAV
-	};
+	/**
+	 * @namespace Output
+	 * @brief output formats
+	 */
+	namespace Output {
+		/**
+		 * @enum Format
+		 * @brief contains all posiable formats
+		 */
+		enum Format {
+			MP3
+		};
+	}
 
 }
 

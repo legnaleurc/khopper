@@ -5,9 +5,12 @@
 #include <vector>
 
 namespace Khopper {
+
+	typedef std::vector< std::string > FieldType;
 	
-	namespace DiscField {
-		enum {
+	namespace Disc {
+
+		enum Field {
 			Arranger,
 			Composer,
 			Genre,
@@ -16,11 +19,15 @@ namespace Khopper {
 			Perfomer,
 			Songwriter,
 			Title,
-			UPC_EAN
+			UPC_EAN,
+			SIZE
 		};
+
 	}
-	namespace TrackField {
-		enum {
+	
+	namespace Track {
+
+		enum Field {
 			Arranger,
 			Composer,
 			Genre,
@@ -29,23 +36,26 @@ namespace Khopper {
 			Number,
 			Perfomer,
 			Title,
-			CD_Text
+			CD_Text,
+			SIZE
 		};
+
+		const char * const Header[] = {
+			"Arranger",
+			"Composer",
+			"Genre",
+			"ISRC",
+			"Message",
+			"Number",
+			"Perfomer",
+			"Title",
+			"CD_Text"
+		};
+
 	}
 	
-	const char * const HEADERS[] = {
-		"Arranger",
-		"Composer",
-		"Genre",
-		"ISRC",
-		"Message",
-		"Number",
-		"Perfomer",
-		"Title",
-		"CD_Text"
-	};
 
-	std::vector< std::vector< std::string > > parseCUE( const std::string & filename );
+	std::vector< FieldType > parseCUE( const std::string & filename );
 
 }
 
