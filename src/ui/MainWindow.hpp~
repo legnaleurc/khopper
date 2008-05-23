@@ -22,7 +22,7 @@ namespace Khopper {
 		private:
 			QTableView * _songList_;
 			QComboBox * _outputTypes_;
-			QPushButton * _action_;
+			QPushButton * _actiom_;
 			
 			void _setLabel_();
 		

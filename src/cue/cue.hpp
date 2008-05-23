@@ -49,7 +49,8 @@ namespace Khopper {
 			"Number",
 			"Perfomer",
 			"Title",
-			"CD_Text"
+			"CD_Text",
+			NULL
 		};
 
 	}

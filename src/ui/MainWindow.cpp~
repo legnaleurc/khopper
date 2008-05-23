@@ -31,7 +31,8 @@ namespace Khopper {
 		bottom->layout()->addWidget( _outputTypes_ );
 		
 		// Action button
-		_action_ = new QPushButton( tr( "Fire!" ), bottom );
+		_action_ = new QPushButton( bottom );
+		_action_.setText( tr( "Fire!" ) );
 		bottom->layout()->addWidget( _action_ );
 	}
 	
