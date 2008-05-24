@@ -1,22 +1,28 @@
 #include "mp3.hpp"
 
 namespace {
-	
-	Output * CreateMp3() {
-		return new Mp3;
+	Khopper::Output * CreateMp3() {
+		return new Khopper::out::Mp3;
 	}
 	
-	// ID, encode in base64
 	const std::string MP3( "TVAzCg==" );
 	
-	const bool registered = TheFactory::Instance().Register( MP3, CreateMp3 );
-	
+	const bool reg_type = Khopper::OutputTypes::Instance().insert( Khopper::OutputTypes::ObjectType::value_type( MP3, "mp3" ) ).second;
+	const bool reg_fac = Khopper::OutputFactory::Instance().Register( MP3, CreateMp3 );
 }
 
 namespace Khopper {
 	
-	std::string Mp3::getOption() const {
-		return "cust ext=mp3 lame --quiet - %f";
+	namespace out {
+		
+		std::string Mp3::getOption() const {
+			return "cust ext=mp3 lame --quiet - %f";
+		}
+		
+		QWidget * Mp3::getUI() const {
+			return NULL;
+		}
+		
 	}
 	
 }

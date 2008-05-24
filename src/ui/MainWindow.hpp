@@ -1,6 +1,9 @@
 #ifndef MAINWINDOW_HPP
 #define MAINWINDOW_HPP
 
+#include "cue.hpp"
+#include "util.hpp"
+
 #include <QMainWindow>
 #include <QTableView>
 #include <QComboBox>
@@ -8,8 +11,6 @@
 #include <QStandardItemModel>
 #include <QStringList>
 #include <QPushButton>
-
-#include "cue.hpp"
 
 namespace Khopper {
 	
@@ -25,6 +26,7 @@ namespace Khopper {
 			QPushButton * _action_;
 			
 			void _setLabel_();
+			void _setOutputTypeList_();
 		
 	};
 	

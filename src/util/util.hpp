@@ -1,36 +1,17 @@
 #ifndef UTIL_HPP
 #define UTIL_HPP
 
+#include "output/output.hpp"
+
+#include <loki/Factory.h>
+#include <loki/Singleton.h>
+#include <loki/AssocVector.h>
+
 namespace Khopper {
-
-	/**
-	 * @namespace Input
-	 * @brief input formats
-	 */
-	namespace Input {
-		/**
-		 * @enum Format
-		 * @brief contains all posiable formats
-		 */
-		enum Format {
-			APE
-		};
-	}
-
-	/**
-	 * @namespace Output
-	 * @brief output formats
-	 */
-	namespace Output {
-		/**
-		 * @enum Format
-		 * @brief contains all posiable formats
-		 */
-		enum Format {
-			MP3
-		};
-	}
-
+	
+	typedef Loki::SingletonHolder< Loki::Factory< Output, std::string > > OutputFactory;
+	typedef Loki::SingletonHolder< Loki::AssocVector< std::string, std::string > > OutputTypes;
+	
 }
 
 #endif

@@ -6,8 +6,7 @@ namespace {
 		return new Ape;
 	}
 	
-	// ID, encode in base64
-	const std::string APE( "QVBFCg==" );
+	const std::string APE( "ape" );
 	
 	const bool registered = TheFactory::Instance().RegisterShape( APE, CreateApe );
 	

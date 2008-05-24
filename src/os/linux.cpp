@@ -16,7 +16,7 @@ namespace Khopper {
 	int Linux::exeRes( std::pair< std::string, std::string > & msg, const std::vector< std::string > & args ) {
 		char * * argt = new char*[ args.size() + 1 ];
 		
-		for( int i = 0; i < args.size(); ++i ) {
+		for( std::size_t i = 0; i < args.size(); ++i ) {
 			argt[i] = new char[ args[i].length() + 1 ];
 			strcpy( argt[i], args[i].c_str() );
 		}
@@ -30,17 +30,17 @@ namespace Khopper {
 		// create pipes
 		if( pipe( out ) < 0 ) {
 			freeArgs( argt );
-			throw std::Error< OS >( strerror( errno ) );
+			throw Error< OS >( strerror( errno ) );
 		}
 		if( pipe( err ) < 0 ) {
 			freeArgs( argt );
-			throw std::Error< OS >( strerror( errno ) );
+			throw Error< OS >( strerror( errno ) );
 		}
 		
 		// fork process
 		if( ( pid = fork() ) < 0 ) {	// error
 			freeArgs( argt );
-			throw std::Error< OS >( strerror( errno ) );
+			throw Error< OS >( strerror( errno ) );
 		} else if( pid > 0 ) {	// parent process
 			int status;
 			
@@ -50,13 +50,13 @@ namespace Khopper {
 			if( WIFEXITED( status ) ) {
 				ret = WEXITSTATUS( status );
 			} else {
-				throw std::Error< OS >( "Child process has unknown return status." );
+				throw Error< OS >( "Child process has unknown return status." );
 			}
 		} else {	// child process
 			ret = execvp( argt[0], argt );
 			freeArgs( argt );
 			if( ret < 0 ) {
-				throw std::Error< OS >( strerror( errno ) );
+				throw Error< OS >( strerror( errno ) );
 			}
 		}
 		

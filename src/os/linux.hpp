@@ -1,6 +1,16 @@
 #ifndef LINUX_HPP
 #define LINUX_HPP
 
+#include "util/error.hpp"
+
+#include <sys/wait.h>
+
+#include <string>
+#include <utility>
+#include <vector>
+
+#include <cerrno>
+
 namespace Khopper {
 	
 	struct Linux {

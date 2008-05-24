@@ -29,6 +29,7 @@ namespace Khopper {
 		// Setting output format select
 		_outputTypes_ = new QComboBox( bottom );
 		bottom->layout()->addWidget( _outputTypes_ );
+		_setOutputTypeList_();
 		
 		// Action button
 		_action_ = new QPushButton( tr( "Fire!" ), bottom );
@@ -44,6 +45,13 @@ namespace Khopper {
 		}
 		
 		model->setHorizontalHeaderLabels( headers );
+	}
+	
+	void MainWindow::_setOutputTypeList_() {
+		const OutputTypes::ObjectType & tm = OutputTypes::Instance();
+		for( OutputTypes::ObjectType::const_iterator it = tm.begin(); it != tm.end(); ++it ) {
+			_outputTypes_->addItem( it->second.c_str() );
+		}
 	}
 	
 	void MainWindow::setSongList( const std::vector< FieldType > & list ) {
