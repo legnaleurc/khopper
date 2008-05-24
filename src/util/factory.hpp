@@ -1,12 +1,12 @@
 #ifndef FACTORY_HPP
 #define FACTORY_HPP
 
-namespace {
+namespace Khopper {
 
 	template<
 		class AbstractProduct,
 		typename IdentifierType,
-		typename ProductCreator,
+		typename ProductCreator = AbstractProduct * ( * )(),
 		template< typename, class > class FactoryErrorPolicy = DefaultFactoryError
 	>
 	class Factory : public FactoryErrorPolicy< IdentifierType, AbstractProduct > {
