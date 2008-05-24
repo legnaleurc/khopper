@@ -56,6 +56,11 @@ namespace Khopper {
 	}
 	
 
+	/**
+	 * @brief Parse cue sheet to readable structure
+	 * @param [in] filename The file name
+	 * @return vector of FieldType
+	 */
 	std::vector< FieldType > parseCUE( const std::string & filename );
 
 }

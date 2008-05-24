@@ -3,8 +3,14 @@
 
 #include "input.hpp"
 
+/**
+ * @namespace Khopper
+ */
 namespace Khopper {
-	
+
+	/**
+	 * @class Ape
+	 */
 	class Ape : public Input {
 	};
 	

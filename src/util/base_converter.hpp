@@ -5,13 +5,30 @@
 
 #include <cstdlib>
 
+/**
+ * @namespace Khopper
+ */
 namespace Khopper {
 
+	/**
+	 * @class base_converter
+	 */
 	template< class OSPolicy >
 	class base_converter : public OSPolicy {
 		public:
+			/**
+			 * @brief You can only use this version
+			 * @param [in] audioFile Audio file path
+			 * @param [in] cuesheet CUE sheet file path
+			 * @param [in] iop Input option
+			 * @param [in] oop Output option
+			 */
 			base_converter( const std::string & audioFile, const std::string & cuesheet, const std::string & iop, const std::string & oop ) : _audio_( audioFile ), _sheet_( cuesheet ), _inputOption_( iop ), _outputOption_( oop ) {}
 			
+			/**
+			 * @brief Convert action
+			 * @return message
+			 */
 			std::string perfrom() const {
 				std::vector< std::string > args;
 				

@@ -7,6 +7,9 @@
 
 #include "util/base_converter.hpp"
 
+/**
+ * @namespace Khopper
+ */
 namespace Khopper {
 	
 #ifdef __linux__

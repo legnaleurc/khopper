@@ -7,6 +7,9 @@
 #include <loki/Singleton.h>
 #include <loki/AssocVector.h>
 
+/**
+ * @namespace Khopper
+ */
 namespace Khopper {
 	
 	typedef Loki::SingletonHolder< Loki::Factory< Output, std::string > > OutputFactory;
