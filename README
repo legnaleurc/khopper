@@ -1,0 +1,12 @@
+目前只有Linux版本
+
+編譯需求：
+	libloki-dev
+	libqt4-dev
+
+執行需求：
+	shntool
+	cuetools
+	各㮧格式用encoder/decoder：
+		mp3: lame
+		ape: mac
