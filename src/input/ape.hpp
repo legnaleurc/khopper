@@ -1,13 +1,11 @@
 #ifndef APE_HPP
 #define APE_HPP
 
-#include <string>
+#include "input.hpp"
 
 namespace Khopper {
 	
-	class APE {
-		protected:
-			std::string getOption() const;
+	class Ape : public Input {
 	};
 	
 }

@@ -1,33 +1,52 @@
 #ifndef CONVERT_HPP
 #define CONVERT_HPP
 
-#include <sstream>
+#include <vector>
 
 #include <cstdlib>
 
 namespace Khopper {
 
-	template< class Input, class Output >
-	class Convert : public Input, public Output {
+	template< class OSPolicy >
+	class base_converter : public OSPolicy {
 		public:
-			void setCUESheet( const std::string & cuesheet ) {
-				_sheet_ = cuesheet;
-			}
+			base_converter( const std::string & audioFile, const std::string & cuesheet, const std::string & iop, const std::string & oop ) : _audio_( audioFile ), _sheet_( cuesheet ), _inputOption_( iop ), _outputOption_( oop ) {}
 			
-			void perfrom() const {
-				std::ostringstream sout( cmd );
+			std::string perfrom() const {
+				std::vector< std::string > args;
 				
-				sout << " -f \"" << _sheet_ << "\"";
-				sout << " -i \"" << Input::getOption() << "\"";
-				sout << " -o \"" << Output::getOption() << "\"";
+				args.push_back( Command );
+				args.push_back( _audio_ );
+				args.push_back( "-f" );
+				args.push_back( _sheet_ );
 				
-				if( std::system( sout.c_str() ) != 0 ) {
-					throw Error;
+				if( _inputOption_ != "" ) {
+					args.push_back( "-i" );
+					args.push_back( _inputOption_ );
+				}
+				
+				if( _outputOption_ != "" ) {
+					args.push_back( "-o" );
+					args.push_back( _outputOption_ );
+				}
+				
+				std::pair< std::string, std::string > msg;
+				if( OSPolicy::exeRes( msg, args ) != 0 ) {
+					throw Error< Runtime >( msg.second );
+				} else {
+					return msg.first;
 				}
 			}
 		private:
-			static const char * const cmd = "shnsplit";
+			static const char * const Command = "shnsplit";
+			
+			std::string _audio_;
 			std::string _sheet_;
+			std::string _inputOption_;
+			std::string _outputOption_;
+			
+			// Protection
+			base_converter();
 	};
 
 }
