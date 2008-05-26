@@ -6,6 +6,9 @@ namespace Khopper {
 		// setTitle
 		setWindowTitle( tr( "Khopper" ) );
 		
+		// Setting menu bar
+		setMenuBar( _setMenu_() );
+		
 		// Setting central widget
 		QWidget * central = new QWidget( this );
 		central->setLayout( new QVBoxLayout( central ) );
@@ -36,6 +39,24 @@ namespace Khopper {
 		bottom->layout()->addWidget( _action_ );
 	}
 	
+	QMenuBar * MainWindow::_setMenu_() {
+		QMenuBar * menuBar = new QMenuBar( this );
+		
+		// setting file menu
+		QMenu * file = new QMenu( tr( "&File" ), menuBar );
+		
+		QAction * open = new QAction( tr( "&Open..." ), file );
+		open->setShortcut( tr( "Ctrl+O" ) );
+		connect( open, SIGNAL( triggered() ), this, SLOT( openFile() ) );
+		file->addAction( open );
+		
+		// add file menu to menu bar
+		menuBar->addMenu( file );
+		// file menu done
+		
+		return menuBar;
+	}
+	
 	void MainWindow::_setLabel_() {
 		QStandardItemModel * model = qobject_cast< QStandardItemModel * >( _songList_->model() );
 		QStringList headers;
@@ -50,8 +71,19 @@ namespace Khopper {
 	void MainWindow::_setOutputTypeList_() {
 		const OutputTypes::ObjectType & tm = OutputTypes::Instance();
 		for( OutputTypes::ObjectType::const_iterator it = tm.begin(); it != tm.end(); ++it ) {
-			_outputTypes_->addItem( it->second.c_str() );
+			_outputTypes_->addItem( it->second.c_str(), QVariant( it->first.c_str() ) );
 		}
+	}
+	
+	// TODO Link converter
+	void MainWindow::_fire_() {
+		QString test = _outputTypes_->itemData( _outputTypes_->currentIndex() ).toString();
+		Output * output = OutputFactory::Instance().CreateObject( test.toStdString() );
+	}
+	
+	// TODO Call CUE parser
+	void MainWindow::openFile() {
+		QString fileName = QFileDialog::getOpenFileName( this, tr( "Open CUE sheet" ), "", "*.cue" );
 	}
 	
 	void MainWindow::setSongList( const std::vector< FieldType > & list ) {
