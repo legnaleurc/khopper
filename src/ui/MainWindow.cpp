@@ -1,4 +1,5 @@
 #include "MainWindow.hpp"
+#include <iostream>
 
 namespace Khopper {
 	
@@ -36,6 +37,7 @@ namespace Khopper {
 		
 		// Action button
 		_action_ = new QPushButton( tr( "Fire!" ), bottom );
+		connect( _action_, SIGNAL( clicked() ), this, SLOT( _fire_() ) );
 		bottom->layout()->addWidget( _action_ );
 	}
 	
@@ -61,8 +63,8 @@ namespace Khopper {
 		QStandardItemModel * model = qobject_cast< QStandardItemModel * >( _songList_->model() );
 		QStringList headers;
 		
-		for( int i = 0; Track::Header[i] != NULL; ++i ) {
-			headers << Track::Header[i];
+		for( int i = 0; CUESheet::Track::Header[i] != NULL; ++i ) {
+			headers << CUESheet::Track::Header[i];
 		}
 		
 		model->setHorizontalHeaderLabels( headers );
@@ -77,8 +79,21 @@ namespace Khopper {
 	
 	// TODO Link converter
 	void MainWindow::_fire_() {
+		// create output format object
 		QString test = _outputTypes_->itemData( _outputTypes_->currentIndex() ).toString();
 		Output * output = OutputFactory::Instance().CreateObject( test.toStdString() );
+		
+		// get select list
+		QModelIndexList selected = _songList_->selectionModel()->selectedRows();
+		
+		std::vector< int > index( selected.size() );
+		for( int i = 0; i < selected.size(); ++i ) {
+			index[i] = selected[i].row();
+		}
+		
+		// TODO call converter
+		
+		delete output;
 	}
 	
 	// TODO Call CUE parser
@@ -86,12 +101,12 @@ namespace Khopper {
 		QString fileName = QFileDialog::getOpenFileName( this, tr( "Open CUE sheet" ), "", "*.cue" );
 	}
 	
-	void MainWindow::setSongList( const std::vector< FieldType > & list ) {
+	void MainWindow::setSongList( const std::vector< CUESheet::FieldType > & list ) {
 		QStandardItemModel * model = qobject_cast< QStandardItemModel * >( _songList_->model() );
 		QStandardItem * item;
 		
 		for( std::size_t row = 0; row < list.size(); ++row ) {
-			for( int col = 0; col < Track::SIZE; ++col ) {
+			for( int col = 0; col < CUESheet::Track::SIZE; ++col ) {
 				item = new QStandardItem( list[row][col].c_str() );
 				model->setItem( row, col, item );
 			}

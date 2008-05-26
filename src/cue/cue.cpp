@@ -1,8 +1,37 @@
-#include "cue.cpp"
+#include "cue.hpp"
 
 namespace Khopper {
 
-	std::vector< FieldType > parseCUE( const std::string & filename ) {
+	const char * const CUESheet::Track::Header[] = {
+		"Arranger",
+		"Composer",
+		"Genre",
+		"ISRC",
+		"Message",
+		"Number",
+		"Perfomer",
+		"Title",
+		"CD_Text",
+		NULL
+	};
+
+	CUESheet::CUESheet( const std::string & filename ) {
+	}
+	
+	std::pair< std::string, std::string > CUESheet::getSheetName() const {
+		return std::pair< std::string, std::string >();
+	}
+	
+	std::pair< std::string, std::string > CUESheet::getAudioName() const {
+		return std::pair< std::string, std::string >();
+	}
+	
+	CUESheet::FieldType CUESheet::getDiscInfo() const {
+		return CUESheet::FieldType();
+	}
+	
+	CUESheet::FieldType CUESheet::getTrackInfo() const {
+		return CUESheet::FieldType();
 	}
 
 }

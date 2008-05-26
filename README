@@ -7,6 +7,10 @@
 執行需求：
 	shntool
 	cuetools
-	各㮧格式用encoder/decoder：
+	各種格式用encoder/decoder：
 		mp3: lame
 		ape: mac
+
+編譯步驟：
+	$ qmake linux.cpp
+	$ make

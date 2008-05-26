@@ -45,7 +45,7 @@ namespace Khopper {
 			 * @brief set the song list
 			 * @param list Song list, generate by cue/cue.hpp
 			 */
-			void setSongList( const std::vector< FieldType > & list );
+			void setSongList( const std::vector< CUESheet::FieldType > & list );
 		
 		private:
 			QTableView * _songList_;

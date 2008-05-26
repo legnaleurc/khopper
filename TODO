@@ -2,7 +2,4 @@ shntool用法：
 	shnsplit [-f CUE檔名稱 [-x 曲目]] -o "cust ext=mp3 lame --quiet - %f" 要切的APE
 
 介面部分：
-	我可能還會再改
-
-外觀：
-	我忘了做曲目選擇的功能
+	OS depent的地方想改寫，不要用policy

@@ -2,6 +2,7 @@
 #define CONVERT_HPP
 
 #include <vector>
+#include <string>
 
 #include <cstdlib>
 
@@ -27,15 +28,29 @@ namespace Khopper {
 			
 			/**
 			 * @brief Convert action
+			 * @param songList the tracks to be convert
 			 * @return message
+			 * @throw Error<Runtime>
 			 */
-			std::string perfrom() const {
+			std::string perfrom( const std::vector< int > & songList ) const {
 				std::vector< std::string > args;
 				
 				args.push_back( Command );
 				args.push_back( _audio_ );
 				args.push_back( "-f" );
 				args.push_back( _sheet_ );
+				
+				if( !songList.empty() ) {
+					std::ostringstream sout;
+					
+					sout << songList[0];
+					for( std::size_t i = 1; i < songList.size(); ++i ) {
+						sout << ',' << songList[i];
+					}
+					
+					args.push_back( "-x" );
+					args.push_back( sout.str() );
+				}
 				
 				if( _inputOption_ != "" ) {
 					args.push_back( "-i" );

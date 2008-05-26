@@ -3,7 +3,7 @@
 ######################################################################
 
 TEMPLATE = app
-TARGET = 
+TARGET = Khopper
 DEPENDPATH += . src src/cue src/input src/os src/output src/ui src/util
 INCLUDEPATH += . src src/ui src/cue src/util src/output src/input src/os
 LIBS += -lloki
@@ -19,5 +19,6 @@ HEADERS += src/converter.hpp \
            src/util/error.hpp \
            src/util/util.hpp
 SOURCES += src/main.cpp \
+           src/cue/cue.cpp \
            src/output/mp3.cpp \
            src/ui/MainWindow.cpp
