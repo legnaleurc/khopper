@@ -2,7 +2,7 @@
 #define MP3_HPP
 
 #include "output.hpp"
-#include "util/util.hpp"
+#include "type.hpp"
 
 namespace Khopper {
 	

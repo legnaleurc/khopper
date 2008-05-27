@@ -2,7 +2,7 @@
 #define MAINWINDOW_HPP
 
 #include "cue.hpp"
-#include "util.hpp"
+#include "type.hpp"
 
 #include <QMainWindow>
 #include <QTableView>

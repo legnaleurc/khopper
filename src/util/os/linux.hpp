@@ -1,7 +1,7 @@
 #ifndef LINUX_HPP
 #define LINUX_HPP
 
-#include "util/error.hpp"
+#include "error.hpp"
 
 #include <sys/wait.h>
 

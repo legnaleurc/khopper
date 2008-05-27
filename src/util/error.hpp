@@ -34,7 +34,7 @@ namespace Khopper {
 			 * @brief Dummy destructor
 			 * @throw NEVER
 			 */
-			virtual ~Error() throw();
+			virtual ~Error() throw() {}
 		private:
 			std::string _msg_;
 	};
