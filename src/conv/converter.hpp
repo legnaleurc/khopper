@@ -1,21 +1,52 @@
 #ifndef CONVERTER_HPP
 #define CONVERTER_HPP
 
-#ifdef __linux__
-#include "os/linux.hpp"
-#endif
+#include "os.hpp"
 
-#include "util/base_converter.hpp"
+#include <vector>
+#include <string>
+#include <sstream>
+
+#include <cstdlib>
 
 /**
  * @namespace Khopper
  */
 namespace Khopper {
-	
-#ifdef __linux__
-	typedef base_converter< Linux > Converter;
-#endif
-	
+
+	/**
+	 * @class Converter
+	 */
+	class Converter {
+		public:
+			/**
+			 * @brief You can only use this version
+			 * @param [in] audioFile Audio file path
+			 * @param [in] cuesheet CUE sheet file path
+			 * @param [in] iop Input option
+			 * @param [in] oop Output option
+			 */
+			Converter( const std::string & audioFile, const std::string & cuesheet, const std::string & iop, const std::string & oop );
+			
+			/**
+			 * @brief Convert action
+			 * @param songList the tracks to be convert
+			 * @return message
+			 * @throw Error<Runtime>
+			 */
+			std::string perfrom( const std::vector< int > & songList ) const;
+		private:
+			static const char * const Command;
+			
+			std::string _audio_;
+			std::string _sheet_;
+			std::string _inputOption_;
+			std::string _outputOption_;
+			
+			// Protection
+			Converter();
+	};
+
 }
 
 #endif

@@ -1,4 +1,6 @@
-#include "linux.hpp"
+#include "os.hpp"
+
+#include <sys/wait.h>
 
 namespace {
 	
@@ -13,7 +15,7 @@ namespace {
 
 namespace Khopper {
 	
-	int Linux::exeRes( std::pair< std::string, std::string > & msg, const std::vector< std::string > & args ) {
+	int os::exeRes( std::pair< std::string, std::string > & msg, const std::vector< std::string > & args ) {
 		char * * argt = new char*[ args.size() + 1 ];
 		
 		for( std::size_t i = 0; i < args.size(); ++i ) {
