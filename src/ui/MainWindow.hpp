@@ -3,6 +3,7 @@
 
 #include "cue.hpp"
 #include "type.hpp"
+#include "converter.hpp"
 
 #include <QMainWindow>
 #include <QTableView>

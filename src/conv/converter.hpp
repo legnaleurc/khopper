@@ -2,6 +2,8 @@
 #define CONVERTER_HPP
 
 #include "os.hpp"
+#include "input.hpp"
+#include "output.hpp"
 
 #include <vector>
 #include <string>
@@ -21,30 +23,32 @@ namespace Khopper {
 		public:
 			/**
 			 * @brief You can only use this version
-			 * @param [in] audioFile Audio file path
-			 * @param [in] cuesheet CUE sheet file path
 			 * @param [in] iop Input option
 			 * @param [in] oop Output option
 			 */
-			Converter( const std::string & audioFile, const std::string & cuesheet, const std::string & iop, const std::string & oop );
+			Converter( Input * iop, Output * oop );
 			
 			/**
 			 * @brief Convert action
-			 * @param songList the tracks to be convert
+			 * @param [in] audio Audio file path
+			 * @param [in] sheet CUE sheet file path
+			 * @param [in] songList the tracks to be convert
 			 * @return message
 			 * @throw Error<Runtime>
 			 */
-			std::string perfrom( const std::vector< int > & songList ) const;
+			std::string perfrom( const std::string & audio, const std::string & sheet, const std::vector< int > & songList ) const;
+			
+			virtual ~Converter();
 		private:
 			static const char * const Command;
 			
-			std::string _audio_;
-			std::string _sheet_;
-			std::string _inputOption_;
-			std::string _outputOption_;
+			Input * _input_;
+			Output * _output_;
 			
 			// Protection
 			Converter();
+			Converter( const Converter & );
+			Converter & operator =( const Converter & );
 	};
 
 }

@@ -92,8 +92,7 @@ namespace Khopper {
 		}
 		
 		// TODO call converter
-		
-		delete output;
+		Converter conv( NULL, output );
 	}
 	
 	// TODO Call CUE parser

@@ -1,6 +1,9 @@
 #ifndef INPUT_HPP
 #define INPUT_HPP
 
+#include <QWidget>
+#include <string>
+
 /**
  * @namespace Khopper
  */

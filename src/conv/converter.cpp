@@ -4,16 +4,25 @@ namespace Khopper {
 	
 	const char * const Converter::Command = "shnsplit";
 	
-	Converter::Converter( const std::string & audioFile, const std::string & cuesheet, const std::string & iop, const std::string & oop ) : _audio_( audioFile ), _sheet_( cuesheet ), _inputOption_( iop ), _outputOption_( oop ) {
+	Converter::Converter( Input * iop, Output * oop ) : _input_( iop ), _output_( oop ) {
 	}
 	
-	std::string Converter::perfrom( const std::vector< int > & songList ) const {
+	Converter::~Converter() {
+		if( _input_ != NULL ) {
+			delete _input_;
+		}
+		if( _output_ != NULL ) {
+			delete _output_;
+		}
+	}
+	
+	std::string Converter::perfrom( const std::string & audio, const std::string & sheet, const std::vector< int > & songList ) const {
 		std::vector< std::string > args;
 		
 		args.push_back( Command );
-		args.push_back( _audio_ );
+		args.push_back( audio );
 		args.push_back( "-f" );
-		args.push_back( _sheet_ );
+		args.push_back( sheet );
 		
 		if( !songList.empty() ) {
 			std::ostringstream sout;
@@ -27,14 +36,14 @@ namespace Khopper {
 			args.push_back( sout.str() );
 		}
 		
-		if( _inputOption_ != "" ) {
+		if( _input_ != NULL ) {
 			args.push_back( "-i" );
-			args.push_back( _inputOption_ );
+			args.push_back( _input_->getOption() );
 		}
 		
-		if( _outputOption_ != "" ) {
+		if( _output_ != NULL ) {
 			args.push_back( "-o" );
-			args.push_back( _outputOption_ );
+			args.push_back( _output_->getOption() );
 		}
 		
 		std::pair< std::string, std::string > msg;
