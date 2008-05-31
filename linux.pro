@@ -22,6 +22,9 @@ INCLUDEPATH += . \
                src/util/os \
                src/conv/input
 LIBS += -lloki
+OBJECTS_DIR = obj
+MOC_DIR = moc
+DESTDIR = build
 
 # Input
 HEADERS += src/conv/converter.hpp \
