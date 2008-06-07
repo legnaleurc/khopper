@@ -46,7 +46,7 @@ namespace Khopper {
 			std::pair< std::string, std::string > getSheetName() const;
 			std::pair< std::string, std::string > getAudioName() const;
 			FieldType getDiscInfo() const;
-			FieldType getTrackInfo() const;
+			std::vector< FieldType > getTrackInfo() const;
 		private:
 			std::pair< std::string, std::string > _sheetName_;
 			std::pair< std::string, std::string > _audioName_;

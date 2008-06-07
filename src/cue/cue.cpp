@@ -30,8 +30,8 @@ namespace Khopper {
 		return CUESheet::FieldType();
 	}
 	
-	CUESheet::FieldType CUESheet::getTrackInfo() const {
-		return CUESheet::FieldType();
+	std::vector< CUESheet::FieldType > CUESheet::getTrackInfo() const {
+		return std::vector< CUESheet::FieldType >();
 	}
 
 }

@@ -1,6 +1,7 @@
 #include "os.hpp"
 
 #include <sys/wait.h>
+#include <cstring>
 
 namespace {
 	
