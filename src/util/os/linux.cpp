@@ -2,6 +2,7 @@
 
 #include <sys/wait.h>
 #include <cstring>
+#include <climits>
 
 namespace {
 	
@@ -48,7 +49,22 @@ namespace Khopper {
 			int status;
 			
 			freeArgs( argt );
+			
+			close( out[1] );
+			close( err[1] );
+			
 			waitpid( pid, &status, 0 );
+			
+			char buffer[PIPE_BUF];
+			
+			msg.first.clear();
+			while( read( out[0], buffer, PIPE_BUF ) > 0 ) {
+				msg.first += buffer;
+			}
+			msg.second.clear();
+			while( read( err[0], buffer, PIPE_BUF ) > 0 ) {
+				msg.second += buffer;
+			}
 			
 			if( WIFEXITED( status ) ) {
 				ret = WEXITSTATUS( status );
@@ -56,8 +72,15 @@ namespace Khopper {
 				throw Error< OS >( "Child process has unknown return status." );
 			}
 		} else {	// child process
+			close( out[0] );
+			close( err[0] );
+			
+			dup2( out[1], 1 );
+			dup2( err[1], 2 );
+			
 			ret = execvp( argt[0], argt );
 			freeArgs( argt );
+			
 			if( ret < 0 ) {
 				throw Error< OS >( strerror( errno ) );
 			}
