@@ -19,19 +19,19 @@ namespace Khopper {
 	}
 	
 	std::pair< std::string, std::string > CUESheet::getSheetName() const {
-		return std::pair< std::string, std::string >();
+		return _sheetName_;
 	}
 	
 	std::pair< std::string, std::string > CUESheet::getAudioName() const {
-		return std::pair< std::string, std::string >();
+		return _audioName_;
 	}
 	
 	CUESheet::FieldType CUESheet::getDiscInfo() const {
-		return CUESheet::FieldType();
+		return _discInfo_;
 	}
 	
 	std::vector< CUESheet::FieldType > CUESheet::getTrackInfo() const {
-		return std::vector< CUESheet::FieldType >();
+		return _TrackInfo_;
 	}
 
 }
