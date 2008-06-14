@@ -1,6 +1,9 @@
 #include "cue.hpp"
 #include <libgen.h>
 #include <cstring>
+#include<iostream>
+
+
 
 namespace {
 	const size_t BUFSIZE = 4096;
@@ -189,7 +192,7 @@ namespace Khopper {
 				pon = str3.find("\n");
 				string no_use = str3.substr(pon);
 				str3.replace(pon,no_use.length(),"");
-				if(disc == 1)
+				if(disc != 1)
 				{
 					temp_vector[t_tag] = str3.substr(pos+1);
 					t_tag++; 
@@ -221,7 +224,8 @@ namespace Khopper {
 					d_tag++; 
 				}
 				else
-				{
+				{	
+					//cout<<str3.substr(pos+2)<<endl;
 					temp_vector[t_tag] = str3.substr(pos+2);
 					t_tag++;
 				}
