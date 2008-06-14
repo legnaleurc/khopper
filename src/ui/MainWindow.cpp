@@ -105,6 +105,8 @@ namespace Khopper {
 		QStandardItemModel * model = qobject_cast< QStandardItemModel * >( _songList_->model() );
 		QStandardItem * item;
 		
+		model->setRowCount( 0 );
+		
 		for( std::size_t row = 0; row < list.size(); ++row ) {
 			for( int col = 0; col < CUESheet::Track::SIZE; ++col ) {
 				item = new QStandardItem( QString::fromUtf8( list[row][col].c_str() ) );

@@ -1,9 +1,6 @@
 #include "cue.hpp"
 #include <libgen.h>
 #include <cstring>
-#include<iostream>
-
-
 
 namespace {
 	const size_t BUFSIZE = 4096;

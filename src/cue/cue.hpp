@@ -18,7 +18,7 @@ namespace Khopper {
 					Genre,
 					Message,
 					Tracks,
-					Perfomer,
+					Performer,
 					Songwriter,
 					Title,
 					UPC_EAN,
@@ -34,7 +34,7 @@ namespace Khopper {
 					ISRC,
 					Message,
 					Number,
-					Perfomer,
+					Performer,
 					Title,
 					CD_Text,
 					SIZE
