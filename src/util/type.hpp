@@ -14,9 +14,8 @@
 namespace Khopper {
 	
 	typedef Loki::SingletonHolder< Loki::Factory< Input, std::string > > InputFactory;
-	typedef Loki::SingletonHolder< Loki::AssocVector< std::string, std::string > > InputTypes;
 	typedef Loki::SingletonHolder< Loki::Factory< Output, std::string > > OutputFactory;
-	typedef Loki::SingletonHolder< Loki::AssocVector< std::string, std::string > > OutputTypes;
+	typedef Loki::SingletonHolder< std::pair< Loki::AssocVector< std::string, std::string >, Loki::AssocVector< std::string, std::string > > > IOTypes;
 	
 }
 

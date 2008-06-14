@@ -70,13 +70,12 @@ namespace Khopper {
 	}
 	
 	void MainWindow::_setOutputTypeList_() {
-		const OutputTypes::ObjectType & tm = OutputTypes::Instance();
-		for( OutputTypes::ObjectType::const_iterator it = tm.begin(); it != tm.end(); ++it ) {
+		const IOTypes::ObjectType & tm = IOTypes::Instance();
+		for( IOTypes::ObjectType::second_type::const_iterator it = tm.second.begin(); it != tm.second.end(); ++it ) {
 			_outputTypes_->addItem( it->second.c_str(), QVariant( it->first.c_str() ) );
 		}
 	}
 	
-	// TODO Link converter
 	void MainWindow::_fire_() {
 		// create output format object
 		QString test = _outputTypes_->itemData( _outputTypes_->currentIndex() ).toString();
@@ -91,7 +90,6 @@ namespace Khopper {
 			index[i] = selected[i].row();
 		}
 		
-		// TODO call converter
 		Converter conv( input, output );
 		conv.perform( _audioPath_, _sheetPath_, index );
 	}
