@@ -51,7 +51,7 @@ namespace Khopper {
 			std::pair< std::string, std::string > _sheetName_;
 			std::pair< std::string, std::string > _audioName_;
 			FieldType _discInfo_;
-			std::vector< FieldType > _TrackInfo_;
+			std::vector< FieldType > _trackInfo_;
 	};
 
 }

@@ -1,5 +1,4 @@
 #include "MainWindow.hpp"
-#include <iostream>
 
 namespace Khopper {
 	
@@ -97,7 +96,9 @@ namespace Khopper {
 	
 	// TODO Call CUE parser
 	void MainWindow::openFile() {
-		QString fileName = QFileDialog::getOpenFileName( this, tr( "Open CUE sheet" ), "", "*.cue" );
+		QString fileName = QFileDialog::getOpenFileName( this, tr( "Open CUE sheet" ), QDir::homePath(), "*.cue" );
+		CUESheet songlist( fileName.toStdString() );
+		setSongList( songlist.getTrackInfo() );
 	}
 	
 	void MainWindow::setSongList( const std::vector< CUESheet::FieldType > & list ) {
