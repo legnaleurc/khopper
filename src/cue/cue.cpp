@@ -1,7 +1,6 @@
 #include "cue.hpp"
 #include <libgen.h>
 #include <cstring>
-#include<iostream>
 
 namespace {
 	const size_t BUFSIZE = 4096;
@@ -39,7 +38,7 @@ namespace Khopper {
 		size_t pos;//mean \t number
 		size_t pon;//mean \n number
 		
-		string command = string( "cueprint " ) + filename;
+		string command = string( "cueprint \"" ) + filename + "\"";
 		
 		_sheetName_ = std::pair< std::string, std::string >( dirname( strcpy( temp, filename.c_str() ) ), basename( strcpy( temp, filename.c_str() ) ) );
 		
@@ -64,16 +63,12 @@ namespace Khopper {
 		}
 		fclose(ad);
 		
-		
 		_audioName_ = std::pair< std::string, std::string >( _sheetName_.first ,temp_1 );
-	
+		
 		if( (fd = popen(command.c_str(),"r")) == NULL )
 			fputs("No command\n", stderr);
 		
-		
-		
 		_discInfo_.resize( Disc::SIZE );
-// 		_trackInfo_ = vector< FieldType >( 0, FieldType( Disc::SIZE ) );
 		
 		FieldType temp_vector( Disc::SIZE );
 		while(fgets(temp,BUFSIZE,fd)!=NULL)
@@ -103,7 +98,6 @@ namespace Khopper {
 				}
 				else
 				{
-					//_trackInfo_[track][t_tag] = str3.substr(pos+1);
 					temp_vector[t_tag] = str3.substr(pos+1);
 					t_tag++;
 				}
@@ -122,7 +116,6 @@ namespace Khopper {
 				}
 				else
 				{
-					//_trackInfo_[track][t_tag] = str3.substr(pos+1);
 					temp_vector[t_tag] = str3.substr(pos+1);
 					t_tag++;
 				}
@@ -141,7 +134,6 @@ namespace Khopper {
 				}
 				else
 				{
-					//_trackInfo_[track][t_tag] = str3.substr(pos+2);
 					temp_vector[t_tag] = str3.substr(pos+2);
 					t_tag++;
 				}
@@ -160,7 +152,6 @@ namespace Khopper {
 				}
 				else
 				{
-					//_trackInfo_[track][t_tag] = str3.substr(pos+1);
 					temp_vector[t_tag] = str3.substr(pos+1);
 					t_tag++;
 				}
@@ -200,7 +191,6 @@ namespace Khopper {
 				str3.replace(pon,no_use.length(),"");
 				if(disc == 1)
 				{
-					//_trackInfo_[track][t_tag] = str3.substr(pos+1);
 					temp_vector[t_tag] = str3.substr(pos+1);
 					t_tag++; 
 				}
@@ -232,7 +222,6 @@ namespace Khopper {
 				}
 				else
 				{
-					//_trackInfo_[track][t_tag] = str3.substr(pos+2);
 					temp_vector[t_tag] = str3.substr(pos+2);
 					t_tag++;
 				}
@@ -259,7 +248,6 @@ namespace Khopper {
 				str3.replace(pon,no_use.length(),"");
 				if(disc != 1)
 				{
-					//_trackInfo_[track][t_tag] = str3.substr(pos+1);
 					temp_vector[t_tag] = str3.substr(pos+1);
 					t_tag++;
 				}
@@ -273,7 +261,6 @@ namespace Khopper {
 				str3.replace(pon,no_use.length(),"");
 				if(disc != 1)
 				{
-					//_trackInfo_[track][t_tag] = str3.substr(pos+1);
 					temp_vector[t_tag] = str3.substr(pos+1);
 					t_tag++;
 				}
@@ -287,7 +274,6 @@ namespace Khopper {
 				str3.replace(pon,no_use.length(),"");
 				if(disc != 1)
 				{
-					//_trackInfo_[track][t_tag] = str3.substr(pos+1);
 					temp_vector[t_tag] = str3.substr(pos+1);
 					_trackInfo_.push_back(temp_vector);
 					t_tag++;
@@ -297,22 +283,21 @@ namespace Khopper {
 		
 		pclose(fd);
 		
-		
 	}
 	
-	std::pair< std::string, std::string > CUESheet::getSheetName() const {
+	const std::pair< std::string, std::string > & CUESheet::getSheetName() const {
 		return _sheetName_;
 	}
 	
-	std::pair< std::string, std::string > CUESheet::getAudioName() const {
+	const std::pair< std::string, std::string > & CUESheet::getAudioName() const {
 		return _audioName_;
 	}
 	
-	CUESheet::FieldType CUESheet::getDiscInfo() const {
+	const CUESheet::FieldType & CUESheet::getDiscInfo() const {
 		return _discInfo_;
 	}
 	
-	std::vector< CUESheet::FieldType > CUESheet::getTrackInfo() const {
+	const std::vector< CUESheet::FieldType > & CUESheet::getTrackInfo() const {
 		return _trackInfo_;
 	}
 

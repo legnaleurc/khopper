@@ -97,7 +97,7 @@ namespace Khopper {
 	// TODO Call CUE parser
 	void MainWindow::openFile() {
 		QString fileName = QFileDialog::getOpenFileName( this, tr( "Open CUE sheet" ), QDir::homePath(), "*.cue" );
-		CUESheet songlist( fileName.toStdString() );
+		CUESheet songlist( fileName.toUtf8().constData() );
 		setSongList( songlist.getTrackInfo() );
 	}
 	
@@ -107,7 +107,7 @@ namespace Khopper {
 		
 		for( std::size_t row = 0; row < list.size(); ++row ) {
 			for( int col = 0; col < CUESheet::Track::SIZE; ++col ) {
-				item = new QStandardItem( list[row][col].c_str() );
+				item = new QStandardItem( QString::fromUtf8( list[row][col].c_str() ) );
 				model->setItem( row, col, item );
 			}
 		}

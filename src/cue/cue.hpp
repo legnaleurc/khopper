@@ -43,10 +43,10 @@ namespace Khopper {
 			};
 			
 			CUESheet( const std::string & filename );
-			std::pair< std::string, std::string > getSheetName() const;
-			std::pair< std::string, std::string > getAudioName() const;
-			FieldType getDiscInfo() const;
-			std::vector< FieldType > getTrackInfo() const;
+			const std::pair< std::string, std::string > & getSheetName() const;
+			const std::pair< std::string, std::string > & getAudioName() const;
+			const FieldType & getDiscInfo() const;
+			const std::vector< FieldType > & getTrackInfo() const;
 		private:
 			std::pair< std::string, std::string > _sheetName_;
 			std::pair< std::string, std::string > _audioName_;
