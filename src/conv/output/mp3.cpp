@@ -5,7 +5,7 @@ namespace {
 		return new Khopper::out::Mp3;
 	}
 	
-	const std::string MP3( "TVAzCg==" );
+	const std::string MP3( "out::Mp3" );
 	
 	const bool reg_type = Khopper::OutputTypes::Instance().insert( Khopper::OutputTypes::ObjectType::value_type( MP3, "mp3" ) ).second;
 	const bool reg_fac = Khopper::OutputFactory::Instance().Register( MP3, CreateMp3 );

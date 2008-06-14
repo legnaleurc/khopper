@@ -1,5 +1,7 @@
 #include "converter.hpp"
 
+#include <iostream>
+
 namespace Khopper {
 	
 	const char * const Converter::Command = "shnsplit";
@@ -16,7 +18,7 @@ namespace Khopper {
 		}
 	}
 	
-	std::string Converter::perfrom( const std::string & audio, const std::string & sheet, const std::vector< int > & songList ) const {
+	std::string Converter::perform( const std::string & audio, const std::string & sheet, const std::vector< int > & songList ) const {
 		std::vector< std::string > args;
 		
 		args.push_back( Command );
@@ -36,12 +38,12 @@ namespace Khopper {
 			args.push_back( sout.str() );
 		}
 		
-		if( _input_ != NULL ) {
+		if( _input_ != NULL && _input_->getOption() != "" ) {
 			args.push_back( "-i" );
 			args.push_back( _input_->getOption() );
 		}
 		
-		if( _output_ != NULL ) {
+		if( _output_ != NULL && _output_->getOption() != "" ) {
 			args.push_back( "-o" );
 			args.push_back( _output_->getOption() );
 		}

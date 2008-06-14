@@ -36,7 +36,7 @@ namespace Khopper {
 			 * @return message
 			 * @throw Error<Runtime>
 			 */
-			std::string perfrom( const std::string & audio, const std::string & sheet, const std::vector< int > & songList ) const;
+			std::string perform( const std::string & audio, const std::string & sheet, const std::vector< int > & songList ) const;
 			
 			virtual ~Converter();
 		private:

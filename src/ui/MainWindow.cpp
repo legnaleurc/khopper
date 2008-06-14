@@ -81,6 +81,7 @@ namespace Khopper {
 		// create output format object
 		QString test = _outputTypes_->itemData( _outputTypes_->currentIndex() ).toString();
 		Output * output = OutputFactory::Instance().CreateObject( test.toStdString() );
+		Input * input = InputFactory::Instance().CreateObject( "in::Ape" );
 		
 		// get select list
 		QModelIndexList selected = _songList_->selectionModel()->selectedRows();
@@ -91,14 +92,16 @@ namespace Khopper {
 		}
 		
 		// TODO call converter
-		Converter conv( NULL, output );
+		Converter conv( input, output );
+		conv.perform( _audioPath_, _sheetPath_, index );
 	}
 	
-	// TODO Call CUE parser
 	void MainWindow::openFile() {
 		QString fileName = QFileDialog::getOpenFileName( this, tr( "Open CUE sheet" ), QDir::homePath(), "*.cue" );
 		CUESheet songlist( fileName.toUtf8().constData() );
 		setSongList( songlist.getTrackInfo() );
+		_audioPath_ = songlist.getAudioName().first + "/" + songlist.getAudioName().second;
+		_sheetPath_ = songlist.getSheetName().first + "/" + songlist.getSheetName().second;
 	}
 	
 	void MainWindow::setSongList( const std::vector< CUESheet::FieldType > & list ) {

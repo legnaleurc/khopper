@@ -52,6 +52,8 @@ namespace Khopper {
 			QTableView * _songList_;
 			QComboBox * _outputTypes_;
 			QPushButton * _action_;
+			std::string _audioPath_;
+			std::string _sheetPath_;
 			
 			QMenuBar * _setMenu_();
 			void _setLabel_();

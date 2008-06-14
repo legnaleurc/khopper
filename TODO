@@ -1,11 +1,9 @@
 shntool用法：
 	shnsplit [-f CUE檔名稱 [-x 曲目]] -o "cust ext=mp3 lame --quiet - %f" 要切的APE
 
-CUE Sheet module:
-	資料匯入的地方出錯，導致Segmentation fault.
-
 介面部分：
 	String定義的地方，port Windows的時候再決定要不要額外定義
+	不知道為啥input的type也被加到output裡了
 
 外觀：
 	About和License

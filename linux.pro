@@ -32,6 +32,8 @@ HEADERS += src/conv/converter.hpp \
            src/ui/MainWindow.hpp \
            src/util/error.hpp \
            src/util/type.hpp \
+           src/conv/input/ape.hpp \
+           src/conv/input/input.hpp \
            src/conv/output/mp3.hpp \
            src/conv/output/output.hpp \
            src/util/os/os.hpp
@@ -39,5 +41,6 @@ SOURCES += src/main.cpp \
            src/conv/converter.cpp \
            src/cue/cue.cpp \
            src/ui/MainWindow.cpp \
+           src/conv/input/ape.cpp \
            src/conv/output/mp3.cpp \
            src/util/os/linux.cpp
