@@ -1,6 +1,7 @@
 #include "cue.hpp"
 #include <libgen.h>
 #include <cstring>
+#include<iostream>
 
 namespace {
 	const size_t BUFSIZE = 4096;
@@ -71,11 +72,13 @@ namespace Khopper {
 		
 		
 		
-		_discInfo_ = FieldType( Disc::SIZE );
+		_discInfo_.resize( Disc::SIZE );
 // 		_trackInfo_ = vector< FieldType >( 0, FieldType( Disc::SIZE ) );
 		
+		FieldType temp_vector( Disc::SIZE );
 		while(fgets(temp,BUFSIZE,fd)!=NULL)
 		{
+			
 			if( strstr(temp,"Disc Information") != NULL )
 				disc = 1;
 			if( strstr(temp,"Track") != NULL )
@@ -83,13 +86,14 @@ namespace Khopper {
 				disc = 0;
 				sscanf(temp,"Track %d Information",&track);
 				track = track-1;
+				t_tag = 0;
 			}
 			if( strstr(temp,"arranger:") != NULL )
 			{
 				str3 = temp;
 				pos = str3.find("\t");
 				pon = str3.find("\n");
-				string no_use = str3.substr(pos);
+				string no_use = str3.substr(pon);
 				str3.replace(pon,no_use.length(),"");
 				
 				if(disc == 1)
@@ -99,7 +103,8 @@ namespace Khopper {
 				}
 				else
 				{
-					_trackInfo_[track][t_tag] = str3.substr(pos+1);
+					//_trackInfo_[track][t_tag] = str3.substr(pos+1);
+					temp_vector[t_tag] = str3.substr(pos+1);
 					t_tag++;
 				}
 			}
@@ -108,7 +113,7 @@ namespace Khopper {
 				str3 = temp;
 				pos = str3.find("\t");
 				pon = str3.find("\n");
-				string no_use = str3.substr(pos);
+				string no_use = str3.substr(pon);
 				str3.replace(pon,no_use.length(),"");
 				if(disc == 1)
 				{
@@ -117,7 +122,8 @@ namespace Khopper {
 				}
 				else
 				{
-					_trackInfo_[track][t_tag] = str3.substr(pos+1);
+					//_trackInfo_[track][t_tag] = str3.substr(pos+1);
+					temp_vector[t_tag] = str3.substr(pos+1);
 					t_tag++;
 				}
 			}
@@ -126,7 +132,7 @@ namespace Khopper {
 				str3 = temp;
 				pos = str3.find("\t\t");
 				pon = str3.find("\n");
-				string no_use = str3.substr(pos);
+				string no_use = str3.substr(pon);
 				str3.replace(pon,no_use.length(),"");
 				if(disc == 1)
 				{
@@ -135,7 +141,8 @@ namespace Khopper {
 				}
 				else
 				{
-					_trackInfo_[track][t_tag] = str3.substr(pos+2);
+					//_trackInfo_[track][t_tag] = str3.substr(pos+2);
+					temp_vector[t_tag] = str3.substr(pos+2);
 					t_tag++;
 				}
 			}
@@ -144,7 +151,7 @@ namespace Khopper {
 				str3 = temp;
 				pos = str3.find("\t");
 				pon = str3.find("\n");
-				string no_use = str3.substr(pos);
+				string no_use = str3.substr(pon);
 				str3.replace(pon,no_use.length(),"");
 				if(disc == 1)
 				{
@@ -153,7 +160,8 @@ namespace Khopper {
 				}
 				else
 				{
-					_trackInfo_[track][t_tag] = str3.substr(pos+1);
+					//_trackInfo_[track][t_tag] = str3.substr(pos+1);
+					temp_vector[t_tag] = str3.substr(pos+1);
 					t_tag++;
 				}
 			}
@@ -162,7 +170,7 @@ namespace Khopper {
 				str3 = temp;
 				pos = str3.find("\t");
 				pon = str3.find("\n");
-				string no_use = str3.substr(pos);
+				string no_use = str3.substr(pon);
 				str3.replace(pon,no_use.length(),"");
 				if(disc == 1)
 				{
@@ -175,7 +183,7 @@ namespace Khopper {
 				str3 = temp;
 				pos = str3.find("\t");
 				pon = str3.find("\n");
-				string no_use = str3.substr(pos);
+				string no_use = str3.substr(pon);
 				str3.replace(pon,no_use.length(),"");
 				if(disc == 1)
 				{
@@ -188,11 +196,12 @@ namespace Khopper {
 				str3 = temp;
 				pos = str3.find("\t");
 				pon = str3.find("\n");
-				string no_use = str3.substr(pos);
+				string no_use = str3.substr(pon);
 				str3.replace(pon,no_use.length(),"");
 				if(disc == 1)
 				{
-					_trackInfo_[track][t_tag] = str3.substr(pos+1);
+					//_trackInfo_[track][t_tag] = str3.substr(pos+1);
+					temp_vector[t_tag] = str3.substr(pos+1);
 					t_tag++; 
 				}
 			}
@@ -201,7 +210,7 @@ namespace Khopper {
 				str3 = temp;
 				pos = str3.find("\t");
 				pon = str3.find("\n");
-				string no_use = str3.substr(pos);
+				string no_use = str3.substr(pon);
 				str3.replace(pon,no_use.length(),"");
 				if(disc == 1)
 				{
@@ -214,7 +223,7 @@ namespace Khopper {
 				str3 = temp;
 				pos = str3.find("\t\t");
 				pon = str3.find("\n");
-				string no_use = str3.substr(pos);
+				string no_use = str3.substr(pon);
 				str3.replace(pon,no_use.length(),"");
 				if(disc == 1)
 				{
@@ -223,7 +232,8 @@ namespace Khopper {
 				}
 				else
 				{
-					_trackInfo_[track][t_tag] = str3.substr(pos+2);
+					//_trackInfo_[track][t_tag] = str3.substr(pos+2);
+					temp_vector[t_tag] = str3.substr(pos+2);
 					t_tag++;
 				}
 			}
@@ -232,7 +242,7 @@ namespace Khopper {
 				str3 = temp;
 				pos = str3.find("\t");
 				pon = str3.find("\n");
-				string no_use = str3.substr(pos);
+				string no_use = str3.substr(pon);
 				str3.replace(pon,no_use.length(),"");
 				if(disc == 1)
 				{
@@ -245,11 +255,12 @@ namespace Khopper {
 				str3 = temp;
 				pos = str3.find("\t\t");
 				pon = str3.find("\n");
-				string no_use = str3.substr(pos);
+				string no_use = str3.substr(pon);
 				str3.replace(pon,no_use.length(),"");
 				if(disc != 1)
 				{
-					_trackInfo_[track][t_tag] = str3.substr(pos+1);
+					//_trackInfo_[track][t_tag] = str3.substr(pos+1);
+					temp_vector[t_tag] = str3.substr(pos+1);
 					t_tag++;
 				}
 			}
@@ -258,11 +269,12 @@ namespace Khopper {
 				str3 = temp;
 				pos = str3.find("\t");
 				pon = str3.find("\n");
-				string no_use = str3.substr(pos);
+				string no_use = str3.substr(pon);
 				str3.replace(pon,no_use.length(),"");
 				if(disc != 1)
 				{
-					_trackInfo_[track][t_tag] = str3.substr(pos+1);
+					//_trackInfo_[track][t_tag] = str3.substr(pos+1);
+					temp_vector[t_tag] = str3.substr(pos+1);
 					t_tag++;
 				}
 			}
@@ -271,11 +283,13 @@ namespace Khopper {
 				str3 = temp;
 				pos = str3.find("\t");
 				pon = str3.find("\n");
-				string no_use = str3.substr(pos);
+				string no_use = str3.substr(pon);
 				str3.replace(pon,no_use.length(),"");
 				if(disc != 1)
 				{
-					_trackInfo_[track][t_tag] = str3.substr(pos+1);
+					//_trackInfo_[track][t_tag] = str3.substr(pos+1);
+					temp_vector[t_tag] = str3.substr(pos+1);
+					_trackInfo_.push_back(temp_vector);
 					t_tag++;
 				}
 			}
