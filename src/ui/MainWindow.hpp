@@ -16,6 +16,7 @@
 #include <QMenuBar>
 #include <QMenu>
 #include <QFileDialog>
+#include <QMessageBox>
 
 /**
  * @namespace Khopper

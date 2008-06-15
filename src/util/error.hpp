@@ -27,7 +27,7 @@ namespace Khopper {
 			 * @return Error message
 			 * @throw NEVER
 			 */
-			virtual const char * what() throw() {
+			virtual const char * what() const throw() {
 				return _msg_.c_str();
 			}
 			/**

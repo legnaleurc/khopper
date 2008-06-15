@@ -87,19 +87,26 @@ namespace Khopper {
 		
 		std::vector< int > index( selected.size() );
 		for( int i = 0; i < selected.size(); ++i ) {
-			index[i] = selected[i].row();
+			// FIXME: dirty hack!
+			index[i] = selected[i].row() + 1;
 		}
 		
 		Converter conv( input, output );
-		conv.perform( _audioPath_, _sheetPath_, index );
+		try {
+			conv.perform( _audioPath_, _sheetPath_, index );
+		} catch( const Error< Runtime > & e ) {
+			QMessageBox::critical( this, tr( "Runtime error!" ), tr( e.what() ) );
+		}
 	}
 	
 	void MainWindow::openFile() {
 		QString fileName = QFileDialog::getOpenFileName( this, tr( "Open CUE sheet" ), QDir::homePath(), "*.cue" );
-		CUESheet songlist( fileName.toUtf8().constData() );
-		setSongList( songlist.getTrackInfo() );
-		_audioPath_ = songlist.getAudioName().first + "/" + songlist.getAudioName().second;
-		_sheetPath_ = songlist.getSheetName().first + "/" + songlist.getSheetName().second;
+		if( fileName != "" ) {
+			CUESheet songlist( fileName.toUtf8().constData() );
+			setSongList( songlist.getTrackInfo() );
+			_audioPath_ = songlist.getAudioName().first + "/" + songlist.getAudioName().second;
+			_sheetPath_ = songlist.getSheetName().first + "/" + songlist.getSheetName().second;
+		}
 	}
 	
 	void MainWindow::setSongList( const std::vector< CUESheet::FieldType > & list ) {
