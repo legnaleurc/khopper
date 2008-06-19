@@ -70,8 +70,9 @@ namespace Khopper {
 	}
 	
 	void MainWindow::_setOutputTypeList_() {
-		const IOTypes::ObjectType & tm = IOTypes::Instance();
-		for( IOTypes::ObjectType::second_type::const_iterator it = tm.second.begin(); it != tm.second.end(); ++it ) {
+		// Take out the output types
+		const OutputList & tm = IOTypes::Instance().second;
+		for( OutputList::const_iterator it = tm.begin(); it != tm.end(); ++it ) {
 			_outputTypes_->addItem( it->second.c_str(), QVariant( it->first.c_str() ) );
 		}
 	}
