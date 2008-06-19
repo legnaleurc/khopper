@@ -40,7 +40,7 @@ namespace Khopper {
 			
 			virtual ~Converter();
 		private:
-			static const char * const Command;
+			static const char * const COMMAND;
 			
 			Input * _input_;
 			Output * _output_;

@@ -92,10 +92,11 @@ namespace Khopper {
 			index[i] = selected[i].row() + 1;
 		}
 		
-		Converter conv( input, output );
+		// Create converter
 		try {
+			Converter conv( input, output );
 			conv.perform( _audioPath_, _sheetPath_, index );
-		} catch( const Error< Runtime > & e ) {
+		} catch( const Error< RunTime > & e ) {
 			QMessageBox::critical( this, tr( "Runtime error!" ), tr( e.what() ) );
 		}
 	}

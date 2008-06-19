@@ -25,7 +25,13 @@ namespace Khopper {
 		 * @param [in] args Arguments of program
 		 * @return child Process exit state
 		 */
-		static int exeRes( std::pair< std::string, std::string > & msg, const std::vector< std::string > & args );
+		static int getResult( std::pair< std::string, std::string > & msg, const std::vector< std::string > & args );
+		/**
+		 * @brief Test if program exists
+		 * @param [in] exe program name
+		 * @throw Error<Runtime> if not found
+		 */
+		static void exists( const std::string & exe );
 	};
 	
 }

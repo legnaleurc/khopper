@@ -17,7 +17,7 @@ namespace {
 
 namespace Khopper {
 	
-	int os::exeRes( std::pair< std::string, std::string > & msg, const std::vector< std::string > & args ) {
+	int os::getResult( std::pair< std::string, std::string > & msg, const std::vector< std::string > & args ) {
 		char * * argt = new char*[ args.size() + 1 ];
 		
 		for( std::size_t i = 0; i < args.size(); ++i ) {
@@ -88,6 +88,17 @@ namespace Khopper {
 		
 		
 		return ret;
+	}
+	
+	void os::exists( const std::string & exe ) {
+		std::ostringstream sout;
+		sout << "[ `which " << exe << "` ]";
+		if( system( sout.str().c_str() ) != 0 ) {
+			sout.str( "" );
+			sout.clear();
+			sout << "`" << exe << "\' not found!";
+			throw Error< RunTime >( sout.str() );
+		}
 	}
 	
 }

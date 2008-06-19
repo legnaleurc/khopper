@@ -3,6 +3,8 @@
 
 #include <exception>
 #include <string>
+#include <sstream>
+#include <cstdlib>
 
 /**
  * @namespace Khopper
@@ -47,10 +49,10 @@ namespace Khopper {
 	};
 	
 	/**
-	 * @class Runtime
+	 * @class RunTime
 	 * @brief Dummy error class
 	 */
-	class Runtime {
+	class RunTime {
 	};
 
 }

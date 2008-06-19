@@ -18,6 +18,7 @@ namespace Khopper {
 	namespace out {
 		
 		std::string Mp3::getOption() const {
+			os::exists( "lame" );
 			return "cust ext=mp3 lame --quiet - %f";
 		}
 		

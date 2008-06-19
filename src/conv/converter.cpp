@@ -4,9 +4,15 @@
 
 namespace Khopper {
 	
-	const char * const Converter::Command = "shnsplit";
+	const char * const Converter::COMMAND = "shnsplit";
 	
 	Converter::Converter( Input * iop, Output * oop ) : _input_( iop ), _output_( oop ) {
+		try {
+			os::exists( COMMAND );
+		} catch( const Error< RunTime > & e ) {
+			this->~Converter();
+			throw e;
+		}
 	}
 	
 	Converter::~Converter() {
@@ -21,7 +27,7 @@ namespace Khopper {
 	std::string Converter::perform( const std::string & audio, const std::string & sheet, const std::vector< int > & songList ) const {
 		std::vector< std::string > args;
 		
-		args.push_back( Command );
+		args.push_back( COMMAND );
 		args.push_back( audio );
 		args.push_back( "-f" );
 		args.push_back( sheet );
@@ -49,8 +55,8 @@ namespace Khopper {
 		}
 		
 		std::pair< std::string, std::string > msg;
-		if( os::exeRes( msg, args ) != 0 ) {
-			throw Error< Runtime >( msg.second );
+		if( os::getResult( msg, args ) != 0 ) {
+			throw Error< RunTime >( msg.second );
 		} else {
 			return msg.first;
 		}
