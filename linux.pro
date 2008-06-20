@@ -3,7 +3,7 @@
 ######################################################################
 
 TEMPLATE = app
-TARGET = Khopper
+TARGET = khopper
 DEPENDPATH += . \
               src \
               src/conv \
@@ -30,6 +30,7 @@ DESTDIR = build
 HEADERS += src/conv/converter.hpp \
            src/cue/cue.hpp \
            src/ui/MainWindow.hpp \
+           src/ui/SongList.hpp \
            src/util/error.hpp \
            src/util/type.hpp \
            src/conv/input/ape.hpp \
@@ -41,6 +42,7 @@ SOURCES += src/main.cpp \
            src/conv/converter.cpp \
            src/cue/cue.cpp \
            src/ui/MainWindow.cpp \
+           src/ui/SongList.cpp \
            src/conv/input/ape.cpp \
            src/conv/output/mp3.cpp \
            src/util/os/linux.cpp

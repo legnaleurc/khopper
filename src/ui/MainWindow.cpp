@@ -15,7 +15,7 @@ namespace Khopper {
 		setCentralWidget( central );
 		
 		// Add song list
-		_songList_ = new QTableView( central );
+		_songList_ = new SongList( central );
 		central->layout()->addWidget( _songList_ );
 		// Set model
 		_songList_->setModel( new QStandardItemModel( _songList_ ) );
@@ -23,6 +23,7 @@ namespace Khopper {
 		_setLabel_();
 		// Set selection behavior
 		_songList_->setSelectionBehavior( QAbstractItemView::SelectRows );
+		connect( _songList_, SIGNAL( openFile( const QString & ) ), this, SLOT( open( const QString & ) ) );
 		
 		// Set bottom layout
 		QWidget * bottom = new QWidget( central );
@@ -48,7 +49,7 @@ namespace Khopper {
 		
 		QAction * open = new QAction( tr( "&Open..." ), file );
 		open->setShortcut( tr( "Ctrl+O" ) );
-		connect( open, SIGNAL( triggered() ), this, SLOT( openFile() ) );
+		connect( open, SIGNAL( triggered() ), this, SLOT( openFileDialog() ) );
 		file->addAction( open );
 		
 		// add file menu to menu bar
@@ -101,10 +102,14 @@ namespace Khopper {
 		}
 	}
 	
-	void MainWindow::openFile() {
+	void MainWindow::openFileDialog() {
 		QString fileName = QFileDialog::getOpenFileName( this, tr( "Open CUE sheet" ), QDir::homePath(), "*.cue" );
-		if( fileName != "" ) {
-			CUESheet songlist( fileName.toUtf8().constData() );
+		open( fileName );
+	}
+	
+	void MainWindow::open( const QString & file ) {
+		if( file != "" ) {
+			CUESheet songlist( file.toUtf8().constData() );
 			setSongList( songlist.getTrackInfo() );
 			_audioPath_ = songlist.getAudioName().first + "/" + songlist.getAudioName().second;
 			_sheetPath_ = songlist.getSheetName().first + "/" + songlist.getSheetName().second;

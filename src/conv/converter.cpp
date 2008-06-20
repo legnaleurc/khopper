@@ -1,7 +1,5 @@
 #include "converter.hpp"
 
-#include <iostream>
-
 namespace Khopper {
 	
 	const char * const Converter::COMMAND = "shnsplit";

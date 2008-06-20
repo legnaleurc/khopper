@@ -4,9 +4,9 @@
 #include "cue.hpp"
 #include "type.hpp"
 #include "converter.hpp"
+#include "SongList.hpp"
 
 #include <QMainWindow>
-#include <QTableView>
 #include <QComboBox>
 #include <QVBoxLayout>
 #include <QStandardItemModel>
@@ -42,15 +42,20 @@ namespace Khopper {
 			/**
 			 * @brief open the file widget
 			 */
-			void openFile();
+			void openFileDialog();
 			/**
 			 * @brief set the song list
 			 * @param list Song list, generate by cue/cue.hpp
 			 */
 			void setSongList( const std::vector< CUESheet::FieldType > & list );
+			/**
+			 * @brief open file
+			 * @param file file name
+			 */
+			void open( const QString & file );
 		
 		private:
-			QTableView * _songList_;
+			SongList * _songList_;
 			QComboBox * _outputTypes_;
 			QPushButton * _action_;
 			std::string _audioPath_;
