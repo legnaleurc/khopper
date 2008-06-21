@@ -4,10 +4,11 @@ shntool用法：
 介面部分：
 	String定義的地方，port Windows的時候再決定要不要額外定義
 	轉檔時的進度條
-	拖拉開檔功能
+	拖拉開檔功能：
+		[bug]dragEnterEvent有發生，但是dropEvent沒反應
 
 防呆：
-	檢查是否能成功執行動作
+	[完成]檢查是否能成功執行動作
 
 外觀：
 	About和License
