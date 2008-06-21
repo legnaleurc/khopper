@@ -18,6 +18,7 @@ namespace Khopper {
 	namespace in {
 		
 		std::string Ape::getOption() const {
+			os::exists( "mac" );
 			return "";
 		}
 		
