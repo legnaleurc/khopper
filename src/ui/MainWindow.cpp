@@ -82,7 +82,7 @@ namespace Khopper {
 		// create output format object
 		QString test = _outputTypes_->itemData( _outputTypes_->currentIndex() ).toString();
 		Output * output = OutputFactory::Instance().CreateObject( test.toStdString() );
-		Input * input = InputFactory::Instance().CreateObject( "in::Ape" );
+		Input * input = InputFactory::Instance().CreateObject( "in::Wav" );
 		
 		// get select list
 		QModelIndexList selected = _songList_->selectionModel()->selectedRows();

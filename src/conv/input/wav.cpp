@@ -1,0 +1,30 @@
+#include "wav.hpp"
+
+namespace {
+	
+	Khopper::Input * CreateWav() {
+		return new Khopper::in::Wav;
+	}
+	
+	const std::string WAV( "in::Wav" );
+	
+	const bool reg_type = Khopper::IOTypes::Instance().first.insert( Khopper::IOTypes::ObjectType::first_type::value_type( WAV, "wav" ) ).second;
+	const bool reg_fac = Khopper::InputFactory::Instance().Register( WAV, CreateWav );
+	
+}
+
+namespace Khopper {
+	
+	namespace in {
+		
+		std::string Wav::getOption() const {
+			return "";
+		}
+		
+		QWidget * Wav::getUI() const {
+			return NULL;
+		}
+		
+	}
+	
+}
