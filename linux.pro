@@ -31,6 +31,7 @@ HEADERS += src/conv/converter.hpp \
            src/cue/cue.hpp \
            src/ui/MainWindow.hpp \
            src/ui/SongList.hpp \
+           src/ui/Threads.hpp \
            src/util/error.hpp \
            src/util/type.hpp \
            src/conv/input/ape.hpp \
@@ -44,6 +45,7 @@ SOURCES += src/main.cpp \
            src/cue/cue.cpp \
            src/ui/MainWindow.cpp \
            src/ui/SongList.cpp \
+           src/ui/Threads.cpp \
            src/conv/input/ape.cpp \
            src/conv/input/wav.cpp \
            src/conv/input/input.cpp \

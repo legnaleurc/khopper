@@ -8,6 +8,7 @@
 #include "type.hpp"
 #include "converter.hpp"
 #include "SongList.hpp"
+#include "Threads.hpp"
 
 #include <QMainWindow>
 #include <QComboBox>

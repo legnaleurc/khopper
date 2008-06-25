@@ -96,7 +96,12 @@ namespace Khopper {
 		// Create converter
 		try {
 			Converter conv( input, output );
-			conv.perform( _audioPath_, _sheetPath_, index );
+			ConverterThread cvt( conv, _audioPath_, _sheetPath_, index );
+			ProgressThread pgs( this );
+			connect( &cvt, SIGNAL( finished() ), &pgs, SLOT( terminate() ) );
+			cvt.start();
+			pgs.start();
+			// conv.perform( _audioPath_, _sheetPath_, index );
 		} catch( const Error< RunTime > & e ) {
 			QMessageBox::critical( this, tr( "Runtime error!" ), tr( e.what() ) );
 		}
