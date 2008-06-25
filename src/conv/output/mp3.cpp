@@ -26,6 +26,9 @@ namespace Khopper {
 			return NULL;
 		}
 		
+		Mp3::~Mp3() {
+		}
+		
 	}
 	
 }

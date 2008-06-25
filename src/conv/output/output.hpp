@@ -26,6 +26,8 @@ namespace Khopper {
 			 * @return GUI object
 			 */
 			virtual QWidget * getUI() const = 0;
+			
+			virtual ~Output() = 0;
 	};
 	
 }

@@ -86,7 +86,6 @@ namespace Khopper {
 			}
 		}
 		
-		
 		return ret;
 	}
 	

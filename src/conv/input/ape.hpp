@@ -17,6 +17,7 @@ namespace Khopper {
 		class Ape : public Input {
 			virtual std::string getOption() const;
 			virtual QWidget * getUI() const;
+			virtual ~Ape();
 		};
 	
 	}

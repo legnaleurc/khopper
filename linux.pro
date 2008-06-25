@@ -46,5 +46,7 @@ SOURCES += src/main.cpp \
            src/ui/SongList.cpp \
            src/conv/input/ape.cpp \
            src/conv/input/wav.cpp \
+           src/conv/input/input.cpp \
            src/conv/output/mp3.cpp \
+           src/conv/output/output.cpp \
            src/util/os/linux.cpp

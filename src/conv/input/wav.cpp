@@ -25,6 +25,9 @@ namespace Khopper {
 			return NULL;
 		}
 		
+		Wav::~Wav() {
+		}
+		
 	}
 	
 }

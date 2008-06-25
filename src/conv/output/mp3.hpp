@@ -11,6 +11,7 @@ namespace Khopper {
 		class Mp3 : public Output {
 			virtual std::string getOption() const;
 			virtual QWidget * getUI() const;
+			virtual ~Mp3();
 		};
 		
 	}
