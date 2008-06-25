@@ -1,3 +1,6 @@
+/**
+ * @file MainWindow.hpp
+ */
 #ifndef MAINWINDOW_HPP
 #define MAINWINDOW_HPP
 
@@ -25,6 +28,7 @@ namespace Khopper {
 
 	/**
 	 * @class MainWindow
+	 * @brief The main window
 	 */
 	class MainWindow : public QMainWindow {
 		

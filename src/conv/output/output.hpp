@@ -1,3 +1,6 @@
+/**
+ * @file output.hpp
+ */
 #ifndef OUTPUT_HPP
 #define OUTPUT_HPP
 
@@ -6,13 +9,10 @@
 #include <QWidget>
 #include <string>
 
-/**
- * @namespace Khopper
- */
 namespace Khopper {
 
 	/**
-	 * @class Output
+	 * @brief Output file format interface
 	 */
 	class Output {
 		public:
@@ -21,14 +21,25 @@ namespace Khopper {
 			 * @return string option
 			 */
 			virtual std::string getOption() const = 0;
+			
 			/**
 			 * @brief Get Type GUI
 			 * @return GUI object
 			 */
 			virtual QWidget * getUI() const = 0;
 			
+			/**
+			 * @brief Pure virtual destructor
+			 */
 			virtual ~Output() = 0;
 	};
+	
+	/**
+	 * @namespace Khopper::out
+	 * @brief Namespace of output file
+	 *
+	 * Avoid conflict with input format.
+	 */
 	
 }
 

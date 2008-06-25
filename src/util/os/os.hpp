@@ -1,3 +1,6 @@
+/**
+ * @file os.hpp
+ */
 #ifndef OS_HPP
 #define OS_HPP
 
@@ -26,6 +29,7 @@ namespace Khopper {
 		 * @return child Process exit state
 		 */
 		static int getResult( std::pair< std::string, std::string > & msg, const std::vector< std::string > & args );
+				
 		/**
 		 * @brief Test if program exists
 		 * @param [in] exe program name

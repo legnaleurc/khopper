@@ -1,3 +1,6 @@
+/**
+ * @file converter.hpp
+ */
 #ifndef CONVERTER_HPP
 #define CONVERTER_HPP
 
@@ -11,13 +14,10 @@
 
 #include <cstdlib>
 
-/**
- * @namespace Khopper
- */
 namespace Khopper {
 
 	/**
-	 * @class Converter
+	 * @brief The audio converter
 	 */
 	class Converter {
 		public:

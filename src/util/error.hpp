@@ -1,3 +1,6 @@
+/**
+ * @file error.hpp
+ */
 #ifndef ERROR_HPP
 #define ERROR_HPP
 
@@ -6,13 +9,9 @@
 #include <sstream>
 #include <cstdlib>
 
-/**
- * @namespace Khopper
- */
 namespace Khopper {
 
 	/**
-	 * @class Error
 	 * @brief Prototype of all errors
 	 */
 	template< typename Type >
@@ -42,14 +41,12 @@ namespace Khopper {
 	};
 	
 	/**
-	 * @class OS
 	 * @brief Dummy error class
 	 */
 	class OS {
 	};
 	
 	/**
-	 * @class RunTime
 	 * @brief Dummy error class
 	 */
 	class RunTime {
