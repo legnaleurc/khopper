@@ -21,6 +21,8 @@
 #include <QMenu>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QProgressDialog>
+#include <QTimer>
 
 /**
  * @namespace Khopper
@@ -65,6 +67,8 @@ namespace Khopper {
 			QPushButton * _action_;
 			std::string _audioPath_;
 			std::string _sheetPath_;
+			QProgressDialog * _progress_;
+			QTimer * _pdTimer_;
 			
 			QMenuBar * _setMenu_();
 			void _setLabel_();
@@ -72,6 +76,7 @@ namespace Khopper {
 		
 		private slots:
 			void _fire_();
+			void _stepProgress_();
 		
 	};
 	

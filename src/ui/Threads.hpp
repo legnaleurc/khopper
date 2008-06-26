@@ -35,18 +35,6 @@ namespace Khopper {
 			ConverterThread();
 	};
 	
-	class ProgressThread : public QThread {
-		public:
-			ProgressThread( QObject * parent = 0 );
-		
-		protected:
-			virtual void run();
-		
-		private:
-			// protection
-			ProgressThread();
-	};
-	
 }
 
 #endif

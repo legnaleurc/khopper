@@ -11,13 +11,4 @@ namespace Khopper {
 		exec();
 	}
 	
-	ProgressThread::ProgressThread( QObject * parent ) : QThread( parent ) {
-	}
-	
-	void ProgressThread::run() {
-		// show progress
-		QProgressDialog progress( tr( "Converting..." ), tr( "Don\'t touch!" ), 0, 0 );
-		exec();
-	}
-	
 }
