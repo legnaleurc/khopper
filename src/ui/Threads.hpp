@@ -7,7 +7,6 @@
 #include "converter.hpp"
 
 #include <QThread>
-#include <QProgressDialog>
 
 namespace Khopper {
 	
@@ -21,18 +20,27 @@ namespace Khopper {
 			 * @param [in] conv Converter object
 			 * @param parent parent object
 			 */
-			ConverterThread( const Converter & conv, const std::string & audio, const std::string & sheet, const std::vector< int > & index, QObject * parent = 0 );
+			ConverterThread( QObject * parent = 0 );
+			
+			void setAudio( const std::string & audio );
+			
+			void setSheet( const std::string & sheet );
+			
+			void setIndex( const std::vector< int > & index );
+			
+			void setInput( Input * input );
+			
+			void setOutput( Output * output );
 		
 		protected:
 			virtual void run();
 		
 		private:
-			const Converter & _conv_;
-			const std::string & _audio_;
-			const std::string & _sheet_;
-			const std::vector< int > & _index_;
-			// protection
-			ConverterThread();
+			Input * _input_;
+			Output * _output_;
+			std::string _audio_;
+			std::string _sheet_;
+			std::vector< int > _index_;
 	};
 	
 }

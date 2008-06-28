@@ -69,6 +69,7 @@ namespace Khopper {
 			std::string _sheetPath_;
 			QProgressDialog * _progress_;
 			QTimer * _pdTimer_;
+			ConverterThread * _cvt_;
 			
 			QMenuBar * _setMenu_();
 			void _setLabel_();

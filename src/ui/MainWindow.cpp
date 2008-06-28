@@ -35,20 +35,25 @@ namespace Khopper {
 		bottom->layout()->addWidget( _outputTypes_ );
 		_setOutputTypeList_();
 		
+		// Action button
+		_action_ = new QPushButton( tr( "Fire!" ), bottom );
+		connect( _action_, SIGNAL( clicked() ), this, SLOT( _fire_() ) );
+		bottom->layout()->addWidget( _action_ );
+		
 		// Progress dialog
-		_progress_ = new QProgressDialog( tr( "Converting..." ), tr( "Don\'t touch!" ), 0, 0, this );
+		_progress_ = new QProgressDialog( tr( "Converting..." ), tr( "Don\'t touch me!" ), 0, 0, this );
 		_progress_->setWindowModality( Qt::WindowModal );
+		_progress_->setAutoClose( true );
 		_progress_->setMinimumDuration( 0 );
 		_progress_->setValue( 0 );
 		_pdTimer_ = new QTimer( this );
 		connect( _pdTimer_, SIGNAL( timeout() ), this, SLOT( _stepProgress_() ) );
 		connect( _progress_, SIGNAL( canceled() ), _pdTimer_, SLOT( stop() ) );
-		srand( time( NULL ) );
 		
-		// Action button
-		_action_ = new QPushButton( tr( "Fire!" ), bottom );
-		connect( _action_, SIGNAL( clicked() ), this, SLOT( _fire_() ) );
-		bottom->layout()->addWidget( _action_ );
+		// Converter thread
+		_cvt_ = new ConverterThread( this );
+		connect( _cvt_, SIGNAL( finished() ), _progress_, SLOT( cancel() ) );
+		connect( _progress_, SIGNAL( canceled() ), _cvt_, SLOT( terminate() ) );
 	}
 	
 	QMenuBar * MainWindow::_setMenu_() {
@@ -91,8 +96,8 @@ namespace Khopper {
 	void MainWindow::_fire_() {
 		// create output format object
 		QString test = _outputTypes_->itemData( _outputTypes_->currentIndex() ).toString();
-// 		Output * output = OutputFactory::Instance().CreateObject( test.toStdString() );
-// 		Input * input = InputFactory::Instance().CreateObject( "in::Wav" );
+		Output * output = OutputFactory::Instance().CreateObject( test.toStdString() );
+		Input * input = InputFactory::Instance().CreateObject( "in::Wav" );
 		
 		// get select list
 		QModelIndexList selected = _songList_->selectionModel()->selectedRows();
@@ -105,12 +110,13 @@ namespace Khopper {
 		
 		// Create converter
 		try {
-// 			Converter conv( input, output );
-// 			ConverterThread cvt( conv, _audioPath_, _sheetPath_, index );
-// 			connect( &cvt, SIGNAL( finished() ), &pgs, SLOT( terminate() ) );
-// 			cvt.start();
+			_cvt_->setAudio( _audioPath_ );
+			_cvt_->setSheet( _sheetPath_ );
+			_cvt_->setIndex( index );
+			_cvt_->setInput( input );
+			_cvt_->setOutput( output );
+			_cvt_->start();
 			_pdTimer_->start( 10 );
-			// conv.perform( _audioPath_, _sheetPath_, index );
 		} catch( const Error< RunTime > & e ) {
 			QMessageBox::critical( this, tr( "Runtime error!" ), tr( e.what() ) );
 		}
@@ -146,7 +152,8 @@ namespace Khopper {
 	
 	void MainWindow::_stepProgress_() {
 		static int i = 1;
-		_progress_->setValue( i++ );
+		_progress_->setValue( i );
+		( i < 0 ) ? ( i = 0 ) : ( ++i );
 	}
 	
 }

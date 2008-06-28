@@ -2,13 +2,33 @@
 
 namespace Khopper {
 	
-	ConverterThread::ConverterThread( const Converter & conv, const std::string & audio, const std::string & sheet, const std::vector< int > & index, QObject * parent ) : QThread( parent ), _conv_( conv ), _audio_( audio ), _sheet_( sheet ), _index_( index ) {
+	ConverterThread::ConverterThread( QObject * parent ) : QThread( parent ) {
+	}
+	
+	void ConverterThread::setAudio( const std::string & audio ) {
+		_audio_ = audio;
+	}
+	
+	void ConverterThread::setSheet( const std::string & sheet ) {
+		_sheet_ = sheet;
+	}
+	
+	void ConverterThread::setIndex( const std::vector< int > & index ) {
+		_index_ = index;
+	}
+	
+	void ConverterThread::setInput( Input * input ) {
+		_input_ = input;
+	}
+	
+	void ConverterThread::setOutput( Output * output ) {
+		_output_ = output;
 	}
 	
 	void ConverterThread::run() {
 		// convert
-		_conv_.perform( _audio_, _sheet_, _index_ );
-		exec();
+		Converter conv( _input_, _output_ );
+		conv.perform( _audio_, _sheet_, _index_ );
 	}
 	
 }
