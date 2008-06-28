@@ -13,6 +13,7 @@ namespace Khopper {
 
 	/**
 	 * @brief Prototype of all errors
+	 * @tparam Type Custom error extension
 	 */
 	template< typename Type >
 	class Error : public std::exception, public Type {

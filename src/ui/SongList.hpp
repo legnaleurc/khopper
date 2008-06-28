@@ -43,6 +43,7 @@ namespace Khopper {
 			/**
 			 * @brief Mouse drop event handler
 			 * @param event Drop event
+			 * @todo This drop action don't work
 			 */
 			virtual void dropEvent( QDropEvent * event );
 	};
