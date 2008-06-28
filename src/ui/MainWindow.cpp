@@ -43,9 +43,7 @@ namespace Khopper {
 		// Progress dialog
 		_progress_ = new QProgressDialog( tr( "Converting..." ), tr( "Don\'t touch me!" ), 0, 0, this );
 		_progress_->setWindowModality( Qt::WindowModal );
-		_progress_->setAutoClose( true );
 		_progress_->setMinimumDuration( 0 );
-		_progress_->setValue( 0 );
 		_pdTimer_ = new QTimer( this );
 		connect( _pdTimer_, SIGNAL( timeout() ), this, SLOT( _stepProgress_() ) );
 		connect( _progress_, SIGNAL( canceled() ), _pdTimer_, SLOT( stop() ) );
@@ -53,6 +51,7 @@ namespace Khopper {
 		// Converter thread
 		_cvt_ = new ConverterThread( this );
 		connect( _cvt_, SIGNAL( finished() ), _progress_, SLOT( cancel() ) );
+		// FIXME: in fact, this don't work
 		connect( _progress_, SIGNAL( canceled() ), _cvt_, SLOT( terminate() ) );
 	}
 	
@@ -116,7 +115,7 @@ namespace Khopper {
 			_cvt_->setInput( input );
 			_cvt_->setOutput( output );
 			_cvt_->start();
-			_pdTimer_->start( 10 );
+			_pdTimer_->start( 50 );
 		} catch( const Error< RunTime > & e ) {
 			QMessageBox::critical( this, tr( "Runtime error!" ), tr( e.what() ) );
 		}
@@ -152,8 +151,13 @@ namespace Khopper {
 	
 	void MainWindow::_stepProgress_() {
 		static int i = 1;
-		_progress_->setValue( i );
-		( i < 0 ) ? ( i = 0 ) : ( ++i );
+		// FIXME
+		if( !_progress_->wasCanceled() ) {
+			_progress_->setValue( i );
+			( i < 0 ) ? ( i = 0 ) : ( ++i );
+		} else {
+			_pdTimer_->stop();
+		}
 	}
 	
 }
