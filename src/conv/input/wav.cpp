@@ -6,9 +6,9 @@ namespace {
 		return new Khopper::in::Wav;
 	}
 	
-	const std::string WAV( "in::Wav" );
+	const char * const WAV = "wav";
 	
-	const bool reg_type = Khopper::IOTypes::Instance().first.insert( Khopper::IOTypes::ObjectType::first_type::value_type( WAV, "wav" ) ).second;
+	const bool reg_type = Khopper::IOTypes::Instance().first.insert( Khopper::InputList::value_type( WAV, "wav" ) ).second;
 	const bool reg_fac = Khopper::InputFactory::Instance().Register( WAV, CreateWav );
 	
 }

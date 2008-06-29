@@ -6,9 +6,9 @@ namespace {
 		return new Khopper::in::Ape;
 	}
 	
-	const std::string APE( "in::Ape" );
+	const char * const APE = "ape";
 	
-	const bool reg_type = Khopper::IOTypes::Instance().first.insert( Khopper::IOTypes::ObjectType::first_type::value_type( APE, "ape" ) ).second;
+	const bool reg_type = Khopper::IOTypes::Instance().first.insert( Khopper::InputList::value_type( APE, "ape" ) ).second;
 	const bool reg_fac = Khopper::InputFactory::Instance().Register( APE, CreateApe );
 	
 }

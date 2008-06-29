@@ -95,20 +95,22 @@ namespace Khopper {
 	void MainWindow::_fire_() {
 		// create output format object
 		QString test = _outputTypes_->itemData( _outputTypes_->currentIndex() ).toString();
-		Output * output = OutputFactory::Instance().CreateObject( test.toStdString() );
-		Input * input = InputFactory::Instance().CreateObject( "in::Wav" );
+		Output * output = NULL;
+		Input * input = NULL;
 		
-		// get select list
-		QModelIndexList selected = _songList_->selectionModel()->selectedRows();
-		
-		std::vector< int > index( selected.size() );
-		for( int i = 0; i < selected.size(); ++i ) {
-			// FIXME: dirty hack!
-			index[i] = selected[i].row() + 1;
-		}
-		
-		// Create converter
 		try {
+			output = OutputFactory::Instance().CreateObject( test.toStdString() );
+			input = InputFactory::Instance().CreateObject( "wav" );
+			
+			// get select list
+			QModelIndexList selected = _songList_->selectionModel()->selectedRows();
+			
+			std::vector< int > index( selected.size() );
+			for( int i = 0; i < selected.size(); ++i ) {
+				// FIXME: dirty hack!
+				index[i] = selected[i].row() + 1;
+			}
+			
 			_cvt_->setAudio( _audioPath_ );
 			_cvt_->setSheet( _sheetPath_ );
 			_cvt_->setIndex( index );
@@ -118,6 +120,8 @@ namespace Khopper {
 			_pdTimer_->start( 50 );
 		} catch( const Error< RunTime > & e ) {
 			QMessageBox::critical( this, tr( "Runtime error!" ), tr( e.what() ) );
+		} catch( const std::exception & e ) {
+			QMessageBox::critical( this, tr( "Unknown error!" ), tr( e.what() ) );
 		}
 	}
 	
