@@ -100,7 +100,7 @@ namespace Khopper {
 		
 		try {
 			output = OutputFactory::Instance().CreateObject( test.toStdString() );
-			input = InputFactory::Instance().CreateObject( "wav" );
+			input = InputFactory::Instance().CreateObject( QFileInfo( QString::fromStdString( _audioPath_ ) ).suffix().toStdString() );
 			
 			// get select list
 			QModelIndexList selected = _songList_->selectionModel()->selectedRows();
