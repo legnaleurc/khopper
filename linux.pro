@@ -21,7 +21,7 @@ INCLUDEPATH += . \
                src/conv \
                src/util/os \
                src/conv/input
-LIBS += -lloki
+LIBS += -lloki -lboost_regex
 OBJECTS_DIR = obj
 MOC_DIR = moc
 DESTDIR = build

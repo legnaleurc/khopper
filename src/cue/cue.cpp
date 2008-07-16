@@ -22,9 +22,7 @@ namespace Khopper {
 	};
 
 	CUESheet::CUESheet( const std::string & filename ) {
-		/* ex: /temp/wer/audio.ape */
-		using namespace std;
-
+		using std::string;
 		FILE *fd;
 		FILE *ad;
 		
@@ -38,9 +36,16 @@ namespace Khopper {
 		size_t pos;//mean \t number
 		size_t pon;//mean \n number
 		
-		string command = string( "cueprint \"" ) + filename + "\"";
+		std::string command = ( boost::format( "cueprint \"%1%\"" ) % filename ).str();
 		
-		_sheetName_ = std::pair< std::string, std::string >( dirname( strcpy( temp, filename.c_str() ) ), basename( strcpy( temp, filename.c_str() ) ) );
+		boost::regex pattern( "(.*)/(.*)" );
+		boost::smatch result;
+		
+		if( !boost::regex_match( filename, result, pattern ) ) {
+			throw Error< Parsing >( ( boost::format( "`%1%\' is not a valid CUE Sheet path." ) % filename ).str() );
+		}
+		
+		_sheetName_ = std::pair< std::string, std::string >( result[1], result[2] );
 		
 		string temp_1;
 		if( (ad = fopen(filename.c_str(),"r")) == NULL )

@@ -4,9 +4,13 @@
 #ifndef CUE_HPP
 #define CUE_HPP
 
+#include "error.hpp"
+
 #include <string>
 #include <vector>
 #include <utility>
+#include <boost/regex.hpp>
+#include <boost/format.hpp>
 
 namespace Khopper {
 
@@ -80,23 +84,29 @@ namespace Khopper {
 					/// Field's amount
 					SIZE
 				};
-				/// Headers of fields
+				/**
+				 * @brief Headers of fields
+				 * 
+				 * This is an NULL terminated char * array.
+				 */
 				static const char * const Header[];
 			};
 			
 			/**
-			 * @brief Construct with a CUE sheet
+			 * @brief Give a CUE Sheet path name and create this object
 			 * @param [in] filename path of CUE sheet
 			 */
 			CUESheet( const std::string & filename );
 			
 			/**
 			 * @brief Get the sheet path
+			 * @todo May be I don't want this return type.
 			 */
 			const std::pair< std::string, std::string > & getSheetName() const;
 			
 			/**
 			 * @brief Get the audio path
+			 * @todo May be I don't want this return type.
 			 */
 			const std::pair< std::string, std::string > & getAudioName() const;
 			

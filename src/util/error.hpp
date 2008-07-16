@@ -52,6 +52,9 @@ namespace Khopper {
 	 */
 	class RunTime {
 	};
+	
+	class Parsing {
+	};
 
 }
 
