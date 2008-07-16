@@ -1,10 +1,14 @@
 #include "MainWindow.hpp"
 
+#include <iostream>
+
 namespace Khopper {
 	
 	MainWindow::MainWindow( QWidget * parent, Qt::WindowFlags flags ) : QMainWindow( parent, flags ) {
 		// setTitle
 		setWindowTitle( tr( "Khopper" ) );
+		
+		_setAbout_();
 		
 		// Setting menu bar
 		setMenuBar( _setMenu_() );
@@ -61,7 +65,7 @@ namespace Khopper {
 		// setting file menu
 		QPointer< QMenu > file = new QMenu( tr( "&File" ), menuBar );
 		
-		QPointer< QAction > open = new QAction( tr( "&Open..." ), file );
+		QPointer< QAction > open = new QAction( tr( "&Open..." ), this );
 		open->setShortcut( tr( "Ctrl+O" ) );
 		connect( open, SIGNAL( triggered() ), this, SLOT( openFileDialog() ) );
 		file->addAction( open );
@@ -69,6 +73,21 @@ namespace Khopper {
 		// add file menu to menu bar
 		menuBar->addMenu( file );
 		// file menu done
+		
+		// setting help menu
+		QPointer< QMenu > help = new QMenu( tr( "&Help" ), menuBar );
+		
+		QPointer< QAction > about = new QAction( tr( "&About Khopper" ), this );
+		connect( about, SIGNAL( triggered() ), _about_, SLOT( exec() ) );
+		help->addAction( about );
+		
+		QPointer< QAction > aboutQt = new QAction( tr( "About &Qt" ), this );
+		connect( aboutQt, SIGNAL( triggered() ), this, SLOT( _showAboutQt_() ) );
+		help->addAction( aboutQt );
+		
+		// add help menu to menu bar
+		menuBar->addMenu( help );
+		// help menu done
 		
 		return menuBar;
 	}
@@ -161,6 +180,18 @@ namespace Khopper {
 		} else {
 			_pdTimer_->stop();
 		}
+	}
+	
+	void MainWindow::_showAboutQt_() {
+		QMessageBox::aboutQt( this );
+	}
+	
+	void MainWindow::_showAbout_() {
+		QMessageBox::about( this, tr( "About Khopper" ), tr( "<a href=\"http://legnaleurc.blogspot.com/\">Home Page</a>" ) );
+	}
+	
+	void MainWindow::_setAbout_() {
+		_about_ = new QMessageBox( QMessageBox::Information, tr( "About Khopper" ), tr( "<a href=\"http://legnaleurc.blogspot.com/\">Home Page</a>" ), QMessageBox::Close, this );
 	}
 	
 }

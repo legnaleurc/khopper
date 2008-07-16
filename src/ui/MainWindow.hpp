@@ -71,6 +71,7 @@ namespace Khopper {
 			QPointer< QProgressDialog > _progress_;
 			QPointer< QTimer > _pdTimer_;
 			QPointer< ConverterThread > _cvt_;
+			QPointer< QMessageBox > _about_;
 			
 			QPointer< QMenuBar > _setMenu_();
 			void _setLabel_();
@@ -79,6 +80,9 @@ namespace Khopper {
 		private slots:
 			void _fire_();
 			void _stepProgress_();
+			void _showAboutQt_();
+			void _showAbout_();
+			void _setAbout_();
 		
 	};
 	
