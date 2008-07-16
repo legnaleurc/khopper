@@ -1,14 +1,17 @@
-shntool用法：
-	shnsplit [-f CUE檔名稱 [-x 曲目]] -o "cust ext=mp3 lame --quiet - %f" 要切的APE
+功能：
+	拖拉開檔：
+		[bug]dragEnterEvent有發生，但是dropEvent沒反應；可能是Model/View的問題
+	輸出檔案的路徑需要詢問；目前是在pwd底下。
 
-介面部分：
+介面：
 	String定義的地方，port Windows的時候再決定要不要額外定義
-	拖拉開檔功能：
-		[bug]dragEnterEvent有發生，但是dropEvent沒反應
+
+實作：
+	指標部分全面使用Smart Pointer（候選：Boost, Loki, QPointer）
+
+文件：
+	about的地方要放版權宣告和作者訊息
 
 防呆：
 	[完成]檢查是否能成功執行動作
 	[完成]轉檔時的進度條
-
-外觀：
-	About和License

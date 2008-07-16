@@ -8,9 +8,20 @@
 	shntool
 	cuetools
 	各種格式用encoder/decoder：
-		mp3: lame
-		ape: mac
+		mp3: lame (lame)
+		ape: mac (monkeys-audio)
 
 編譯步驟：
-	$ qmake linux.cpp
+	$ qmake linux.pro
 	$ make
+
+shntool用法：
+	shnsplit [-f CUE檔名稱 [-x 曲目]] -o "cust ext=mp3 lame --quiet - %f" 要切的APE
+
+聯絡方式：
+	信箱：
+		legnaleurc@gmail.com
+	網頁：
+		http://legnaleurc.blogspot.com/search/label/Khopper
+	檔案庫：
+		http://repo.or.cz/w/Khopper.git
