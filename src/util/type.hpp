@@ -10,6 +10,7 @@
 #include <loki/Factory.h>
 #include <loki/Singleton.h>
 #include <loki/AssocVector.h>
+#include <loki/SmartPtr.h>
 
 /**
  * @brief Namespace of this program
@@ -40,6 +41,20 @@ namespace Khopper {
 	 * @brief The convience alias for take output format list
 	 */
 	typedef IOTypes::ObjectType::second_type OutputList;
+	
+	/**
+	 * @brief Input Type smart pointer
+	 * 
+	 * Use Loki to implement. Reference counted and multithread competible. Object level locked.
+	 */
+	typedef Loki::SmartPtr< Input, Loki::RefCountedMTAdj< Loki::ObjectLevelLockable >::RefCountedMT > InputSP;
+	
+	/**
+	 * @brief Output Type smart pointer
+	 * 
+	 * Use Loki to implement. Reference counted and multithread competible. Object level locked.
+	 */
+	typedef Loki::SmartPtr< Output, Loki::RefCountedMTAdj< Loki::ObjectLevelLockable >::RefCountedMT > OutputSP;
 	
 }
 

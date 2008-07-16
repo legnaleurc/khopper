@@ -10,7 +10,7 @@ namespace Khopper {
 		setMenuBar( _setMenu_() );
 		
 		// Setting central widget
-		QWidget * central = new QWidget( this );
+		QPointer< QWidget > central = new QWidget( this );
 		central->setLayout( new QVBoxLayout( central ) );
 		setCentralWidget( central );
 		
@@ -26,7 +26,7 @@ namespace Khopper {
 		connect( _songList_, SIGNAL( openFile( const QString & ) ), this, SLOT( open( const QString & ) ) );
 		
 		// Set bottom layout
-		QWidget * bottom = new QWidget( central );
+		QPointer< QWidget > bottom = new QWidget( central );
 		bottom->setLayout( new QHBoxLayout( bottom ) );
 		central->layout()->addWidget( bottom );
 		
@@ -55,13 +55,13 @@ namespace Khopper {
 		connect( _progress_, SIGNAL( canceled() ), _cvt_, SLOT( terminate() ) );
 	}
 	
-	QMenuBar * MainWindow::_setMenu_() {
-		QMenuBar * menuBar = new QMenuBar( this );
+	QPointer< QMenuBar > MainWindow::_setMenu_() {
+		QPointer< QMenuBar > menuBar = new QMenuBar( this );
 		
 		// setting file menu
-		QMenu * file = new QMenu( tr( "&File" ), menuBar );
+		QPointer< QMenu > file = new QMenu( tr( "&File" ), menuBar );
 		
-		QAction * open = new QAction( tr( "&Open..." ), file );
+		QPointer< QAction > open = new QAction( tr( "&Open..." ), file );
 		open->setShortcut( tr( "Ctrl+O" ) );
 		connect( open, SIGNAL( triggered() ), this, SLOT( openFileDialog() ) );
 		file->addAction( open );
@@ -74,7 +74,7 @@ namespace Khopper {
 	}
 	
 	void MainWindow::_setLabel_() {
-		QStandardItemModel * model = qobject_cast< QStandardItemModel * >( _songList_->model() );
+		QPointer< QStandardItemModel > model = qobject_cast< QStandardItemModel * >( _songList_->model() );
 		QStringList headers;
 		
 		for( int i = 0; CUESheet::Track::Header[i] != NULL; ++i ) {
@@ -95,8 +95,8 @@ namespace Khopper {
 	void MainWindow::_fire_() {
 		// create output format object
 		QString test = _outputTypes_->itemData( _outputTypes_->currentIndex() ).toString();
-		Output * output = NULL;
-		Input * input = NULL;
+		OutputSP output;
+		InputSP input;
 		
 		try {
 			output = OutputFactory::Instance().CreateObject( test.toStdString() );
@@ -140,20 +140,19 @@ namespace Khopper {
 	}
 	
 	void MainWindow::setSongList( const std::vector< CUESheet::FieldType > & list ) {
-		QStandardItemModel * model = qobject_cast< QStandardItemModel * >( _songList_->model() );
-		QStandardItem * item;
+		QPointer< QStandardItemModel > model = qobject_cast< QStandardItemModel * >( _songList_->model() );
 		
 		model->setRowCount( 0 );
 		
 		for( std::size_t row = 0; row < list.size(); ++row ) {
 			for( int col = 0; col < CUESheet::Track::SIZE; ++col ) {
-				item = new QStandardItem( QString::fromUtf8( list[row][col].c_str() ) );
-				model->setItem( row, col, item );
+				model->setItem( row, col, new QStandardItem( QString::fromUtf8( list[row][col].c_str() ) ) );
 			}
 		}
 	}
 	
 	void MainWindow::_stepProgress_() {
+		// Don't worry about multithread, I don't care.
 		static int i = 1;
 		// FIXME
 		if( !_progress_->wasCanceled() ) {

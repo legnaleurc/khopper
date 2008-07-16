@@ -4,23 +4,23 @@ namespace Khopper {
 	
 	const char * const Converter::COMMAND = "shnsplit";
 	
-	Converter::Converter( Input * iop, Output * oop ) : _input_( iop ), _output_( oop ) {
+	Converter::Converter( const InputSP & iop, const OutputSP & oop ) : _input_( iop ), _output_( oop ) {
 		try {
 			os::exists( COMMAND );
 		} catch( const Error< RunTime > & e ) {
-			this->~Converter();
+// 			this->~Converter();
 			throw e;
 		}
 	}
 	
-	Converter::~Converter() {
-		if( _input_ != NULL ) {
-			delete _input_;
-		}
-		if( _output_ != NULL ) {
-			delete _output_;
-		}
-	}
+// 	Converter::~Converter() {
+// 		if( _input_ != NULL ) {
+// 			delete _input_;
+// 		}
+// 		if( _output_ != NULL ) {
+// 			delete _output_;
+// 		}
+// 	}
 	
 	std::string Converter::perform( const std::string & audio, const std::string & sheet, const std::vector< int > & songList ) const {
 		std::vector< std::string > args;

@@ -7,6 +7,7 @@
 #include "os.hpp"
 #include "input.hpp"
 #include "output.hpp"
+#include "type.hpp"
 
 #include <vector>
 #include <string>
@@ -26,7 +27,7 @@ namespace Khopper {
 			 * @param [in] iop Input option
 			 * @param [in] oop Output option
 			 */
-			Converter( Input * iop, Output * oop );
+			Converter( const InputSP & iop, const OutputSP & oop );
 			
 			/**
 			 * @brief Convert action
@@ -38,12 +39,12 @@ namespace Khopper {
 			 */
 			std::string perform( const std::string & audio, const std::string & sheet, const std::vector< int > & songList ) const;
 			
-			virtual ~Converter();
+// 			virtual ~Converter();
 		private:
 			static const char * const COMMAND;
 			
-			Input * _input_;
-			Output * _output_;
+			InputSP _input_;
+			OutputSP _output_;
 			
 			// Protection
 			Converter();

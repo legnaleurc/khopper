@@ -7,7 +7,8 @@
 	String定義的地方，port Windows的時候再決定要不要額外定義
 
 實作：
-	指標部分全面使用Smart Pointer（候選：Boost, Loki, QPointer）
+	[進行中]指標部分全面使用Smart Pointer（候選：Boost, Loki, QPointer）
+	拔掉外部執行檔改用FFMpeg的library
 
 文件：
 	about的地方要放版權宣告和作者訊息

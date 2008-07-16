@@ -17,11 +17,11 @@ namespace Khopper {
 		_index_ = index;
 	}
 	
-	void ConverterThread::setInput( Input * input ) {
+	void ConverterThread::setInput( const InputSP & input ) {
 		_input_ = input;
 	}
 	
-	void ConverterThread::setOutput( Output * output ) {
+	void ConverterThread::setOutput( const OutputSP & output ) {
 		_output_ = output;
 	}
 	

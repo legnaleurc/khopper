@@ -28,16 +28,16 @@ namespace Khopper {
 			
 			void setIndex( const std::vector< int > & index );
 			
-			void setInput( Input * input );
+			void setInput( const InputSP & input );
 			
-			void setOutput( Output * output );
+			void setOutput( const OutputSP & output );
 		
 		protected:
 			virtual void run();
 		
 		private:
-			Input * _input_;
-			Output * _output_;
+			InputSP _input_;
+			OutputSP _output_;
 			std::string _audio_;
 			std::string _sheet_;
 			std::vector< int > _index_;
