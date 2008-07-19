@@ -11,6 +11,7 @@
 #include <vector>
 
 #include <cerrno>
+#include <cstdlib>
 
 /**
  * @namespace Khopper
@@ -33,7 +34,7 @@ namespace Khopper {
 		/**
 		 * @brief Test if program exists
 		 * @param [in] exe program name
-		 * @throw Error<Runtime> if not found
+		 * @throw Error<RunTime> if not found
 		 */
 		static void exists( const std::string & exe );
 	};

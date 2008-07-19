@@ -23,8 +23,8 @@ namespace Khopper {
 
 	CUESheet::CUESheet( const std::string & filename ) {
 		using std::string;
+		
 		FILE *fd;
-		FILE *ad;
 		
 		char temp[BUFSIZE];//catch file line
 		
@@ -48,27 +48,21 @@ namespace Khopper {
 		sheetName_ = std::pair< std::string, std::string >( result[1], result[2] );
 		
 		string temp_1;
-		if( (ad = fopen(filename.c_str(),"r")) == NULL )
-		{		fputs("No file\n",stderr);}
-		else
-		{
-			while(fgets(temp,BUFSIZE,ad)!=NULL)
-			{
-				if( strstr(temp,"FILE") != NULL )
-				{
-					temp_1 = temp;
-					pos = temp_1.find("\"");
-					temp_1 = temp_1.substr(pos+1);
-					pon = temp_1.find("\"");
-					string no_use = temp_1.substr(pon);
-					temp_1.replace(pon,no_use.length(),"");
-					break;
-				}
+		std::ifstream fin( filename.c_str() );
+		if( !fin.is_open() ) {
+			throw Error< System >( ( boost::format( "Can not open %1% !" ) % filename ).str() );
+		}
+		pattern = ".*FILE(\\s+)\"(.+)\".*";
+		while( getline( fin, temp_1 ) ) {
+			if( boost::regex_match( temp_1, result, pattern ) ) {
+				audioName_ = std::pair< std::string, std::string >( sheetName_.first ,result[2] );
+				break;
 			}
 		}
-		fclose(ad);
-		
-		audioName_ = std::pair< std::string, std::string >( sheetName_.first ,temp_1 );
+		fin.close();
+		if( audioName_.second.length() == 0 ) {
+			throw Error< System >( "Can not found media path." );
+		}
 		
 		if( (fd = popen(command.c_str(),"r")) == NULL )
 			fputs("No command\n", stderr);

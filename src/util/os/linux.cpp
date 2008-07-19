@@ -3,6 +3,7 @@
 #include <sys/wait.h>
 #include <cstring>
 #include <climits>
+#include <boost/format.hpp>
 
 namespace {
 	
@@ -90,13 +91,8 @@ namespace Khopper {
 	}
 	
 	void os::exists( const std::string & exe ) {
-		std::ostringstream sout;
-		sout << "[ `which " << exe << "` ]";
-		if( system( sout.str().c_str() ) != 0 ) {
-			sout.str( "" );
-			sout.clear();
-			sout << "`" << exe << "\' not found!";
-			throw Error< RunTime >( sout.str() );
+		if( system( ( boost::format( "[ `which %1% ]" ) % exe ).str().c_str() ) != 0 ) {
+			throw Error< RunTime >( ( boost::format( "`%1%\' not found!" ) % exe ).str() );
 		}
 	}
 	

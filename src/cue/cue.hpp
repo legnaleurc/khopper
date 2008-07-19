@@ -7,6 +7,7 @@
 #include "error.hpp"
 
 #include <string>
+#include <fstream>
 #include <vector>
 #include <utility>
 #include <boost/regex.hpp>

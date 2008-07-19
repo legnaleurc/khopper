@@ -6,8 +6,6 @@
 
 #include <exception>
 #include <string>
-#include <sstream>
-#include <cstdlib>
 
 namespace Khopper {
 
@@ -54,6 +52,9 @@ namespace Khopper {
 	};
 	
 	class Parsing {
+	};
+	
+	class System {
 	};
 
 }
