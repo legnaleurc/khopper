@@ -23,14 +23,14 @@ namespace Khopper {
 			 * @param [in] msg Error message
 			 * @throw NEVER
 			 */
-			Error( const std::string & msg ) throw() : _msg_( msg ) {}
+			Error( const std::string & msg ) throw() : msg_( msg ) {}
 			/**
 			 * @brief Get the error message
 			 * @return Error message
 			 * @throw NEVER
 			 */
 			virtual const char * what() const throw() {
-				return _msg_.c_str();
+				return msg_.c_str();
 			}
 			/**
 			 * @brief Dummy destructor
@@ -38,7 +38,7 @@ namespace Khopper {
 			 */
 			virtual ~Error() throw() {}
 		private:
-			std::string _msg_;
+			std::string msg_;
 	};
 	
 	/**

@@ -112,13 +112,10 @@ namespace Khopper {
 			 */
 			const std::vector< FieldType > & getTrackInfo() const;
 		private:
-			std::pair< std::string, std::string > _sheetName_;
-			std::pair< std::string, std::string > _audioName_;
-			FieldType _discInfo_;
-			std::vector< FieldType > _trackInfo_;
-			
-			// protection
-			CUESheet();
+			std::pair< std::string, std::string > sheetName_;
+			std::pair< std::string, std::string > audioName_;
+			FieldType discInfo_;
+			std::vector< FieldType > trackInfo_;
 	};
 
 }

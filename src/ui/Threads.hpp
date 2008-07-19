@@ -36,11 +36,11 @@ namespace Khopper {
 			virtual void run();
 		
 		private:
-			InputSP _input_;
-			OutputSP _output_;
-			std::string _audio_;
-			std::string _sheet_;
-			std::vector< int > _index_;
+			InputSP input_;
+			OutputSP output_;
+			std::string audio_;
+			std::string sheet_;
+			std::vector< int > index_;
 	};
 	
 }

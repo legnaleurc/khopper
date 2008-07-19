@@ -8,10 +8,10 @@ namespace Khopper {
 		// setTitle
 		setWindowTitle( tr( "Khopper" ) );
 		
-		_setAbout_();
+		setAbout_();
 		
 		// Setting menu bar
-		setMenuBar( _setMenu_() );
+		setMenuBar( setMenu_() );
 		
 		// Setting central widget
 		QPointer< QWidget > central = new QWidget( this );
@@ -19,15 +19,15 @@ namespace Khopper {
 		setCentralWidget( central );
 		
 		// Add song list
-		_songList_ = new SongList( central );
-		central->layout()->addWidget( _songList_ );
+		songList_ = new SongList( central );
+		central->layout()->addWidget( songList_ );
 		// Set model
-		_songList_->setModel( new QStandardItemModel( _songList_ ) );
+		songList_->setModel( new QStandardItemModel( songList_ ) );
 		// Set header of model
-		_setLabel_();
+		setLabel_();
 		// Set selection behavior
-		_songList_->setSelectionBehavior( QAbstractItemView::SelectRows );
-		connect( _songList_, SIGNAL( openFile( const QString & ) ), this, SLOT( open( const QString & ) ) );
+		songList_->setSelectionBehavior( QAbstractItemView::SelectRows );
+		connect( songList_, SIGNAL( openFile( const QString & ) ), this, SLOT( open( const QString & ) ) );
 		
 		// Set bottom layout
 		QPointer< QWidget > bottom = new QWidget( central );
@@ -35,31 +35,31 @@ namespace Khopper {
 		central->layout()->addWidget( bottom );
 		
 		// Setting output format select
-		_outputTypes_ = new QComboBox( bottom );
-		bottom->layout()->addWidget( _outputTypes_ );
-		_setOutputTypeList_();
+		outputTypes_ = new QComboBox( bottom );
+		bottom->layout()->addWidget( outputTypes_ );
+		setOutputTypeList_();
 		
 		// Action button
-		_action_ = new QPushButton( tr( "Fire!" ), bottom );
-		connect( _action_, SIGNAL( clicked() ), this, SLOT( _fire_() ) );
-		bottom->layout()->addWidget( _action_ );
+		action_ = new QPushButton( tr( "Fire!" ), bottom );
+		connect( action_, SIGNAL( clicked() ), this, SLOT( fire_() ) );
+		bottom->layout()->addWidget( action_ );
 		
 		// Progress dialog
-		_progress_ = new QProgressDialog( tr( "Converting..." ), tr( "Don\'t touch me!" ), 0, 0, this );
-		_progress_->setWindowModality( Qt::WindowModal );
-		_progress_->setMinimumDuration( 0 );
-		_pdTimer_ = new QTimer( this );
-		connect( _pdTimer_, SIGNAL( timeout() ), this, SLOT( _stepProgress_() ) );
-		connect( _progress_, SIGNAL( canceled() ), _pdTimer_, SLOT( stop() ) );
+		progress_ = new QProgressDialog( tr( "Converting..." ), tr( "Don\'t touch me!" ), 0, 0, this );
+		progress_->setWindowModality( Qt::WindowModal );
+		progress_->setMinimumDuration( 0 );
+		pdTimer_ = new QTimer( this );
+		connect( pdTimer_, SIGNAL( timeout() ), this, SLOT( stepProgress_() ) );
+		connect( progress_, SIGNAL( canceled() ), pdTimer_, SLOT( stop() ) );
 		
 		// Converter thread
-		_cvt_ = new ConverterThread( this );
-		connect( _cvt_, SIGNAL( finished() ), _progress_, SLOT( cancel() ) );
+		cvt_ = new ConverterThread( this );
+		connect( cvt_, SIGNAL( finished() ), progress_, SLOT( cancel() ) );
 		// FIXME: in fact, this don't work
-		connect( _progress_, SIGNAL( canceled() ), _cvt_, SLOT( terminate() ) );
+		connect( progress_, SIGNAL( canceled() ), cvt_, SLOT( terminate() ) );
 	}
 	
-	QPointer< QMenuBar > MainWindow::_setMenu_() {
+	QPointer< QMenuBar > MainWindow::setMenu_() {
 		QPointer< QMenuBar > menuBar = new QMenuBar( this );
 		
 		// setting file menu
@@ -78,11 +78,11 @@ namespace Khopper {
 		QPointer< QMenu > help = new QMenu( tr( "&Help" ), menuBar );
 		
 		QPointer< QAction > about = new QAction( tr( "&About Khopper" ), this );
-		connect( about, SIGNAL( triggered() ), _about_, SLOT( exec() ) );
+		connect( about, SIGNAL( triggered() ), about_, SLOT( exec() ) );
 		help->addAction( about );
 		
 		QPointer< QAction > aboutQt = new QAction( tr( "About &Qt" ), this );
-		connect( aboutQt, SIGNAL( triggered() ), this, SLOT( _showAboutQt_() ) );
+		connect( aboutQt, SIGNAL( triggered() ), this, SLOT( showAboutQt_() ) );
 		help->addAction( aboutQt );
 		
 		// add help menu to menu bar
@@ -92,8 +92,8 @@ namespace Khopper {
 		return menuBar;
 	}
 	
-	void MainWindow::_setLabel_() {
-		QPointer< QStandardItemModel > model = qobject_cast< QStandardItemModel * >( _songList_->model() );
+	void MainWindow::setLabel_() {
+		QPointer< QStandardItemModel > model = qobject_cast< QStandardItemModel * >( songList_->model() );
 		QStringList headers;
 		
 		for( int i = 0; CUESheet::Track::Header[i] != NULL; ++i ) {
@@ -103,26 +103,26 @@ namespace Khopper {
 		model->setHorizontalHeaderLabels( headers );
 	}
 	
-	void MainWindow::_setOutputTypeList_() {
+	void MainWindow::setOutputTypeList_() {
 		// Take out the output types
 		const OutputList & tm = IOTypes::Instance().second;
 		for( OutputList::const_iterator it = tm.begin(); it != tm.end(); ++it ) {
-			_outputTypes_->addItem( it->second.c_str(), QVariant( it->first.c_str() ) );
+			outputTypes_->addItem( it->second.c_str(), QVariant( it->first.c_str() ) );
 		}
 	}
 	
-	void MainWindow::_fire_() {
+	void MainWindow::fire_() {
 		// create output format object
-		QString test = _outputTypes_->itemData( _outputTypes_->currentIndex() ).toString();
+		QString test = outputTypes_->itemData( outputTypes_->currentIndex() ).toString();
 		OutputSP output;
 		InputSP input;
 		
 		try {
 			output = OutputFactory::Instance().CreateObject( test.toStdString() );
-			input = InputFactory::Instance().CreateObject( QFileInfo( QString::fromStdString( _audioPath_ ) ).suffix().toStdString() );
+			input = InputFactory::Instance().CreateObject( QFileInfo( QString::fromStdString( audioPath_ ) ).suffix().toStdString() );
 			
 			// get select list
-			QModelIndexList selected = _songList_->selectionModel()->selectedRows();
+			QModelIndexList selected = songList_->selectionModel()->selectedRows();
 			
 			std::vector< int > index( selected.size() );
 			for( int i = 0; i < selected.size(); ++i ) {
@@ -130,13 +130,13 @@ namespace Khopper {
 				index[i] = selected[i].row() + 1;
 			}
 			
-			_cvt_->setAudio( _audioPath_ );
-			_cvt_->setSheet( _sheetPath_ );
-			_cvt_->setIndex( index );
-			_cvt_->setInput( input );
-			_cvt_->setOutput( output );
-			_cvt_->start();
-			_pdTimer_->start( 50 );
+			cvt_->setAudio( audioPath_ );
+			cvt_->setSheet( sheetPath_ );
+			cvt_->setIndex( index );
+			cvt_->setInput( input );
+			cvt_->setOutput( output );
+			cvt_->start();
+			pdTimer_->start( 50 );
 		} catch( const Error< RunTime > & e ) {
 			QMessageBox::critical( this, tr( "Runtime error!" ), tr( e.what() ) );
 		} catch( const std::exception & e ) {
@@ -153,13 +153,13 @@ namespace Khopper {
 		if( file != "" ) {
 			CUESheet songlist( file.toUtf8().constData() );
 			setSongList( songlist.getTrackInfo() );
-			_audioPath_ = songlist.getAudioName().first + "/" + songlist.getAudioName().second;
-			_sheetPath_ = songlist.getSheetName().first + "/" + songlist.getSheetName().second;
+			audioPath_ = songlist.getAudioName().first + "/" + songlist.getAudioName().second;
+			sheetPath_ = songlist.getSheetName().first + "/" + songlist.getSheetName().second;
 		}
 	}
 	
 	void MainWindow::setSongList( const std::vector< CUESheet::FieldType > & list ) {
-		QPointer< QStandardItemModel > model = qobject_cast< QStandardItemModel * >( _songList_->model() );
+		QPointer< QStandardItemModel > model = qobject_cast< QStandardItemModel * >( songList_->model() );
 		
 		model->setRowCount( 0 );
 		
@@ -170,28 +170,28 @@ namespace Khopper {
 		}
 	}
 	
-	void MainWindow::_stepProgress_() {
+	void MainWindow::stepProgress_() {
 		// Don't worry about multithread, I don't care.
 		static int i = 1;
 		// FIXME
-		if( !_progress_->wasCanceled() ) {
-			_progress_->setValue( i );
+		if( !progress_->wasCanceled() ) {
+			progress_->setValue( i );
 			( i < 0 ) ? ( i = 0 ) : ( ++i );
 		} else {
-			_pdTimer_->stop();
+			pdTimer_->stop();
 		}
 	}
 	
-	void MainWindow::_showAboutQt_() {
+	void MainWindow::showAboutQt_() {
 		QMessageBox::aboutQt( this );
 	}
 	
-	void MainWindow::_showAbout_() {
+	void MainWindow::showAbout_() {
 		QMessageBox::about( this, tr( "About Khopper" ), tr( "<a href=\"http://legnaleurc.blogspot.com/\">Home Page</a>" ) );
 	}
 	
-	void MainWindow::_setAbout_() {
-		_about_ = new QMessageBox( QMessageBox::Information, tr( "About Khopper" ), tr( "<a href=\"http://legnaleurc.blogspot.com/\">Home Page</a>" ), QMessageBox::Close, this );
+	void MainWindow::setAbout_() {
+		about_ = new QMessageBox( QMessageBox::Information, tr( "About Khopper" ), tr( "<a href=\"http://legnaleurc.blogspot.com/\">Home Page</a>" ), QMessageBox::Close, this );
 	}
 	
 }

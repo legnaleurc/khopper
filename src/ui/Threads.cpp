@@ -6,29 +6,29 @@ namespace Khopper {
 	}
 	
 	void ConverterThread::setAudio( const std::string & audio ) {
-		_audio_ = audio;
+		audio_ = audio;
 	}
 	
 	void ConverterThread::setSheet( const std::string & sheet ) {
-		_sheet_ = sheet;
+		sheet_ = sheet;
 	}
 	
 	void ConverterThread::setIndex( const std::vector< int > & index ) {
-		_index_ = index;
+		index_ = index;
 	}
 	
 	void ConverterThread::setInput( const InputSP & input ) {
-		_input_ = input;
+		input_ = input;
 	}
 	
 	void ConverterThread::setOutput( const OutputSP & output ) {
-		_output_ = output;
+		output_ = output;
 	}
 	
 	void ConverterThread::run() {
 		// convert
-		Converter conv( _input_, _output_ );
-		conv.perform( _audio_, _sheet_, _index_ );
+		Converter conv( input_, output_ );
+		conv.perform( audio_, sheet_, index_ );
 	}
 	
 }

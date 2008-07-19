@@ -38,16 +38,13 @@ namespace Khopper {
 			 * @throw Error<Runtime>
 			 */
 			std::string perform( const std::string & audio, const std::string & sheet, const std::vector< int > & songList ) const;
-			
-// 			virtual ~Converter();
 		private:
 			static const char * const COMMAND;
 			
-			InputSP _input_;
-			OutputSP _output_;
+			InputSP input_;
+			OutputSP output_;
 			
 			// Protection
-			Converter();
 			Converter( const Converter & );
 			Converter & operator =( const Converter & );
 	};
