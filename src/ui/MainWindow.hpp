@@ -23,6 +23,7 @@
 #include <QMessageBox>
 #include <QProgressDialog>
 #include <QTimer>
+#include <QPointer>
 
 /**
  * @namespace Khopper
@@ -62,22 +63,26 @@ namespace Khopper {
 			void open( const QString & file );
 		
 		private:
-			SongList * _songList_;
-			QComboBox * _outputTypes_;
-			QPushButton * _action_;
-			std::string _audioPath_;
-			std::string _sheetPath_;
-			QProgressDialog * _progress_;
-			QTimer * _pdTimer_;
-			ConverterThread * _cvt_;
+			QPointer< SongList > songList_;
+			QPointer< QComboBox > outputTypes_;
+			QPointer< QPushButton > action_;
+			std::string audioPath_;
+			std::string sheetPath_;
+			QPointer< QProgressDialog > progress_;
+			QPointer< QTimer > pdTimer_;
+			QPointer< ConverterThread > cvt_;
+			QPointer< QMessageBox > about_;
 			
-			QMenuBar * _setMenu_();
-			void _setLabel_();
-			void _setOutputTypeList_();
+			QPointer< QMenuBar > setMenu_();
+			void setLabel_();
+			void setOutputTypeList_();
 		
 		private slots:
-			void _fire_();
-			void _stepProgress_();
+			void fire_();
+			void stepProgress_();
+			void showAboutQt_();
+			void showAbout_();
+			void setAbout_();
 		
 	};
 	

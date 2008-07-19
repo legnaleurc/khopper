@@ -4,22 +4,8 @@ namespace Khopper {
 	
 	const char * const Converter::COMMAND = "shnsplit";
 	
-	Converter::Converter( Input * iop, Output * oop ) : _input_( iop ), _output_( oop ) {
-		try {
-			os::exists( COMMAND );
-		} catch( const Error< RunTime > & e ) {
-			this->~Converter();
-			throw e;
-		}
-	}
-	
-	Converter::~Converter() {
-		if( _input_ != NULL ) {
-			delete _input_;
-		}
-		if( _output_ != NULL ) {
-			delete _output_;
-		}
+	Converter::Converter( const InputSP & iop, const OutputSP & oop ) : input_( iop ), output_( oop ) {
+		os::exists( COMMAND );
 	}
 	
 	std::string Converter::perform( const std::string & audio, const std::string & sheet, const std::vector< int > & songList ) const {
@@ -42,14 +28,14 @@ namespace Khopper {
 			args.push_back( sout.str() );
 		}
 		
-		if( _input_ != NULL && _input_->getOption() != "" ) {
+		if( input_ != NULL && input_->getOption() != "" ) {
 			args.push_back( "-i" );
-			args.push_back( _input_->getOption() );
+			args.push_back( input_->getOption() );
 		}
 		
-		if( _output_ != NULL && _output_->getOption() != "" ) {
+		if( output_ != NULL && output_->getOption() != "" ) {
 			args.push_back( "-o" );
-			args.push_back( _output_->getOption() );
+			args.push_back( output_->getOption() );
 		}
 		
 		std::pair< std::string, std::string > msg;

@@ -1,16 +1,19 @@
 功能：
 	拖拉開檔：
 		[bug]dragEnterEvent有發生，但是dropEvent沒反應；可能是Model/View的問題
-	輸出檔案的路徑需要詢問；目前是在pwd底下。
+	輸出檔案的路徑需要詢問；目前是在pwd底下
+	解除只能開CUE sheet的限制
 
 介面：
 	String定義的地方，port Windows的時候再決定要不要額外定義
+	似乎可以再降低include dependancy
 
 實作：
-	指標部分全面使用Smart Pointer（候選：Boost, Loki, QPointer）
+	[進行中]指標部分全面使用Smart Pointer（候選：Boost, Loki, QPointer）
+	拔掉外部執行檔改用FFMpeg的library
 
 文件：
-	about的地方要放版權宣告和作者訊息
+	[進行中]about的地方要放版權宣告和作者訊息
 
 防呆：
 	[完成]檢查是否能成功執行動作
