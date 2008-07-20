@@ -14,6 +14,9 @@ namespace Khopper {
 	 * @brief Thread of converter
 	 */
 	class ConverterThread : public QThread {
+		
+		Q_OBJECT
+		
 		public:
 			/**
 			 * @brief Initialize with a converter
@@ -31,6 +34,9 @@ namespace Khopper {
 			void setInput( const InputSP & input );
 			
 			void setOutput( const OutputSP & output );
+			
+		signals:
+			void error( const QString & );
 		
 		protected:
 			virtual void run();

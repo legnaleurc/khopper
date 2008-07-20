@@ -83,6 +83,7 @@ namespace Khopper {
 			void showAboutQt_();
 			void showAbout_();
 			void setAbout_();
+			void runTimeError_( const QString & );
 		
 	};
 	

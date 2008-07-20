@@ -55,6 +55,7 @@ namespace Khopper {
 		// Converter thread
 		cvt_ = new ConverterThread( this );
 		connect( cvt_, SIGNAL( finished() ), progress_, SLOT( cancel() ) );
+		connect( cvt_, SIGNAL( error( const QString & ) ), this, SLOT( runTimeError_( const QString & ) ) );
 		// FIXME: in fact, this don't work
 		connect( progress_, SIGNAL( canceled() ), cvt_, SLOT( terminate() ) );
 	}
@@ -138,7 +139,7 @@ namespace Khopper {
 			cvt_->start();
 			pdTimer_->start( 50 );
 		} catch( const Error< RunTime > & e ) {
-			QMessageBox::critical( this, tr( "Runtime error!" ), tr( e.what() ) );
+			runTimeError_( tr( e.what() ) );
 		} catch( const std::exception & e ) {
 			QMessageBox::critical( this, tr( "Unknown error!" ), tr( e.what() ) );
 		}
@@ -192,6 +193,10 @@ namespace Khopper {
 	
 	void MainWindow::setAbout_() {
 		about_ = new QMessageBox( QMessageBox::Information, tr( "About Khopper" ), tr( "<a href=\"http://legnaleurc.blogspot.com/\">Home Page</a>" ), QMessageBox::Close, this );
+	}
+	
+	void MainWindow::runTimeError_( const QString & msg ) {
+		QMessageBox::critical( this, tr( "Run-time error!" ), msg );
 	}
 	
 }

@@ -27,8 +27,12 @@ namespace Khopper {
 	
 	void ConverterThread::run() {
 		// convert
-		Converter conv( input_, output_ );
-		conv.perform( audio_, sheet_, index_ );
+		try {
+			Converter conv( input_, output_ );
+			conv.perform( audio_, sheet_, index_ );
+		} catch( const Error< RunTime > & e ) {
+			emit error( tr( e.what() ) );
+		}
 	}
 	
 }

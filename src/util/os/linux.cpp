@@ -91,7 +91,7 @@ namespace Khopper {
 	}
 	
 	void os::exists( const std::string & exe ) {
-		if( system( ( boost::format( "[ `which %1% ]" ) % exe ).str().c_str() ) != 0 ) {
+		if( system( ( boost::format( "[ `which %1%` ]" ) % exe ).str().c_str() ) != 0 ) {
 			throw Error< RunTime >( ( boost::format( "`%1%\' not found!" ) % exe ).str() );
 		}
 	}
