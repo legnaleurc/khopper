@@ -4,7 +4,7 @@
 #ifndef MAINWINDOW_HPP
 #define MAINWINDOW_HPP
 
-#include "cue.hpp"
+#include "cuesheet.hpp"
 #include "type.hpp"
 #include "converter.hpp"
 #include "SongList.hpp"
@@ -55,7 +55,7 @@ namespace Khopper {
 			 * @brief set the song list
 			 * @param list Song list, generate by cue/cue.hpp
 			 */
-			void setSongList( const std::vector< CUESheet::FieldType > & list );
+			void setSongList( const CUESheet & list );
 			/**
 			 * @brief open file
 			 * @param file file name

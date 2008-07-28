@@ -97,8 +97,8 @@ namespace Khopper {
 		QPointer< QStandardItemModel > model = qobject_cast< QStandardItemModel * >( songList_->model() );
 		QStringList headers;
 		
-		for( int i = 0; CUESheet::Track::Header[i] != NULL; ++i ) {
-			headers << CUESheet::Track::Header[i];
+		for( std::size_t i = 0; i < CUESheet::headers.size(); ++i ) {
+			headers << CUESheet::headers[i].c_str();
 		}
 		
 		model->setHorizontalHeaderLabels( headers );
@@ -153,21 +153,20 @@ namespace Khopper {
 	void MainWindow::open( const QString & file ) {
 		if( file != "" ) {
 			CUESheet songlist( file.toUtf8().constData() );
-			setSongList( songlist.getTrackInfo() );
-			audioPath_ = songlist.getAudioName().first + "/" + songlist.getAudioName().second;
-			sheetPath_ = songlist.getSheetName().first + "/" + songlist.getSheetName().second;
+			setSongList( songlist );
+// 			audioPath_ = songlist.getAudioName().first + "/" + songlist.getAudioName().second;
+// 			sheetPath_ = songlist.getSheetName().first + "/" + songlist.getSheetName().second;
 		}
 	}
 	
-	void MainWindow::setSongList( const std::vector< CUESheet::FieldType > & list ) {
+	void MainWindow::setSongList( const CUESheet & sheet ) {
 		QPointer< QStandardItemModel > model = qobject_cast< QStandardItemModel * >( songList_->model() );
 		
 		model->setRowCount( 0 );
 		
-		for( std::size_t row = 0; row < list.size(); ++row ) {
-			for( int col = 0; col < CUESheet::Track::SIZE; ++col ) {
-				model->setItem( row, col, new QStandardItem( QString::fromUtf8( list[row][col].c_str() ) ) );
-			}
+		for( std::size_t row = 0; row < sheet.size(); ++row ) {
+			model->setItem( row, 0, new QStandardItem( QString::fromAscii( sheet[row].title.c_str() ) ) );
+			model->setItem( row, 1, new QStandardItem( QString::fromAscii( sheet[row].performer.c_str() ) ) );
 		}
 	}
 	
