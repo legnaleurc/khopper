@@ -66,12 +66,11 @@ namespace Khopper {
 			QPointer< SongList > songList_;
 			QPointer< QComboBox > outputTypes_;
 			QPointer< QPushButton > action_;
-			std::string audioPath_;
-			std::string sheetPath_;
 			QPointer< QProgressDialog > progress_;
 			QPointer< QTimer > pdTimer_;
 			QPointer< ConverterThread > cvt_;
 			QPointer< QMessageBox > about_;
+			CUESheet sheet_;
 			
 			QPointer< QMenuBar > setMenu_();
 			void setLabel_();

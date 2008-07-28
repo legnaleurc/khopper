@@ -48,13 +48,14 @@ namespace Khopper {
 		progress_ = new QProgressDialog( tr( "Converting..." ), tr( "Don\'t touch me!" ), 0, 0, this );
 		progress_->setWindowModality( Qt::WindowModal );
 		progress_->setMinimumDuration( 0 );
-		pdTimer_ = new QTimer( this );
-		connect( pdTimer_, SIGNAL( timeout() ), this, SLOT( stepProgress_() ) );
-		connect( progress_, SIGNAL( canceled() ), pdTimer_, SLOT( stop() ) );
+// 		pdTimer_ = new QTimer( this );
+// 		connect( pdTimer_, SIGNAL( timeout() ), this, SLOT( stepProgress_() ) );
+// 		connect( progress_, SIGNAL( canceled() ), pdTimer_, SLOT( stop() ) );
 		
 		// Converter thread
 		cvt_ = new ConverterThread( this );
 		connect( cvt_, SIGNAL( finished() ), progress_, SLOT( cancel() ) );
+		connect( cvt_, SIGNAL( step( int ) ), progress_, SLOT( setValue( int ) ) );
 		connect( cvt_, SIGNAL( error( const QString & ) ), this, SLOT( runTimeError_( const QString & ) ) );
 		// FIXME: in fact, this don't work
 		connect( progress_, SIGNAL( canceled() ), cvt_, SLOT( terminate() ) );
@@ -113,35 +114,37 @@ namespace Khopper {
 	}
 	
 	void MainWindow::fire_() {
-		// create output format object
-		QString test = outputTypes_->itemData( outputTypes_->currentIndex() ).toString();
-		OutputSP output;
-		InputSP input;
-		
-		try {
-			output = OutputFactory::Instance().CreateObject( test.toStdString() );
-			input = InputFactory::Instance().CreateObject( QFileInfo( QString::fromStdString( audioPath_ ) ).suffix().toStdString() );
+		if( sheet_.getPath() != "" ) {
+			// create output format object
+			QString test = outputTypes_->itemData( outputTypes_->currentIndex() ).toString();
+			OutputSP output;
+// 			InputSP input;
 			
-			// get select list
-			QModelIndexList selected = songList_->selectionModel()->selectedRows();
-			
-			std::vector< int > index( selected.size() );
-			for( int i = 0; i < selected.size(); ++i ) {
-				// FIXME: dirty hack!
-				index[i] = selected[i].row() + 1;
+			try {
+				output = OutputFactory::Instance().CreateObject( test.toStdString() );
+// 				input = InputFactory::Instance().CreateObject( QFileInfo( QString::fromStdString( audioPath_ ) ).suffix().toStdString() );
+				
+				// get select list
+				QModelIndexList selected = songList_->selectionModel()->selectedRows();
+				
+				std::vector< int > index( selected.size() );
+				for( int i = 0; i < selected.size(); ++i ) {
+					// FIXME: dirty hack!
+					index[i] = selected[i].row() + 1;
+				}
+				
+				progress_->setRange( 0, index.size() );
+				cvt_->setSheet( sheet_ );
+// 				cvt_->setInput( input );
+				cvt_->setOutput( output );
+				cvt_->setIndex( index );
+				cvt_->start();
+// 				pdTimer_->start( 50 );
+			} catch( const Error< RunTime > & e ) {
+				runTimeError_( tr( e.what() ) );
+			} catch( const std::exception & e ) {
+				QMessageBox::critical( this, tr( "Unknown error!" ), tr( e.what() ) );
 			}
-			
-			cvt_->setAudio( audioPath_ );
-			cvt_->setSheet( sheetPath_ );
-			cvt_->setIndex( index );
-			cvt_->setInput( input );
-			cvt_->setOutput( output );
-			cvt_->start();
-			pdTimer_->start( 50 );
-		} catch( const Error< RunTime > & e ) {
-			runTimeError_( tr( e.what() ) );
-		} catch( const std::exception & e ) {
-			QMessageBox::critical( this, tr( "Unknown error!" ), tr( e.what() ) );
 		}
 	}
 	
@@ -152,10 +155,8 @@ namespace Khopper {
 	
 	void MainWindow::open( const QString & file ) {
 		if( file != "" ) {
-			CUESheet songlist( file.toUtf8().constData() );
-			setSongList( songlist );
-// 			audioPath_ = songlist.getAudioName().first + "/" + songlist.getAudioName().second;
-// 			sheetPath_ = songlist.getSheetName().first + "/" + songlist.getSheetName().second;
+			sheet_.open( file.toUtf8().constData() );
+			setSongList( sheet_ );
 		}
 	}
 	

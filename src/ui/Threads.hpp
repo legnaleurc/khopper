@@ -5,8 +5,10 @@
 #define THREADS_HPP
 
 #include "converter.hpp"
+#include "cuesheet.hpp"
 
 #include <QThread>
+#include <QFileInfo>
 
 namespace Khopper {
 	
@@ -25,27 +27,22 @@ namespace Khopper {
 			 */
 			ConverterThread( QObject * parent = 0 );
 			
-			void setAudio( const std::string & audio );
+			void setSheet( const CUESheet & sheet );
 			
-			void setSheet( const std::string & sheet );
-			
-			void setIndex( const std::vector< int > & index );
-			
-			void setInput( const InputSP & input );
+			void setIndex( const std::vector< int > & track );
 			
 			void setOutput( const OutputSP & output );
 			
 		signals:
 			void error( const QString & );
+			void step( int );
 		
 		protected:
 			virtual void run();
 		
 		private:
-			InputSP input_;
 			OutputSP output_;
-			std::string audio_;
-			std::string sheet_;
+			CUESheet sheet_;
 			std::vector< int > index_;
 	};
 	

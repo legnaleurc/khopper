@@ -8,25 +8,16 @@ namespace Khopper {
 		os::exists( COMMAND );
 	}
 	
-	std::string Converter::perform( const std::string & audio, const std::string & sheet, const std::vector< int > & songList ) const {
+	std::string Converter::perform( const Track & track, const std::string & sheet ) const {
 		std::vector< std::string > args;
 		
 		args.push_back( COMMAND );
-		args.push_back( audio );
+		args.push_back( track.dataFile.name );
 		args.push_back( "-f" );
 		args.push_back( sheet );
 		
-		if( !songList.empty() ) {
-			std::ostringstream sout;
-			
-			sout << songList[0];
-			for( std::size_t i = 1; i < songList.size(); ++i ) {
-				sout << ',' << songList[i];
-			}
-		
-			args.push_back( "-x" );
-			args.push_back( sout.str() );
-		}
+		args.push_back( "-x" );
+		args.push_back( boost::lexical_cast< std::string >( track.number ) );
 		
 		if( input_ != NULL && input_->getOption() != "" ) {
 			args.push_back( "-i" );

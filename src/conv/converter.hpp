@@ -8,6 +8,9 @@
 #include "input.hpp"
 #include "output.hpp"
 #include "type.hpp"
+#include "track.hpp"
+
+#include <boost/lexical_cast.hpp>
 
 #include <vector>
 #include <string>
@@ -37,7 +40,7 @@ namespace Khopper {
 			 * @return message
 			 * @throw Error<Runtime>
 			 */
-			std::string perform( const std::string & audio, const std::string & sheet, const std::vector< int > & songList ) const;
+			std::string perform( const Track & track, const std::string & sheet ) const;
 		private:
 			static const char * const COMMAND;
 			

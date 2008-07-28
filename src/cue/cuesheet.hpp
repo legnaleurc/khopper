@@ -24,16 +24,21 @@ namespace Khopper {
 	class CUESheet {
 		public:
 			static const std::vector< std::string > headers;
+			
+			CUESheet();
 			/**
 			 * @brief Give a CUE Sheet path name and create this object
-			 * @param [in] filename path of CUE sheet
+			 * @param [in] fileName path of CUE sheet
 			 */
-			CUESheet( const std::string & filename );
+			CUESheet( const std::string & fileName );
+			
+			void open( const std::string & fileName );
 			
 			const std::string & getCatalog() const;
 			const std::string & getCDTextFile() const;
 			const std::map< std::string, std::string > & getComments() const;
 			const std::vector< std::string > & getGarbage() const;
+			const std::string & getPath() const;
 			const std::string & getPerformer() const;
 			const std::string & getSongWriter() const;
 			const std::string & getTitle() const;
@@ -54,6 +59,7 @@ namespace Khopper {
 			std::string cdTextFile_;
 			std::map< std::string, std::string > comments_;
 			std::vector< std::string > garbage_;
+			std::string path_;
 			std::string performer_;
 			std::string songWriter_;
 			std::string title_;
