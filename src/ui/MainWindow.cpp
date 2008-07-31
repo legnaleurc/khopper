@@ -166,8 +166,8 @@ namespace Khopper {
 		model->setRowCount( 0 );
 		
 		for( std::size_t row = 0; row < sheet.size(); ++row ) {
-			model->setItem( row, 0, new QStandardItem( QString::fromAscii( sheet[row].title.c_str() ) ) );
-			model->setItem( row, 1, new QStandardItem( QString::fromAscii( sheet[row].performer.c_str() ) ) );
+			model->setItem( row, 0, new QStandardItem( QString::fromUtf8( sheet[row].title.c_str() ) ) );
+			model->setItem( row, 1, new QStandardItem( QString::fromUtf8( sheet[row].performer.c_str() ) ) );
 		}
 	}
 	
