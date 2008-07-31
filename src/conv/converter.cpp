@@ -15,6 +15,8 @@ namespace Khopper {
 		args.push_back( track.dataFile.name );
 		args.push_back( "-f" );
 		args.push_back( sheet );
+		args.push_back( "-O" );
+		args.push_back( "always" );
 		
 		args.push_back( "-x" );
 		args.push_back( boost::lexical_cast< std::string >( track.number ) );

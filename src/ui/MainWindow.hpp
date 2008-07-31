@@ -67,7 +67,6 @@ namespace Khopper {
 			QPointer< QComboBox > outputTypes_;
 			QPointer< QPushButton > action_;
 			QPointer< QProgressDialog > progress_;
-			QPointer< QTimer > pdTimer_;
 			QPointer< ConverterThread > cvt_;
 			QPointer< QMessageBox > about_;
 			CUESheet sheet_;
@@ -78,7 +77,6 @@ namespace Khopper {
 		
 		private slots:
 			void fire_();
-			void stepProgress_();
 			void showAboutQt_();
 			void showAbout_();
 			void setAbout_();

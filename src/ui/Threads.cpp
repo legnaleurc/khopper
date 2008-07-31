@@ -28,6 +28,8 @@ namespace Khopper {
 			}
 		} catch( const Error< RunTime > & e ) {
 			emit error( tr( e.what() ) );
+		} catch( const Loki::DefaultFactoryError< std::string, Khopper::Input >::Exception & e ) {
+			emit error( tr( e.what() ) );
 		}
 	}
 	

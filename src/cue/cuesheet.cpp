@@ -7,6 +7,7 @@ namespace {
 	const boost::regex FLAGS( "\\s*FLAGS\\s+(DATA|DCP|4CH|PRE|SCMS)\\s*" );
 	const boost::regex TRACK( "\\s*TRACK\\s+(\\d+)\\s+(AUDIO)\\s*" );
 	const boost::regex INDEX( "\\s*(INDEX|PREGAP|POSTGAP)\\s+((\\d+)\\s+)?(\\d+):(\\d+):(\\d+)\\s*" );
+	const boost::regex DIRNAME( "(.*)/.*" );
 	
 	std::string stripQuote( const std::string & s ) {
 		if( s[0] == '\"' && s[s.length()-1] == '\"' ) {
@@ -37,6 +38,12 @@ namespace Khopper {
 	
 	void CUESheet::open( const std::string & fileName ) {
 		path_ = fileName;
+		boost::smatch result;
+		if( boost::regex_match( fileName, result, DIRNAME ) ) {
+			dirName_ = result[1];
+		} else {
+			throw Error< System >( ( boost::format( "Invalid path: %1%" ) % fileName ).str() );
+		}
 		std::ifstream fin( fileName.c_str() );
 		if( !fin.is_open() ) {
 			throw Error< System >( ( boost::format( "Can not open %1% !" ) % fileName ).str() );
@@ -71,7 +78,6 @@ namespace Khopper {
 				parseTrack_( result[1], result[2], trackNO );
 				if( currentFile.name != "" ) {
 					tracks_[trackNO].dataFile = currentFile;
-					currentFile = AudioFile();
 				}
 			} else {
 				parseGarbage_( cueLines[i], trackNO );
@@ -115,7 +121,12 @@ namespace Khopper {
 	}
 	
 	AudioFile CUESheet::parseFile_( const std::string & fileName, const std::string & type ) {
-		return AudioFile( stripQuote( fileName ), type );
+		std::string temp = stripQuote( fileName );
+		boost::smatch result;
+		if( !boost::regex_match( temp, result, DIRNAME ) ) {
+			temp = dirName_ + "/" + temp;
+		}
+		return AudioFile( temp, type );
 	}
 	
 	void CUESheet::parseFlags_( const std::string & flag, int trackNO ) {

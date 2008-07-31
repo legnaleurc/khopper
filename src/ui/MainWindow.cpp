@@ -48,9 +48,6 @@ namespace Khopper {
 		progress_ = new QProgressDialog( tr( "Converting..." ), tr( "Don\'t touch me!" ), 0, 0, this );
 		progress_->setWindowModality( Qt::WindowModal );
 		progress_->setMinimumDuration( 0 );
-// 		pdTimer_ = new QTimer( this );
-// 		connect( pdTimer_, SIGNAL( timeout() ), this, SLOT( stepProgress_() ) );
-// 		connect( progress_, SIGNAL( canceled() ), pdTimer_, SLOT( stop() ) );
 		
 		// Converter thread
 		cvt_ = new ConverterThread( this );
@@ -118,28 +115,24 @@ namespace Khopper {
 			// create output format object
 			QString test = outputTypes_->itemData( outputTypes_->currentIndex() ).toString();
 			OutputSP output;
-// 			InputSP input;
 			
 			try {
 				output = OutputFactory::Instance().CreateObject( test.toStdString() );
-// 				input = InputFactory::Instance().CreateObject( QFileInfo( QString::fromStdString( audioPath_ ) ).suffix().toStdString() );
 				
 				// get select list
 				QModelIndexList selected = songList_->selectionModel()->selectedRows();
 				
 				std::vector< int > index( selected.size() );
 				for( int i = 0; i < selected.size(); ++i ) {
-					// FIXME: dirty hack!
-					index[i] = selected[i].row() + 1;
+					index[i] = selected[i].row();
 				}
 				
 				progress_->setRange( 0, index.size() );
 				cvt_->setSheet( sheet_ );
-// 				cvt_->setInput( input );
 				cvt_->setOutput( output );
 				cvt_->setIndex( index );
 				cvt_->start();
-// 				pdTimer_->start( 50 );
+				progress_->show();
 			} catch( const Error< RunTime > & e ) {
 				runTimeError_( tr( e.what() ) );
 			} catch( const std::exception & e ) {
@@ -168,18 +161,6 @@ namespace Khopper {
 		for( std::size_t row = 0; row < sheet.size(); ++row ) {
 			model->setItem( row, 0, new QStandardItem( QString::fromUtf8( sheet[row].title.c_str() ) ) );
 			model->setItem( row, 1, new QStandardItem( QString::fromUtf8( sheet[row].performer.c_str() ) ) );
-		}
-	}
-	
-	void MainWindow::stepProgress_() {
-		// Don't worry about multithread, I don't care.
-		static int i = 1;
-		// FIXME
-		if( !progress_->wasCanceled() ) {
-			progress_->setValue( i );
-			( i < 0 ) ? ( i = 0 ) : ( ++i );
-		} else {
-			pdTimer_->stop();
 		}
 	}
 	

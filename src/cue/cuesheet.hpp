@@ -58,6 +58,7 @@ namespace Khopper {
 			std::string catalog_;
 			std::string cdTextFile_;
 			std::map< std::string, std::string > comments_;
+			std::string dirName_;
 			std::vector< std::string > garbage_;
 			std::string path_;
 			std::string performer_;
