@@ -1,14 +1,12 @@
 #include "cuesheet.hpp"
 
-#include <iostream>
-
 namespace {
-	const boost::regex COMMENT( "\\s*REM\\s+(.*?)\\s+(.*?)" );
-	const boost::regex SINGLE( "\\s*(CATALOG|CDTEXTFILE|ISRC|PERFORMER|SONGWRITER|TITLE)\\s+(.*)" );
-	const boost::regex FILES( "\\s*FILE\\s(.*?)\\s(WAVE)" );
-	const boost::regex FLAGS( "\\s*FLAGS\\s+(DATA|DCP|4CH|PRE|SCMS)" );
-	const boost::regex TRACK( "\\s*TRACK\\s+(\\d+)\\s+(AUDIO)" );
-	const boost::regex INDEX( "\\s*(INDEX|PREGAP|POSTGAP)\\s+((\\d+)\\s+)?(\\d+):(\\d+):(\\d+)" );
+	const boost::regex COMMENT( "\\s*REM\\s+(.*?)\\s+(.*?)\\s*" );
+	const boost::regex SINGLE( "\\s*(CATALOG|CDTEXTFILE|ISRC|PERFORMER|SONGWRITER|TITLE)\\s+(.*?)\\s*" );
+	const boost::regex FILES( "\\s*FILE\\s+(.*?)\\s+(WAVE)\\s*" );
+	const boost::regex FLAGS( "\\s*FLAGS\\s+(DATA|DCP|4CH|PRE|SCMS)\\s*" );
+	const boost::regex TRACK( "\\s*TRACK\\s+(\\d+)\\s+(AUDIO)\\s*" );
+	const boost::regex INDEX( "\\s*(INDEX|PREGAP|POSTGAP)\\s+((\\d+)\\s+)?(\\d+):(\\d+):(\\d+)\\s*" );
 	
 	std::string stripQuote( const std::string & s ) {
 		if( s[0] == '\"' && s[s.length()-1] == '\"' ) {
@@ -59,40 +57,16 @@ namespace Khopper {
 		AudioFile currentFile;
 		for( std::size_t i = 0; i < cueLines.size(); ++i ) {
 			if( boost::regex_match( cueLines[i], result, SINGLE ) ) {
-				
-				std::clog << "single" << std::endl;
-				std::clog << result[1] << result[2] << std::endl;
-				
 				parseSingle_( result[1], result[2], trackNO );
 			} else if( boost::regex_match( cueLines[i], result, FILES ) ) {
-				
-				std::clog << "files" << std::endl;
-				std::clog << result[1] << result[2] << std::endl;
-				
 				currentFile = parseFile_( result[1], result[2] );
 			} else if( boost::regex_match( cueLines[i], result, FLAGS ) ) {
-				
-				std::clog << "flags" << std::endl;
-				std::clog << result[1] << std::endl;
-				
 				parseFlags_( result[1], trackNO );
 			} else if( boost::regex_match( cueLines[i], result, INDEX ) ) {
-				
-				std::clog << "index" << std::endl;
-				std::clog << result[1] << result[3] << result[4] << result[5] << result[6] << std::endl;
-				
 				parseIndex_( result[1], result[3], result[4], result[5], result[6], trackNO );
 			} else if( boost::regex_match( cueLines[i], result, COMMENT ) ) {
-				
-				std::clog << "comment" << std::endl;
-				std::clog << result[1] << result[2] << std::endl;
-				
 				parseComment_( result[1], result[2], trackNO );
 			} else if( boost::regex_match( cueLines[i], result, TRACK ) ) {
-				
-				std::clog << "track" << std::endl;
-				std::clog << result[1] << result[2] << std::endl;
-				
 				++trackNO;
 				parseTrack_( result[1], result[2], trackNO );
 				if( currentFile.name != "" ) {
@@ -100,10 +74,6 @@ namespace Khopper {
 					currentFile = AudioFile();
 				}
 			} else {
-				
-				std::clog << "garbage" << std::endl;
-				std::clog << cueLines[i] << std::endl;
-				
 				parseGarbage_( cueLines[i], trackNO );
 			}
 		}
