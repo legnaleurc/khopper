@@ -6,27 +6,40 @@
 #include <boost/format.hpp>
 
 namespace {
-	
-	void freeArgs( char * * args ) {
-		for( int i = 0; args[i] != NULL; ++i ) {
-			delete [] args[i];
-		}
-		delete [] args;
-	}
+
+	class Args_{
+		public:
+			Args_( const std::vector< std::string > & args ) {
+				argt_ = new char * [ args.size() + 1 ];
+				for( std::size_t i = 0; i < args.size(); ++i ) {
+					argt_[i] = new char[ args[i].length() + 1 ];
+					strcpy( argt_[i], args[i].c_str() );
+				}
+				argt_[args.size()] = NULL;
+			}
+
+			char * * getArgs() {
+				return argt_;
+			}
+
+			~Args_() {
+				for( int i = 0; argt_[i] != NULL; ++i ) {
+					delete [] argt_[i];
+				}
+				delete [] argt_;
+			}
+			
+		private:
+			char * * argt_;
+			Args_( const Args_ & );
+			Args_ & operator =( const Args_ & );
+	};
 	
 }
 
 namespace Khopper {
 	
 	int os::getResult( std::pair< std::string, std::string > & msg, const std::vector< std::string > & args ) {
-		char * * argt = new char*[ args.size() + 1 ];
-		
-		for( std::size_t i = 0; i < args.size(); ++i ) {
-			argt[i] = new char[ args[i].length() + 1 ];
-			strcpy( argt[i], args[i].c_str() );
-		}
-		argt[args.size()] = NULL;
-		
 		pid_t pid;
 		int ret;
 		int out[2];
@@ -34,22 +47,19 @@ namespace Khopper {
 		
 		// create pipes
 		if( pipe( out ) < 0 ) {
-			freeArgs( argt );
 			throw Error< OS >( strerror( errno ) );
 		}
 		if( pipe( err ) < 0 ) {
-			freeArgs( argt );
 			throw Error< OS >( strerror( errno ) );
 		}
 		
+		Args_ argt( args );
+		
 		// fork process
 		if( ( pid = fork() ) < 0 ) {	// error
-			freeArgs( argt );
 			throw Error< OS >( strerror( errno ) );
 		} else if( pid > 0 ) {	// parent process
 			int status;
-			
-			freeArgs( argt );
 			
 			close( out[1] );
 			close( err[1] );
@@ -79,8 +89,7 @@ namespace Khopper {
 			dup2( out[1], 1 );
 			dup2( err[1], 2 );
 			
-			ret = execvp( argt[0], argt );
-			freeArgs( argt );
+			ret = execvp( argt.getArgs()[0], argt.getArgs() );
 			
 			if( ret < 0 ) {
 				throw Error< OS >( strerror( errno ) );
