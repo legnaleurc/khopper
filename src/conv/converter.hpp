@@ -34,9 +34,8 @@ namespace Khopper {
 			
 			/**
 			 * @brief Convert action
-			 * @param [in] audio Audio file path
+			 * @param [in] track Track information
 			 * @param [in] sheet CUE sheet file path
-			 * @param [in] songList the tracks to be convert
 			 * @return message
 			 * @throw Error<Runtime>
 			 */

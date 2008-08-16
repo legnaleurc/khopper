@@ -32,11 +32,15 @@ namespace Khopper {
 		}
 		
 		std::pair< std::string, std::string > msg;
-		if( os::getResult( msg, args ) != 0 ) {
-			// FIXME: Should delete junk
-			throw Error< RunTime >( msg.second );
-		} else {
-			return msg.first;
+		try {
+			if( os::getResult( msg, args ) != 0 ) {
+				// FIXME: Should delete junk
+				throw Error< RunTime >( msg.second );
+			} else {
+				return msg.first;
+			}
+		} catch ( const Error< OS > & e ) {
+			throw Error< RunTime >( e.what() );
 		}
 	}
 	

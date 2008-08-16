@@ -50,10 +50,16 @@ namespace Khopper {
 	 */
 	class RunTime {
 	};
-	
+
+	/**
+	 * @brief Dummy error class
+	 */
 	class Parsing {
 	};
-	
+
+	/**
+	 * @brief Dummy error class
+	 */
 	class System {
 	};
 
