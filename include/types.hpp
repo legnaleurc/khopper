@@ -1,5 +1,5 @@
 /**
- * @file type.hpp
+ * @file types.hpp
  */
 #ifndef UTIL_HPP
 #define UTIL_HPP

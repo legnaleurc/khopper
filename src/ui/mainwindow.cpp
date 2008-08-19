@@ -1,7 +1,7 @@
 #include "ui/mainwindow.hpp"
 #include "ui/songlist.hpp"
 #include "ui/threads.hpp"
-#include "type.hpp"
+#include "types.hpp"
 #include "util/os.hpp"
 #include "cue/track.hpp"
 #include <QtGui>

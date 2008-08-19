@@ -1,7 +1,7 @@
 #include "ui/threads.hpp"
 #include "cue/track.hpp"
 #include "conv/converter.hpp"
-#include "type.hpp"
+#include "types.hpp"
 #include "util/os.hpp"
 #include <QFileInfo>
 
