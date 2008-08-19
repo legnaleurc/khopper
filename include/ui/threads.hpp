@@ -1,11 +1,11 @@
 /**
- * @file Threads.hpp
+ * @file threads.hpp
  */
 #ifndef THREADS_HPP
 #define THREADS_HPP
 
 #include "cue/cuesheet.hpp"
-#include "type.hpp"
+#include "types.hpp"
 
 #include <QThread>
 

@@ -1,7 +1,7 @@
-#include "converter.hpp"
-#include "os.hpp"
-#include "track.hpp"
-#include "error.hpp"
+#include "conv/converter.hpp"
+#include "util/os.hpp"
+#include "cue/track.hpp"
+#include "util/error.hpp"
 
 #include <vector>
 #include <boost/lexical_cast.hpp>

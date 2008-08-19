@@ -1,5 +1,5 @@
 #include "conv/input/input_wav.hpp"
-#include "type.hpp"
+#include "types.hpp"
 
 namespace {
 	

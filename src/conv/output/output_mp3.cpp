@@ -1,5 +1,5 @@
 #include "conv/output/output_mp3.hpp"
-#include "type.hpp"
+#include "types.hpp"
 #include "util/os.hpp"
 
 namespace {

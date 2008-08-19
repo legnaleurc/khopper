@@ -1,5 +1,5 @@
 /**
- * @file mp3.hpp
+ * @file output_mp3.hpp
  */
 #ifndef MP3_HPP
 #define MP3_HPP

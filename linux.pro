@@ -23,7 +23,7 @@ OBJECTS_DIR = obj
 DESTDIR = build
 
 # Input
-HEADERS += include/type.hpp \
+HEADERS += include/types.hpp \
            include/conv/converter.hpp \
            include/conv/input/input.hpp \
            include/conv/input/input_ape.hpp \
@@ -43,9 +43,9 @@ SOURCES += src/main.cpp \
            src/cue/audiofile.cpp \
            src/cue/cuesheet.cpp \
            src/cue/track.cpp \
-           src/ui/MainWindow.cpp \
-           src/ui/SongList.cpp \
-           src/ui/Threads.cpp \
+           src/ui/mainwindow.cpp \
+           src/ui/songlist.cpp \
+           src/ui/threads.cpp \
            src/util/linux.cpp \
            src/conv/input/input.cpp \
            src/conv/input/input_ape.cpp \

@@ -1,5 +1,5 @@
 #include "conv/input/input_ape.hpp"
-#include "type.hpp"
+#include "types.hpp"
 #include "util/os.hpp"
 
 namespace {

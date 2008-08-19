@@ -1,5 +1,5 @@
 /**
- * @file wav.hpp
+ * @file input_wav.hpp
  */
 #ifndef WAV_HPP
 #define WAV_HPP

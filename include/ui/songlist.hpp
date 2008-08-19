@@ -1,5 +1,5 @@
 /**
- * @file SongList.hpp
+ * @file songlist.hpp
  */
 #ifndef SONGLIST_HPP
 #define SONGLIST_HPP

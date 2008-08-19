@@ -1,5 +1,5 @@
 /**
- * @file MainWindow.hpp
+ * @file mainwindow.hpp
  */
 #ifndef MAINWINDOW_HPP
 #define MAINWINDOW_HPP
