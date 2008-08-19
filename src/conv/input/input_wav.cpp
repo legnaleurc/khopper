@@ -1,4 +1,4 @@
-#include "wav.hpp"
+#include "conv/input/input_wav.hpp"
 #include "type.hpp"
 
 namespace {

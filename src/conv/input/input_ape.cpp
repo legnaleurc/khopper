@@ -1,6 +1,6 @@
-#include "ape.hpp"
+#include "conv/input/input_ape.hpp"
 #include "type.hpp"
-#include "os.hpp"
+#include "util/os.hpp"
 
 namespace {
 	

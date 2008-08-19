@@ -4,7 +4,7 @@
 #ifndef MAINWINDOW_HPP
 #define MAINWINDOW_HPP
 
-#include "cuesheet.hpp"
+#include "cue/cuesheet.hpp"
 
 #include <QMainWindow>
 #include <QPointer>

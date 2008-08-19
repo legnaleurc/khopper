@@ -1,9 +1,9 @@
-#include "MainWindow.hpp"
-#include "SongList.hpp"
-#include "Threads.hpp"
+#include "ui/mainwindow.hpp"
+#include "ui/songlist.hpp"
+#include "ui/threads.hpp"
 #include "type.hpp"
-#include "os.hpp"
-#include "track.hpp"
+#include "util/os.hpp"
+#include "cue/track.hpp"
 #include <QtGui>
 
 namespace Khopper {

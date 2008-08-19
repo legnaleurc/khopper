@@ -1,8 +1,9 @@
-#include "Threads.hpp"
-#include "track.hpp"
-#include "converter.hpp"
+#include "ui/threads.hpp"
+#include "cue/track.hpp"
+#include "conv/converter.hpp"
 #include "type.hpp"
-#include "os.hpp"
+#include "util/os.hpp"
+#include <QFileInfo>
 
 namespace Khopper {
 	

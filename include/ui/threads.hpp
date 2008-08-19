@@ -4,11 +4,10 @@
 #ifndef THREADS_HPP
 #define THREADS_HPP
 
-#include "converter.hpp"
-#include "cuesheet.hpp"
+#include "cue/cuesheet.hpp"
+#include "type.hpp"
 
 #include <QThread>
-#include <QFileInfo>
 
 namespace Khopper {
 	

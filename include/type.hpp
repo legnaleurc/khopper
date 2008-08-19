@@ -4,8 +4,8 @@
 #ifndef UTIL_HPP
 #define UTIL_HPP
 
-#include "input/input.hpp"
-#include "output/output.hpp"
+#include "conv/input/input.hpp"
+#include "conv/output/output.hpp"
 
 #include <loki/Factory.h>
 #include <loki/Singleton.h>

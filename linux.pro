@@ -17,7 +17,7 @@ DEPENDPATH += . \
               src/util \
               src/conv/input \
               src/conv/output
-INCLUDEPATH += . include/conv include include/util include/cue
+INCLUDEPATH += . include
 MOC_DIR = moc
 OBJECTS_DIR = obj
 DESTDIR = build
@@ -25,11 +25,11 @@ DESTDIR = build
 # Input
 HEADERS += include/type.hpp \
            include/conv/converter.hpp \
-           include/conv/input.hpp \
-           include/conv/input_ape.hpp \
-           include/conv/input_wav.hpp \
-           include/conv/output.hpp \
-           include/conv/output_mp3.hpp \
+           include/conv/input/input.hpp \
+           include/conv/input/input_ape.hpp \
+           include/conv/input/input_wav.hpp \
+           include/conv/output/output.hpp \
+           include/conv/output/output_mp3.hpp \
            include/cue/audiofile.hpp \
            include/cue/cuesheet.hpp \
            include/cue/track.hpp \
