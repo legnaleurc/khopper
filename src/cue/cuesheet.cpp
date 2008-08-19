@@ -1,4 +1,11 @@
 #include "cuesheet.hpp"
+#include "error.hpp"
+#include "audiofile.hpp"
+#include "track.hpp"
+#include <boost/regex.hpp>
+#include <boost/format.hpp>
+#include <boost/lexical_cast.hpp>
+#include <fstream>
 
 namespace {
 	const boost::regex COMMENT( "\\s*REM\\s+(.*?)\\s+(.*?)\\s*" );

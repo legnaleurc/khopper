@@ -1,4 +1,6 @@
 #include "mp3.hpp"
+#include "type.hpp"
+#include "os.hpp"
 
 namespace {
 

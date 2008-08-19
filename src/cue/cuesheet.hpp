@@ -4,19 +4,15 @@
 #ifndef CUESHEET_HPP
 #define CUESHEET_HPP
 
-#include "error.hpp"
-#include "audiofile.hpp"
 #include "track.hpp"
 
 #include <string>
-#include <fstream>
 #include <vector>
 #include <map>
-#include <boost/regex.hpp>
-#include <boost/format.hpp>
-#include <boost/lexical_cast.hpp>
 
 namespace Khopper {
+
+	class AudioFile;
 	
 	/**
 	 * @brief The CUE parser

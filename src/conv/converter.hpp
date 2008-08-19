@@ -4,21 +4,13 @@
 #ifndef CONVERTER_HPP
 #define CONVERTER_HPP
 
-#include "os.hpp"
-#include "input.hpp"
-#include "output.hpp"
 #include "type.hpp"
-#include "track.hpp"
 
-#include <boost/lexical_cast.hpp>
-
-#include <vector>
 #include <string>
-#include <sstream>
-
-#include <cstdlib>
 
 namespace Khopper {
+
+	class Track;
 
 	/**
 	 * @brief The audio converter
@@ -30,7 +22,7 @@ namespace Khopper {
 			 * @param [in] iop Input option
 			 * @param [in] oop Output option
 			 */
-			Converter( const InputSP & iop, const OutputSP & oop );
+			Converter( InputSP iop, OutputSP oop );
 			
 			/**
 			 * @brief Convert action

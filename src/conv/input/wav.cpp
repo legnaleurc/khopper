@@ -1,4 +1,5 @@
 #include "wav.hpp"
+#include "type.hpp"
 
 namespace {
 	

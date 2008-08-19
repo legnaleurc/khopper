@@ -1,4 +1,6 @@
 #include "ape.hpp"
+#include "type.hpp"
+#include "os.hpp"
 
 namespace {
 	

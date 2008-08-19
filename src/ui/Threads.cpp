@@ -1,4 +1,8 @@
 #include "Threads.hpp"
+#include "track.hpp"
+#include "converter.hpp"
+#include "type.hpp"
+#include "os.hpp"
 
 namespace Khopper {
 	

@@ -1,5 +1,7 @@
 #include "SongList.hpp"
 
+#include <QtGui>
+
 namespace Khopper {
 	
 	SongList::SongList( QWidget * parent ) : QTableView( parent ) {

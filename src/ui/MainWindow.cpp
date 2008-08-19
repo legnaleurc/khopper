@@ -1,6 +1,10 @@
 #include "MainWindow.hpp"
-
-#include <iostream>
+#include "SongList.hpp"
+#include "Threads.hpp"
+#include "type.hpp"
+#include "os.hpp"
+#include "track.hpp"
+#include <QtGui>
 
 namespace Khopper {
 	

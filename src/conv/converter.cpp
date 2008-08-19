@@ -1,10 +1,16 @@
 #include "converter.hpp"
+#include "os.hpp"
+#include "track.hpp"
+#include "error.hpp"
+
+#include <vector>
+#include <boost/lexical_cast.hpp>
 
 namespace Khopper {
 	
 	const char * const Converter::COMMAND = "shnsplit";
 	
-	Converter::Converter( const InputSP & iop, const OutputSP & oop ) : input_( iop ), output_( oop ) {
+	Converter::Converter( InputSP iop, OutputSP oop ) : input_( iop ), output_( oop ) {
 		os::exists( COMMAND );
 	}
 	

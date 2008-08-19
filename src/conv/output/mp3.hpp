@@ -5,7 +5,6 @@
 #define MP3_HPP
 
 #include "output.hpp"
-#include "type.hpp"
 
 namespace Khopper {
 	

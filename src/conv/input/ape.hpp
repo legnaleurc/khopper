@@ -5,7 +5,6 @@
 #define APE_HPP
 
 #include "input.hpp"
-#include "type.hpp"
 
 namespace Khopper {
 

@@ -10,9 +10,6 @@
 #include <utility>
 #include <vector>
 
-#include <cerrno>
-#include <cstdlib>
-
 /**
  * @namespace Khopper
  */

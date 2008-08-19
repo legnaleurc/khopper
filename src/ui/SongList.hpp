@@ -5,10 +5,13 @@
 #define SONGLIST_HPP
 
 #include <QTableView>
-#include <QDragEnterEvent>
-#include <QDropEvent>
-#include <QUrl>
-#include <QFileInfo>
+
+QT_BEGIN_NAMESPACE
+class QDragEnterEvent;
+class QDropEvent;
+class QUrl;
+class QFileInfo;
+QT_END_NAMESPACE
 
 namespace Khopper {
 	

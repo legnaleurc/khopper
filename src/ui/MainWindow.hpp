@@ -5,30 +5,26 @@
 #define MAINWINDOW_HPP
 
 #include "cuesheet.hpp"
-#include "type.hpp"
-#include "converter.hpp"
-#include "SongList.hpp"
-#include "Threads.hpp"
 
 #include <QMainWindow>
-#include <QComboBox>
-#include <QVBoxLayout>
-#include <QStandardItemModel>
-#include <QStringList>
-#include <QPushButton>
-#include <QVariant>
-#include <QMenuBar>
-#include <QMenu>
-#include <QFileDialog>
-#include <QMessageBox>
-#include <QProgressDialog>
-#include <QTimer>
 #include <QPointer>
+
+QT_BEGIN_NAMESPACE
+class QComboBox;
+class QPushButton;
+class QProgressDialog;
+class QMessageBox;
+class QString;
+class QMenuBar;
+QT_END_NAMESPACE
 
 /**
  * @namespace Khopper
  */
 namespace Khopper {
+
+	class ConverterThread;
+	class SongList;
 
 	/**
 	 * @class MainWindow
