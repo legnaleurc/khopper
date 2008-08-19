@@ -1,6 +1,7 @@
 #include "os.hpp"
 
 #include <sys/wait.h>
+#include <cerrno>
 #include <cstring>
 #include <climits>
 #include <boost/format.hpp>
