@@ -33,13 +33,7 @@ namespace Khopper {
 			 * @brief Give a CUE Sheet path name and create this object
 			 * @param [in] fileName path of CUE sheet
 			 */
-			CUESheet( const std::string & fileName );
-
-			/**
-			 * @brief Open file by given file path
-			 * @param [in] fileName path of CUE sheet
-			 */
-			void open( const std::string & fileName );
+			CUESheet( const std::vector< std::string > & content );
 
 			/**
 			 * @brief Set CUE sheet by given string vector
@@ -70,12 +64,6 @@ namespace Khopper {
 			 * @return garbage
 			 */
 			const std::vector< std::string > & getGarbage() const;
-			
-			/**
-			 * @brief Get CUE sheet path
-			 * @return file path
-			 */
-			const std::string & getPath() const;
 			
 			/**
 			 * @brief Get performer infomation
@@ -114,7 +102,7 @@ namespace Khopper {
 			void parseFlags_( const std::string &, int );
 			void parseIndex_( const std::string &, const std::string &, const std::string &, const std::string &, const std::string &, int );
 			void parseComment_( const std::string &, const std::string &, int );
-			void parseTrack_( const std::string &, const std::string &, int );
+			void parseTrack_( const std::string &, const std::string & );
 			void parseGarbage_( const std::string &, int );
 			
 			std::string catalog_;
@@ -122,7 +110,6 @@ namespace Khopper {
 			std::map< std::string, std::string > comments_;
 			std::string dirName_;
 			std::vector< std::string > garbage_;
-			std::string path_;
 			std::string performer_;
 			std::string songWriter_;
 			std::string title_;

@@ -4,8 +4,6 @@
 #ifndef MAINWINDOW_HPP
 #define MAINWINDOW_HPP
 
-#include "cue/cuesheet.hpp"
-
 #include <QMainWindow>
 #include <QPointer>
 
@@ -15,7 +13,7 @@ class QPushButton;
 class QProgressDialog;
 class QMessageBox;
 class QString;
-class QMenuBar;
+class QStandardItemModel;
 QT_END_NAMESPACE
 
 /**
@@ -23,8 +21,9 @@ QT_END_NAMESPACE
  */
 namespace Khopper {
 
+	class CUESheet;
 	class ConverterThread;
-	class SongList;
+	class SongListView;
 
 	/**
 	 * @class MainWindow
@@ -48,10 +47,10 @@ namespace Khopper {
 			 */
 			void openFileDialog();
 			/**
-			 * @brief set the song list
-			 * @param list Song list, generate by cue/cue.hpp
+			 * @brief add the song list
+			 * @param list Song list, generate by cue/cuesheet.hpp
 			 */
-			void setSongList( const CUESheet & list );
+			void addSongList( const CUESheet & list );
 			/**
 			 * @brief open file
 			 * @param fileName file name
@@ -59,17 +58,17 @@ namespace Khopper {
 			void open( const QString & fileName );
 		
 		private:
-			QPointer< SongList > songList_;
+			QPointer< SongListView > songListView_;
+			QPointer< QStandardItemModel > songListModel_;
 			QPointer< QComboBox > outputTypes_;
 			QPointer< QPushButton > action_;
 			QPointer< QProgressDialog > progress_;
 			QPointer< ConverterThread > cvt_;
 			QPointer< QMessageBox > about_;
-			CUESheet sheet_;
 			
-			QPointer< QMenuBar > setMenu_();
-			void setLabel_();
-			void setOutputTypeList_();
+			void initMenuBar_();
+			void initOutputTypeList_();
+			void initHeader();
 		
 		private slots:
 			void fire_();

@@ -10,12 +10,8 @@ namespace Khopper {
 	ConverterThread::ConverterThread( QObject * parent ) : QThread( parent ) {
 	}
 	
-	void ConverterThread::setSheet( const CUESheet & sheet ) {
-		sheet_ = sheet;
-	}
-	
-	void ConverterThread::setIndex( const std::vector< int > & index ) {
-		index_ = index;
+	void ConverterThread::setTracks( const std::vector< Track > & tracks ) {
+		tracks_ = tracks;
 	}
 	
 	void ConverterThread::setOutput( const OutputSP & output ) {
@@ -25,15 +21,15 @@ namespace Khopper {
 	void ConverterThread::run() {
 		// convert
 		try {
-			for( std::size_t i = 0; i < index_.size(); ++i ) {
-				InputSP input = InputFactory::Instance().CreateObject( QFileInfo( QString::fromStdString( sheet_[index_[i]].dataFile.name ) ).suffix().toStdString() );
+			for( std::size_t i = 0; i < tracks_.size(); ++i ) {
+				InputSP input = InputFactory::Instance().CreateObject( QFileInfo( QString::fromStdString( tracks_[i].getAudioData().getFileName() ) ).suffix().toStdString() );
 				Converter conv( input, output_ );
-				conv.perform( sheet_[index_[i]], sheet_.getPath() );
+				conv.perform( tracks_[i] );
 				emit step( i );
 			}
-		} catch( const Error< RunTime > & e ) {
+		} catch( Error< RunTime > & e ) {
 			emit error( tr( e.what() ) );
-		} catch( const Loki::DefaultFactoryError< std::string, Khopper::Input >::Exception & e ) {
+		} catch( Loki::DefaultFactoryError< std::string, Input >::Exception & e ) {
 			emit error( tr( e.what() ) );
 		}
 	}

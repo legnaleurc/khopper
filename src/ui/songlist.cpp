@@ -4,17 +4,19 @@
 
 namespace Khopper {
 	
-	SongList::SongList( QWidget * parent ) : QTableView( parent ) {
+	SongListView::SongListView( QWidget * parent ) : QTableView( parent ) {
 		setAcceptDrops( true );
+		// Set selection behavior
+		setSelectionBehavior( QAbstractItemView::SelectRows );
 	}
 	
-	void SongList::dragEnterEvent( QDragEnterEvent * event ) {
+	void SongListView::dragEnterEvent( QDragEnterEvent * event ) {
 		if( event->mimeData()->hasFormat( "text/uri-list" ) ) {
 			event->acceptProposedAction();
 		}
 	}
 	
-	void SongList::dropEvent( QDropEvent * event ) {
+	void SongListView::dropEvent( QDropEvent * event ) {
 		if( event->mimeData()->hasUrls() ) {
 			const QList< QUrl > & urlList = event->mimeData()->urls();
 			for( QList< QUrl >::const_iterator it = urlList.begin(); it != urlList.end(); ++it ) {

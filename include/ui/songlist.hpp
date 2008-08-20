@@ -9,16 +9,14 @@
 QT_BEGIN_NAMESPACE
 class QDragEnterEvent;
 class QDropEvent;
-class QUrl;
-class QFileInfo;
 QT_END_NAMESPACE
 
 namespace Khopper {
 	
 	/**
-	 * @brief The song list in the center widget
+	 * @brief The song list view in the center widget
 	 */
-	class SongList : public QTableView {
+	class SongListView : public QTableView {
 		
 		Q_OBJECT
 		
@@ -27,7 +25,7 @@ namespace Khopper {
 			 * @brief Default constructor
 			 * @param parent Parent widget
 			 */
-			SongList( QWidget * parent = 0 );
+			SongListView( QWidget * parent = 0 );
 		
 		signals:
 			/**

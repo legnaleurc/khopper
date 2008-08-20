@@ -4,7 +4,7 @@
 #ifndef THREADS_HPP
 #define THREADS_HPP
 
-#include "cue/cuesheet.hpp"
+#include "cue/track.hpp"
 #include "types.hpp"
 
 #include <QThread>
@@ -26,16 +26,10 @@ namespace Khopper {
 			ConverterThread( QObject * parent = 0 );
 
 			/**
-			 * @brief Set a CUE sheet to this thread
-			 * @param [in] sheet CUE Sheet
-			 */
-			void setSheet( const CUESheet & sheet );
-
-			/**
 			 * @brief Set indeice of song to be convert
 			 * @param [in] track Index array
 			 */
-			void setIndex( const std::vector< int > & track );
+			void setTracks( const std::vector< Track > & tracks );
 
 			/**
 			 * @brief Set output format
@@ -64,8 +58,7 @@ namespace Khopper {
 		
 		private:
 			OutputSP output_;
-			CUESheet sheet_;
-			std::vector< int > index_;
+			std::vector< Track > tracks_;
 	};
 	
 }

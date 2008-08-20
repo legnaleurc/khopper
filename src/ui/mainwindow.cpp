@@ -3,10 +3,12 @@
 #include "ui/threads.hpp"
 #include "types.hpp"
 #include "util/os.hpp"
+#include "cue/cuesheet.hpp"
 #include "cue/track.hpp"
 #include <QtGui>
 
-#include <iostream>
+// for Track to QVariant
+Q_DECLARE_METATYPE( Khopper::Track )
 
 namespace Khopper {
 	
@@ -17,7 +19,7 @@ namespace Khopper {
 		setAbout_();
 		
 		// Setting menu bar
-		setMenuBar( setMenu_() );
+		initMenuBar_();
 		
 		// Setting central widget
 		QPointer< QWidget > central = new QWidget( this );
@@ -25,15 +27,12 @@ namespace Khopper {
 		setCentralWidget( central );
 		
 		// Add song list
-		songList_ = new SongList( central );
-		central->layout()->addWidget( songList_ );
+		songListView_ = new SongListView( central );
+		songListModel_ = new QStandardItemModel( songListView_ );
+		central->layout()->addWidget( songListView_ );
 		// Set model
-		songList_->setModel( new QStandardItemModel( songList_ ) );
-		// Set header of model
-		setLabel_();
-		// Set selection behavior
-		songList_->setSelectionBehavior( QAbstractItemView::SelectRows );
-		connect( songList_, SIGNAL( openFile( const QString & ) ), this, SLOT( open( const QString & ) ) );
+		songListView_->setModel( songListModel_ );
+		connect( songListView_, SIGNAL( openFile( const QString & ) ), this, SLOT( open( const QString & ) ) );
 		
 		// Set bottom layout
 		QPointer< QWidget > bottom = new QWidget( central );
@@ -43,7 +42,7 @@ namespace Khopper {
 		// Setting output format select
 		outputTypes_ = new QComboBox( bottom );
 		bottom->layout()->addWidget( outputTypes_ );
-		setOutputTypeList_();
+		initOutputTypeList_();
 		
 		// Action button
 		action_ = new QPushButton( tr( "Fire!" ), bottom );
@@ -64,7 +63,7 @@ namespace Khopper {
 		connect( progress_, SIGNAL( canceled() ), cvt_, SLOT( terminate() ) );
 	}
 	
-	QPointer< QMenuBar > MainWindow::setMenu_() {
+	void MainWindow::initMenuBar_() {
 		QPointer< QMenuBar > menuBar = new QMenuBar( this );
 		
 		// setting file menu
@@ -94,21 +93,10 @@ namespace Khopper {
 		menuBar->addMenu( help );
 		// help menu done
 		
-		return menuBar;
+		setMenuBar( menuBar );
 	}
 	
-	void MainWindow::setLabel_() {
-		QPointer< QStandardItemModel > model = qobject_cast< QStandardItemModel * >( songList_->model() );
-		QStringList headers;
-		
-		for( std::size_t i = 0; i < CUESheet::headers.size(); ++i ) {
-			headers << CUESheet::headers[i].c_str();
-		}
-		
-		model->setHorizontalHeaderLabels( headers );
-	}
-	
-	void MainWindow::setOutputTypeList_() {
+	void MainWindow::initOutputTypeList_() {
 		// Take out the output types
 		const OutputList & tm = IOTypes::Instance().second;
 		for( OutputList::const_iterator it = tm.begin(); it != tm.end(); ++it ) {
@@ -116,8 +104,17 @@ namespace Khopper {
 		}
 	}
 	
+	void MainWindow::initHeader() {
+		QStringList headers;
+		for( std::size_t i = 0; i < CUESheet::headers.size(); ++i ) {
+			headers << CUESheet::headers[i].c_str();
+		}
+		songListModel_->setHorizontalHeaderLabels( headers );
+	}
+	
 	void MainWindow::fire_() {
-		if( sheet_.getPath() != "" ) {
+		// FIXME: check audio/cue file name?
+		if( true ) {
 			// create output format object
 			QString test = outputTypes_->itemData( outputTypes_->currentIndex() ).toString();
 			OutputSP output;
@@ -126,22 +123,21 @@ namespace Khopper {
 				output = OutputFactory::Instance().CreateObject( test.toStdString() );
 				
 				// get select list
-				QModelIndexList selected = songList_->selectionModel()->selectedRows();
+				QModelIndexList selected = songListView_->selectionModel()->selectedRows();
 				
-				std::vector< int > index( selected.size() );
+				std::vector< Track > tracks( selected.size() );
 				for( int i = 0; i < selected.size(); ++i ) {
-					index[i] = selected[i].row();
+					tracks[i] = selected[i].data( Qt::UserRole ).value< Track >();
 				}
 				
-				progress_->setRange( 0, index.size() );
-				cvt_->setSheet( sheet_ );
+				progress_->setRange( 0, tracks.size() );
 				cvt_->setOutput( output );
-				cvt_->setIndex( index );
+				cvt_->setTracks( tracks );
 				cvt_->start();
 				progress_->show();
-			} catch( const Error< RunTime > & e ) {
+			} catch( Error< RunTime > & e ) {
 				runTimeError_( tr( e.what() ) );
-			} catch( const std::exception & e ) {
+			} catch( std::exception & e ) {
 				QMessageBox::critical( this, tr( "Unknown error!" ), tr( e.what() ) );
 			}
 		}
@@ -163,24 +159,21 @@ namespace Khopper {
 			std::vector< std::string > lines;
 			QString line( ts.readLine() );
 			while( !line.isNull() ) {
-				std::clog << line.toStdString() << std::endl;
-				std::cin.get();
 				lines.push_back( line.toUtf8().constData() );
 				line = ts.readLine();
 			}
-			sheet_.open( lines );
-			setSongList( sheet_ );
+			addSongList( CUESheet( lines ) );
 		}
 	}
 	
-	void MainWindow::setSongList( const CUESheet & sheet ) {
-		QPointer< QStandardItemModel > model = qobject_cast< QStandardItemModel * >( songList_->model() );
-		
-		model->setRowCount( 0 );
-		
+	void MainWindow::addSongList( const CUESheet & sheet ) {
 		for( std::size_t row = 0; row < sheet.size(); ++row ) {
-			model->setItem( row, 0, new QStandardItem( QString::fromUtf8( sheet[row].title.c_str() ) ) );
-			model->setItem( row, 1, new QStandardItem( QString::fromUtf8( sheet[row].performer.c_str() ) ) );
+			songListModel_->setItem( row, 0, new QStandardItem( QString::fromUtf8( sheet[row].getTitle().c_str() ) ) );
+			songListModel_->setItem( row, 1, new QStandardItem( QString::fromUtf8( sheet[row].getPerformer().c_str() ) ) );
+
+			QVariant data( QVariant::UserType );
+			data.setValue( sheet[row] );
+			songListModel_->item( row )->setData( data, Qt::UserRole );
 		}
 	}
 	

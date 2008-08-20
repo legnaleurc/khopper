@@ -2,26 +2,30 @@
 
 namespace Khopper {
 	
-	AudioFile::AudioFile( const std::string & fileName, const std::string & fileType ) : name( fileName ) {
+	AudioFile::AudioFile( const std::string & fileName, const std::string & fileType ) : name_( fileName ) {
 		if( fileType == "BINARY" ) {
-			type = BINARY;
+			type_ = BINARY;
 		} else if( fileType == "MOTOROLA" ) {
-			type = MOTOROLA;
+			type_ = MOTOROLA;
 		} else if( fileType == "AIFF" ) {
-			type = AIFF;
+			type_ = AIFF;
 		} else if( fileType == "WAVE" ) {
-			type = WAVE;
+			type_ = WAVE;
 		} else if( fileType == "MP3" ) {
-			type = MP3;
+			type_ = MP3;
 		} else {
-			type = BINARY;
+			type_ = BINARY;
 		}
 	}
 	
 	AudioFile::AudioFile() {
 	}
 	
-	AudioFile::AudioFile( const std::string & fileName, FileType fileType ) : name( fileName ), type( fileType ) {
+	AudioFile::AudioFile( const std::string & fileName, FileType fileType ) : name_( fileName ), type_( fileType ) {
+	}
+
+	const std::string & AudioFile::getFileName() const {
+		return name_;
 	}
 	
 }

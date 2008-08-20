@@ -1,11 +1,10 @@
 #include "cue/cuesheet.hpp"
-#include "util/error.hpp"
 #include "cue/audiofile.hpp"
 #include "cue/track.hpp"
+#include "util/error.hpp"
 #include <boost/regex.hpp>
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
-#include <fstream>
 
 namespace {
 	const boost::regex COMMENT( "\\s*REM\\s+(.*?)\\s+(.*?)\\s*" );
@@ -39,30 +38,8 @@ namespace Khopper {
 	
 	CUESheet::CUESheet() {}
 	
-	CUESheet::CUESheet( const std::string & fileName ) {
-		open( fileName );
-	}
-	
-	void CUESheet::open( const std::string & fileName ) {
-		path_ = fileName;
-		boost::smatch result;
-		if( boost::regex_match( fileName, result, DIRNAME ) ) {
-			dirName_ = result[1];
-		} else {
-			throw Error< System >( ( boost::format( "Invalid path: %1%" ) % fileName ).str() );
-		}
-		std::ifstream fin( fileName.c_str() );
-		if( !fin.is_open() ) {
-			throw Error< System >( ( boost::format( "Can not open %1% !" ) % fileName ).str() );
-		}
-		std::string temp;
-		std::vector< std::string > file;
-		while( getline( fin, temp ) ) {
-			file.push_back( temp );
-		}
-		fin.close();
-		
-		parseCUE_( file );
+	CUESheet::CUESheet( const std::vector< std::string > & content ) {
+		parseCUE_( content );
 	}
 
 	void CUESheet::open( const std::vector< std::string > & content ) {
@@ -86,9 +63,9 @@ namespace Khopper {
 				parseComment_( result[1], result[2], trackNO );
 			} else if( boost::regex_match( cueLines[i], result, TRACK ) ) {
 				++trackNO;
-				parseTrack_( result[1], result[2], trackNO );
-				if( currentFile.name != "" ) {
-					tracks_[trackNO].dataFile = currentFile;
+				parseTrack_( result[1], result[2] );
+				if( currentFile.getFileName() != "" ) {
+					tracks_[trackNO].setAudioData( currentFile );
 				}
 			} else {
 				parseGarbage_( cueLines[i], trackNO );
@@ -108,35 +85,35 @@ namespace Khopper {
 			}
 		} else if( c == "ISRC" ) {
 			if( trackNO != -1 ) {
-				tracks_[trackNO].isrc = content;
+				tracks_[trackNO].setISRC( content );
 			}
 		} else if( c == "PERFORMER" ) {
 			if( trackNO == -1 ) {
 				performer_ = content;
 			} else {
-				tracks_[trackNO].performer = content;
+				tracks_[trackNO].setPerformer( content );
 			}
 		} else if( c == "SONGWRITER" ) {
 			if( trackNO == -1 ) {
 				songWriter_ = content;
 			} else {
-				tracks_[trackNO].songWriter = content;
+				tracks_[trackNO].setSongWriter( content );
 			}
 		} else if( c == "TITLE" ) {
 			if( trackNO == -1 ) {
 				title_ = content;
 			} else {
-				tracks_[trackNO].title = content;
+				tracks_[trackNO].setTitle( content );
 			}
 		}
 	}
 	
 	AudioFile CUESheet::parseFile_( const std::string & fileName, const std::string & type ) {
 		std::string temp = stripQuote( fileName );
-		boost::smatch result;
-		if( !boost::regex_match( temp, result, DIRNAME ) ) {
-			temp = dirName_ + "/" + temp;
-		}
+// 		boost::smatch result;
+// 		if( !boost::regex_match( temp, result, DIRNAME ) ) {
+// 			temp = dirName_ + "/" + temp;
+// 		}
 		return AudioFile( temp, type );
 	}
 	
@@ -152,11 +129,15 @@ namespace Khopper {
 		unsigned short int frame = boost::lexical_cast< unsigned short int >( f );
 		
 		if( type == "INDEX" ) {
-			tracks_[trackNO].indices[boost::lexical_cast< short int >( num )] = Index( minute, second, frame );
+			if( boost::lexical_cast< unsigned short int >( num ) ) {
+				tracks_[trackNO].setEndIndex( Index( minute, second, frame ) );
+			} else {
+				tracks_[trackNO].setBeginIndex( Index( minute, second, frame ) );
+			}
 		} else if( type == "PREGAP" ) {
-			tracks_[trackNO].preGap = Index( minute, second, frame );
+			tracks_[trackNO].setPreGap( Index( minute, second, frame ) );
 		} else if( type == "POSTGAP" ) {
-			tracks_[trackNO].postGap = Index( minute, second, frame );
+			tracks_[trackNO].setPostGap( Index( minute, second, frame ) );
 		}
 	}
 	
@@ -164,11 +145,11 @@ namespace Khopper {
 		if( trackNO == -1 ) {
 			comments_[key] = value;
 		} else {
-			tracks_[trackNO].comments[key] = value;
+			tracks_[trackNO].addComment( key, value );
 		}
 	}
 	
-	void CUESheet::parseTrack_( const std::string & num, const std::string & type, int trackNO ) {
+	void CUESheet::parseTrack_( const std::string & num, const std::string & type ) {
 		tracks_.push_back( Track( boost::lexical_cast< unsigned short int >( num ), type ) );
 	}
 	
@@ -176,7 +157,7 @@ namespace Khopper {
 		if( trackNO == -1 ) {
 			garbage_.push_back( line );
 		} else {
-			tracks_[trackNO].garbage.push_back( line );
+			tracks_[trackNO].addGarbage( line );
 		}
 	}
 	const std::string & CUESheet::getCatalog() const {
@@ -195,9 +176,9 @@ namespace Khopper {
 		return garbage_;
 	}
 	
-	const std::string & CUESheet::getPath() const {
-		return path_;
-	}
+// 	const std::string & CUESheet::getPath() const {
+// 		return path_;
+// 	}
 	
 	const std::string & CUESheet::getPerformer() const {
 		return performer_;

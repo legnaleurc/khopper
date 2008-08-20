@@ -4,7 +4,6 @@
 #include "util/error.hpp"
 
 #include <vector>
-#include <boost/lexical_cast.hpp>
 
 namespace Khopper {
 	
@@ -14,18 +13,13 @@ namespace Khopper {
 		os::exists( COMMAND );
 	}
 	
-	std::string Converter::perform( const Track & track, const std::string & sheet ) const {
+	std::string Converter::perform( const Track & track ) const {
 		std::vector< std::string > args;
 		
 		args.push_back( COMMAND );
-		args.push_back( track.dataFile.name );
-		args.push_back( "-f" );
-		args.push_back( sheet );
+		args.push_back( track.getAudioData().getFileName() );
 		args.push_back( "-O" );
 		args.push_back( "always" );
-		
-		args.push_back( "-x" );
-		args.push_back( boost::lexical_cast< std::string >( track.number ) );
 		
 		if( input_ != NULL && input_->getOption() != "" ) {
 			args.push_back( "-i" );
@@ -39,7 +33,7 @@ namespace Khopper {
 		
 		std::pair< std::string, std::string > msg;
 		try {
-			if( os::getResult( msg, args ) != 0 ) {
+			if( os::getResult( msg, args, track.getIndicesString() ) != 0 ) {
 				// FIXME: Should delete junk
 				throw Error< RunTime >( msg.second );
 			} else {
