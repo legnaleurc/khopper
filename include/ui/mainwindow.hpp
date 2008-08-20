@@ -54,9 +54,9 @@ namespace Khopper {
 			void setSongList( const CUESheet & list );
 			/**
 			 * @brief open file
-			 * @param file file name
+			 * @param fileName file name
 			 */
-			void open( const QString & file );
+			void open( const QString & fileName );
 		
 		private:
 			QPointer< SongList > songList_;

@@ -42,6 +42,12 @@ namespace Khopper {
 			void open( const std::string & fileName );
 
 			/**
+			 * @brief Set CUE sheet by given string vector
+			 * @param [in] content contents of CUE sheet
+			 */
+			void open( const std::vector< std::string > & content );
+
+			/**
 			 * @brief Get catalog infomation
 			 * @return catalog
 			 */

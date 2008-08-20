@@ -6,6 +6,8 @@
 #include "cue/track.hpp"
 #include <QtGui>
 
+#include <iostream>
+
 namespace Khopper {
 	
 	MainWindow::MainWindow( QWidget * parent, Qt::WindowFlags flags ) : QMainWindow( parent, flags ) {
@@ -150,9 +152,23 @@ namespace Khopper {
 		open( fileName );
 	}
 	
-	void MainWindow::open( const QString & file ) {
-		if( file != "" ) {
-			sheet_.open( file.toUtf8().constData() );
+	void MainWindow::open( const QString & fileName ) {
+		if( fileName != "" ) {
+			QFile fin( fileName );
+			if( !fin.open( QIODevice::ReadOnly | QIODevice::Text ) ) {
+				QMessageBox::critical( this, tr( "File open error!" ), tr( "Could not open the file: `" ) + fileName + "\'" );
+			}
+			// TODO: set codec
+			QTextStream ts( &fin );
+			std::vector< std::string > lines;
+			QString line( ts.readLine() );
+			while( !line.isNull() ) {
+				std::clog << line.toStdString() << std::endl;
+				std::cin.get();
+				lines.push_back( line.toUtf8().constData() );
+				line = ts.readLine();
+			}
+			sheet_.open( lines );
 			setSongList( sheet_ );
 		}
 	}

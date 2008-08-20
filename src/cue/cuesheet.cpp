@@ -1,7 +1,7 @@
-#include "cuesheet.hpp"
-#include "error.hpp"
-#include "audiofile.hpp"
-#include "track.hpp"
+#include "cue/cuesheet.hpp"
+#include "util/error.hpp"
+#include "cue/audiofile.hpp"
+#include "cue/track.hpp"
 #include <boost/regex.hpp>
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
@@ -63,6 +63,10 @@ namespace Khopper {
 		fin.close();
 		
 		parseCUE_( file );
+	}
+
+	void CUESheet::open( const std::vector< std::string > & content ) {
+		parseCUE_( content );
 	}
 	
 	void CUESheet::parseCUE_( const std::vector< std::string > & cueLines ) {
