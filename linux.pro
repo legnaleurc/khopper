@@ -17,10 +17,12 @@ DEPENDPATH += . \
               src/util \
               src/conv/input \
               src/conv/output
-INCLUDEPATH += . include
+INCLUDEPATH += . \
+               include
+debug:OBJECTS_DIR = obj/debug
+release:OBJECTS_DIR = obj/release
 MOC_DIR = moc
-OBJECTS_DIR = obj
-DESTDIR = build
+DESTDIR = bin
 
 # Input
 HEADERS += include/types.hpp \
@@ -56,3 +58,6 @@ SOURCES += src/main.cpp \
 # link
 LIBS += -lloki \
         -lboost_regex
+
+# config
+CONFIG += debug_and_release
