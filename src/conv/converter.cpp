@@ -18,6 +18,8 @@ namespace Khopper {
 		
 		args.push_back( COMMAND );
 		args.push_back( os::join( path, track.getAudioData().getFileName() ) );
+		args.push_back( "-x" );
+		args.push_back( "2" );
 		args.push_back( "-O" );
 		args.push_back( "always" );
 		

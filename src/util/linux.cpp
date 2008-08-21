@@ -73,6 +73,7 @@ namespace Khopper {
 				close( err[1] );
 
 				write( in[1], input.c_str(), input.length() );
+				close( in[1] );
 				
 				waitpid( pid, &status, 0 );
 				
