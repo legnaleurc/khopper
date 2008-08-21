@@ -13,11 +13,11 @@ namespace Khopper {
 		os::exists( COMMAND );
 	}
 	
-	std::string Converter::perform( const Track & track ) const {
+	std::string Converter::perform( const Track & track, const std::string & path ) const {
 		std::vector< std::string > args;
 		
 		args.push_back( COMMAND );
-		args.push_back( track.getAudioData().getFileName() );
+		args.push_back( os::join( path, track.getAudioData().getFileName() ) );
 		args.push_back( "-O" );
 		args.push_back( "always" );
 		

@@ -50,7 +50,7 @@ namespace Khopper {
 			 * @brief add the song list
 			 * @param list Song list, generate by cue/cuesheet.hpp
 			 */
-			void addSongList( const CUESheet & list );
+			void addSongList( const CUESheet & sheet, const QString & fileDir );
 			/**
 			 * @brief open file
 			 * @param fileName file name

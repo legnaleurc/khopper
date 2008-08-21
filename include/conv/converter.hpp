@@ -23,15 +23,15 @@ namespace Khopper {
 			 * @param [in] oop Output option
 			 */
 			Converter( InputSP iop, OutputSP oop );
-			
+
 			/**
 			 * @brief Convert action
 			 * @param [in] track Track information
-			 * @param [in] sheet CUE sheet file path
+			 * @param [in] path Audio file path
 			 * @return message
 			 * @throw Error<Runtime>
 			 */
-			std::string perform( const Track & track ) const;
+			std::string perform( const Track & track, const std::string & path = "" ) const;
 		private:
 			static const char * const COMMAND;
 			

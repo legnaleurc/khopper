@@ -32,6 +32,12 @@ namespace Khopper {
 			void setTracks( const std::vector< Track > & tracks );
 
 			/**
+			 * @brief Set indeice of song to be convert
+			 * @param [in] track Index array
+			 */
+			void setPaths( const std::vector< QString > & paths );
+
+			/**
 			 * @brief Set output format
 			 * @param [in] output Output format object
 			 */
@@ -59,6 +65,7 @@ namespace Khopper {
 		private:
 			OutputSP output_;
 			std::vector< Track > tracks_;
+			std::vector< QString > paths_;
 	};
 	
 }

@@ -123,16 +123,23 @@ namespace Khopper {
 				output = OutputFactory::Instance().CreateObject( test.toStdString() );
 				
 				// get select list
-				QModelIndexList selected = songListView_->selectionModel()->selectedRows();
+				QModelIndexList selected = songListView_->selectionModel()->selectedRows( 0 );
 				
 				std::vector< Track > tracks( selected.size() );
 				for( int i = 0; i < selected.size(); ++i ) {
 					tracks[i] = selected[i].data( Qt::UserRole ).value< Track >();
 				}
+
+				selected = songListView_->selectionModel()->selectedRows( 1 );
+				std::vector< QString > paths( selected.size() );
+				for( int i = 0; i < selected.size(); ++i ) {
+					paths[i] = selected[i].data( Qt::UserRole ).value< QString >();
+				}
 				
 				progress_->setRange( 0, tracks.size() );
 				cvt_->setOutput( output );
 				cvt_->setTracks( tracks );
+				cvt_->setPaths( paths );
 				cvt_->start();
 				progress_->show();
 			} catch( Error< RunTime > & e ) {
@@ -162,18 +169,20 @@ namespace Khopper {
 				lines.push_back( line.toUtf8().constData() );
 				line = ts.readLine();
 			}
-			addSongList( CUESheet( lines ) );
+			addSongList( CUESheet( lines ), QFileInfo( fileName ).absolutePath() );
 		}
 	}
 	
-	void MainWindow::addSongList( const CUESheet & sheet ) {
+	void MainWindow::addSongList( const CUESheet & sheet, const QString & fileDir ) {
 		for( std::size_t row = 0; row < sheet.size(); ++row ) {
 			songListModel_->setItem( row, 0, new QStandardItem( QString::fromUtf8( sheet[row].getTitle().c_str() ) ) );
 			songListModel_->setItem( row, 1, new QStandardItem( QString::fromUtf8( sheet[row].getPerformer().c_str() ) ) );
 
-			QVariant data( QVariant::UserType );
+			QVariant data;
 			data.setValue( sheet[row] );
-			songListModel_->item( row )->setData( data, Qt::UserRole );
+			songListModel_->item( row, 0 )->setData( data, Qt::UserRole );
+			data.setValue( fileDir );
+			songListModel_->item( row, 1 )->setData( data, Qt::UserRole );
 		}
 	}
 	

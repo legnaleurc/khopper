@@ -41,66 +41,6 @@ namespace {
 namespace Khopper {
 
 	namespace os {
-		
-		int getResult( std::pair< std::string, std::string > & msg, const std::vector< std::string > & args ) {
-			pid_t pid;
-			int ret;
-			int out[2];
-			int err[2];
-
-			// create pipes
-			if( pipe( out ) < 0 ) {
-				throw Error< OS >( strerror( errno ) );
-			}
-			if( pipe( err ) < 0 ) {
-				throw Error< OS >( strerror( errno ) );
-			}
-
-			Args_ argt( args );
-
-			// fork process
-			if( ( pid = fork() ) < 0 ) {	// error
-				throw Error< OS >( strerror( errno ) );
-			} else if( pid > 0 ) {	// parent process
-				int status;
-
-				close( out[1] );
-				close( err[1] );
-
-				waitpid( pid, &status, 0 );
-
-				char buffer[PIPE_BUF];
-
-				msg.first.clear();
-				while( read( out[0], buffer, PIPE_BUF ) > 0 ) {
-					msg.first += buffer;
-				}
-				msg.second.clear();
-				while( read( err[0], buffer, PIPE_BUF ) > 0 ) {
-					msg.second += buffer;
-				}
-
-				if( WIFEXITED( status ) ) {
-					ret = WEXITSTATUS( status );
-				} else {
-					throw Error< OS >( "Child process has unknown return status." );
-				}
-			} else {	// child process
-				close( out[0] );
-				close( err[0] );
-
-				dup2( out[1], 1 );
-				dup2( err[1], 2 );
-
-				ret = execvp( argt.getArgs()[0], argt.getArgs() );
-
-				if( ret < 0 ) {
-					throw Error< OS >( strerror( errno ) );
-				}
-			}
-
-			return ret;
-		}
 
 		int getResult( std::pair< std::string, std::string > & msg, const std::vector< std::string > & args, const std::string & input ) {
 			pid_t pid;
@@ -119,7 +59,7 @@ namespace Khopper {
 			if( pipe( err ) < 0 ) {
 				throw Error< OS >( strerror( errno ) );
 			}
-			
+
 			Args_ argt( args );
 			
 			// fork process
@@ -175,6 +115,21 @@ namespace Khopper {
 			if( system( ( boost::format( "[ `which %1%` ]" ) % exe ).str().c_str() ) != 0 ) {
 				throw Error< RunTime >( ( boost::format( "`%1%\' not found!" ) % exe ).str() );
 			}
+		}
+
+		std::string join( const std::string & front, const std::string & back ) {
+			std::size_t bpos = back.find_last_not_of( "/" );
+			if( back[bpos] == '\\' || front.empty() ) {
+				++bpos;
+			}
+			if( back[0] == '/' ) {
+				return back.substr( 0, bpos + 1 );
+			}
+			std::size_t fpos = front.find_last_not_of( "/" );
+			if( front[fpos] == '\\' ) {
+				++fpos;
+			}
+			return front.substr( 0, fpos + 1 ) + "/" + back.substr( 0, bpos + 1 );
 		}
 	
 	}
