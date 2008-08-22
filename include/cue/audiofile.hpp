@@ -27,30 +27,33 @@ namespace Khopper {
 			};
 
 			/**
-			* @brief Default constructor
-			*/
+			 * @brief Default constructor
+			 */
 			AudioFile();
 
 			/**
-			* @brief Initialize with file path and file type by string
-			* @param [in] fileName File path
-			* @param [in] fileType File type writen in string
-			*/
-			AudioFile( const std::string & fileName, const std::string & fileType );
+			 * @brief Initialize with file path and file type by string
+			 * @param [in] fileName File path
+			 * @param [in] fileType File type writen in string
+			 */
+			AudioFile( const std::string & filePath, const std::string & fileType );
 
 			/**
-			* @brief Initialize with file path and file type by enum
-			* @param [in] fileName File path
-			* @param [in] fileType File type specify by enum
-			*/
-			AudioFile( const std::string & fileName, FileType fileType );
+			 * @brief Initialize with file path and file type by enum
+			 * @param [in] fileName File path
+			 * @param [in] fileType File type specify by enum
+			 */
+			AudioFile( const std::string & filePath, FileType fileType );
 
-			const std::string & getFileName() const;
+			const std::string & getFilePath() const;
+
+			const std::string & getFormat() const;
 
 			std::string toString() const;
 
 		private:
-			std::string name_;
+			std::string path_;
+			std::string format_;
 			FileType type_;
 	};
 }

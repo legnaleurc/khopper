@@ -33,13 +33,13 @@ namespace Khopper {
 			 * @brief Give a CUE Sheet path name and create this object
 			 * @param [in] fileName path of CUE sheet
 			 */
-			CUESheet( const std::vector< std::string > & content );
+			CUESheet( const std::vector< std::string > & content, const std::string & dirPath = "" );
 
 			/**
 			 * @brief Set CUE sheet by given string vector
 			 * @param [in] content contents of CUE sheet
 			 */
-			void open( const std::vector< std::string > & content );
+			void open( const std::vector< std::string > & content, const std::string & dirPath = "" );
 
 			/**
 			 * @brief Get catalog infomation
@@ -102,13 +102,13 @@ namespace Khopper {
 			 */
 			const Track & operator []( std::size_t index ) const;
 		private:
-			void parseCUE_( const std::vector< std::string > & );
+			void parseCUE_( const std::vector< std::string > &, const std::string & );
 			void parseSingle_( const std::string &, const std::string &, int );
-			AudioFile parseFile_( const std::string &, const std::string & );
+			AudioFile parseFile_( const std::string &, const std::string &, const std::string & );
 			void parseFlags_( const std::string &, int );
 			void parseIndex_( const std::string &, const std::string &, const std::string &, const std::string &, const std::string &, int );
 			void parseComment_( const std::string &, const std::string &, int );
-			void parseTrack_( const std::string &, const std::string & );
+			void parseTrack_( const std::string &, const AudioFile &, const std::string &, int );
 			void parseGarbage_( const std::string &, int );
 			
 			std::string catalog_;

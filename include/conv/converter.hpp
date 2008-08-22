@@ -31,7 +31,7 @@ namespace Khopper {
 			 * @return message
 			 * @throw Error<Runtime>
 			 */
-			std::string perform( const Track & track, const std::string & path = "" ) const;
+			std::string perform( const Track & track ) const;
 		private:
 			static const char * const COMMAND;
 			

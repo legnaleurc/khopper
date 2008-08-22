@@ -113,20 +113,11 @@ namespace Khopper {
 			Track();
 
 			/**
-			 * @brief Initialize track type form string
-			 * @param [in] trackNO Track number
-			 * @param [in] type Track type (written in string)
-			 *
-			 * The string will be parsing to DataType.
-			 */
-			Track( unsigned short int trackNO, const std::string & type );
-
-			/**
 			 * @brief Initialize track type form DataType
 			 * @param [in] trackNO Track number
 			 * @param [in] type Track type
 			 */
-			Track( unsigned short int trackNO, DataType type );
+			Track( unsigned short int trackNO, const AudioFile & data );
 			
 			void addComment( const std::string & key, const std::string & value );
 			

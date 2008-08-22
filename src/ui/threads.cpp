@@ -26,9 +26,9 @@ namespace Khopper {
 		// convert
 		try {
 			for( std::size_t i = 0; i < tracks_.size(); ++i ) {
-				InputSP input = InputFactory::Instance().CreateObject( QFileInfo( QString::fromStdString( tracks_[i].getAudioData().getFileName() ) ).suffix().toStdString() );
+				InputSP input = InputFactory::Instance().CreateObject( tracks_[i].getAudioData().getFormat() );
 				Converter conv( input, output_ );
-				conv.perform( tracks_[i], paths_[i].toUtf8().constData() );
+				conv.perform( tracks_[i] );
 				emit step( i );
 			}
 		} catch( Error< RunTime > & e ) {

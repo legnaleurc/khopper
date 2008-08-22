@@ -14,32 +14,10 @@ namespace Khopper {
 		return ( boost::format( "%||:%||.%||" ) % minute_ % second_ % frame_ ).str();
 	}
 
-	Track::Track() : number_( -1 ), dataType_( AUDIO ) {
+	Track::Track() : number_( -1 ) {
 	}
 	
-	Track::Track( unsigned short int trackNO, const std::string & type ) : number_( trackNO ) {
-		if( type == "AUDIO" ) {
-			dataType_ = AUDIO;
-		} else if( type == "CDG" ) {
-			dataType_ = CDG;
-		} else if( type == "MODE1/2048" ) {
-			dataType_ = MODE1_2048;
-		} else if( type == "MODE1/2352" ) {
-			dataType_ = MODE1_2352;
-		} else if( type == "MODE2/2336" ) {
-			dataType_ = MODE2_2336;
-		} else if( type == "MODE2/2352" ) {
-			dataType_ = MODE2_2352;
-		} else if( type == "CDI/2336" ) {
-			dataType_ = CDI_2336;
-		} else if( type == "CDI/2352" ) {
-			dataType_ = CDI_2352;
-		} else {
-			dataType_ = AUDIO;
-		}
-	}
-	
-	Track::Track( unsigned short int trackNO, DataType type ) : number_( trackNO ), dataType_( type ) {
+	Track::Track( unsigned short int trackNO, const AudioFile & data ) : number_( trackNO ), dataFile_( data ) {
 	}
 	
 	void Track::addComment( const std::string & key, const std::string & value ) {
