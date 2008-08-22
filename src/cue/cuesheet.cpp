@@ -109,12 +109,7 @@ namespace Khopper {
 	}
 	
 	AudioFile CUESheet::parseFile_( const std::string & fileName, const std::string & type ) {
-		std::string temp = stripQuote( fileName );
-// 		boost::smatch result;
-// 		if( !boost::regex_match( temp, result, DIRNAME ) ) {
-// 			temp = dirName_ + "/" + temp;
-// 		}
-		return AudioFile( temp, type );
+		return AudioFile( stripQuote( fileName ), type );
 	}
 	
 	void CUESheet::parseFlags_( const std::string & flag, int trackNO ) {
@@ -176,10 +171,6 @@ namespace Khopper {
 		return garbage_;
 	}
 	
-// 	const std::string & CUESheet::getPath() const {
-// 		return path_;
-// 	}
-	
 	const std::string & CUESheet::getPerformer() const {
 		return performer_;
 	}
@@ -192,12 +183,35 @@ namespace Khopper {
 		return title_;
 	}
 	
-	const Track & CUESheet::operator []( std::size_t index ) const {
-		return tracks_[index];
-	}
-	
 	std::size_t CUESheet::size() const {
 		return tracks_.size();
+	}
+	
+	std::string CUESheet::toString() const {
+		std::ostringstream sout;
+		sout << "Title:\t" << title_ << "\n";
+		sout << "Performer:\t" << performer_ << "\n";
+		sout << "Song Writer:\t" << songWriter_ << "\n";
+		sout << "Catalog:\t" << catalog_ << "\n";
+		sout << "CD text:\t" << cdTextFile_ << "\n";
+		sout << "Track number:\t" << tracks_.size() << "\n";
+		sout << "Comments:\n";
+		for( std::map< std::string, std::string >::const_iterator it = comments_.begin(); it != comments_.end(); ++it  ) {
+			sout << "\t" << it->first << ":\t" << it->second << "\n";
+		}
+		sout << "Gargages:\n";
+		for( std::vector< std::string >::const_iterator it = garbage_.begin(); it != garbage_.end(); ++it ) {
+			sout << "\t" << *it << "\n";
+		}
+		sout << "Tracks:\n";
+		for( std::vector< Track >::const_iterator it = tracks_.begin(); it != tracks_.end(); ++it ) {
+			sout << "\t" << it->toString() << "\n";
+		}
+		return sout.str();
+	}
+	
+	const Track & CUESheet::operator []( std::size_t index ) const {
+		return tracks_[index];
 	}
 
 }

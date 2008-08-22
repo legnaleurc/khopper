@@ -84,17 +84,23 @@ namespace Khopper {
 			const std::string & getTitle() const;
 
 			/**
+			 * @brief Get track amount of disc
+			 * @return track amount
+			 */
+			std::size_t size() const;
+
+			/**
+			 * @brief Dump CUE Sheet to string
+			 * @return Human readable information
+			 */
+			std::string toString() const;
+
+			/**
 			 * @brief Get track infomation
 			 * @param [in] index track index
 			 * @return track information
 			 */
 			const Track & operator []( std::size_t index ) const;
-			
-			/**
-			 * @brief Get track amount of disc
-			 * @return track amount
-			 */
-			std::size_t size() const;
 		private:
 			void parseCUE_( const std::vector< std::string > & );
 			void parseSingle_( const std::string &, const std::string &, int );
@@ -108,7 +114,6 @@ namespace Khopper {
 			std::string catalog_;
 			std::string cdTextFile_;
 			std::map< std::string, std::string > comments_;
-			std::string dirName_;
 			std::vector< std::string > garbage_;
 			std::string performer_;
 			std::string songWriter_;

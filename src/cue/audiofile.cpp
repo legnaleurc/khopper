@@ -1,4 +1,5 @@
 #include "cue/audiofile.hpp"
+#include <sstream>
 
 namespace Khopper {
 	
@@ -26,6 +27,13 @@ namespace Khopper {
 
 	const std::string & AudioFile::getFileName() const {
 		return name_;
+	}
+	
+	std::string AudioFile::toString() const {
+		std::ostringstream sout;
+		sout << "File Name:\t" << name_ << "\n";
+		sout << "FileType:\t" << type_ << "\n";
+		return sout.str();
 	}
 	
 }

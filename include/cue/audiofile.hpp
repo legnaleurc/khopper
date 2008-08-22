@@ -47,6 +47,8 @@ namespace Khopper {
 
 			const std::string & getFileName() const;
 
+			std::string toString() const;
+
 		private:
 			std::string name_;
 			FileType type_;

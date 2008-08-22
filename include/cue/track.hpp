@@ -127,34 +127,36 @@ namespace Khopper {
 			 * @param [in] type Track type
 			 */
 			Track( unsigned short int trackNO, DataType type );
-
-			std::string getIndicesString() const;
-
-			const std::string & getTitle() const;
-
-			const std::string & getPerformer() const;
-
+			
+			void addComment( const std::string & key, const std::string & value );
+			
 			/**
 			 * @brief Add flag information form string
 			 * @param [in] f Flag string
 			 */
 			void addFlag( const std::string & f );
-
+			
 			/**
 			 * @brief Add flag information
 			 * @param [in] f Flag enum
 			 */
 			void addFlag( Flag f );
-
-			void addComment( const std::string & key, const std::string & value );
-
-			void setAudioData( const AudioFile & audio );
+			
+			void addGarbage( const std::string & gi );
 			
 			const AudioFile & getAudioData() const;
 
-			void addGarbage( const std::string & gi );
+			std::string getIndicesString() const;
+			
+			const std::string & getPerformer() const;
+
+			const std::string & getTitle() const;
+			
+			void setAudioData( const AudioFile & audio );
 
 			void setBeginIndex( const Index & begin );
+			
+			void setDataType( DataType type );
 
 			void setEndIndex( const Index & end );
 
@@ -170,23 +172,24 @@ namespace Khopper {
 
 			void setTitle( const std::string & title );
 
-			void setDataType( DataType type );
+			std::string toString() const;
 
 		private:
 			unsigned short int number_;
-			DataType dataType_;
+			Index beginIndex_;
 			std::map< std::string, std::string > comments_;
 			AudioFile dataFile_;
-			std::vector< std::string > garbage_;
-			Index beginIndex_;
+			DataType dataType_;
 			Index endIndex_;
+			std::set< Flag > flags_;
+			std::vector< std::string > garbage_;
 			std::string isrc_;
+			std::string path_;
 			std::string performer_;
 			Index postGap_;
 			Index preGap_;
 			std::string songWriter_;
 			std::string title_;
-			std::set< Flag > flags_;
 	};
 
 }
