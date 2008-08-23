@@ -29,8 +29,8 @@ namespace Khopper {
 			ConverterThread( QObject * parent = 0 );
 
 			/**
-			 * @brief Set indeice of song to be convert
-			 * @param [in] track Index array
+			 * @brief Set tracks to convert
+			 * @param [in] tracks Tracks information
 			 */
 			void setTracks( const std::vector< Track > & tracks );
 

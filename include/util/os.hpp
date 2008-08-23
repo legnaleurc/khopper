@@ -32,7 +32,7 @@ namespace Khopper {
 		/**
 		 * @brief Test if program exists
 		 * @param [in] exe program name
-		 * @throw Error<RunTime> if not found
+		 * @throw Error<RunTime> Strong
 		 */
 		void exists( const std::string & exe );
 

@@ -43,16 +43,16 @@ namespace Khopper {
 		
 		public slots:
 			/**
-			 * @brief open the file widget
+			 * @brief Open the file widget
 			 */
 			void openFileDialog();
 			/**
-			 * @brief add the song list
-			 * @param list Song list, generate by cue/cuesheet.hpp
+			 * @brief Add songs the song list
+			 * @param sheet CUE Sheet object
 			 */
 			void addSongList( const CUESheet & sheet );
 			/**
-			 * @brief open file
+			 * @brief Open file
 			 * @param fileName file name
 			 */
 			void open( const QString & fileName );

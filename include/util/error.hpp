@@ -19,20 +19,17 @@ namespace Khopper {
 			/**
 			 * @brief Constructor that set error message
 			 * @param [in] msg Error message
-			 * @throw NEVER
 			 */
 			Error( const std::string & msg ) throw() : msg_( msg ) {}
 			/**
 			 * @brief Get the error message
 			 * @return Error message
-			 * @throw NEVER
 			 */
 			virtual const char * what() const throw() {
 				return msg_.c_str();
 			}
 			/**
 			 * @brief Dummy destructor
-			 * @throw NEVER
 			 */
 			virtual ~Error() throw() {}
 		private:

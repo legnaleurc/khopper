@@ -19,7 +19,6 @@ namespace Khopper {
 		public:
 			/**
 			 * @brief You can only use this version
-			 * @param [in] iop Input option
 			 * @param [in] oop Output option
 			 */
 			Converter( OutputSP oop );
@@ -27,9 +26,9 @@ namespace Khopper {
 			/**
 			 * @brief Convert action
 			 * @param [in] track Track information
-			 * @param [in] path Audio file path
+			 * @param [in] iop Input option
 			 * @return message
-			 * @throw Error<Runtime>
+			 * @throw Error<Runtime> Basic
 			 */
 			std::string perform( const Track & track, InputSP iop ) const;
 		private:
