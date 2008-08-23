@@ -14,12 +14,8 @@ namespace Khopper {
 		tracks_ = tracks;
 	}
 	
-	void ConverterThread::setPaths( const std::vector< QString > & paths ) {
-		paths_ = paths;
-	}
-	
 	void ConverterThread::setOutput( const OutputSP & output ) {
-		output_ = output;
+		converter_.reset( new Converter( output ) );
 	}
 	
 	void ConverterThread::run() {
@@ -27,8 +23,7 @@ namespace Khopper {
 		try {
 			for( std::size_t i = 0; i < tracks_.size(); ++i ) {
 				InputSP input = InputFactory::Instance().CreateObject( tracks_[i].getAudioData().getFormat() );
-				Converter conv( input, output_ );
-				conv.perform( tracks_[i] );
+				converter_->perform( tracks_[i], input );
 				emit step( i );
 			}
 		} catch( Error< RunTime > & e ) {

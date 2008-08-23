@@ -9,11 +9,11 @@ namespace Khopper {
 	
 	const char * const Converter::COMMAND = "shnsplit";
 	
-	Converter::Converter( InputSP iop, OutputSP oop ) : input_( iop ), output_( oop ) {
+	Converter::Converter( OutputSP oop ) : output_( oop ) {
 		os::exists( COMMAND );
 	}
 	
-	std::string Converter::perform( const Track & track ) const {
+	std::string Converter::perform( const Track & track, InputSP iop ) const {
 		std::vector< std::string > args;
 		
 		args.push_back( COMMAND );
@@ -23,9 +23,9 @@ namespace Khopper {
 		args.push_back( "-O" );
 		args.push_back( "always" );
 		
-		if( input_ != NULL && input_->getOption() != "" ) {
+		if( iop != NULL && iop->getOption() != "" ) {
 			args.push_back( "-i" );
-			args.push_back( input_->getOption() );
+			args.push_back( iop->getOption() );
 		}
 		
 		if( output_ != NULL && output_->getOption() != "" ) {

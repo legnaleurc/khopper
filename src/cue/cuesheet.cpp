@@ -107,7 +107,19 @@ namespace Khopper {
 	}
 	
 	AudioFile CUESheet::parseFile_( const std::string & fileName, const std::string & type, const std::string & dirPath ) {
-		return AudioFile( os::join( dirPath, stripQuote( fileName ) ), type );
+		if( type == "BINARY" ) {
+			return AudioFile( os::join( dirPath, stripQuote( fileName ) ), AudioFile::BINARY );
+		} else if( type == "MOTOROLA" ) {
+			return AudioFile( os::join( dirPath, stripQuote( fileName ) ), AudioFile::MOTOROLA );
+		} else if( type == "AIFF" ) {
+			return AudioFile( os::join( dirPath, stripQuote( fileName ) ), AudioFile::AIFF );
+		} else if( type == "WAVE" ) {
+			return AudioFile( os::join( dirPath, stripQuote( fileName ) ), AudioFile::WAVE );
+		} else if( type == "MP3" ) {
+			return AudioFile( os::join( dirPath, stripQuote( fileName ) ), AudioFile::MP3 );
+		} else {
+			return AudioFile( os::join( dirPath, stripQuote( fileName ) ), AudioFile::BINARY );
+		}
 	}
 	
 	void CUESheet::parseFlags_( const std::string & flag, int trackNO ) {

@@ -6,10 +6,13 @@
 
 #include "cue/track.hpp"
 #include "types.hpp"
+#include <boost/shared_ptr.hpp>
 
 #include <QThread>
 
 namespace Khopper {
+
+	class Converter;
 	
 	/**
 	 * @brief Thread of converter
@@ -30,12 +33,6 @@ namespace Khopper {
 			 * @param [in] track Index array
 			 */
 			void setTracks( const std::vector< Track > & tracks );
-
-			/**
-			 * @brief Set indeice of song to be convert
-			 * @param [in] track Index array
-			 */
-			void setPaths( const std::vector< QString > & paths );
 
 			/**
 			 * @brief Set output format
@@ -63,7 +60,7 @@ namespace Khopper {
 			virtual void run();
 		
 		private:
-			OutputSP output_;
+			boost::shared_ptr< Converter > converter_;
 			std::vector< Track > tracks_;
 			std::vector< QString > paths_;
 	};

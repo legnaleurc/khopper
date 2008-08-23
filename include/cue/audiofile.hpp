@@ -32,13 +32,6 @@ namespace Khopper {
 			AudioFile();
 
 			/**
-			 * @brief Initialize with file path and file type by string
-			 * @param [in] fileName File path
-			 * @param [in] fileType File type writen in string
-			 */
-			AudioFile( const std::string & filePath, const std::string & fileType );
-
-			/**
 			 * @brief Initialize with file path and file type by enum
 			 * @param [in] fileName File path
 			 * @param [in] fileType File type specify by enum

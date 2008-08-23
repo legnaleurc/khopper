@@ -22,7 +22,7 @@ namespace Khopper {
 			 * @param [in] iop Input option
 			 * @param [in] oop Output option
 			 */
-			Converter( InputSP iop, OutputSP oop );
+			Converter( OutputSP oop );
 
 			/**
 			 * @brief Convert action
@@ -31,11 +31,10 @@ namespace Khopper {
 			 * @return message
 			 * @throw Error<Runtime>
 			 */
-			std::string perform( const Track & track ) const;
+			std::string perform( const Track & track, InputSP iop ) const;
 		private:
 			static const char * const COMMAND;
 			
-			InputSP input_;
 			OutputSP output_;
 			
 			// Protection
