@@ -7,7 +7,8 @@ namespace Khopper {
 	SongListView::SongListView( QWidget * parent ) : QTableView( parent ) {
 		setAcceptDrops( true );
 		// Set selection behavior
-		setSelectionBehavior( QAbstractItemView::SelectRows );
+		setSelectionBehavior( SelectRows );
+		setEditTriggers( DoubleClicked );
 	}
 	
 	void SongListView::dragEnterEvent( QDragEnterEvent * event ) {
