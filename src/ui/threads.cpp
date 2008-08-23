@@ -26,9 +26,7 @@ namespace Khopper {
 				converter_->perform( tracks_[i], input );
 				emit step( i );
 			}
-		} catch( Error< RunTime > & e ) {
-			emit error( tr( e.what() ) );
-		} catch( Loki::DefaultFactoryError< std::string, Input >::Exception & e ) {
+		} catch( std::exception & e ) {
 			emit error( tr( e.what() ) );
 		}
 	}
