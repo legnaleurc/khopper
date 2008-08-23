@@ -122,12 +122,6 @@ namespace Khopper {
 			void addComment( const std::string & key, const std::string & value );
 			
 			/**
-			 * @brief Add flag information form string
-			 * @param [in] f Flag string
-			 */
-			void addFlag( const std::string & f );
-			
-			/**
 			 * @brief Add flag information
 			 * @param [in] f Flag enum
 			 */

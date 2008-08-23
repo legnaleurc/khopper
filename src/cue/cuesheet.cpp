@@ -124,7 +124,17 @@ namespace Khopper {
 	
 	void CUESheet::parseFlags_( const std::string & flag, int trackNO ) {
 		if( trackNO != -1 ) {
-			tracks_[trackNO].addFlag( flag );
+			if( flag == "DATA" ) {
+				tracks_[trackNO].addFlag( Track::DATA );
+			} else if( flag == "DCP" ) {
+				tracks_[trackNO].addFlag( Track::DCP );
+			} else if( flag == "4CH" ) {
+				tracks_[trackNO].addFlag( Track::CH4 );
+			} else if( flag == "PRE" ) {
+				tracks_[trackNO].addFlag( Track::PRE );
+			} else if( flag == "SCMS" ) {
+				tracks_[trackNO].addFlag( Track::SCMS );
+			}
 		}
 	}
 	

@@ -24,20 +24,6 @@ namespace Khopper {
 		comments_[key] = value;
 	}
 	
-	void Track::addFlag( const std::string & f ) {
-		if( f == "DATA" ) {
-			addFlag( DATA );
-		} else if( f == "DCP" ) {
-			addFlag( DCP );
-		} else if( f == "4CH" ) {
-			addFlag( CH4 );
-		} else if( f == "PRE" ) {
-			addFlag( PRE );
-		} else if( f == "SCMS" ) {
-			addFlag( SCMS );
-		}
-	}
-	
 	void Track::addFlag( Flag f ) {
 		flags_.insert( f );
 	}
