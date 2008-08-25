@@ -35,7 +35,13 @@ namespace Khopper {
 		 * @throw Error<RunTime> Strong
 		 */
 		void exists( const std::string & exe );
-
+		
+		/**
+		 * @brief Join paths to one path
+		 * @param [in] front front part
+		 * @param [in] back back part
+		 * @return Complete path
+		 */
 		std::string join( const std::string & front, const std::string & back );
 	};
 	

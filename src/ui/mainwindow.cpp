@@ -30,6 +30,7 @@ namespace Khopper {
 		songListView_ = new SongListView( central );
 		songListModel_ = new QStandardItemModel( songListView_ );
 		central->layout()->addWidget( songListView_ );
+		initHeader();
 		// Set model
 		songListView_->setModel( songListModel_ );
 		connect( songListView_, SIGNAL( openFile( const QString & ) ), this, SLOT( open( const QString & ) ) );
