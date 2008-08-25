@@ -231,6 +231,11 @@ namespace Khopper {
 			 * @return Formated string
 			 */
 			std::string toString() const;
+			
+			/**
+			 * @brief Headers of fields
+			 */
+			static const std::vector< std::string > headers;
 
 		private:
 			unsigned short int number_;

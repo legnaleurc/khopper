@@ -68,7 +68,7 @@ namespace Khopper {
 			
 			void initMenuBar_();
 			void initOutputTypeList_();
-			void initHeader();
+			void initHeader_();
 		
 		private slots:
 			void fire_();

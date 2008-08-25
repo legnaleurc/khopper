@@ -30,7 +30,7 @@ namespace Khopper {
 		songListView_ = new SongListView( central );
 		songListModel_ = new QStandardItemModel( songListView_ );
 		central->layout()->addWidget( songListView_ );
-		initHeader();
+		initHeader_();
 		// Set model
 		songListView_->setModel( songListModel_ );
 		connect( songListView_, SIGNAL( openFile( const QString & ) ), this, SLOT( open( const QString & ) ) );
@@ -105,10 +105,10 @@ namespace Khopper {
 		}
 	}
 	
-	void MainWindow::initHeader() {
+	void MainWindow::initHeader_() {
 		QStringList headers;
-		for( std::size_t i = 0; i < CUESheet::headers.size(); ++i ) {
-			headers << CUESheet::headers[i].c_str();
+		for( std::vector< std::string >::const_iterator it = Track::headers.begin(); it != Track::headers.end(); ++it ) {
+			headers << it->c_str();
 		}
 		songListModel_->setHorizontalHeaderLabels( headers );
 	}

@@ -2,6 +2,15 @@
 #include <boost/format.hpp>
 #include <sstream>
 
+namespace {
+	std::vector< std::string > createHeader() {
+		std::vector< std::string > vs;
+		vs.push_back( "Title" );
+		vs.push_back( "Performer" );
+		return vs;
+	}
+}
+
 namespace Khopper {
 
 	Index::Index() : minute_( 0 ), second_( 0 ), frame_( 0 ) {
@@ -114,5 +123,7 @@ namespace Khopper {
 		}
 		return sout.str();
 	}
+
+	const std::vector< std::string > Track::headers = createHeader();
 	
 }
