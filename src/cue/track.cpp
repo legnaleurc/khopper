@@ -20,7 +20,7 @@ namespace Khopper {
 	}
 	
 	std::string Index::toString() const {
-		return ( boost::format( "%||:%||.%||" ) % minute_ % second_ % frame_ ).str();
+		return ( boost::format( "%||:%|02d|.%|02d|" ) % minute_ % second_ % frame_ ).str();
 	}
 
 	Track::Track() : number_( -1 ) {
@@ -46,7 +46,11 @@ namespace Khopper {
 	}
 
 	std::string Track::getIndicesString() const {
-		return beginIndex_.toString() + "\n" + endIndex_.toString() + "\n";
+		if( endIndex_.getMinute() == 0 && endIndex_.getSecond() == 0 && endIndex_.getFrame() == 0 ) {
+			return beginIndex_.toString() + "\n";
+		} else {
+			return beginIndex_.toString() + "\n" + endIndex_.toString() + "\n";
+		}
 	}
 	
 	const std::string & Track::getPerformer() const {

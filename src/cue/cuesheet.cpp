@@ -145,9 +145,9 @@ namespace Khopper {
 		
 		if( type == "INDEX" ) {
 			if( boost::lexical_cast< unsigned short int >( num ) ) {
-				tracks_[trackNO].setEndIndex( Index( minute, second, frame ) );
-			} else {
 				tracks_[trackNO].setBeginIndex( Index( minute, second, frame ) );
+			} else {
+				tracks_[trackNO-1].setEndIndex( Index( minute, second, frame ) );
 			}
 		} else if( type == "PREGAP" ) {
 			tracks_[trackNO].setPreGap( Index( minute, second, frame ) );
