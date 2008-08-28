@@ -16,8 +16,7 @@
 namespace Khopper {
 
 	/**
-	 * @namespace os
-	 * @brief OS specific system code
+	 * @brief Operating System dependant system code
 	 */
 	namespace os {
 		/**
@@ -25,7 +24,7 @@ namespace Khopper {
 		 * @param [out] msg If you get any message, goes here. first is stdout, second is stderr
 		 * @param [in] args Arguments of program
 		 * @param [in] input String that pipe to stdin
-		 * @return child Process exit state
+		 * @return child process exit state
 		 */
 		int getResult( std::pair< std::string, std::string > & msg, const std::vector< std::string > & args, const std::string & input = "" );
 		

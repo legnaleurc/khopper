@@ -32,12 +32,14 @@ namespace Khopper {
 			/**
 			 * @brief Give a CUE Sheet content and create this object
 			 * @param [in] content CHESheet content
+			 * @param [in] dirPath where the CUE sheet comes from
 			 */
 			CUESheet( const std::vector< std::string > & content, const std::string & dirPath = "" );
 
 			/**
 			 * @brief Set CUE sheet by given string vector
 			 * @param [in] content CHESheet content
+			 * @param [in] dirPath where the CUE sheet comes from
 			 */
 			void open( const std::vector< std::string > & content, const std::string & dirPath = "" );
 

@@ -20,6 +20,7 @@ namespace Khopper {
 			/**
 			 * @brief You can only use this version
 			 * @param [in] oop Output option
+			 * @param [in] outDir Output directory
 			 */
 			Converter( OutputSP oop, const std::string & outDir );
 
