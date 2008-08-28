@@ -11,7 +11,6 @@ QT_BEGIN_NAMESPACE
 class QComboBox;
 class QPushButton;
 class QProgressDialog;
-class QMessageBox;
 class QString;
 class QStandardItemModel;
 QT_END_NAMESPACE
@@ -64,17 +63,15 @@ namespace Khopper {
 			QPointer< QPushButton > action_;
 			QPointer< QProgressDialog > progress_;
 			QPointer< ConverterThread > cvt_;
-			QPointer< QMessageBox > about_;
+			QPointer< QWidget > about_;
 			
 			void initMenuBar_();
 			void initOutputTypeList_();
 			void initHeader_();
+			void initAbout_();
 		
 		private slots:
 			void fire_();
-			void showAboutQt_();
-			void showAbout_();
-			void setAbout_();
 			void runTimeError_( const QString & );
 		
 	};

@@ -16,7 +16,7 @@ namespace Khopper {
 		// setTitle
 		setWindowTitle( tr( "Khopper" ) );
 		
-		setAbout_();
+		initAbout_();
 		
 		// Setting menu bar
 		initMenuBar_();
@@ -83,11 +83,11 @@ namespace Khopper {
 		QPointer< QMenu > help = new QMenu( tr( "&Help" ), menuBar );
 		
 		QPointer< QAction > about = new QAction( tr( "&About Khopper" ), this );
-		connect( about, SIGNAL( triggered() ), about_, SLOT( exec() ) );
+		connect( about, SIGNAL( triggered() ), about_, SLOT( show() ) );
 		help->addAction( about );
 		
 		QPointer< QAction > aboutQt = new QAction( tr( "About &Qt" ), this );
-		connect( aboutQt, SIGNAL( triggered() ), this, SLOT( showAboutQt_() ) );
+		connect( aboutQt, SIGNAL( triggered() ), qApp, SLOT( aboutQt() ) );
 		help->addAction( aboutQt );
 		
 		// add help menu to menu bar
@@ -178,16 +178,26 @@ namespace Khopper {
 		}
 	}
 	
-	void MainWindow::showAboutQt_() {
-		QMessageBox::aboutQt( this );
-	}
-	
-	void MainWindow::showAbout_() {
-		QMessageBox::about( this, tr( "About Khopper" ), tr( "<a href=\"http://legnaleurc.blogspot.com/\">Home Page</a>" ) );
-	}
-	
-	void MainWindow::setAbout_() {
-		about_ = new QMessageBox( QMessageBox::Information, tr( "About Khopper" ), tr( "<a href=\"http://legnaleurc.blogspot.com/\">Home Page</a>" ), QMessageBox::Close, this );
+	void MainWindow::initAbout_() {
+		about_ = new QWidget( this, Qt::Dialog );
+		about_->setWindowTitle( tr( "About Khopper" ) );
+		about_->resize( 320, 240 );
+		
+		QPointer< QVBoxLayout > vbl = new QVBoxLayout( about_ );
+		about_->setLayout( vbl );
+
+		QPointer< QTabWidget > tw = new QTabWidget( about_ );
+		vbl->addWidget( tw );
+
+		QPointer< QLabel > about = new QLabel( tr(
+			"An audio converter<br/>"
+			"(C) 2008 ~<br/>"
+			"Present by legnaleurc<br/>"
+			"E-Mail: <a href=\"mailto:legnaleurc@gmail.com\">legnaleurc@gmail.com</a><br/>"
+			"<a href=\"http://legnaleurc.blogspot.com/\">Home Page</a>"
+		), tw );
+		about->setTextFormat( Qt::RichText );
+		tw->addTab( about, tr( "&About" ) );
 	}
 	
 	void MainWindow::runTimeError_( const QString & msg ) {
