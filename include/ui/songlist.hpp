@@ -40,11 +40,16 @@ namespace Khopper {
 			 * @param event Drag enter event
 			 */
 			virtual void dragEnterEvent( QDragEnterEvent * event );
+
+			/**
+			 * @brief Mouse drag move event handler
+			 * @param event Drag move event
+			 */
+			virtual void dragMoveEvent( QDragMoveEvent * event );
 			
 			/**
 			 * @brief Mouse drop event handler
 			 * @param event Drop event
-			 * @todo This drop action don't work
 			 */
 			virtual void dropEvent( QDropEvent * event );
 	};

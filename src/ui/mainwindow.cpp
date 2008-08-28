@@ -167,13 +167,14 @@ namespace Khopper {
 	}
 	
 	void MainWindow::addSongList( const CUESheet & sheet ) {
+		int offset = songListModel_->rowCount();
 		for( std::size_t row = 0; row < sheet.size(); ++row ) {
-			songListModel_->setItem( row, 0, new QStandardItem( QString::fromUtf8( sheet[row].getTitle().c_str() ) ) );
-			songListModel_->setItem( row, 1, new QStandardItem( QString::fromUtf8( sheet[row].getPerformer().c_str() ) ) );
+			songListModel_->setItem( row + offset, 0, new QStandardItem( QString::fromUtf8( sheet[row].getTitle().c_str() ) ) );
+			songListModel_->setItem( row + offset, 1, new QStandardItem( QString::fromUtf8( sheet[row].getPerformer().c_str() ) ) );
 
 			QVariant data;
 			data.setValue( sheet[row] );
-			songListModel_->item( row, 0 )->setData( data, Qt::UserRole );
+			songListModel_->item( row + offset, 0 )->setData( data, Qt::UserRole );
 		}
 	}
 	

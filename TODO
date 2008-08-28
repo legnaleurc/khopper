@@ -1,6 +1,5 @@
 功能：
-	拖拉開檔：
-		[bug]dragEnterEvent有發生，但是dropEvent沒反應；可能是Model/View的問題
+	[完成]拖拉開檔
 	[完成]輸出檔案的路徑需要詢問；目前是在pwd底下
 	解除只能開CUE sheet的限制
 

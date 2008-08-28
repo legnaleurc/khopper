@@ -16,6 +16,12 @@ namespace Khopper {
 			event->acceptProposedAction();
 		}
 	}
+
+	void SongListView::dragMoveEvent( QDragMoveEvent * event ) {
+		if( event->mimeData()->hasFormat( "text/uri-list" ) ) {
+			event->acceptProposedAction();
+		}
+	}
 	
 	void SongListView::dropEvent( QDropEvent * event ) {
 		if( event->mimeData()->hasUrls() ) {
