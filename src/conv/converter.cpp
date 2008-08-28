@@ -19,7 +19,11 @@ namespace Khopper {
 		args.push_back( COMMAND );
 		args.push_back( track.getAudioData().getFilePath() );
 		args.push_back( "-x" );
-		args.push_back( "2" );
+		if( track.getNumber() == 1 ) {
+			args.push_back( "1" );
+		} else {
+			args.push_back( "2" );
+		}
 		args.push_back( "-d" );
 		args.push_back( outDir_ );
 		args.push_back( "-O" );

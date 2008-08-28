@@ -155,6 +155,12 @@ namespace Khopper {
 			std::string getIndicesString() const;
 
 			/**
+			 * @brief Get track number
+			 * @return track number
+			 */
+			unsigned short int getNumber() const;
+
+			/**
 			 * @brief Get performer
 			 * @return performer
 			 */

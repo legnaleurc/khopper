@@ -52,6 +52,10 @@ namespace Khopper {
 			return beginIndex_.toString() + "\n" + endIndex_.toString() + "\n";
 		}
 	}
+
+	unsigned short int Track::getNumber() const {
+		return number_;
+	}
 	
 	const std::string & Track::getPerformer() const {
 		return performer_;
