@@ -114,25 +114,24 @@ namespace Khopper {
 	}
 	
 	void MainWindow::fire_() {
-		// FIXME: check audio/cue file name?
-		if( true ) {
-			// create output format object
-			QString test = outputTypes_->itemData( outputTypes_->currentIndex() ).toString();
-			OutputSP output;
-			
+		QString test = outputTypes_->itemData( outputTypes_->currentIndex() ).toString();
+		QString outDir = QFileDialog::getExistingDirectory( this, tr( "Target Directory" ), QDir::homePath() );
+
+		if( outDir != "" ) {
 			try {
-				output = OutputFactory::Instance().CreateObject( test.toStdString() );
-				
+				// create output format object
+				OutputSP output( OutputFactory::Instance().CreateObject( test.toStdString() ) );
+
 				// get select list
 				QModelIndexList selected = songListView_->selectionModel()->selectedRows( 0 );
-				
+
 				std::vector< Track > tracks( selected.size() );
 				for( int i = 0; i < selected.size(); ++i ) {
 					tracks[i] = selected[i].data( Qt::UserRole ).value< Track >();
 				}
-				
+
 				progress_->setRange( 0, tracks.size() );
-				cvt_->setOutput( output );
+				cvt_->setOutput( output, outDir );
 				cvt_->setTracks( tracks );
 				cvt_->start();
 				progress_->show();

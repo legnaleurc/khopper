@@ -21,7 +21,7 @@ namespace Khopper {
 			 * @brief You can only use this version
 			 * @param [in] oop Output option
 			 */
-			Converter( OutputSP oop );
+			Converter( OutputSP oop, const std::string & outDir );
 
 			/**
 			 * @brief Convert action
@@ -35,6 +35,7 @@ namespace Khopper {
 			static const char * const COMMAND;
 			
 			OutputSP output_;
+			std::string outDir_;
 			
 			// Protection
 			Converter( const Converter & );

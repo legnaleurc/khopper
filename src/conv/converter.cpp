@@ -9,7 +9,7 @@ namespace Khopper {
 	
 	const char * const Converter::COMMAND = "shnsplit";
 	
-	Converter::Converter( OutputSP oop ) : output_( oop ) {
+	Converter::Converter( OutputSP oop, const std::string & outDir ) : output_( oop ), outDir_( outDir ) {
 		os::exists( COMMAND );
 	}
 	
@@ -20,6 +20,8 @@ namespace Khopper {
 		args.push_back( track.getAudioData().getFilePath() );
 		args.push_back( "-x" );
 		args.push_back( "2" );
+		args.push_back( "-d" );
+		args.push_back( outDir_ );
 		args.push_back( "-O" );
 		args.push_back( "always" );
 		

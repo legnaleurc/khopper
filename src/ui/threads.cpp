@@ -10,12 +10,12 @@ namespace Khopper {
 	ConverterThread::ConverterThread( QObject * parent ) : QThread( parent ) {
 	}
 	
-	void ConverterThread::setTracks( const std::vector< Track > & tracks ) {
-		tracks_ = tracks;
+	void ConverterThread::setOutput( const OutputSP & output, const QString & outDir ) {
+		converter_.reset( new Converter( output, outDir.toUtf8().constData() ) );
 	}
 	
-	void ConverterThread::setOutput( const OutputSP & output ) {
-		converter_.reset( new Converter( output ) );
+	void ConverterThread::setTracks( const std::vector< Track > & tracks ) {
+		tracks_ = tracks;
 	}
 	
 	void ConverterThread::run() {

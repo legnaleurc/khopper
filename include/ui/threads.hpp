@@ -27,18 +27,19 @@ namespace Khopper {
 			 * @param parent parent object
 			 */
 			ConverterThread( QObject * parent = 0 );
+			
+			/**
+			 * @brief Set output option
+			 * @param [in] output Output format object
+			 * @param [in] outDir Output directory
+			 */
+			void setOutput( const OutputSP & output, const QString & outDir );
 
 			/**
 			 * @brief Set tracks to convert
 			 * @param [in] tracks Tracks information
 			 */
 			void setTracks( const std::vector< Track > & tracks );
-
-			/**
-			 * @brief Set output format
-			 * @param [in] output Output format object
-			 */
-			void setOutput( const OutputSP & output );
 			
 		signals:
 			/**
@@ -63,6 +64,7 @@ namespace Khopper {
 			boost::shared_ptr< Converter > converter_;
 			std::vector< Track > tracks_;
 			std::vector< QString > paths_;
+			QString outDir_;
 	};
 	
 }
