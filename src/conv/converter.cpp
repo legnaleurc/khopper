@@ -3,8 +3,6 @@
 #include "cue/track.hpp"
 #include "util/error.hpp"
 
-#include <vector>
-
 namespace Khopper {
 	
 	const char * const Converter::COMMAND = "shnsplit";
@@ -17,7 +15,7 @@ namespace Khopper {
 		std::vector< std::string > args;
 		
 		args.push_back( COMMAND );
-		args.push_back( track.getAudioData().getFilePath() );
+		args.push_back( track.getAudioData().getFilePath().toUtf8().constData() );
 		args.push_back( "-x" );
 		// Dirty hack
 		if( track.getNumber() == 1 ) {
@@ -30,7 +28,7 @@ namespace Khopper {
 		args.push_back( "-d" );
 		args.push_back( outDir_ );
 		args.push_back( "-z" );
-		args.push_back( track.getTitle() );
+		args.push_back( track.getTitle().toUtf8().constData() );
 		args.push_back( "-O" );
 		args.push_back( "always" );
 		
@@ -46,7 +44,7 @@ namespace Khopper {
 		
 		std::pair< std::string, std::string > msg;
 		try {
-			if( os::getResult( msg, args, track.getIndicesString() ) != 0 ) {
+			if( os::getResult( msg, args, track.getIndicesString().toUtf8().constData() ) != 0 ) {
 				// FIXME: Should delete junk
 				throw Error< RunTime >( msg.second );
 			} else {

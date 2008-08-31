@@ -106,11 +106,7 @@ namespace Khopper {
 	}
 	
 	void MainWindow::initHeader_() {
-		QStringList headers;
-		for( std::vector< std::string >::const_iterator it = Track::headers.begin(); it != Track::headers.end(); ++it ) {
-			headers << it->c_str();
-		}
-		songListModel_->setHorizontalHeaderLabels( headers );
+		songListModel_->setHorizontalHeaderLabels( Track::headers );
 	}
 	
 	void MainWindow::fire_() {
@@ -156,21 +152,21 @@ namespace Khopper {
 			}
 			// TODO: set codec
 			QTextStream ts( &fin );
-			std::vector< std::string > lines;
+			QStringList lines;
 			QString line( ts.readLine() );
 			while( !line.isNull() ) {
-				lines.push_back( line.toUtf8().constData() );
+				lines.push_back( line );
 				line = ts.readLine();
 			}
-			addSongList( CUESheet( lines, QFileInfo( fileName ).absolutePath().toUtf8().constData() ) );
+			addSongList( CUESheet( lines, QFileInfo( fileName ).absolutePath() ) );
 		}
 	}
 	
 	void MainWindow::addSongList( const CUESheet & sheet ) {
 		int offset = songListModel_->rowCount();
 		for( std::size_t row = 0; row < sheet.size(); ++row ) {
-			songListModel_->setItem( row + offset, 0, new QStandardItem( QString::fromUtf8( sheet[row].getTitle().c_str() ) ) );
-			songListModel_->setItem( row + offset, 1, new QStandardItem( QString::fromUtf8( sheet[row].getPerformer().c_str() ) ) );
+			songListModel_->setItem( row + offset, 0, new QStandardItem( sheet[row].getTitle() ) );
+			songListModel_->setItem( row + offset, 1, new QStandardItem( sheet[row].getPerformer() ) );
 
 			QVariant data;
 			data.setValue( sheet[row] );

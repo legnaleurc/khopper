@@ -3,10 +3,10 @@
 
 #include "cue/audiofile.hpp"
 
-#include <set>
-#include <vector>
-#include <string>
-#include <map>
+#include <QString>
+#include <QStringList>
+#include <QSet>
+#include <QMap>
 
 namespace Khopper {
 
@@ -55,10 +55,10 @@ namespace Khopper {
 			}
 
 			/**
-			 * @brief Convert to std::string
+			 * @brief Convert to QString
 			 * @return mm:ss.ff
 			 */
-			std::string toString() const;
+			QString toString() const;
 
 		private:
 			/// minite
@@ -124,7 +124,7 @@ namespace Khopper {
 			 * @param [in] key Comment key
 			 * @param [in] value Comment value
 			 */
-			void addComment( const std::string & key, const std::string & value );
+			void addComment( const QString & key, const QString & value );
 			
 			/**
 			 * @brief Add flag information
@@ -136,7 +136,7 @@ namespace Khopper {
 			 * @brief Add garbage information
 			 * @param [in] gi Gargage string
 			 */
-			void addGarbage( const std::string & gi );
+			void addGarbage( const QString & gi );
 
 			/**
 			 * @brief Get audio information
@@ -152,7 +152,7 @@ namespace Khopper {
 			 * MM:SS.FF
 			 * MM:SS.FF
 			 */
-			std::string getIndicesString() const;
+			QString getIndicesString() const;
 
 			/**
 			 * @brief Get track number
@@ -164,13 +164,13 @@ namespace Khopper {
 			 * @brief Get performer
 			 * @return performer
 			 */
-			const std::string & getPerformer() const;
+			const QString & getPerformer() const;
 
 			/**
 			 * @brief Get title
 			 * @return title
 			 */
-			const std::string & getTitle() const;
+			const QString & getTitle() const;
 
 			/**
 			 * @brief Set audio information
@@ -200,13 +200,13 @@ namespace Khopper {
 			 * @brief Set ISRC
 			 * @param isrc ISRC
 			 */
-			void setISRC( const std::string & isrc );
+			void setISRC( const QString & isrc );
 
 			/**
 			 * @brief Set performer
 			 * @param performer performer
 			 */
-			void setPerformer( const std::string & performer );
+			void setPerformer( const QString & performer );
 
 			/**
 			 * @brief Set Postgap
@@ -224,41 +224,41 @@ namespace Khopper {
 			 * @brief Set song writer
 			 * @param songWriter song writer
 			 */
-			void setSongWriter( const std::string & songWriter );
+			void setSongWriter( const QString & songWriter );
 
 			/**
 			 * @brief Set track title
 			 * @param title title
 			 */
-			void setTitle( const std::string & title );
+			void setTitle( const QString & title );
 
 			/**
 			 * @brief Dump track information
 			 * @return Formated string
 			 */
-			std::string toString() const;
+			QString toString() const;
 			
 			/**
 			 * @brief Headers of fields
 			 */
-			static const std::vector< std::string > headers;
+			static const QStringList headers;
 
 		private:
 			unsigned short int number_;
 			Index beginIndex_;
-			std::map< std::string, std::string > comments_;
+			QMap< QString, QString > comments_;
 			AudioFile dataFile_;
 			DataType dataType_;
 			Index endIndex_;
-			std::set< Flag > flags_;
-			std::vector< std::string > garbage_;
-			std::string isrc_;
-			std::string path_;
-			std::string performer_;
+			QSet< Flag > flags_;
+			QStringList garbage_;
+			QString isrc_;
+			QString path_;
+			QString performer_;
 			Index postGap_;
 			Index preGap_;
-			std::string songWriter_;
-			std::string title_;
+			QString songWriter_;
+			QString title_;
 	};
 
 }

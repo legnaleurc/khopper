@@ -18,8 +18,6 @@ DEPENDPATH += . \
               src/conv/output
 INCLUDEPATH += . \
                include
-debug:OBJECTS_DIR = obj/debug
-release:OBJECTS_DIR = obj/release
 MOC_DIR = moc
 DESTDIR = bin
 
@@ -56,11 +54,17 @@ SOURCES += src/main.cpp \
 # config
 CONFIG += debug_and_release
 
+CONFIG( debug, debug|release ) {
+    OBJECTS_DIR = obj/debug
+} else {
+    OBJECTS_DIR = obj/release
+    DEFINES += QT_NO_DEBUG_OUTPUT
+}
+
 unix {
     TEMPLATE = app
     SOURCES += src/util/linux.cpp
-    LIBS += -lloki \
-            -lboost_regex
+    LIBS += -lloki
 }
 
 win32 {

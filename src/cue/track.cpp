@@ -1,10 +1,10 @@
 #include "cue/track.hpp"
-#include <boost/format.hpp>
-#include <sstream>
+
+#include <QTextStream>
 
 namespace {
-	std::vector< std::string > createHeader() {
-		std::vector< std::string > vs;
+	QStringList createHeader() {
+		QStringList vs;
 		vs.push_back( "Title" );
 		vs.push_back( "Performer" );
 		return vs;
@@ -19,8 +19,8 @@ namespace Khopper {
 	Index::Index( unsigned short int m, unsigned short int s, unsigned short int f ) : minute_( m ), second_( s ), frame_( f ) {
 	}
 	
-	std::string Index::toString() const {
-		return ( boost::format( "%||:%|02d|.%|02d|" ) % minute_ % second_ % frame_ ).str();
+	QString Index::toString() const {
+		return QString( "%1:%2.%3" ).arg( minute_ ).arg( second_, 2, 10, QChar( '0' ) ).arg( frame_, 2, 10, QChar( '0' ) );
 	}
 
 	Track::Track() : number_( -1 ) {
@@ -29,7 +29,7 @@ namespace Khopper {
 	Track::Track( unsigned short int trackNO, const AudioFile & data ) : number_( trackNO ), dataFile_( data ) {
 	}
 	
-	void Track::addComment( const std::string & key, const std::string & value ) {
+	void Track::addComment( const QString & key, const QString & value ) {
 		comments_[key] = value;
 	}
 	
@@ -37,7 +37,7 @@ namespace Khopper {
 		flags_.insert( f );
 	}
 	
-	void Track::addGarbage( const std::string & gi ) {
+	void Track::addGarbage( const QString & gi ) {
 		garbage_.push_back( gi );
 	}
 	
@@ -45,7 +45,7 @@ namespace Khopper {
 		return dataFile_;
 	}
 
-	std::string Track::getIndicesString() const {
+	QString Track::getIndicesString() const {
 		if( endIndex_.getMinute() == 0 && endIndex_.getSecond() == 0 && endIndex_.getFrame() == 0 ) {
 			return beginIndex_.toString() + "\n";
 		} else {
@@ -57,11 +57,11 @@ namespace Khopper {
 		return number_;
 	}
 	
-	const std::string & Track::getPerformer() const {
+	const QString & Track::getPerformer() const {
 		return performer_;
 	}
 
-	const std::string & Track::getTitle() const {
+	const QString & Track::getTitle() const {
 		return title_;
 	}
 	
@@ -81,11 +81,11 @@ namespace Khopper {
 		endIndex_ = end;
 	}
 	
-	void Track::setISRC( const std::string & isrc ) {
+	void Track::setISRC( const QString & isrc ) {
 		isrc_ = isrc;
 	}
 	
-	void Track::setPerformer( const std::string & performer ) {
+	void Track::setPerformer( const QString & performer ) {
 		performer_ = performer;
 	}
 	
@@ -97,16 +97,16 @@ namespace Khopper {
 		preGap_ = pre;
 	}
 
-	void Track::setSongWriter( const std::string & songWriter ) {
+	void Track::setSongWriter( const QString & songWriter ) {
 		songWriter_ = songWriter;
 	}
 	
-	void Track::setTitle( const std::string & title ) {
+	void Track::setTitle( const QString & title ) {
 		title_ = title;
 	}
 
-	std::string Track::toString() const {
-		std::ostringstream sout;
+	QString Track::toString() const {
+		QTextStream sout;
 		sout << "Title:\t" << title_ << "\n";
 		sout << "Performer:\t" << performer_ << "\n";
 		sout << "Song Writer:\t" << songWriter_ << "\n";
@@ -119,19 +119,19 @@ namespace Khopper {
 		sout << "Type:\t" << dataType_ << "\n";
 		sout << "Audio Data:\t" << dataFile_.toString() << "\n";
 		sout << "Comments:\n";
-		for( std::map< std::string, std::string >::const_iterator it = comments_.begin(); it != comments_.end(); ++it ) {
-			sout << "\t" << it->first << ":\t" << it->second << "\n";
+		for( QMap< QString, QString >::const_iterator it = comments_.begin(); it != comments_.end(); ++it ) {
+			sout << "\t" << it.key() << ":\t" << it.value() << "\n";
 		}
 		sout << "Garbage:\n";
-		for( std::vector< std::string >::const_iterator it = garbage_.begin(); it != garbage_.end(); ++it ) {
-			sout << "\t" << *it << "\n";
+		foreach( QString s, garbage_ ) {
+			sout << "\t" << s << "\n";
 		}
-		for( std::set< Flag >::const_iterator it = flags_.begin(); it != flags_.end(); ++it ) {
-			sout << *it << "\n";
+		foreach( Flag f, flags_ ) {
+			sout << f << "\n";
 		}
-		return sout.str();
+		return sout.readAll();
 	}
 
-	const std::vector< std::string > Track::headers = createHeader();
+	const QStringList Track::headers = createHeader();
 	
 }

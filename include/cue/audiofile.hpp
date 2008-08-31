@@ -1,7 +1,7 @@
 #ifndef AUDIOFILE_HPP
 #define AUDIOFILE_HPP
 
-#include <string>
+#include <QString>
 
 namespace Khopper {
 
@@ -36,30 +36,30 @@ namespace Khopper {
 			 * @param [in] filePath File path
 			 * @param [in] fileType File type specify by enum
 			 */
-			AudioFile( const std::string & filePath, FileType fileType );
+			AudioFile( const QString & filePath, FileType fileType );
 
 			/**
 			 * @brief Get audio file path
 			 * @return File path
 			 */
-			const std::string & getFilePath() const;
+			const QString & getFilePath() const;
 
 			/**
 			 * @brief Get audio format
 			 * @return format string
 			 */
-			const std::string & getFormat() const;
+			const QString & getFormat() const;
 
 			/**
 			 * @brief String representation
 			 * @return A formated content string
 			 */
-			std::string toString() const;
+			QString toString() const;
 
 		private:
-			std::string path_;
-			std::string format_;
+			QString path_;
 			FileType type_;
+			QString format_;
 	};
 }
 

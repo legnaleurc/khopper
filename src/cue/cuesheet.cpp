@@ -3,29 +3,33 @@
 #include "cue/track.hpp"
 #include "util/error.hpp"
 #include "util/os.hpp"
-#include <boost/regex.hpp>
-#include <boost/format.hpp>
-#include <boost/lexical_cast.hpp>
+
+#include <QRegExp>
+#include <QTextStream>
+#include <QMutex>
+#include <QMutexLocker>
+#include <QtDebug>
 
 namespace {
-	const boost::regex COMMENT( "\\s*REM\\s+(.*?)\\s+(.*?)\\s*" );
-	const boost::regex SINGLE( "\\s*(CATALOG|CDTEXTFILE|ISRC|PERFORMER|SONGWRITER|TITLE)\\s+(.*?)\\s*" );
-	const boost::regex FILES( "\\s*FILE\\s+(.*?)\\s+(WAVE)\\s*" );
-	const boost::regex FLAGS( "\\s*FLAGS\\s+(DATA|DCP|4CH|PRE|SCMS)\\s*" );
-	const boost::regex TRACK( "\\s*TRACK\\s+(\\d+)\\s+(AUDIO)\\s*" );
-	const boost::regex INDEX( "\\s*(INDEX|PREGAP|POSTGAP)\\s+((\\d+)\\s+)?(\\d+):(\\d+):(\\d+)\\s*" );
-	const boost::regex DIRNAME( "(.*)/.*" );
+	QMutex sheet;
 	
-	std::string stripQuote( const std::string & s ) {
+	QRegExp COMMENT( "\\s*REM\\s+(.*)\\s+(.*)\\s*", Qt::CaseSensitive, QRegExp::RegExp2 );
+	QRegExp SINGLE( "\\s*(CATALOG|CDTEXTFILE|ISRC|PERFORMER|SONGWRITER|TITLE)\\s+(.*)\\s*", Qt::CaseSensitive, QRegExp::RegExp2 );
+	QRegExp FILES( "\\s*FILE\\s+(.*)\\s+(WAVE)\\s*", Qt::CaseSensitive, QRegExp::RegExp2 );
+	QRegExp FLAGS( "\\s*FLAGS\\s+(DATA|DCP|4CH|PRE|SCMS)\\s*", Qt::CaseSensitive, QRegExp::RegExp2 );
+	QRegExp TRACK( "\\s*TRACK\\s+(\\d+)\\s+(AUDIO)\\s*", Qt::CaseSensitive, QRegExp::RegExp2 );
+	QRegExp INDEX( "\\s*(INDEX|PREGAP|POSTGAP)\\s+((\\d+)\\s+)?(\\d+):(\\d+):(\\d+)\\s*", Qt::CaseSensitive, QRegExp::RegExp2 );
+	
+	QString stripQuote( const QString & s ) {
 		if( s[0] == '\"' && s[s.length()-1] == '\"' ) {
-			return s.substr( 1, s.length() - 2 );
+			return s.mid( 1, s.length() - 2 );
 		} else {
 			return s;
 		}
 	}
 	
-	std::vector< std::string > createHeader() {
-		std::vector< std::string > vs;
+	QStringList createHeader() {
+		QStringList vs;
 		vs.push_back( "Title" );
 		vs.push_back( "Performer" );
 		return vs;
@@ -35,44 +39,55 @@ namespace {
 
 namespace Khopper {
 	
-	const std::vector< std::string > CUESheet::headers = createHeader();
+	const QStringList CUESheet::headers = createHeader();
 	
 	CUESheet::CUESheet() {}
 	
-	CUESheet::CUESheet( const std::vector< std::string > & content, const std::string & dirPath ) {
+	CUESheet::CUESheet( const QStringList & content, const QString & dirPath ) {
+		qDebug() << "Parsing CUE sheet:" << dirPath;
+		QMutexLocker lock( &sheet );
 		parseCUE_( content, dirPath );
 	}
 
-	void CUESheet::open( const std::vector< std::string > & content, const std::string & dirPath ) {
+	void CUESheet::open( const QStringList & content, const QString & dirPath ) {
+		qDebug() << "Parsing CUE sheet:" << dirPath;
+		QMutexLocker lock( &sheet );
 		parseCUE_( content, dirPath );
 	}
 	
-	void CUESheet::parseCUE_( const std::vector< std::string > & cueLines, const std::string & dirPath ) {
-		boost::smatch result;
+	void CUESheet::parseCUE_( const QStringList & cueLines, const QString & dirPath ) {
 		int trackNO = -1;
 		AudioFile currentFile;
-		for( std::size_t i = 0; i < cueLines.size(); ++i ) {
-			if( boost::regex_match( cueLines[i], result, SINGLE ) ) {
-				parseSingle_( result[1], result[2], trackNO );
-			} else if( boost::regex_match( cueLines[i], result, FILES ) ) {
-				currentFile = parseFile_( result[1], result[2], dirPath );
-			} else if( boost::regex_match( cueLines[i], result, FLAGS ) ) {
-				parseFlags_( result[1], trackNO );
-			} else if( boost::regex_match( cueLines[i], result, INDEX ) ) {
-				parseIndex_( result[1], result[3], result[4], result[5], result[6], trackNO );
-			} else if( boost::regex_match( cueLines[i], result, COMMENT ) ) {
-				parseComment_( result[1], result[2], trackNO );
-			} else if( boost::regex_match( cueLines[i], result, TRACK ) ) {
+		foreach( QString line, cueLines ) {
+			qDebug() << line;
+			if( SINGLE.exactMatch( line ) ) {
+				qDebug() << "Single matched:" << SINGLE.cap( 1 ) << SINGLE.cap( 2 );
+				parseSingle_( SINGLE.cap( 1 ), SINGLE.cap( 2 ), trackNO );
+			} else if( FILES.exactMatch( line ) ) {
+				qDebug() << "File matched:" << FILES.cap( 1 ) << FILES.cap( 2 );
+				currentFile = parseFile_( FILES.cap( 1 ), FILES.cap( 2 ), dirPath );
+			} else if( FLAGS.exactMatch( line ) ) {
+				qDebug() << "Flag matched:" << FLAGS.cap( 1 );
+				parseFlags_( FLAGS.cap( 1 ), trackNO );
+			} else if( INDEX.exactMatch( line ) ) {
+				qDebug() << "Index matched:" << INDEX.cap( 3 );
+				parseIndex_( INDEX.cap( 1 ), INDEX.cap( 3 ), INDEX.cap( 4 ), INDEX.cap( 5 ), INDEX.cap( 6 ), trackNO );
+			} else if( COMMENT.exactMatch( line ) ) {
+				qDebug() << "Comment matched:" << COMMENT.cap( 1 ) << COMMENT.cap( 2 );
+				parseComment_( COMMENT.cap( 1 ), COMMENT.cap( 2 ), trackNO );
+			} else if( TRACK.exactMatch( line ) ) {
+				qDebug() << "Track matched:" << TRACK.cap( 1 ) << TRACK.cap( 2 );
 				++trackNO;
-				parseTrack_( result[1], currentFile, result[2], trackNO );
+				parseTrack_( TRACK.cap( 1 ), currentFile, TRACK.cap( 2 ), trackNO );
 			} else {
-				parseGarbage_( cueLines[i], trackNO );
+				qDebug( "Nothing matched: garbage" );
+				parseGarbage_( line, trackNO );
 			}
 		}
 	}
 	
-	void CUESheet::parseSingle_( const std::string & c, const std::string & s, int trackNO ) {
-		std::string content = stripQuote( s );
+	void CUESheet::parseSingle_( const QString & c, const QString & s, int trackNO ) {
+		QString content = stripQuote( s );
 		if( c == "CATALOG" ) {
 			if( trackNO == -1 ) {
 				catalog_ = content;
@@ -106,23 +121,23 @@ namespace Khopper {
 		}
 	}
 	
-	AudioFile CUESheet::parseFile_( const std::string & fileName, const std::string & type, const std::string & dirPath ) {
+	AudioFile CUESheet::parseFile_( const QString & fileName, const QString & type, const QString & dirPath ) {
 		if( type == "BINARY" ) {
-			return AudioFile( os::join( dirPath, stripQuote( fileName ) ), AudioFile::BINARY );
+			return AudioFile( os::join( dirPath.toUtf8().constData(), stripQuote( fileName ).toUtf8().constData() ).c_str(), AudioFile::BINARY );
 		} else if( type == "MOTOROLA" ) {
-			return AudioFile( os::join( dirPath, stripQuote( fileName ) ), AudioFile::MOTOROLA );
+			return AudioFile( os::join( dirPath.toUtf8().constData(), stripQuote( fileName ).toUtf8().constData() ).c_str(), AudioFile::MOTOROLA );
 		} else if( type == "AIFF" ) {
-			return AudioFile( os::join( dirPath, stripQuote( fileName ) ), AudioFile::AIFF );
+			return AudioFile( os::join( dirPath.toUtf8().constData(), stripQuote( fileName ).toUtf8().constData() ).c_str(), AudioFile::AIFF );
 		} else if( type == "WAVE" ) {
-			return AudioFile( os::join( dirPath, stripQuote( fileName ) ), AudioFile::WAVE );
+			return AudioFile( os::join( dirPath.toUtf8().constData(), stripQuote( fileName ).toUtf8().constData() ).c_str(), AudioFile::WAVE );
 		} else if( type == "MP3" ) {
-			return AudioFile( os::join( dirPath, stripQuote( fileName ) ), AudioFile::MP3 );
+			return AudioFile( os::join( dirPath.toUtf8().constData(), stripQuote( fileName ).toUtf8().constData() ).c_str(), AudioFile::MP3 );
 		} else {
-			return AudioFile( os::join( dirPath, stripQuote( fileName ) ), AudioFile::BINARY );
+			return AudioFile( os::join( dirPath.toUtf8().constData(), stripQuote( fileName ).toUtf8().constData() ).c_str(), AudioFile::BINARY );
 		}
 	}
 	
-	void CUESheet::parseFlags_( const std::string & flag, int trackNO ) {
+	void CUESheet::parseFlags_( const QString & flag, int trackNO ) {
 		if( trackNO != -1 ) {
 			if( flag == "DATA" ) {
 				tracks_[trackNO].addFlag( Track::DATA );
@@ -138,13 +153,13 @@ namespace Khopper {
 		}
 	}
 	
-	void CUESheet::parseIndex_( const std::string & type, const std::string & num, const std::string & m, const std::string & s, const std::string & f, int trackNO ) {
-		unsigned short int minute = boost::lexical_cast< unsigned short int >( m );
-		unsigned short int second = boost::lexical_cast< unsigned short int >( s );
-		unsigned short int frame = boost::lexical_cast< unsigned short int >( f );
+	void CUESheet::parseIndex_( const QString & type, const QString & num, const QString & m, const QString & s, const QString & f, int trackNO ) {
+		unsigned short int minute = m.toUShort();
+		unsigned short int second = s.toUShort();
+		unsigned short int frame = f.toUShort();
 		
 		if( type == "INDEX" ) {
-			if( boost::lexical_cast< unsigned short int >( num ) ) {
+			if( num.toUShort() ) {
 				tracks_[trackNO].setBeginIndex( Index( minute, second, frame ) );
 			} else {
 				tracks_[trackNO-1].setEndIndex( Index( minute, second, frame ) );
@@ -156,7 +171,7 @@ namespace Khopper {
 		}
 	}
 	
-	void CUESheet::parseComment_( const std::string & key, const std::string & value, int trackNO ) {
+	void CUESheet::parseComment_( const QString & key, const QString & value, int trackNO ) {
 		if( trackNO == -1 ) {
 			comments_[key] = value;
 		} else {
@@ -164,8 +179,8 @@ namespace Khopper {
 		}
 	}
 	
-	void CUESheet::parseTrack_( const std::string & num, const AudioFile & audioData, const std::string & type, int trackNO ) {
-		tracks_.push_back( Track( boost::lexical_cast< unsigned short int >( num ), audioData ) );
+	void CUESheet::parseTrack_( const QString & num, const AudioFile & audioData, const QString & type, int trackNO ) {
+		tracks_.push_back( Track( num.toUShort(), audioData ) );
 		if( type == "AUDIO" ) {
 			tracks_[trackNO].setDataType( Track::AUDIO );
 		} else if( type == "CDG" ) {
@@ -187,38 +202,38 @@ namespace Khopper {
 		}
 	}
 	
-	void CUESheet::parseGarbage_( const std::string & line, int trackNO ) {
+	void CUESheet::parseGarbage_( const QString & line, int trackNO ) {
 		if( trackNO == -1 ) {
 			garbage_.push_back( line );
 		} else {
 			tracks_[trackNO].addGarbage( line );
 		}
 	}
-	const std::string & CUESheet::getCatalog() const {
+	const QString & CUESheet::getCatalog() const {
 		return catalog_;
 	}
 	
-	const std::string & CUESheet::getCDTextFile() const {
+	const QString & CUESheet::getCDTextFile() const {
 		return cdTextFile_;
 	}
 	
-	const std::map< std::string, std::string > & CUESheet::getComments() const {
+	const QMap< QString, QString > & CUESheet::getComments() const {
 		return comments_;
 	}
 	
-	const std::vector< std::string > & CUESheet::getGarbage() const {
+	const QStringList & CUESheet::getGarbage() const {
 		return garbage_;
 	}
 	
-	const std::string & CUESheet::getPerformer() const {
+	const QString & CUESheet::getPerformer() const {
 		return performer_;
 	}
 	
-	const std::string & CUESheet::getSongWriter() const {
+	const QString & CUESheet::getSongWriter() const {
 		return songWriter_;
 	}
 	
-	const std::string & CUESheet::getTitle() const {
+	const QString & CUESheet::getTitle() const {
 		return title_;
 	}
 	
@@ -226,8 +241,8 @@ namespace Khopper {
 		return tracks_.size();
 	}
 	
-	std::string CUESheet::toString() const {
-		std::ostringstream sout;
+	QString CUESheet::toString() const {
+		QTextStream sout;
 		sout << "Title:\t" << title_ << "\n";
 		sout << "Performer:\t" << performer_ << "\n";
 		sout << "Song Writer:\t" << songWriter_ << "\n";
@@ -235,18 +250,18 @@ namespace Khopper {
 		sout << "CD text:\t" << cdTextFile_ << "\n";
 		sout << "Track number:\t" << tracks_.size() << "\n";
 		sout << "Comments:\n";
-		for( std::map< std::string, std::string >::const_iterator it = comments_.begin(); it != comments_.end(); ++it  ) {
-			sout << "\t" << it->first << ":\t" << it->second << "\n";
+		for( QMap< QString, QString >::const_iterator it = comments_.begin(); it != comments_.end(); ++it  ) {
+			sout << "\t" << it.key() << ":\t" << it.value() << "\n";
 		}
-		sout << "Gargages:\n";
-		for( std::vector< std::string >::const_iterator it = garbage_.begin(); it != garbage_.end(); ++it ) {
-			sout << "\t" << *it << "\n";
+		sout << "Garbage:\n";
+		foreach( QString s, garbage_ ) {
+			sout << "\t" << s << "\n";
 		}
 		sout << "Tracks:\n";
-		for( std::vector< Track >::const_iterator it = tracks_.begin(); it != tracks_.end(); ++it ) {
+		for( QVector< Track >::const_iterator it = tracks_.begin(); it != tracks_.end(); ++it ) {
 			sout << "\t" << it->toString() << "\n";
 		}
-		return sout.str();
+		return sout.readAll();
 	}
 	
 	const Track & CUESheet::operator []( std::size_t index ) const {
