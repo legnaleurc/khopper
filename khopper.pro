@@ -70,7 +70,10 @@ unix {
 win32 {
     TEMPLATE = vcapp
     SOURCES += src/util/windows.cpp
-    LIBS += -lboost_regex-vc90-mt-1_35 \
-            -lloki
-    DEFINES += LOKI_OBJECT_LEVEL_THREADING
+    debug {
+        LIBS += -lloki_D
+    }
+    release {
+        LIBS += -lloki
+    }
 }

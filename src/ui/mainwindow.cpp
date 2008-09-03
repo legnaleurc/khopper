@@ -152,6 +152,7 @@ namespace Khopper {
 			}
 			// TODO: set codec
 			QTextStream ts( &fin );
+			ts.setCodec( QTextCodec::codecForName( "UTF-8" ) );
 			QStringList lines;
 			QString line( ts.readLine() );
 			while( !line.isNull() ) {

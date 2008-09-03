@@ -10,7 +10,8 @@
 #include <loki/Factory.h>
 #include <loki/Singleton.h>
 #include <loki/AssocVector.h>
-#include <loki/SmartPtr.h>
+
+#include <memory>
 
 /**
  * @brief Namespace of this program
@@ -47,14 +48,14 @@ namespace Khopper {
 	 * 
 	 * Use Loki to implement. Reference counted and multithread competible. Object level locked.
 	 */
-	typedef Loki::SmartPtr< Input, Loki::RefCountedMTAdj< Loki::ObjectLevelLockable >::RefCountedMT > InputSP;
+	typedef std::tr1::shared_ptr< Input > InputSP;
 	
 	/**
 	 * @brief Output Type smart pointer
 	 * 
 	 * Use Loki to implement. Reference counted and multithread competible. Object level locked.
 	 */
-	typedef Loki::SmartPtr< Output, Loki::RefCountedMTAdj< Loki::ObjectLevelLockable >::RefCountedMT > OutputSP;
+	typedef std::tr1::shared_ptr< Output > OutputSP;
 	
 }
 
