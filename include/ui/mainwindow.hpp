@@ -5,7 +5,6 @@
 #define MAINWINDOW_HPP
 
 #include <QMainWindow>
-#include <QPointer>
 
 QT_BEGIN_NAMESPACE
 class QComboBox;
@@ -23,6 +22,7 @@ namespace Khopper {
 	class CUESheet;
 	class ConverterThread;
 	class SongListView;
+	class Codec;
 
 	/**
 	 * @class MainWindow
@@ -57,13 +57,14 @@ namespace Khopper {
 			void open( const QString & fileName );
 		
 		private:
-			QPointer< SongListView > songListView_;
-			QPointer< QStandardItemModel > songListModel_;
-			QPointer< QComboBox > outputTypes_;
-			QPointer< QPushButton > action_;
-			QPointer< QProgressDialog > progress_;
-			QPointer< ConverterThread > cvt_;
-			QPointer< QWidget > about_;
+			Codec * codec_;
+			SongListView * songListView_;
+			QStandardItemModel * songListModel_;
+			QComboBox * outputTypes_;
+			QPushButton * action_;
+			QProgressDialog * progress_;
+			ConverterThread * cvt_;
+			QWidget * about_;
 			
 			void initMenuBar_();
 			void initOutputTypeList_();

@@ -43,22 +43,23 @@ namespace Khopper {
 	
 	CUESheet::CUESheet() {}
 	
-	CUESheet::CUESheet( const QStringList & content, const QString & dirPath ) {
+	CUESheet::CUESheet( const QString & content, const QString & dirPath ) {
 		qDebug() << "Parsing CUE sheet:" << dirPath;
 		QMutexLocker lock( &sheet );
 		parseCUE_( content, dirPath );
 	}
 
-	void CUESheet::open( const QStringList & content, const QString & dirPath ) {
+	void CUESheet::open( const QString & content, const QString & dirPath ) {
 		qDebug() << "Parsing CUE sheet:" << dirPath;
 		QMutexLocker lock( &sheet );
 		parseCUE_( content, dirPath );
 	}
 	
-	void CUESheet::parseCUE_( const QStringList & cueLines, const QString & dirPath ) {
+	void CUESheet::parseCUE_( QString content, const QString & dirPath ) {
 		int trackNO = -1;
 		AudioFile currentFile;
-		foreach( QString line, cueLines ) {
+		QTextStream lines( &content );
+		for( QString line = lines.readLine(); !line.isNull(); line = lines.readLine() ) {
 			qDebug() << line;
 			if( SINGLE.exactMatch( line ) ) {
 				qDebug() << "Single matched:" << SINGLE.cap( 1 ) << SINGLE.cap( 2 );
