@@ -4,7 +4,7 @@
 #include <cerrno>
 #include <cstring>
 #include <climits>
-#include <boost/format.hpp>
+#include <cstdlib>
 
 namespace {
 
@@ -113,8 +113,8 @@ namespace Khopper {
 		}
 
 		void exists( const std::string & exe ) {
-			if( system( ( boost::format( "[ `which %1%` ]" ) % exe ).str().c_str() ) != 0 ) {
-				throw Error< RunTime >( ( boost::format( "`%1%\' not found!" ) % exe ).str() );
+			if( std::system( ( std::string( "[ `which " ) + exe + "` ]" ).c_str() ) != 0 ) {
+				throw Error< RunTime >( std::string( "`" ) + exe + "\' not found!" );
 			}
 		}
 
