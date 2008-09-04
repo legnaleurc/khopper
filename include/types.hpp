@@ -8,7 +8,7 @@
 #include <loki/Singleton.h>
 #include <loki/AssocVector.h>
 
-#include <memory>
+#include "util/shared_ptr.hpp"
 
 /**
  * @brief Namespace of this program

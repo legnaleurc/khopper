@@ -1,6 +1,8 @@
 #include "ui/threads.hpp"
 #include "cue/track.hpp"
 #include "conv/converter.hpp"
+#include "conv/input/input.hpp"
+#include "conv/output/output.hpp"
 #include "types.hpp"
 #include "util/os.hpp"
 #include <QFileInfo>

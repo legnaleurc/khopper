@@ -6,6 +6,7 @@
 #include "util/os.hpp"
 #include "cue/cuesheet.hpp"
 #include "cue/track.hpp"
+#include "conv/output/output.hpp"
 #include <QtGui>
 
 // for Track to QVariant
