@@ -6,7 +6,7 @@
 
 #include "cue/track.hpp"
 #include "types.hpp"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <QThread>
 
@@ -61,7 +61,7 @@ namespace Khopper {
 			virtual void run();
 		
 		private:
-			boost::shared_ptr< Converter > converter_;
+			std::tr1::shared_ptr< Converter > converter_;
 			std::vector< Track > tracks_;
 			std::vector< QString > paths_;
 			QString outDir_;

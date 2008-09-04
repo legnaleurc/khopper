@@ -22,7 +22,7 @@ namespace Khopper {
 		// convert
 		try {
 			for( std::size_t i = 0; i < tracks_.size(); ++i ) {
-				InputSP input = InputFactory::Instance().CreateObject( tracks_[i].getAudioData().getFormat().toUtf8().constData() );
+				InputSP input( InputFactory::Instance().CreateObject( tracks_[i].getAudioData().getFormat().toUtf8().constData() ) );
 				converter_->perform( tracks_[i], input );
 				emit step( i );
 			}

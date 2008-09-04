@@ -1,6 +1,7 @@
 #include "ui/mainwindow.hpp"
 #include "ui/songlist.hpp"
 #include "ui/threads.hpp"
+#include "ui/codec.hpp"
 #include "types.hpp"
 #include "util/os.hpp"
 #include "cue/cuesheet.hpp"
@@ -17,12 +18,13 @@ namespace Khopper {
 		setWindowTitle( tr( "Khopper" ) );
 		
 		initAbout_();
+		codec_ = new Codec( this );
 		
 		// Setting menu bar
 		initMenuBar_();
 		
 		// Setting central widget
-		QPointer< QWidget > central = new QWidget( this );
+		QWidget * central = new QWidget( this );
 		central->setLayout( new QVBoxLayout( central ) );
 		setCentralWidget( central );
 		
@@ -36,7 +38,7 @@ namespace Khopper {
 		connect( songListView_, SIGNAL( openFile( const QString & ) ), this, SLOT( open( const QString & ) ) );
 		
 		// Set bottom layout
-		QPointer< QWidget > bottom = new QWidget( central );
+		QWidget * bottom = new QWidget( central );
 		bottom->setLayout( new QHBoxLayout( bottom ) );
 		central->layout()->addWidget( bottom );
 		
@@ -65,12 +67,12 @@ namespace Khopper {
 	}
 	
 	void MainWindow::initMenuBar_() {
-		QPointer< QMenuBar > menuBar = new QMenuBar( this );
+		QMenuBar * menuBar = new QMenuBar( this );
 		
 		// setting file menu
-		QPointer< QMenu > file = new QMenu( tr( "&File" ), menuBar );
+		QMenu * file = new QMenu( tr( "&File" ), menuBar );
 		
-		QPointer< QAction > open = new QAction( tr( "&Open..." ), this );
+		QAction * open = new QAction( tr( "&Open..." ), this );
 		open->setShortcut( tr( "Ctrl+O" ) );
 		connect( open, SIGNAL( triggered() ), this, SLOT( openFileDialog() ) );
 		file->addAction( open );
@@ -80,13 +82,13 @@ namespace Khopper {
 		// file menu done
 		
 		// setting help menu
-		QPointer< QMenu > help = new QMenu( tr( "&Help" ), menuBar );
+		QMenu * help = new QMenu( tr( "&Help" ), menuBar );
 		
-		QPointer< QAction > about = new QAction( tr( "&About Khopper" ), this );
+		QAction * about = new QAction( tr( "&About Khopper" ), this );
 		connect( about, SIGNAL( triggered() ), about_, SLOT( show() ) );
 		help->addAction( about );
 		
-		QPointer< QAction > aboutQt = new QAction( tr( "About &Qt" ), this );
+		QAction * aboutQt = new QAction( tr( "About &Qt" ), this );
 		connect( aboutQt, SIGNAL( triggered() ), qApp, SLOT( aboutQt() ) );
 		help->addAction( aboutQt );
 		
@@ -150,15 +152,15 @@ namespace Khopper {
 			if( !fin.open( QIODevice::ReadOnly | QIODevice::Text ) ) {
 				QMessageBox::critical( this, tr( "File open error!" ), tr( "Could not open the file: `" ) + fileName + "\'" );
 			}
-			// TODO: set codec
-			QTextStream ts( &fin );
-			QStringList lines;
-			QString line( ts.readLine() );
-			while( !line.isNull() ) {
-				lines.push_back( line );
-				line = ts.readLine();
+			
+			QByteArray raw_input = fin.readAll();
+			fin.close();
+
+			codec_->setEncoded( raw_input );
+
+			if( codec_->exec() ) {
+				addSongList( CUESheet( codec_->getDecoded(), QFileInfo( fileName ).absolutePath() ) );
 			}
-			addSongList( CUESheet( lines, QFileInfo( fileName ).absolutePath() ) );
 		}
 	}
 	
@@ -179,13 +181,13 @@ namespace Khopper {
 		about_->setWindowTitle( tr( "About Khopper" ) );
 		about_->resize( 320, 240 );
 		
-		QPointer< QVBoxLayout > vbl = new QVBoxLayout( about_ );
+		QVBoxLayout * vbl = new QVBoxLayout( about_ );
 		about_->setLayout( vbl );
 
-		QPointer< QTabWidget > tw = new QTabWidget( about_ );
+		QTabWidget * tw = new QTabWidget( about_ );
 		vbl->addWidget( tw );
 
-		QPointer< QLabel > about = new QLabel( tr(
+		QLabel * about = new QLabel( tr(
 			"An audio converter<br/>"
 			"(C) 2008 ~<br/>"
 			"Present by legnaleurc<br/>"

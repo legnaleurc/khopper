@@ -32,6 +32,7 @@ HEADERS += include/types.hpp \
            include/cue/audiofile.hpp \
            include/cue/cuesheet.hpp \
            include/cue/track.hpp \
+           include/ui/codec.hpp \
            include/ui/mainwindow.hpp \
            include/ui/songlist.hpp \
            include/ui/threads.hpp \
@@ -42,6 +43,7 @@ SOURCES += src/main.cpp \
            src/cue/audiofile.cpp \
            src/cue/cuesheet.cpp \
            src/cue/track.cpp \
+           src/ui/codec.cpp \
            src/ui/mainwindow.cpp \
            src/ui/songlist.cpp \
            src/ui/threads.cpp \
@@ -70,7 +72,10 @@ unix {
 win32 {
     TEMPLATE = vcapp
     SOURCES += src/util/windows.cpp
-    LIBS += -lboost_regex-vc90-mt-1_35 \
-            -lloki
-    DEFINES += LOKI_OBJECT_LEVEL_THREADING
+    debug {
+        LIBS += -lloki_D
+    }
+    release {
+        LIBS += -lloki
+    }
 }

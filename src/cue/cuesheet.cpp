@@ -13,12 +13,12 @@
 namespace {
 	QMutex sheet;
 	
-	QRegExp COMMENT( "\\s*REM\\s+(.*)\\s+(.*)\\s*", Qt::CaseSensitive, QRegExp::RegExp2 );
-	QRegExp SINGLE( "\\s*(CATALOG|CDTEXTFILE|ISRC|PERFORMER|SONGWRITER|TITLE)\\s+(.*)\\s*", Qt::CaseSensitive, QRegExp::RegExp2 );
-	QRegExp FILES( "\\s*FILE\\s+(.*)\\s+(WAVE)\\s*", Qt::CaseSensitive, QRegExp::RegExp2 );
-	QRegExp FLAGS( "\\s*FLAGS\\s+(DATA|DCP|4CH|PRE|SCMS)\\s*", Qt::CaseSensitive, QRegExp::RegExp2 );
-	QRegExp TRACK( "\\s*TRACK\\s+(\\d+)\\s+(AUDIO)\\s*", Qt::CaseSensitive, QRegExp::RegExp2 );
-	QRegExp INDEX( "\\s*(INDEX|PREGAP|POSTGAP)\\s+((\\d+)\\s+)?(\\d+):(\\d+):(\\d+)\\s*", Qt::CaseSensitive, QRegExp::RegExp2 );
+	QRegExp COMMENT( "\\s*REM\\s+(.*)\\s+(.*)\\s*" );
+	QRegExp SINGLE( "\\s*(CATALOG|CDTEXTFILE|ISRC|PERFORMER|SONGWRITER|TITLE)\\s+(.*)\\s*" );
+	QRegExp FILES( "\\s*FILE\\s+(.*)\\s+(WAVE)\\s*" );
+	QRegExp FLAGS( "\\s*FLAGS\\s+(DATA|DCP|4CH|PRE|SCMS)\\s*" );
+	QRegExp TRACK( "\\s*TRACK\\s+(\\d+)\\s+(AUDIO)\\s*" );
+	QRegExp INDEX( "\\s*(INDEX|PREGAP|POSTGAP)\\s+((\\d+)\\s+)?(\\d+):(\\d+):(\\d+)\\s*" );
 	
 	QString stripQuote( const QString & s ) {
 		if( s[0] == '\"' && s[s.length()-1] == '\"' ) {
@@ -43,22 +43,23 @@ namespace Khopper {
 	
 	CUESheet::CUESheet() {}
 	
-	CUESheet::CUESheet( const QStringList & content, const QString & dirPath ) {
+	CUESheet::CUESheet( const QString & content, const QString & dirPath ) {
 		qDebug() << "Parsing CUE sheet:" << dirPath;
 		QMutexLocker lock( &sheet );
 		parseCUE_( content, dirPath );
 	}
 
-	void CUESheet::open( const QStringList & content, const QString & dirPath ) {
+	void CUESheet::open( const QString & content, const QString & dirPath ) {
 		qDebug() << "Parsing CUE sheet:" << dirPath;
 		QMutexLocker lock( &sheet );
 		parseCUE_( content, dirPath );
 	}
 	
-	void CUESheet::parseCUE_( const QStringList & cueLines, const QString & dirPath ) {
+	void CUESheet::parseCUE_( QString content, const QString & dirPath ) {
 		int trackNO = -1;
 		AudioFile currentFile;
-		foreach( QString line, cueLines ) {
+		QTextStream lines( &content );
+		for( QString line = lines.readLine(); !line.isNull(); line = lines.readLine() ) {
 			qDebug() << line;
 			if( SINGLE.exactMatch( line ) ) {
 				qDebug() << "Single matched:" << SINGLE.cap( 1 ) << SINGLE.cap( 2 );

@@ -1,4 +1,6 @@
 #include "conv/converter.hpp"
+#include "conv/input/input.hpp"
+#include "conv/output/output.hpp"
 #include "util/os.hpp"
 #include "cue/track.hpp"
 #include "util/error.hpp"

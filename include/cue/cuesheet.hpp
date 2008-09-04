@@ -34,14 +34,14 @@ namespace Khopper {
 			 * @param [in] content CHESheet content
 			 * @param [in] dirPath where the CUE sheet comes from
 			 */
-			CUESheet( const QStringList & content, const QString & dirPath = QString() );
+			CUESheet( const QString & content, const QString & dirPath = QString() );
 
 			/**
 			 * @brief Set CUE sheet by given string vector
 			 * @param [in] content CHESheet content
 			 * @param [in] dirPath where the CUE sheet comes from
 			 */
-			void open( const QStringList & content, const QString & dirPath = QString() );
+			void open( const QString & content, const QString & dirPath = QString() );
 
 			/**
 			 * @brief Get catalog infomation
@@ -104,7 +104,7 @@ namespace Khopper {
 			 */
 			const Track & operator []( std::size_t index ) const;
 		private:
-			void parseCUE_( const QStringList &, const QString & );
+			void parseCUE_( QString, const QString & );
 			void parseSingle_( const QString &, const QString &, int );
 			AudioFile parseFile_( const QString &, const QString &, const QString & );
 			void parseFlags_( const QString &, int );
