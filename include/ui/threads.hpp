@@ -6,7 +6,6 @@
 
 #include "cue/track.hpp"
 #include "types.hpp"
-#include <memory>
 
 #include <QThread>
 

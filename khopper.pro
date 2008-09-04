@@ -37,7 +37,8 @@ HEADERS += include/types.hpp \
            include/ui/songlist.hpp \
            include/ui/threads.hpp \
            include/util/error.hpp \
-           include/util/os.hpp
+           include/util/os.hpp \
+           include/util/shared_ptr.hpp
 SOURCES += src/main.cpp \
            src/conv/converter.cpp \
            src/cue/audiofile.cpp \

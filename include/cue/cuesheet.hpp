@@ -37,7 +37,7 @@ namespace Khopper {
 			CUESheet( const QString & content, const QString & dirPath = QString() );
 
 			/**
-			 * @brief Set CUE sheet by given string vector
+			 * @brief Set CUE sheet by given whole content
 			 * @param [in] content CHESheet content
 			 * @param [in] dirPath where the CUE sheet comes from
 			 */
