@@ -1,8 +1,8 @@
 /**
  * @file songlist.hpp
  */
-#ifndef SONGLIST_HPP
-#define SONGLIST_HPP
+#ifndef KHOPPER_UI_SONGLIST_HPP
+#define KHOPPER_UI_SONGLIST_HPP
 
 #include <QTableView>
 

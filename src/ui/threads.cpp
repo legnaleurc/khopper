@@ -1,10 +1,8 @@
-#include "ui/threads.hpp"
-#include "cue/track.hpp"
-#include "conv/converter.hpp"
-#include "conv/input/input.hpp"
-#include "conv/output/output.hpp"
-#include "types.hpp"
-#include "util/os.hpp"
+#include "threads.hpp"
+#include "track.hpp"
+#include "converter.hpp"
+#include "decoder.hpp"
+#include "os.hpp"
 #include <QFileInfo>
 
 namespace Khopper {
@@ -12,7 +10,7 @@ namespace Khopper {
 	ConverterThread::ConverterThread( QObject * parent ) : QThread( parent ) {
 	}
 	
-	void ConverterThread::setOutput( const OutputSP & output, const QString & outDir ) {
+	void ConverterThread::setOutput( EncoderSP output, const QString & outDir ) {
 		converter_.reset( new Converter( output, outDir.toUtf8().constData() ) );
 	}
 	
@@ -24,7 +22,7 @@ namespace Khopper {
 		// convert
 		try {
 			for( std::size_t i = 0; i < tracks_.size(); ++i ) {
-				InputSP input( InputFactory::Instance().CreateObject( tracks_[i].getAudioData().getFormat().toUtf8().constData() ) );
+				DecoderSP input( DecoderFactory::Instance().CreateObject( tracks_[i].getAudioData().getFormat().toUtf8().constData() ) );
 				converter_->perform( tracks_[i], input );
 				emit step( i );
 			}

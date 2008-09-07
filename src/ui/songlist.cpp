@@ -1,4 +1,4 @@
-#include "ui/songlist.hpp"
+#include "songlist.hpp"
 
 #include <QtGui>
 

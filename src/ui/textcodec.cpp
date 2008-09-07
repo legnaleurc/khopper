@@ -1,4 +1,4 @@
-#include "ui/codec.hpp"
+#include "textcodec.hpp"
 
 #include <QComboBox>
 #include <QDialogButtonBox>
@@ -8,7 +8,7 @@
 
 namespace Khopper {
 
-	Codec::Codec( QWidget *parent, Qt::WindowFlags f ) : QDialog( parent, f ) {
+	TextCodec::TextCodec( QWidget *parent, Qt::WindowFlags f ) : QDialog( parent, f ) {
 		setWindowTitle( tr( "Choose Encoding" ) );
 
 		codecs_ = new QComboBox( this );
@@ -28,16 +28,16 @@ namespace Khopper {
 		box->addWidget( buttons_ );
 	}
 
-	void Codec::setEncoded( const QByteArray & encoded ) {
+	void TextCodec::setEncoded( const QByteArray & encoded ) {
 		encoded_ = encoded;
 		update( codecs_->currentIndex() );
 	}
 
-	QString Codec::getDecoded() const {
+	QString TextCodec::getDecoded() const {
 		return decoded_;
 	}
 
-	void Codec::update( int index ) {
+	void TextCodec::update( int index ) {
 		int mib = codecs_->itemData( index ).toInt();
 		QTextStream ts( &encoded_ );
 		ts.setCodec( QTextCodec::codecForMib( mib ) );

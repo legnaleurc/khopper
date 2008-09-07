@@ -1,8 +1,8 @@
 /**
  * @file mainwindow.hpp
  */
-#ifndef MAINWINDOW_HPP
-#define MAINWINDOW_HPP
+#ifndef KHOPPER_UI_MAINWINDOW_HPP
+#define KHOPPER_UI_MAINWINDOW_HPP
 
 #include <QMainWindow>
 
@@ -22,7 +22,7 @@ namespace Khopper {
 	class CUESheet;
 	class ConverterThread;
 	class SongListView;
-	class Codec;
+	class TextCodec;
 
 	/**
 	 * @class MainWindow
@@ -57,7 +57,7 @@ namespace Khopper {
 			void open( const QString & fileName );
 		
 		private:
-			Codec * codec_;
+			TextCodec * codec_;
 			SongListView * songListView_;
 			QStandardItemModel * songListModel_;
 			QComboBox * outputTypes_;

@@ -1,10 +1,11 @@
 /**
  * @file converter.hpp
  */
-#ifndef CONVERTER_HPP
-#define CONVERTER_HPP
+#ifndef KHOPPER_MUXER_CONVERTER_HPP
+#define KHOPPER_MUXER_CONVERTER_HPP
 
-#include "types.hpp"
+#include "decoder.hpp"
+#include "encoder.hpp"
 
 #include <string>
 
@@ -19,23 +20,23 @@ namespace Khopper {
 		public:
 			/**
 			 * @brief You can only use this version
-			 * @param [in] oop Output option
+			 * @param [in] oop Encoder option
 			 * @param [in] outDir Output directory
 			 */
-			Converter( OutputSP oop, const std::string & outDir );
+			Converter( EncoderSP oop, const std::string & outDir );
 
 			/**
 			 * @brief Convert action
 			 * @param [in] track Track information
-			 * @param [in] iop Input option
+			 * @param [in] iop Decoder option
 			 * @return message
 			 * @throw Error<Runtime> Basic
 			 */
-			std::string perform( const Track & track, InputSP iop ) const;
+			std::string perform( const Track & track, DecoderSP iop ) const;
 		private:
 			static const char * const COMMAND;
 			
-			OutputSP output_;
+			EncoderSP output_;
 			std::string outDir_;
 			
 			// Protection

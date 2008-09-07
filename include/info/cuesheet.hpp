@@ -1,8 +1,8 @@
 /**
  * @file cuesheet.hpp
  */
-#ifndef CUESHEET_HPP
-#define CUESHEET_HPP
+#ifndef KHOPPER_INFO_CUESHEET_HPP
+#define KHOPPER_INFO_CUESHEET_HPP
 
 #include "track.hpp"
 

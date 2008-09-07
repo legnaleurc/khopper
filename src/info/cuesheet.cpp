@@ -1,8 +1,8 @@
-#include "cue/cuesheet.hpp"
-#include "cue/audiofile.hpp"
-#include "cue/track.hpp"
-#include "util/error.hpp"
-#include "util/os.hpp"
+#include "cuesheet.hpp"
+#include "audiofile.hpp"
+#include "track.hpp"
+#include "error.hpp"
+#include "os.hpp"
 
 #include <QRegExp>
 #include <QTextStream>

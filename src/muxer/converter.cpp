@@ -1,19 +1,18 @@
-#include "conv/converter.hpp"
-#include "conv/input/input.hpp"
-#include "conv/output/output.hpp"
-#include "util/os.hpp"
-#include "cue/track.hpp"
-#include "util/error.hpp"
+#include "converter.hpp"
+#include "decoder.hpp"
+#include "os.hpp"
+#include "track.hpp"
+#include "error.hpp"
 
 namespace Khopper {
 	
 	const char * const Converter::COMMAND = "shnsplit";
 	
-	Converter::Converter( OutputSP oop, const std::string & outDir ) : output_( oop ), outDir_( outDir ) {
+	Converter::Converter( EncoderSP oop, const std::string & outDir ) : output_( oop ), outDir_( outDir ) {
 		os::exists( COMMAND );
 	}
 	
-	std::string Converter::perform( const Track & track, InputSP iop ) const {
+	std::string Converter::perform( const Track & track, DecoderSP iop ) const {
 		std::vector< std::string > args;
 		
 		args.push_back( COMMAND );

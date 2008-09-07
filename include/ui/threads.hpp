@@ -1,11 +1,12 @@
 /**
  * @file threads.hpp
  */
-#ifndef THREADS_HPP
-#define THREADS_HPP
+#ifndef KHOPPER_UI_THREADS_HPP
+#define KHOPPER_UI_THREADS_HPP
 
-#include "cue/track.hpp"
-#include "types.hpp"
+#include "track.hpp"
+#include "tr1.hpp"
+#include "encoder.hpp"
 
 #include <QThread>
 
@@ -29,10 +30,10 @@ namespace Khopper {
 			
 			/**
 			 * @brief Set output option
-			 * @param [in] output Output format object
+			 * @param [in] output Decoder object
 			 * @param [in] outDir Output directory
 			 */
-			void setOutput( const OutputSP & output, const QString & outDir );
+			void setOutput( EncoderSP output, const QString & outDir );
 
 			/**
 			 * @brief Set tracks to convert

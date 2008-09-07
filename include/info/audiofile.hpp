@@ -1,5 +1,5 @@
-#ifndef AUDIOFILE_HPP
-#define AUDIOFILE_HPP
+#ifndef KHOPPER_INFO_AUDIOFILE_HPP
+#define KHOPPER_INFO_AUDIOFILE_HPP
 
 #include <QString>
 

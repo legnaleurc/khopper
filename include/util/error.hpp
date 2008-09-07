@@ -1,8 +1,8 @@
 /**
  * @file error.hpp
  */
-#ifndef ERROR_HPP
-#define ERROR_HPP
+#ifndef KHOPPER_UTIL_ERROR_HPP
+#define KHOPPER_UTIL_ERROR_HPP
 
 #include <exception>
 #include <string>

@@ -1,5 +1,8 @@
-#ifndef CODEC_HPP
-#define CODEC_HPP
+/**
+ * @file textcodec.hpp
+ */
+#ifndef KHOPPER_UI_TEXTCODEC_HPP
+#define KHOPPER_UI_TEXTCODEC_HPP
 
 #include <QDialog>
 
@@ -11,12 +14,12 @@ QT_END_NAMESPACE
 
 namespace Khopper {
 
-	class Codec : public QDialog {
+	class TextCodec : public QDialog {
 
 		Q_OBJECT
 
 		public:
-			Codec( QWidget * parent = 0, Qt::WindowFlags f = 0 );
+			TextCodec( QWidget * parent = 0, Qt::WindowFlags f = 0 );
 			void setEncoded( const QByteArray & encoded );
 			QString getDecoded() const;
 

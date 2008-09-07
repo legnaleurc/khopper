@@ -1,5 +1,5 @@
-#ifndef SHARED_PTR_HPP
-#define SHARED_PTR_HPP
+#ifndef KHOPPER_UTIL_TR1_HPP
+#define KHOPPER_UTIL_TR1_HPP
 
 #ifdef _HAS_TR1
 #include <memory>

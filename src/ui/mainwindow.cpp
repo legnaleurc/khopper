@@ -1,12 +1,11 @@
-#include "ui/mainwindow.hpp"
-#include "ui/songlist.hpp"
-#include "ui/threads.hpp"
-#include "ui/codec.hpp"
-#include "types.hpp"
-#include "util/os.hpp"
-#include "cue/cuesheet.hpp"
-#include "cue/track.hpp"
-#include "conv/output/output.hpp"
+#include "mainwindow.hpp"
+#include "songlist.hpp"
+#include "threads.hpp"
+#include "textcodec.hpp"
+#include "os.hpp"
+#include "cuesheet.hpp"
+#include "track.hpp"
+#include "encoder.hpp"
 #include <QtGui>
 
 // for Track to QVariant
@@ -19,7 +18,7 @@ namespace Khopper {
 		setWindowTitle( tr( "Khopper" ) );
 		
 		initAbout_();
-		codec_ = new Codec( this );
+		codec_ = new TextCodec( this );
 		
 		// Setting menu bar
 		initMenuBar_();
@@ -102,8 +101,8 @@ namespace Khopper {
 	
 	void MainWindow::initOutputTypeList_() {
 		// Take out the output types
-		const OutputList & tm = IOTypes::Instance().second;
-		for( OutputList::const_iterator it = tm.begin(); it != tm.end(); ++it ) {
+		const EncoderList::ObjectType & tm = EncoderList::Instance();
+		for( EncoderList::ObjectType::const_iterator it = tm.begin(); it != tm.end(); ++it ) {
 			outputTypes_->addItem( it->second.c_str(), QVariant( it->first.c_str() ) );
 		}
 	}
@@ -118,8 +117,8 @@ namespace Khopper {
 
 		if( outDir != "" ) {
 			try {
-				// create output format object
-				OutputSP output( OutputFactory::Instance().CreateObject( test.toStdString() ) );
+				// create encoder object
+				EncoderSP output( EncoderFactory::Instance().CreateObject( test.toStdString() ) );
 
 				// get select list
 				QModelIndexList selected = songListView_->selectionModel()->selectedRows( 0 );

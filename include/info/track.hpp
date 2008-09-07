@@ -1,7 +1,7 @@
-#ifndef TRACK_HPP
-#define TRACK_HPP
+#ifndef KHOPPER_INFO_TRACK_HPP
+#define KHOPPER_INFO_TRACK_HPP
 
-#include "cue/audiofile.hpp"
+#include "audiofile.hpp"
 
 #include <QString>
 #include <QStringList>

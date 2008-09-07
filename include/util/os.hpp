@@ -1,8 +1,8 @@
 /**
  * @file os.hpp
  */
-#ifndef OS_HPP
-#define OS_HPP
+#ifndef KHOPPER_UTIL_OS_HPP
+#define KHOPPER_UTIL_OS_HPP
 
 #include "error.hpp"
 

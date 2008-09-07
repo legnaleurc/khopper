@@ -1,4 +1,4 @@
-#include "cue/audiofile.hpp"
+#include "audiofile.hpp"
 
 #include <QFileInfo>
 #include <QTextStream>
