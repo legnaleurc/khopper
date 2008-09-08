@@ -8,17 +8,17 @@ DEPENDPATH += . \
               src/muxer \
               src/ui \
               src/util \
-              include/muxer/decoder \
-              include/muxer/encoder \
-              src/muxer/decoder \
-              src/muxer/encoder
+              include/muxer/dec \
+              include/muxer/enc \
+              src/muxer/dec \
+              src/muxer/enc
 INCLUDEPATH += . \
                include/ui \
                include/info \
                include/util \
                include/muxer \
-               include/muxer/decoder \
-               include/muxer/encoder
+               include/muxer/dec \
+               include/muxer/enc
 
 # Input
 HEADERS += include/info/audiofile.hpp \
@@ -34,9 +34,9 @@ HEADERS += include/info/audiofile.hpp \
            include/util/error.hpp \
            include/util/os.hpp \
            include/util/tr1.hpp \
-           include/muxer/decoder/ape_d.hpp \
-           include/muxer/decoder/wav_d.hpp \
-           include/muxer/encoder/mp3_e.hpp
+           include/muxer/dec/ape_d.hpp \
+           include/muxer/dec/wav_d.hpp \
+           include/muxer/enc/mp3_e.hpp
 SOURCES += src/khopper.cpp \
            src/info/audiofile.cpp \
            src/info/cuesheet.cpp \
@@ -48,9 +48,9 @@ SOURCES += src/khopper.cpp \
            src/ui/songlist.cpp \
            src/ui/textcodec.cpp \
            src/ui/threads.cpp \
-           src/muxer/decoder/ape_d.cpp \
-           src/muxer/decoder/wav_d.cpp \
-           src/muxer/encoder/mp3_e.cpp
+           src/muxer/dec/ape_d.cpp \
+           src/muxer/dec/wav_d.cpp \
+           src/muxer/enc/mp3_e.cpp
 
 # config
 TARGET = khopper
