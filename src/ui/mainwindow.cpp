@@ -160,7 +160,7 @@ namespace Khopper {
 		if( filePath != "" ) {
 			std::vector< Track > tracks;
 
-			if( filePath == "cue" ) {
+			if( QFileInfo( filePath ).suffix() == "cue" ) {
 				QFile fin( filePath );
 				if( !fin.open( QIODevice::ReadOnly | QIODevice::Text ) ) {
 					QMessageBox::critical( this, tr( "File open error!" ), tr( "Could not open the file: `" ) + filePath + "\'" );
