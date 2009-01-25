@@ -56,7 +56,7 @@ unix {
     SOURCES += src/util/linux.cpp
     CONFIG += link_pkgconfig
     PKGCONFIG += libavcodec libavformat
-    LIBS += -lloki
+    LIBS += -lloki -lboost_regex
 }
 
 win32 {

@@ -21,7 +21,7 @@ namespace {
 	const wregex FLAGS( L"\\s*FLAGS\\s+(DATA|DCP|4CH|PRE|SCMS)\\s*" );
 	const wregex TRACK( L"\\s*TRACK\\s+(\\d+)\\s+(AUDIO)\\s*" );
 	const wregex INDEX( L"\\s*(INDEX|PREGAP|POSTGAP)\\s+((\\d+)\\s+)?(\\d+):(\\d+):(\\d+)\\s*" );
-	
+
 	wstring stripQuote( const wstring & s ) {
 		if( s[0] == '\"' && s[s.length()-1] == '\"' ) {
 			return s.substr( 1, s.length() - 2 );
@@ -29,7 +29,7 @@ namespace {
 			return s;
 		}
 	}
-	
+
 	std::vector< wstring > createHeader() {
 		std::vector< wstring > vs;
 		vs.push_back( L"Title" );
