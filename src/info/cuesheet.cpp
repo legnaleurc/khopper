@@ -1,5 +1,4 @@
 #include "cuesheet.hpp"
-// #include "audiofile.hpp"
 #include "track.hpp"
 #include "error.hpp"
 #include "os.hpp"
@@ -48,18 +47,18 @@ namespace {
 }
 
 namespace Khopper {
-	
+
 	const std::vector< wstring > CUESheet::Headers = createHeader();
-	
+
 	CUESheet::CUESheet() {}
-	
+
 	CUESheet::CUESheet( const wstring & content, const wstring & dirPath ) {
-		qDebug() << "Parsing CUE sheet:" << dirPath;
+		qDebug() << "Parsing CUE sheet:" << QString::fromStdWString( dirPath );
 		this->parseCUE_( content, dirPath );
 	}
 
 	void CUESheet::open( const wstring & content, const wstring & dirPath ) {
-		qDebug() << "Parsing CUE sheet:" << dirPath;
+		qDebug() << "Parsing CUE sheet:" << QString::fromStdWString( dirPath );
 		this->parseCUE_( content, dirPath );
 	}
 
@@ -71,7 +70,7 @@ namespace Khopper {
 		wstring line;
 
 		while( getline( sin, line ) ) {
-			qDebug() << line;
+			qDebug() << QString::fromStdWString( line );
 			if( regex_match( line, result, SINGLE ) ) {
 // 				qDebug() << "Single matched:" << SINGLE.cap( 1 ) << SINGLE.cap( 2 );
 				parseSingle_( result[1], result[2], trackNO );
@@ -132,7 +131,7 @@ namespace Khopper {
 			}
 		}
 	}
-	
+
 	std::pair< wstring, CUESheet::FileType > CUESheet::parseFile_( const wstring & fileName, const wstring & type, const wstring & dirPath ) {
 		wstring filePath = os::join( dirPath, stripQuote( fileName ) );
 		if( type == L"BINARY" ) {
@@ -149,7 +148,7 @@ namespace Khopper {
 			return std::make_pair( filePath, BINARY );
 		}
 	}
-	
+
 	void CUESheet::parseFlags_( const wstring & flag, int trackNO ) {
 		if( trackNO != -1 ) {
 			if( flag == L"DATA" ) {
@@ -165,7 +164,7 @@ namespace Khopper {
 			}
 		}
 	}
-	
+
 	void CUESheet::parseIndex_( const wstring & type, const wstring & num, const wstring & m, const wstring & s, const wstring & f, int trackNO ) {
 		unsigned short int minute = toUShort( m );
 		unsigned short int second = toUShort( s );
@@ -183,7 +182,7 @@ namespace Khopper {
 			this->tracks[trackNO].postGap = Index( minute, second, frame );
 		}
 	}
-	
+
 	void CUESheet::parseComment_( const wstring & key, const wstring & value, int trackNO ) {
 		if( trackNO == -1 ) {
 			this->comments[key] = value;
@@ -191,7 +190,7 @@ namespace Khopper {
 			this->tracks[trackNO].comments[key] = value;
 		}
 	}
-	
+
 	void CUESheet::parseTrack_( const wstring & num, const std::pair< wstring, FileType > & audioData, const wstring & type ) {
 		Track track;
 		track.index = toUShort( num );
@@ -217,7 +216,7 @@ namespace Khopper {
 		}
 		this->tracks.push_back( track );
 	}
-	
+
 	void CUESheet::parseGarbage_( const wstring & line, int trackNO ) {
 		if( trackNO == -1 ) {
 			this->garbage.push_back( line );
