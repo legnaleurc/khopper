@@ -19,10 +19,12 @@ namespace Khopper {
 	}
 
 	void ConverterThread::run() {
+		// TODO: damn hack!
+		QString nameHack( "%1/%2.mp3" );
 		// convert
 		try {
 			for( std::size_t i = 0; i < tracks_.size(); ++i ) {
-				this->tracks_[i].convert( this->outDir_.toStdWString(), this->encoder_ );
+				this->tracks_[i].convert( nameHack.arg( this->outDir_ ).arg( QString::fromStdWString( tracks_[i].title ) ).toStdWString(), this->encoder_ );
 				emit step( i );
 			}
 		} catch( std::exception & e ) {

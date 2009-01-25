@@ -27,12 +27,16 @@ namespace Khopper {
 	performer(),
 	songWriter(),
 	title(),
-	decoder_() {
+	decoder_( new Decoder ) {
 	}
 
-	void Track::convert( const std::wstring & targetPath, const EncoderSP & encoder ) const {
-		this->decoder_->open( filePath );
+	void Track::convert( const std::wstring & targetPath, EncoderSP encoder ) const {
+// 		this->decoder_->open( filePath );
 		encoder->open( targetPath );
+
+		encoder->setBitRate( 320000 );
+		encoder->setSampleRate( 48000 );
+		encoder->setChannels( 2 );
 
 		double begin = this->startTime.toDouble();
 		double end = 0.0;

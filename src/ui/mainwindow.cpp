@@ -101,10 +101,11 @@ namespace Khopper {
 
 	void MainWindow::initOutputTypeList_() {
 		// Take out the output types
-		const EncoderList::ObjectType & tm = EncoderList::Instance();
-		for( EncoderList::ObjectType::const_iterator it = tm.begin(); it != tm.end(); ++it ) {
-			outputTypes_->addItem( it->second.c_str(), QVariant( it->first.c_str() ) );
-		}
+// 		const EncoderList::ObjectType & tm = EncoderList::Instance();
+// 		for( EncoderList::ObjectType::const_iterator it = tm.begin(); it != tm.end(); ++it ) {
+// 			outputTypes_->addItem( it->second.c_str(), QVariant( it->first.c_str() ) );
+// 		}
+		this->outputTypes_->addItem( QObject::tr( "mp3" ) );
 	}
 
 	void MainWindow::initHeader_() {
@@ -117,7 +118,7 @@ namespace Khopper {
 
 	void MainWindow::fire_() {
 		// get format
-		QString test = outputTypes_->itemData( outputTypes_->currentIndex() ).toString();
+// 		QString test = outputTypes_->itemData( outputTypes_->currentIndex() ).toString();
 		// get saving directory
 		QString outDir = QFileDialog::getExistingDirectory( this, tr( "Target Directory" ), QDir::homePath() );
 
@@ -125,7 +126,8 @@ namespace Khopper {
 			try {
 				// create encoder object
 				// TODO: need changes
-				EncoderSP output( EncoderFactory::Instance().CreateObject( test.toStdString() ) );
+// 				EncoderSP output( EncoderFactory::Instance().CreateObject( test.toStdString() ) );
+				EncoderSP output( new Encoder );
 
 				// get selected list
 				QModelIndexList selected = this->songListView_->selectionModel()->selectedRows( 0 );
@@ -139,6 +141,9 @@ namespace Khopper {
 				// set progress bar
 				progress_->setRange( 0, tracks.size() );
 				// set output information
+				// TODO:
+				// not only target directory, but filenames
+				// I'll let cvt_ to do this, but this really needs change
 				cvt_->setOutput( output, outDir );
 				cvt_->setTracks( tracks );
 				cvt_->start();

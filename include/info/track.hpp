@@ -70,7 +70,7 @@ namespace Khopper {
 
 		Track();
 
-		void convert( const std::wstring & targetPath, const EncoderSP & encoder ) const;
+		void convert( const std::wstring & targetPath, EncoderSP encoder ) const;
 
 		/**
 		 * @brief Dump track information
