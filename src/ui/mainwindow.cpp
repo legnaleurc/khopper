@@ -74,7 +74,7 @@ namespace Khopper {
 
 		QAction * open = new QAction( tr( "&Open..." ), this );
 		open->setShortcut( tr( "Ctrl+O" ) );
-		connect( open, SIGNAL( triggered() ), this, SLOT( openFileDialog() ) );
+		connect( open, SIGNAL( triggered() ), this, SLOT( showOpenFileDialog() ) );
 		file->addAction( open );
 
 		// add file menu to menu bar
