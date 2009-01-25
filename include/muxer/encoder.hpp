@@ -15,6 +15,7 @@
 #include <string>
 
 struct AVFormatContext;
+struct AVOutputFormat;
 struct AVStream;
 
 namespace Khopper {
@@ -47,12 +48,16 @@ namespace Khopper {
 		 */
 		virtual QWidget * getUI() const;
 
+	protected:
+		virtual AVOutputFormat * guessFormat() const;
+
 	private:
 		bool openAudio_();
 		void closeAudio_();
 		void writeFrame_( short * );
 
 		bool opening_;
+		std::string filePath_;
 		ByteArray buffer_;
 		ByteArray samples_;
 		std::tr1::shared_ptr< AVFormatContext > pFormatContext_;

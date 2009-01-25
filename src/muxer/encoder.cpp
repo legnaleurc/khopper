@@ -28,6 +28,7 @@ namespace Khopper {
 
 	Encoder::Encoder():
 	opening_( false ),
+	filePath_(),
 	samples_(),
 	pFormatContext_(),
 	pStream_( NULL ),
@@ -52,8 +53,8 @@ namespace Khopper {
 	}
 
 	void Encoder::open( const std::wstring & filePath ) {
-		std::string fP = os::encodeString( filePath );
-		AVOutputFormat * pOF = guess_format( NULL, fP.c_str(), NULL );
+		this->filePath_ = os::encodeString( filePath );
+		AVOutputFormat * pOF = this->guessFormat();
 		if( pOF == NULL ) {
 			return;
 		}
@@ -63,7 +64,7 @@ namespace Khopper {
 			return;
 		}
 		this->pFormatContext_->oformat = pOF;
-		strncpy( this->pFormatContext_->filename, fP.c_str(), sizeof( this->pFormatContext_->filename ) );
+		strncpy( this->pFormatContext_->filename, this->filePath_.c_str(), sizeof( this->pFormatContext_->filename ) );
 
 		AVCodecContext * pCC = NULL;
 
@@ -92,7 +93,7 @@ namespace Khopper {
 		this->openAudio_();
 
 		if( !( pOF->flags & AVFMT_NOFILE ) ) {
-			if( url_fopen( &this->pFormatContext_->pb, fP.c_str(), URL_WRONLY ) < 0 ) {
+			if( url_fopen( &this->pFormatContext_->pb, this->filePath_.c_str(), URL_WRONLY ) < 0 ) {
 				return;
 			}
 		}
@@ -102,6 +103,10 @@ namespace Khopper {
 		samples_.resize( pCC->frame_size * sizeof( short ) * pCC->channels );
 
 		this->opening_ = true;
+	}
+
+	bool Encoder::is_open() const {
+		return this->opening_;
 	}
 
 	void Encoder::close() {
@@ -145,6 +150,10 @@ namespace Khopper {
 			this->writeFrame_( reinterpret_cast< short * >( &this->buffer_[0] ) );
 			this->buffer_.clear();
 		}
+	}
+
+	AVOutputFormat * Encoder::guessFormat() const {
+		return guess_format( NULL, this->filePath_.c_str(), NULL );
 	}
 
 	void Encoder::writeFrame_( short * samples ) {
