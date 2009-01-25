@@ -14,29 +14,52 @@
 
 #include <string>
 
+struct AVFormatContext;
+struct AVStream;
+
 namespace Khopper {
 
 	/**
 	 * @brief Encoder interface
 	 */
 	class Encoder {
-		public:
-			/**
-			 * @brief Get format specified options
-			 * @return string option
-			 */
-			virtual std::string getOption() const = 0;
-			
-			/**
-			 * @brief Get Type GUI
-			 * @return GUI object
-			 */
-			virtual QWidget * getUI() const = 0;
-			
-			/**
-			 * @brief Pure virtual destructor
-			 */
-			virtual ~Encoder() = 0;
+	public:
+		Encoder();
+		/**
+		 * @brief Pure virtual destructor
+		 */
+		virtual ~Encoder();
+
+		void open( const std::wstring & filePath );
+		bool is_open() const;
+		void close();
+
+		void setBitRate( int bit_rate );
+		void setSampleRate( int sample_rate );
+		void setChannels( int channels );
+
+		void write( const ByteArray & data );
+		void flush();
+
+		/**
+		 * @brief Get Type GUI
+		 * @return GUI object
+		 */
+		virtual QWidget * getUI() const;
+
+	private:
+		bool openAudio_();
+		void closeAudio_();
+		void writeFrame_( short * );
+
+		bool opening_;
+		ByteArray buffer_;
+		ByteArray samples_;
+		std::tr1::shared_ptr< AVFormatContext > pFormatContext_;
+		AVStream * pStream_;
+		int bitRate_;
+		int sampleRate_;
+		int channels_;
 	};
 
 	/**

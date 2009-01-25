@@ -5,16 +5,19 @@
 #include "error.hpp"
 
 namespace Khopper {
-	
-	const char * const Converter::COMMAND = "shnsplit";
-	
-	Converter::Converter( EncoderSP oop, const std::string & outDir ) : output_( oop ), outDir_( outDir ) {
-		os::exists( COMMAND );
+
+	Converter::Converter() : output_(), outDir_() {
 	}
-	
-	std::string Converter::perform( const Track & track, DecoderSP iop ) const {
-		std::vector< std::string > args;
-		
+
+	Converter::Converter( EncoderSP oop, const QString & outDir ) : output_( oop ), outDir_( outDir ) {
+	}
+
+	QString Converter::perform( const Track & track, DecoderSP iop ) const {
+		iop->open( track.getAudioData().getFilePath() );
+// 		iop->seek(  );
+		while( iop ) {
+		}
+
 		args.push_back( COMMAND );
 		args.push_back( track.getAudioData().getFilePath().toUtf8().constData() );
 		args.push_back( "-x" );

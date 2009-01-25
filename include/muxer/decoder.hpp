@@ -13,29 +13,48 @@
 
 #include <string>
 
+struct AVFormatContext;
+struct AVCodecContext;
+struct AVPacket;
+
 namespace Khopper {
 
 	/**
 	 * @brief Decoder interface
 	 */
 	class Decoder {
-		public:
-			/**
-			 * @brief Get option information
-			 * @return It is a string
-			 */
-			virtual std::string getOption() const = 0;
-			
-			/**
-			 * @brief Type specified UI
-			 * @return A GUI object
-			 */
-			virtual QWidget * getUI() const = 0;
-			
-			/**
-			 * @brief Pure virtual destructor
-			 */
-			virtual ~Decoder() = 0;
+	public:
+		Decoder();
+
+		/**
+		 * @brief Pure virtual destructor
+		 */
+		virtual ~Decoder();
+
+		void open( const std::wstring & filePath );
+		bool is_open() const {
+			return opening_;
+		}
+		void close();
+
+		bool seek( double timestamp );
+
+		ByteArray next();
+		bool hasNext( double timestamp = 0.0 ) const;
+
+		/**
+		 * @brief Type specified UI
+		 * @return A GUI object
+		 */
+		virtual QWidget * getUI() const;
+
+	private:
+		bool opening_;
+		bool hasNext_;
+		std::tr1::shared_ptr< AVFormatContext > pFormatContext_;
+		std::tr1::shared_ptr< AVCodecContext > pCodecContext_;
+		std::tr1::shared_ptr< AVPacket > pPacket_;
+		double timeBase_;
 	};
 
 	/**

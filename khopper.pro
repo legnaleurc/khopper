@@ -7,24 +7,17 @@ DEPENDPATH += . \
               src/info \
               src/muxer \
               src/ui \
-              src/util \
-              include/muxer/dec \
-              include/muxer/enc \
-              src/muxer/dec \
-              src/muxer/enc
+              src/util
 INCLUDEPATH += . \
                include/ui \
                include/info \
                include/util \
-               include/muxer \
-               include/muxer/dec \
-               include/muxer/enc
+               include/muxer
 
 # Input
-HEADERS += include/info/audiofile.hpp \
-           include/info/cuesheet.hpp \
+HEADERS += include/info/cuesheet.hpp \
+           include/info/index.hpp \
            include/info/track.hpp \
-           include/muxer/converter.hpp \
            include/muxer/decoder.hpp \
            include/muxer/encoder.hpp \
            include/ui/mainwindow.hpp \
@@ -33,24 +26,17 @@ HEADERS += include/info/audiofile.hpp \
            include/ui/threads.hpp \
            include/util/error.hpp \
            include/util/os.hpp \
-           include/util/tr1.hpp \
-           include/muxer/dec/ape_d.hpp \
-           include/muxer/dec/wav_d.hpp \
-           include/muxer/enc/mp3_e.hpp
+           include/util/tr1.hpp
 SOURCES += src/khopper.cpp \
-           src/info/audiofile.cpp \
            src/info/cuesheet.cpp \
+           src/info/index.cpp \
            src/info/track.cpp \
-           src/muxer/converter.cpp \
            src/muxer/decoder.cpp \
            src/muxer/encoder.cpp \
            src/ui/mainwindow.cpp \
            src/ui/songlist.cpp \
            src/ui/textcodec.cpp \
-           src/ui/threads.cpp \
-           src/muxer/dec/ape_d.cpp \
-           src/muxer/dec/wav_d.cpp \
-           src/muxer/enc/mp3_e.cpp
+           src/ui/threads.cpp
 
 # config
 TARGET = khopper
@@ -68,6 +54,8 @@ CONFIG( debug, debug|release ) {
 unix {
     TEMPLATE = app
     SOURCES += src/util/linux.cpp
+    CONFIG += link_pkgconfig
+    PKGCONFIG += libavcodec libavformat
     LIBS += -lloki
 }
 

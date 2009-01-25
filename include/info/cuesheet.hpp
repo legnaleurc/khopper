@@ -6,121 +6,77 @@
 
 #include "track.hpp"
 
-#include <QString>
-#include <QMap>
-#include <QVector>
+#include <vector>
+#include <string>
 
 namespace Khopper {
 
-	class AudioFile;
-	
 	/**
 	 * @brief The CUE parser
 	 */
 	class CUESheet {
-		public:
-			/**
-			 * @brief Headers of fields
-			 */
-			static const QStringList headers;
+	public:
+		enum FileType {
+			/// Binary
+			BINARY,
+			/// Motorola
+			MOTOROLA,
+			/// AIFF
+			AIFF,
+			/// wave
+			WAVE,
+			/// Mpeg 1 Layer 3
+			MP3
+		};
 
-			/**
-			 * @brief Default constructor
-			 */
-			CUESheet();
-			
-			/**
-			 * @brief Give a CUE Sheet content and create this object
-			 * @param [in] content CHESheet content
-			 * @param [in] dirPath where the CUE sheet comes from
-			 */
-			CUESheet( const QString & content, const QString & dirPath = QString() );
+		/**
+		 * @brief Headers of fields
+		 */
+		static const std::vector< std::wstring > Headers;
 
-			/**
-			 * @brief Set CUE sheet by given whole content
-			 * @param [in] content CHESheet content
-			 * @param [in] dirPath where the CUE sheet comes from
-			 */
-			void open( const QString & content, const QString & dirPath = QString() );
+		/**
+		 * @brief Default constructor
+		 */
+		CUESheet();
 
-			/**
-			 * @brief Get catalog infomation
-			 * @return catalog
-			 */
-			const QString & getCatalog() const;
-			
-			/**
-			 * @brief Get CD text infomation
-			 * @return CD text
-			 */
-			const QString & getCDTextFile() const;
-			
-			/**
-			 * @brief Get comments
-			 * @return comments
-			 */
-			const QMap< QString, QString > & getComments() const;
-			
-			/**
-			 * @brief Get garbage infomation
-			 * @return garbage
-			 */
-			const QStringList & getGarbage() const;
-			
-			/**
-			 * @brief Get performer infomation
-			 * @return performer
-			 */
-			const QString & getPerformer() const;
+		/**
+		 * @brief Give a CUE Sheet content and create this object
+		 * @param [in] content CHESheet content
+		 * @param [in] dirPath where the CUE sheet comes from
+		 */
+		CUESheet( const std::wstring & content, const std::wstring & dirPath = std::wstring() );
 
-			/**
-			 * @brief Get song writer infomation
-			 * @return song writer
-			 */
-			const QString & getSongWriter() const;
-			
-			/**
-			 * @brief Get disc title infomation
-			 * @return disc title
-			 */
-			const QString & getTitle() const;
+		/**
+		 * @brief Set CUE sheet by given whole content
+		 * @param [in] content CHESheet content
+		 * @param [in] dirPath where the CUE sheet comes from
+		 */
+		void open( const std::wstring & content, const std::wstring & dirPath = std::wstring() );
 
-			/**
-			 * @brief Get track amount of disc
-			 * @return track amount
-			 */
-			std::size_t size() const;
+		/**
+		 * @brief Dump CUE Sheet to string
+		 * @return Human readable information
+		 */
+		std::wstring toStdWString() const;
 
-			/**
-			 * @brief Dump CUE Sheet to string
-			 * @return Human readable information
-			 */
-			QString toString() const;
+		std::wstring catalog;
+		std::wstring cdTextFile;
+		std::map< std::wstring, std::wstring > comments;
+		std::vector< std::wstring > garbage;
+		std::wstring performer;
+		std::wstring songWriter;
+		std::wstring title;
+		std::vector< Track > tracks;
 
-			/**
-			 * @brief Get track infomation
-			 * @param [in] index track index
-			 * @return track information
-			 */
-			const Track & operator []( std::size_t index ) const;
-		private:
-			void parseCUE_( QString, const QString & );
-			void parseSingle_( const QString &, const QString &, int );
-			AudioFile parseFile_( const QString &, const QString &, const QString & );
-			void parseFlags_( const QString &, int );
-			void parseIndex_( const QString &, const QString &, const QString &, const QString &, const QString &, int );
-			void parseComment_( const QString &, const QString &, int );
-			void parseTrack_( const QString &, const AudioFile &, const QString &, int );
-			void parseGarbage_( const QString &, int );
-			
-			QString catalog_;
-			QString cdTextFile_;
-			QMap< QString, QString > comments_;
-			QStringList garbage_;
-			QString performer_;
-			QString songWriter_;
-			QString title_;
-			QVector< Track > tracks_;
+	private:
+		void parseCUE_( const std::wstring &, const std::wstring & );
+		void parseSingle_( const std::wstring &, const std::wstring &, int );
+		std::pair< std::wstring, FileType > parseFile_( const std::wstring &, const std::wstring &, const std::wstring & );
+		void parseFlags_( const std::wstring &, int );
+		void parseIndex_( const std::wstring &, const std::wstring &, const std::wstring &, const std::wstring &, const std::wstring &, int );
+		void parseComment_( const std::wstring &, const std::wstring &, int );
+		void parseTrack_( const std::wstring &, const std::pair< std::wstring, FileType > &, const std::wstring & );
+		void parseGarbage_( const std::wstring &, int );
 	};
 
 }

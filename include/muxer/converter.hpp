@@ -7,7 +7,7 @@
 #include "decoder.hpp"
 #include "encoder.hpp"
 
-#include <string>
+#include <QString>
 
 namespace Khopper {
 
@@ -19,11 +19,16 @@ namespace Khopper {
 	class Converter {
 		public:
 			/**
+			 * @brief Default constructor
+			 */
+			Converter();
+
+			/**
 			 * @brief You can only use this version
 			 * @param [in] oop Encoder option
 			 * @param [in] outDir Output directory
 			 */
-			Converter( EncoderSP oop, const std::string & outDir );
+			Converter( EncoderSP oop, const QString & outDir );
 
 			/**
 			 * @brief Convert action
@@ -32,12 +37,10 @@ namespace Khopper {
 			 * @return message
 			 * @throw Error<Runtime> Basic
 			 */
-			std::string perform( const Track & track, DecoderSP iop ) const;
+			QString perform( const Track & track, DecoderSP iop ) const;
 		private:
-			static const char * const COMMAND;
-			
 			EncoderSP output_;
-			std::string outDir_;
+			QString outDir_;
 			
 			// Protection
 			Converter( const Converter & );

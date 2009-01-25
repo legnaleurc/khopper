@@ -1,4 +1,7 @@
 #include "os.hpp"
+#include "tr1.hpp"
+
+#include <QString>
 
 #include <sys/wait.h>
 #include <cerrno>
@@ -118,21 +121,27 @@ namespace Khopper {
 			}
 		}
 
-		std::string join( const std::string & front, const std::string & back ) {
-			std::size_t bpos = back.find_last_not_of( "/" );
-			if( back[bpos] == '\\' || front.empty() ) {
-				++bpos;
+		std::wstring join( const std::wstring & front, const std::wstring & back ) {
+			// kill all tail '/' in front
+			// kill all lead '/' in back
+			// return front + '/' + back
+			using namespace std::tr1;
+			const wregex fp( L"(.*)/*" );
+			wsmatch fr;
+			const wregex bp( L"/*(.*)" );
+			wsmatch br;
+
+			if( regex_match( front, fr, fp ) && regex_match( back, br, bp ) ) {
+				return fr[1].str() + L"/" + br[1].str();
+			} else {
+				return L"";
 			}
-			if( back[0] == '/' ) {
-				return back.substr( 0, bpos + 1 );
-			}
-			std::size_t fpos = front.find_last_not_of( "/" );
-			if( front[fpos] == '\\' ) {
-				++fpos;
-			}
-			return front.substr( 0, fpos + 1 ) + "/" + back.substr( 0, bpos + 1 );
 		}
-	
+
+		std::string encodeString( const std::wstring & unicode ) {
+			return QString::fromStdWString( unicode ).toLocal8Bit().constData();
+		}
+
 	}
-	
+
 }

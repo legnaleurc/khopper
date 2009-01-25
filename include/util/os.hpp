@@ -42,6 +42,10 @@ namespace Khopper {
 		 * @return Complete path
 		 */
 		std::string join( const std::string & front, const std::string & back );
+
+		std::wstring join( const std::wstring & front, const std::wstring & back );
+
+		std::string encodeString( const std::wstring & unicode );
 	};
 	
 }

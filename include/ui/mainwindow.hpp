@@ -23,6 +23,7 @@ namespace Khopper {
 	class ConverterThread;
 	class SongListView;
 	class TextCodec;
+	class Track;
 
 	/**
 	 * @class MainWindow
@@ -44,12 +45,12 @@ namespace Khopper {
 			/**
 			 * @brief Open the file widget
 			 */
-			void openFileDialog();
+			void showOpenFileDialog();
 			/**
 			 * @brief Add songs the song list
 			 * @param sheet CUE Sheet object
 			 */
-			void addSongList( const CUESheet & sheet );
+			void addSongList( const std::vector< Track > & sheet );
 			/**
 			 * @brief Open file
 			 * @param fileName file name

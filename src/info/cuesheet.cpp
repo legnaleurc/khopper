@@ -1,272 +1,252 @@
 #include "cuesheet.hpp"
-#include "audiofile.hpp"
+// #include "audiofile.hpp"
 #include "track.hpp"
 #include "error.hpp"
 #include "os.hpp"
+#include "tr1.hpp"
 
-#include <QRegExp>
-#include <QTextStream>
-#include <QMutex>
-#include <QMutexLocker>
 #include <QtDebug>
 
+#include <sstream>
+
+using std::wstring;
+using std::tr1::wregex;
+using std::tr1::wsmatch;
+using std::tr1::regex_match;
+
 namespace {
-	QMutex sheet;
+
+	const wregex COMMENT( L"\\s*REM\\s+(.*)\\s+(.*)\\s*" );
+	const wregex SINGLE( L"\\s*(CATALOG|CDTEXTFILE|ISRC|PERFORMER|SONGWRITER|TITLE)\\s+(.*)\\s*" );
+	const wregex FILES( L"\\s*FILE\\s+(.*)\\s+(WAVE)\\s*" );
+	const wregex FLAGS( L"\\s*FLAGS\\s+(DATA|DCP|4CH|PRE|SCMS)\\s*" );
+	const wregex TRACK( L"\\s*TRACK\\s+(\\d+)\\s+(AUDIO)\\s*" );
+	const wregex INDEX( L"\\s*(INDEX|PREGAP|POSTGAP)\\s+((\\d+)\\s+)?(\\d+):(\\d+):(\\d+)\\s*" );
 	
-	QRegExp COMMENT( "\\s*REM\\s+(.*)\\s+(.*)\\s*" );
-	QRegExp SINGLE( "\\s*(CATALOG|CDTEXTFILE|ISRC|PERFORMER|SONGWRITER|TITLE)\\s+(.*)\\s*" );
-	QRegExp FILES( "\\s*FILE\\s+(.*)\\s+(WAVE)\\s*" );
-	QRegExp FLAGS( "\\s*FLAGS\\s+(DATA|DCP|4CH|PRE|SCMS)\\s*" );
-	QRegExp TRACK( "\\s*TRACK\\s+(\\d+)\\s+(AUDIO)\\s*" );
-	QRegExp INDEX( "\\s*(INDEX|PREGAP|POSTGAP)\\s+((\\d+)\\s+)?(\\d+):(\\d+):(\\d+)\\s*" );
-	
-	QString stripQuote( const QString & s ) {
+	wstring stripQuote( const wstring & s ) {
 		if( s[0] == '\"' && s[s.length()-1] == '\"' ) {
-			return s.mid( 1, s.length() - 2 );
+			return s.substr( 1, s.length() - 2 );
 		} else {
 			return s;
 		}
 	}
 	
-	QStringList createHeader() {
-		QStringList vs;
-		vs.push_back( "Title" );
-		vs.push_back( "Performer" );
+	std::vector< wstring > createHeader() {
+		std::vector< wstring > vs;
+		vs.push_back( L"Title" );
+		vs.push_back( L"Performer" );
 		return vs;
 	}
-	
+
+	unsigned short int toUShort( const std::wstring & s ) {
+		std::wistringstream sin( s );
+		unsigned short int usi;
+		sin >> usi;
+		return usi;
+	}
+
 }
 
 namespace Khopper {
 	
-	const QStringList CUESheet::headers = createHeader();
+	const std::vector< wstring > CUESheet::Headers = createHeader();
 	
 	CUESheet::CUESheet() {}
 	
-	CUESheet::CUESheet( const QString & content, const QString & dirPath ) {
+	CUESheet::CUESheet( const wstring & content, const wstring & dirPath ) {
 		qDebug() << "Parsing CUE sheet:" << dirPath;
-		QMutexLocker lock( &sheet );
-		parseCUE_( content, dirPath );
+		this->parseCUE_( content, dirPath );
 	}
 
-	void CUESheet::open( const QString & content, const QString & dirPath ) {
+	void CUESheet::open( const wstring & content, const wstring & dirPath ) {
 		qDebug() << "Parsing CUE sheet:" << dirPath;
-		QMutexLocker lock( &sheet );
-		parseCUE_( content, dirPath );
+		this->parseCUE_( content, dirPath );
 	}
-	
-	void CUESheet::parseCUE_( QString content, const QString & dirPath ) {
+
+	void CUESheet::parseCUE_( const wstring & content, const wstring & dirPath ) {
 		int trackNO = -1;
-		AudioFile currentFile;
-		QTextStream lines( &content );
-		for( QString line = lines.readLine(); !line.isNull(); line = lines.readLine() ) {
+		std::pair< wstring, FileType > currentFile;
+		std::wistringstream sin( content );
+		wsmatch result;
+		wstring line;
+
+		while( getline( sin, line ) ) {
 			qDebug() << line;
-			if( SINGLE.exactMatch( line ) ) {
-				qDebug() << "Single matched:" << SINGLE.cap( 1 ) << SINGLE.cap( 2 );
-				parseSingle_( SINGLE.cap( 1 ), SINGLE.cap( 2 ), trackNO );
-			} else if( FILES.exactMatch( line ) ) {
-				qDebug() << "File matched:" << FILES.cap( 1 ) << FILES.cap( 2 );
-				currentFile = parseFile_( FILES.cap( 1 ), FILES.cap( 2 ), dirPath );
-			} else if( FLAGS.exactMatch( line ) ) {
-				qDebug() << "Flag matched:" << FLAGS.cap( 1 );
-				parseFlags_( FLAGS.cap( 1 ), trackNO );
-			} else if( INDEX.exactMatch( line ) ) {
-				qDebug() << "Index matched:" << INDEX.cap( 3 );
-				parseIndex_( INDEX.cap( 1 ), INDEX.cap( 3 ), INDEX.cap( 4 ), INDEX.cap( 5 ), INDEX.cap( 6 ), trackNO );
-			} else if( COMMENT.exactMatch( line ) ) {
-				qDebug() << "Comment matched:" << COMMENT.cap( 1 ) << COMMENT.cap( 2 );
-				parseComment_( COMMENT.cap( 1 ), COMMENT.cap( 2 ), trackNO );
-			} else if( TRACK.exactMatch( line ) ) {
-				qDebug() << "Track matched:" << TRACK.cap( 1 ) << TRACK.cap( 2 );
+			if( regex_match( line, result, SINGLE ) ) {
+// 				qDebug() << "Single matched:" << SINGLE.cap( 1 ) << SINGLE.cap( 2 );
+				parseSingle_( result[1], result[2], trackNO );
+			} else if( regex_match( line, result, FILES ) ) {
+// 				qDebug() << "File matched:" << FILES.cap( 1 ) << FILES.cap( 2 );
+				currentFile = parseFile_( result[1], result[2], dirPath );
+			} else if( regex_match( line, result, FLAGS ) ) {
+// 				qDebug() << "Flag matched:" << FLAGS.cap( 1 );
+				parseFlags_( result[1], trackNO );
+			} else if( regex_match( line, result, INDEX ) ) {
+// 				qDebug() << "Index matched:" << INDEX.cap( 3 );
+				parseIndex_( result[1], result[3], result[4], result[5], result[6], trackNO );
+			} else if( regex_match( line, result, COMMENT ) ) {
+// 				qDebug() << "Comment matched:" << COMMENT.cap( 1 ) << COMMENT.cap( 2 );
+				parseComment_( result[1], result[2], trackNO );
+			} else if( regex_match( line, result, TRACK ) ) {
+// 				qDebug() << "Track matched:" << TRACK.cap( 1 ) << TRACK.cap( 2 );
 				++trackNO;
-				parseTrack_( TRACK.cap( 1 ), currentFile, TRACK.cap( 2 ), trackNO );
+				parseTrack_( result[1], currentFile, result[2] );
 			} else {
 				qDebug( "Nothing matched: garbage" );
 				parseGarbage_( line, trackNO );
 			}
 		}
 	}
-	
-	void CUESheet::parseSingle_( const QString & c, const QString & s, int trackNO ) {
-		QString content = stripQuote( s );
-		if( c == "CATALOG" ) {
+
+	void CUESheet::parseSingle_( const wstring & c, const wstring & s, int trackNO ) {
+		wstring content = stripQuote( s );
+		if( c == L"CATALOG" ) {
 			if( trackNO == -1 ) {
-				catalog_ = content;
+				this->catalog = content;
 			}
-		} else if( c == "CDTEXTFILE" ) {
+		} else if( c == L"CDTEXTFILE" ) {
 			if( trackNO == -1 ) {
-				cdTextFile_ = content;
+				this->cdTextFile = content;
 			}
-		} else if( c == "ISRC" ) {
+		} else if( c == L"ISRC" ) {
 			if( trackNO != -1 ) {
-				tracks_[trackNO].setISRC( content );
+				this->tracks[trackNO].isrc = content;
 			}
-		} else if( c == "PERFORMER" ) {
+		} else if( c == L"PERFORMER" ) {
 			if( trackNO == -1 ) {
-				performer_ = content;
+				this->performer = content;
 			} else {
-				tracks_[trackNO].setPerformer( content );
+				this->tracks[trackNO].performer = content;
 			}
-		} else if( c == "SONGWRITER" ) {
+		} else if( c == L"SONGWRITER" ) {
 			if( trackNO == -1 ) {
-				songWriter_ = content;
+				this->songWriter = content;
 			} else {
-				tracks_[trackNO].setSongWriter( content );
+				this->tracks[trackNO].songWriter = content;
 			}
-		} else if( c == "TITLE" ) {
+		} else if( c == L"TITLE" ) {
 			if( trackNO == -1 ) {
-				title_ = content;
+				this->title = content;
 			} else {
-				tracks_[trackNO].setTitle( content );
+				this->tracks[trackNO].title = content;
 			}
 		}
 	}
 	
-	AudioFile CUESheet::parseFile_( const QString & fileName, const QString & type, const QString & dirPath ) {
-		if( type == "BINARY" ) {
-			return AudioFile( os::join( dirPath.toUtf8().constData(), stripQuote( fileName ).toUtf8().constData() ).c_str(), AudioFile::BINARY );
-		} else if( type == "MOTOROLA" ) {
-			return AudioFile( os::join( dirPath.toUtf8().constData(), stripQuote( fileName ).toUtf8().constData() ).c_str(), AudioFile::MOTOROLA );
-		} else if( type == "AIFF" ) {
-			return AudioFile( os::join( dirPath.toUtf8().constData(), stripQuote( fileName ).toUtf8().constData() ).c_str(), AudioFile::AIFF );
-		} else if( type == "WAVE" ) {
-			return AudioFile( os::join( dirPath.toUtf8().constData(), stripQuote( fileName ).toUtf8().constData() ).c_str(), AudioFile::WAVE );
-		} else if( type == "MP3" ) {
-			return AudioFile( os::join( dirPath.toUtf8().constData(), stripQuote( fileName ).toUtf8().constData() ).c_str(), AudioFile::MP3 );
+	std::pair< wstring, CUESheet::FileType > CUESheet::parseFile_( const wstring & fileName, const wstring & type, const wstring & dirPath ) {
+		wstring filePath = os::join( dirPath, stripQuote( fileName ) );
+		if( type == L"BINARY" ) {
+			return std::make_pair( filePath, BINARY );
+		} else if( type == L"MOTOROLA" ) {
+			return std::make_pair( filePath, MOTOROLA );
+		} else if( type == L"AIFF" ) {
+			return std::make_pair( filePath, AIFF );
+		} else if( type == L"WAVE" ) {
+			return std::make_pair( filePath, WAVE );
+		} else if( type == L"MP3" ) {
+			return std::make_pair( filePath, MP3 );
 		} else {
-			return AudioFile( os::join( dirPath.toUtf8().constData(), stripQuote( fileName ).toUtf8().constData() ).c_str(), AudioFile::BINARY );
+			return std::make_pair( filePath, BINARY );
 		}
 	}
 	
-	void CUESheet::parseFlags_( const QString & flag, int trackNO ) {
+	void CUESheet::parseFlags_( const wstring & flag, int trackNO ) {
 		if( trackNO != -1 ) {
-			if( flag == "DATA" ) {
-				tracks_[trackNO].addFlag( Track::DATA );
-			} else if( flag == "DCP" ) {
-				tracks_[trackNO].addFlag( Track::DCP );
-			} else if( flag == "4CH" ) {
-				tracks_[trackNO].addFlag( Track::CH4 );
-			} else if( flag == "PRE" ) {
-				tracks_[trackNO].addFlag( Track::PRE );
-			} else if( flag == "SCMS" ) {
-				tracks_[trackNO].addFlag( Track::SCMS );
+			if( flag == L"DATA" ) {
+				this->tracks[trackNO].flags = static_cast< Track::Flag >( this->tracks[trackNO].flags | Track::DATA );
+			} else if( flag == L"DCP" ) {
+				this->tracks[trackNO].flags = static_cast< Track::Flag >( this->tracks[trackNO].flags | Track::DCP );
+			} else if( flag == L"4CH" ) {
+				this->tracks[trackNO].flags = static_cast< Track::Flag >( this->tracks[trackNO].flags | Track::CH4 );
+			} else if( flag == L"PRE" ) {
+				this->tracks[trackNO].flags = static_cast< Track::Flag >( this->tracks[trackNO].flags | Track::PRE );
+			} else if( flag == L"SCMS" ) {
+				this->tracks[trackNO].flags = static_cast< Track::Flag >( this->tracks[trackNO].flags | Track::SCMS );
 			}
 		}
 	}
 	
-	void CUESheet::parseIndex_( const QString & type, const QString & num, const QString & m, const QString & s, const QString & f, int trackNO ) {
-		unsigned short int minute = m.toUShort();
-		unsigned short int second = s.toUShort();
-		unsigned short int frame = f.toUShort();
-		
-		if( type == "INDEX" ) {
-			if( num.toUShort() ) {
-				tracks_[trackNO].setBeginIndex( Index( minute, second, frame ) );
+	void CUESheet::parseIndex_( const wstring & type, const wstring & num, const wstring & m, const wstring & s, const wstring & f, int trackNO ) {
+		unsigned short int minute = toUShort( m );
+		unsigned short int second = toUShort( s );
+		unsigned short int frame = toUShort( f );
+
+		if( type == L"INDEX" ) {
+			if( toUShort( num ) == 1 ) {
+				this->tracks[trackNO].startTime = Index( minute, second, frame );
 			} else {
-				tracks_[trackNO-1].setEndIndex( Index( minute, second, frame ) );
+				this->tracks[trackNO-1].duration = Index( minute, second, frame ) - this->tracks[trackNO].startTime;
 			}
-		} else if( type == "PREGAP" ) {
-			tracks_[trackNO].setPreGap( Index( minute, second, frame ) );
-		} else if( type == "POSTGAP" ) {
-			tracks_[trackNO].setPostGap( Index( minute, second, frame ) );
+		} else if( type == L"PREGAP" ) {
+			this->tracks[trackNO].preGap = Index( minute, second, frame );
+		} else if( type == L"POSTGAP" ) {
+			this->tracks[trackNO].postGap = Index( minute, second, frame );
 		}
 	}
 	
-	void CUESheet::parseComment_( const QString & key, const QString & value, int trackNO ) {
+	void CUESheet::parseComment_( const wstring & key, const wstring & value, int trackNO ) {
 		if( trackNO == -1 ) {
-			comments_[key] = value;
+			this->comments[key] = value;
 		} else {
-			tracks_[trackNO].addComment( key, value );
+			this->tracks[trackNO].comments[key] = value;
 		}
 	}
 	
-	void CUESheet::parseTrack_( const QString & num, const AudioFile & audioData, const QString & type, int trackNO ) {
-		tracks_.push_back( Track( num.toUShort(), audioData ) );
-		if( type == "AUDIO" ) {
-			tracks_[trackNO].setDataType( Track::AUDIO );
-		} else if( type == "CDG" ) {
-			tracks_[trackNO].setDataType( Track::CDG );
-		} else if( type == "MODE1/2048" ) {
-			tracks_[trackNO].setDataType( Track::MODE1_2048 );
-		} else if( type == "MODE1/2352" ) {
-			tracks_[trackNO].setDataType( Track::MODE1_2352 );
-		} else if( type == "MODE2/2336" ) {
-			tracks_[trackNO].setDataType( Track::MODE2_2336 );
-		} else if( type == "MODE2/2352" ) {
-			tracks_[trackNO].setDataType( Track::MODE2_2352 );
-		} else if( type == "CDI/2336" ) {
-			tracks_[trackNO].setDataType( Track::CDI_2336 );
-		} else if( type == "CDI/2352" ) {
-			tracks_[trackNO].setDataType( Track::CDI_2352 );
+	void CUESheet::parseTrack_( const wstring & num, const std::pair< wstring, FileType > & audioData, const wstring & type ) {
+		Track track;
+		track.index = toUShort( num );
+		track.filePath = audioData.first;
+		if( type == L"AUDIO" ) {
+			track.dataType = Track::AUDIO;
+		} else if( type == L"CDG" ) {
+			track.dataType = Track::CDG;
+		} else if( type == L"MODE1/2048" ) {
+			track.dataType = Track::MODE1_2048;
+		} else if( type == L"MODE1/2352" ) {
+			track.dataType = Track::MODE1_2352;
+		} else if( type == L"MODE2/2336" ) {
+			track.dataType = Track::MODE2_2336;
+		} else if( type == L"MODE2/2352" ) {
+			track.dataType = Track::MODE2_2352;
+		} else if( type == L"CDI/2336" ) {
+			track.dataType = Track::CDI_2336;
+		} else if( type == L"CDI/2352" ) {
+			track.dataType = Track::CDI_2352;
 		} else {
-			tracks_[trackNO].setDataType( Track::AUDIO );
+			track.dataType = Track::AUDIO;
 		}
+		this->tracks.push_back( track );
 	}
 	
-	void CUESheet::parseGarbage_( const QString & line, int trackNO ) {
+	void CUESheet::parseGarbage_( const wstring & line, int trackNO ) {
 		if( trackNO == -1 ) {
-			garbage_.push_back( line );
+			this->garbage.push_back( line );
 		} else {
-			tracks_[trackNO].addGarbage( line );
+			this->tracks[trackNO].garbage.push_back( line );
 		}
 	}
-	const QString & CUESheet::getCatalog() const {
-		return catalog_;
-	}
-	
-	const QString & CUESheet::getCDTextFile() const {
-		return cdTextFile_;
-	}
-	
-	const QMap< QString, QString > & CUESheet::getComments() const {
-		return comments_;
-	}
-	
-	const QStringList & CUESheet::getGarbage() const {
-		return garbage_;
-	}
-	
-	const QString & CUESheet::getPerformer() const {
-		return performer_;
-	}
-	
-	const QString & CUESheet::getSongWriter() const {
-		return songWriter_;
-	}
-	
-	const QString & CUESheet::getTitle() const {
-		return title_;
-	}
-	
-	std::size_t CUESheet::size() const {
-		return tracks_.size();
-	}
-	
-	QString CUESheet::toString() const {
-		QTextStream sout;
-		sout << "Title:\t" << title_ << "\n";
-		sout << "Performer:\t" << performer_ << "\n";
-		sout << "Song Writer:\t" << songWriter_ << "\n";
-		sout << "Catalog:\t" << catalog_ << "\n";
-		sout << "CD text:\t" << cdTextFile_ << "\n";
-		sout << "Track number:\t" << tracks_.size() << "\n";
-		sout << "Comments:\n";
-		for( QMap< QString, QString >::const_iterator it = comments_.begin(); it != comments_.end(); ++it  ) {
-			sout << "\t" << it.key() << ":\t" << it.value() << "\n";
+
+	wstring CUESheet::toStdWString() const {
+		std::wostringstream sout;
+		sout << L"Title:\t" << this->title << L"\n";
+		sout << L"Performer:\t" << this->performer << L"\n";
+		sout << L"Song Writer:\t" << this->songWriter << L"\n";
+		sout << L"Catalog:\t" << this->catalog << L"\n";
+		sout << L"CD text:\t" << this->cdTextFile << L"\n";
+		sout << L"Track number:\t" << this->tracks.size() << L"\n";
+		sout << L"Comments:\n";
+		for( std::map< wstring, wstring >::const_iterator it = this->comments.begin(); it != this->comments.end(); ++it  ) {
+			sout << L"\t" << it->first << L":\t" << it->second << L"\n";
 		}
-		sout << "Garbage:\n";
-		foreach( QString s, garbage_ ) {
-			sout << "\t" << s << "\n";
+		sout << L"Garbage:\n";
+		for( std::vector< wstring >::const_iterator it = this->garbage.begin(); it != this->garbage.end(); ++it ) {
+			sout << L"\t" << *it << L"\n";
 		}
-		sout << "Tracks:\n";
-		for( QVector< Track >::const_iterator it = tracks_.begin(); it != tracks_.end(); ++it ) {
-			sout << "\t" << it->toString() << "\n";
+		sout << L"Tracks:\n";
+		for( std::vector< Track >::const_iterator it = this->tracks.begin(); it != this->tracks.end(); ++it ) {
+			sout << L"\t" << it->toStdWString() << L"\n";
 		}
-		return sout.readAll();
-	}
-	
-	const Track & CUESheet::operator []( std::size_t index ) const {
-		return tracks_[index];
+		return sout.str();
 	}
 
 }
