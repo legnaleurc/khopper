@@ -1,4 +1,5 @@
 #include "track.hpp"
+#include "error.hpp"
 
 #include <sstream>
 
@@ -31,18 +32,21 @@ namespace Khopper {
 	}
 
 	void Track::convert( const std::wstring & targetPath, EncoderSP encoder ) const {
-// 		this->decoder_->open( filePath );
-		encoder->open( targetPath );
-
 		encoder->setBitRate( 320000 );
 		encoder->setSampleRate( 48000 );
 		encoder->setChannels( 2 );
 
+		this->decoder_->open( filePath );
+		encoder->open( targetPath );
+
+		if( !this->decoder_->is_open() || !encoder->is_open() ) {
+			throw Error< RunTime >( "Daaaaaah!" );
+		}
+
 		double begin = this->startTime.toDouble();
-		double end = 0.0;
+		double end = begin + this->duration.toDouble();
 		if( begin != 0.0 ) {
 			decoder_->seek( begin );
-			end = begin + this->duration.toDouble();
 		}
 
 		while( decoder_->hasNext( end ) ) {
