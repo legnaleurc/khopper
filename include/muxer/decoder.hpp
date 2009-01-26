@@ -42,6 +42,8 @@ namespace Khopper {
 		ByteArray next();
 		bool hasNext( double timestamp = 0.0 ) const;
 
+		double getDuration() const;
+
 		/**
 		 * @brief Type specified UI
 		 * @return A GUI object
@@ -51,6 +53,7 @@ namespace Khopper {
 	private:
 		bool opening_;
 		bool hasNext_;
+		double duration_;
 		std::tr1::shared_ptr< AVFormatContext > pFormatContext_;
 		std::tr1::shared_ptr< AVCodecContext > pCodecContext_;
 		std::tr1::shared_ptr< AVPacket > pPacket_;

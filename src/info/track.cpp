@@ -1,6 +1,8 @@
 #include "track.hpp"
 #include "error.hpp"
 
+#include <QtDebug>
+
 #include <sstream>
 
 namespace {
@@ -33,10 +35,10 @@ namespace Khopper {
 
 	void Track::convert( const std::wstring & targetPath, EncoderSP encoder ) const {
 		encoder->setBitRate( 320000 );
-		encoder->setSampleRate( 48000 );
+		encoder->setSampleRate( 44100 );
 		encoder->setChannels( 2 );
 
-		this->decoder_->open( filePath );
+		this->decoder_->open( this->filePath );
 		encoder->open( targetPath );
 
 		if( !this->decoder_->is_open() || !encoder->is_open() ) {
@@ -44,7 +46,11 @@ namespace Khopper {
 		}
 
 		double begin = this->startTime.toDouble();
+// 		qDebug() << QString::fromStdWString( this->startTime.toStdWString() );
+// 		qDebug() << "Start time:" << begin;
 		double end = begin + this->duration.toDouble();
+// 		qDebug() << QString::fromStdWString( this->duration.toStdWString() );
+// 		qDebug() << "End time:" << end;
 		if( begin != 0.0 ) {
 			decoder_->seek( begin );
 		}

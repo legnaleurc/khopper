@@ -53,12 +53,12 @@ namespace Khopper {
 	CUESheet::CUESheet() {}
 
 	CUESheet::CUESheet( const wstring & content, const wstring & dirPath ) {
-		qDebug() << "Parsing CUE sheet:" << QString::fromStdWString( dirPath );
+// 		qDebug() << "Parsing CUE sheet:" << QString::fromStdWString( dirPath );
 		this->parseCUE_( content, dirPath );
 	}
 
 	void CUESheet::open( const wstring & content, const wstring & dirPath ) {
-		qDebug() << "Parsing CUE sheet:" << QString::fromStdWString( dirPath );
+// 		qDebug() << "Parsing CUE sheet:" << QString::fromStdWString( dirPath );
 		this->parseCUE_( content, dirPath );
 	}
 
@@ -70,7 +70,7 @@ namespace Khopper {
 		wstring line;
 
 		while( getline( sin, line ) ) {
-			qDebug() << QString::fromStdWString( line );
+// 			qDebug() << QString::fromStdWString( line );
 			if( regex_match( line, result, SINGLE ) ) {
 // 				qDebug() << "Single matched:" << SINGLE.cap( 1 ) << SINGLE.cap( 2 );
 				parseSingle_( result[1], result[2], trackNO );
@@ -91,10 +91,20 @@ namespace Khopper {
 				++trackNO;
 				parseTrack_( result[1], currentFile, result[2] );
 			} else {
-				qDebug( "Nothing matched: garbage" );
+// 				qDebug( "Nothing matched: garbage" );
 				parseGarbage_( line, trackNO );
 			}
 		}
+
+		// get the total length, because cue sheet don't provide it
+		DecoderSP decoder( new Decoder );
+		decoder->open( currentFile.first );
+		if( decoder->is_open() ) {
+// 			qDebug() << "Decoder duration:" << decoder->getDuration();
+			this->tracks.back().duration = Index( decoder->getDuration() ) - this->tracks.back().startTime;
+			decoder->close();
+		}
+// 		qDebug() << "Last duration:" << QString::fromStdWString( this->tracks.back().duration.toStdWString() );
 	}
 
 	void CUESheet::parseSingle_( const wstring & c, const wstring & s, int trackNO ) {
@@ -173,8 +183,11 @@ namespace Khopper {
 		if( type == L"INDEX" ) {
 			if( toUShort( num ) == 1 ) {
 				this->tracks[trackNO].startTime = Index( minute, second, frame );
+// 				qDebug() << "Song start:" << QString::fromStdWString( this->tracks[trackNO].startTime.toStdWString() );
 			} else {
-				this->tracks[trackNO-1].duration = Index( minute, second, frame ) - this->tracks[trackNO].startTime;
+// 				qDebug() << "Song end:" << QString::fromStdWString( Index( minute, second, frame ).toStdWString() );
+				this->tracks[trackNO-1].duration = Index( minute, second, frame ) - this->tracks[trackNO-1].startTime;
+// 				qDebug() << "Duration:" << QString::fromStdWString( this->tracks[trackNO-1].duration.toStdWString() );
 			}
 		} else if( type == L"PREGAP" ) {
 			this->tracks[trackNO].preGap = Index( minute, second, frame );

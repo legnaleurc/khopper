@@ -1,5 +1,9 @@
 #include "index.hpp"
 
+#include <sstream>
+#include <iomanip>
+#include <cmath>
+
 namespace Khopper {
 
 	Index::Index() : minute( 0 ), second( 0 ), frame( 0 ) {
@@ -9,6 +13,14 @@ namespace Khopper {
 	minute( m ),
 	second( s ),
 	frame( f ) {
+	}
+
+	Index::Index( double d ) {
+		this->minute = std::floor( d / 60 );
+		d -= this->minute * 60;
+		this->second = std::floor( d );
+		d -= this->second;
+		this->frame = std::floor( d * 100 );
 	}
 
 	const Index & Index::operator -=( const Index & that ) {
@@ -24,7 +36,7 @@ namespace Khopper {
 		} else {
 			this->second -= that.second;
 		}
-		this->minute -= that.second;
+		this->minute -= that.minute;
 
 		return *this;
 	}
@@ -38,7 +50,11 @@ namespace Khopper {
 	}
 
 	std::wstring Index::toStdWString() const {
-		return L"";
+		std::wostringstream sout;
+		sout << this->minute << L':';
+		sout << std::setfill( L'0' ) << std::setw( 2 ) << this->second;
+		sout << L'.' << std::setfill( L'0' ) << std::setw( 2 ) << this->frame;
+		return sout.str();
 	}
 
 }

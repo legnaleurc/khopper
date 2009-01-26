@@ -27,6 +27,8 @@ namespace Khopper {
 			 */
 			Index( short int m, short int s, short int f );
 
+			Index( double d );
+
 			/// minite
 			unsigned short int minute;
 			/// second

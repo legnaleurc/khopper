@@ -19,6 +19,7 @@ namespace Khopper {
 	Decoder::Decoder():
 	opening_( false ),
 	hasNext_( false ),
+	duration_( 0.0 ),
 	pFormatContext_(),
 	pCodecContext_(),
 	pPacket_( static_cast< AVPacket * >( av_malloc( sizeof( AVPacket ) ) ), p_helper ),
@@ -27,6 +28,9 @@ namespace Khopper {
 	}
 
 	Decoder::~Decoder() {
+		if( this->opening_ ) {
+			this->close();
+		}
 	}
 
 	void Decoder::open( const std::wstring & filePath ) {
@@ -36,8 +40,8 @@ namespace Khopper {
 		if( av_open_input_file( &pFC, fP.c_str(), NULL, 0, NULL ) != 0 ) {
 			return;
 		}
-		pFormatContext_.reset( pFC, av_close_input_file );
-		if( av_find_stream_info( pFormatContext_.get() ) < 0 ) {
+		this->pFormatContext_.reset( pFC, av_close_input_file );
+		if( av_find_stream_info( this->pFormatContext_.get() ) < 0 ) {
 			return;
 		}
 		// NOTE: format recognization is done
@@ -55,6 +59,10 @@ namespace Khopper {
 		AVCodecContext * pCC = pFormatContext_->streams[a_stream]->codec;
 		this->timeBase_ = av_q2d( this->pFormatContext_->streams[a_stream]->time_base );
 
+		if( this->pFormatContext_->duration != AV_NOPTS_VALUE ) {
+			this->duration_ = this->pFormatContext_->duration / static_cast< double >( AV_TIME_BASE );
+		}
+
 		AVCodec * pC = avcodec_find_decoder( pCC->codec_id );
 		if( pC == NULL ) {
 			return;
@@ -70,6 +78,7 @@ namespace Khopper {
 	}
 
 	void Decoder::close() {
+		this->duration_ = 0.0;
 		this->timeBase_ = 0.0;
 		this->hasNext_ = false;
 		this->opening_ = false;
@@ -135,6 +144,10 @@ namespace Khopper {
 			avcodec_flush_buffers( this->pCodecContext_.get() );
 		}
 		return succeed;
+	}
+
+	double Decoder::getDuration() const {
+		return this->duration_;
 	}
 
 	QWidget * Decoder::getUI() const {
