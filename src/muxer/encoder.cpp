@@ -19,7 +19,7 @@ namespace {
 			url_fclose( oc->pb );
 		}
 
-		av_freep( oc );
+		av_freep( &oc );
 	}
 
 }
@@ -116,8 +116,6 @@ namespace Khopper {
 			this->closeAudio_();
 		}
 		av_write_trailer( this->pFormatContext_.get() );
-
-		this->pFormatContext_.reset();
 
 		this->opening_ = false;
 	}
