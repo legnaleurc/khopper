@@ -6,6 +6,14 @@ extern "C" {
 #include <avformat.h>
 }
 
+namespace {
+
+	inline void p_helper( AVPacket * p ) {
+		av_freep( &p );
+	}
+
+}
+
 namespace Khopper {
 
 	Decoder::Decoder():
@@ -13,7 +21,7 @@ namespace Khopper {
 	hasNext_( false ),
 	pFormatContext_(),
 	pCodecContext_(),
-	pPacket_( static_cast< AVPacket * >( av_malloc( sizeof( AVPacket ) ) ), av_freep ),
+	pPacket_( static_cast< AVPacket * >( av_malloc( sizeof( AVPacket ) ) ), p_helper ),
 	timeBase_( 0.0 ) {
 		av_init_packet( this->pPacket_.get() );
 	}

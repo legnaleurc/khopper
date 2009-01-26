@@ -8,7 +8,7 @@ extern "C" {
 
 namespace {
 
-	void fc_helper( AVFormatContext * oc ) {
+	inline void fc_helper( AVFormatContext * oc ) {
 		for( std::size_t i = 0; i < oc->nb_streams; ++i ) {
 			if( oc->streams[i] ) {
 				avcodec_close( oc->streams[i]->codec );
@@ -41,6 +41,9 @@ namespace Khopper {
 	}
 
 	Encoder::~Encoder() {
+		if( this->opening_ ) {
+			this->close();
+		}
 	}
 
 	void Encoder::setBitRate( int bit_rate ) {
