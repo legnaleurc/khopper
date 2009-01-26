@@ -10,6 +10,9 @@ namespace {
 
 	void fc_helper( AVFormatContext * oc ) {
 		for( std::size_t i = 0; i < oc->nb_streams; ++i ) {
+			if( oc->streams[i] ) {
+				avcodec_close( oc->streams[i]->codec );
+			}
 			av_freep( &oc->streams[i]->codec );
 			av_freep( &oc->streams[i] );
 		}
@@ -112,9 +115,6 @@ namespace Khopper {
 	void Encoder::close() {
 		this->flush();
 
-		if( this->pStream_ ) {
-			this->closeAudio_();
-		}
 		av_write_trailer( this->pFormatContext_.get() );
 
 		this->opening_ = false;
@@ -189,10 +189,6 @@ namespace Khopper {
 		}
 
 		return true;
-	}
-
-	void Encoder::closeAudio_() {
-		avcodec_close( this->pStream_->codec );
 	}
 
 	QWidget * Encoder::getUI() const {

@@ -53,7 +53,6 @@ namespace Khopper {
 
 	private:
 		bool openAudio_();
-		void closeAudio_();
 		void writeFrame_( short * );
 
 		bool opening_;
