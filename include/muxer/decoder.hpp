@@ -39,6 +39,8 @@ namespace Khopper {
 
 		bool seek( double timestamp );
 
+		void setRange( double begin, double end );
+		ByteArray read();
 		ByteArray next();
 		bool hasNext( double timestamp = 0.0 ) const;
 
@@ -51,7 +53,12 @@ namespace Khopper {
 		virtual QWidget * getUI() const;
 
 	private:
+		bool afterBegin_() const;
+		bool afterEnd_() const;
 		bool opening_;
+		int64_t begin_;
+		int64_t end_;
+		int64_t nextPts_;
 		bool hasNext_;
 		double duration_;
 		std::tr1::shared_ptr< AVFormatContext > pFormatContext_;

@@ -100,11 +100,9 @@ namespace Khopper {
 		DecoderSP decoder( new Decoder );
 		decoder->open( currentFile.first );
 		if( decoder->is_open() ) {
-// 			qDebug() << "Decoder duration:" << decoder->getDuration();
 			this->tracks.back().duration = Index( decoder->getDuration() ) - this->tracks.back().startTime;
 			decoder->close();
 		}
-// 		qDebug() << "Last duration:" << QString::fromStdWString( this->tracks.back().duration.toStdWString() );
 	}
 
 	void CUESheet::parseSingle_( const wstring & c, const wstring & s, int trackNO ) {

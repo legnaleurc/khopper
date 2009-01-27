@@ -51,12 +51,13 @@ namespace Khopper {
 		double end = begin + this->duration.toDouble();
 // 		qDebug() << QString::fromStdWString( this->duration.toStdWString() );
 // 		qDebug() << "End time:" << end;
-		if( begin != 0.0 ) {
-			decoder_->seek( begin );
-		}
+// 		if( begin != 0.0 ) {
+// 			decoder_->seek( begin );
+// 		}
+		decoder_->setRange( begin, end );
 
-		while( decoder_->hasNext( end ) ) {
-			encoder->write( decoder_->next() );
+		while( decoder_->hasNext() ) {
+			encoder->write( decoder_->read() );
 		}
 
 		encoder->close();
