@@ -42,18 +42,11 @@ namespace Khopper {
 		encoder->open( targetPath );
 
 		if( !this->decoder_->is_open() || !encoder->is_open() ) {
-			throw Error< RunTime >( "Daaaaaah!" );
+			throw Error< RunTime >( "Can not open decoder or encoder!" );
 		}
 
 		double begin = this->startTime.toDouble();
-// 		qDebug() << QString::fromStdWString( this->startTime.toStdWString() );
-// 		qDebug() << "Start time:" << begin;
 		double end = begin + this->duration.toDouble();
-// 		qDebug() << QString::fromStdWString( this->duration.toStdWString() );
-// 		qDebug() << "End time:" << end;
-// 		if( begin != 0.0 ) {
-// 			decoder_->seek( begin );
-// 		}
 		decoder_->setRange( begin, end );
 
 		while( decoder_->hasNext() ) {

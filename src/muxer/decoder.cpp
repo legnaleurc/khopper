@@ -86,8 +86,10 @@ namespace Khopper {
 	void Decoder::close() {
 		this->duration_ = 0.0;
 		this->timeBase_ = 0.0;
-		this->hasNext_ = false;
+		this->begin_ = -1;
+		this->end_ = -1;
 		this->nextPts_ = -1;
+		this->hasNext_ = false;
 		this->opening_ = false;
 		// free the members in packet, not itself
 		av_free_packet( this->pPacket_.get() );
@@ -156,7 +158,6 @@ namespace Khopper {
 		if( this->begin_ < 0 ) {
 			return true;
 		}
-// 		int64_t current = av_rescale( this->nextPts_, AV_TIME_BASE * static_cast< int64_t >( this->pFormatContext_->streams[0]->time_base.num ), this->pFormatContext_->streams[0]->time_base.den );
 		return this->nextPts_ >= this->begin_;
 	}
 
@@ -164,68 +165,11 @@ namespace Khopper {
 		if( this->end_ < 0 ) {
 			return false;
 		}
-// 		int64_t current = av_rescale( this->nextPts_, AV_TIME_BASE * static_cast< int64_t >( this->pFormatContext_->streams[0]->time_base.num ), this->pFormatContext_->streams[0]->time_base.den );
 		return this->nextPts_ >= this->end_;
 	}
 
-	ByteArray Decoder::next() {
-		if( !this->opening_ || !this->hasNext_ ) {
-			return ByteArray();
-		}
-
-		uint8_t audio_buf[AVCODEC_MAX_AUDIO_FRAME_SIZE*3/2];
-		uint8_t * audio_pkt_data = NULL;
-		int audio_pkt_size = 0;
-
-		int dp_len, data_size;
-
-		ByteArray data;
-
-		if( av_read_frame( this->pFormatContext_.get(), this->pPacket_.get() ) >= 0 ) {
-			audio_pkt_data = this->pPacket_->data;
-			audio_pkt_size = this->pPacket_->size;
-			qDebug() << this->pPacket_->dts;
-			qDebug() << this->pPacket_->pts;
-			qDebug() << this->pPacket_->duration;
-// 			qDebug() << av_rescale( this->pPacket_->dts, AV_TIME_BASE * (int64_t) this->pFormatContext_->streams[0]->time_base.num, this->pFormatContext_->streams[0]->time_base.den );
-// 			qDebug() << av_rescale( this->pPacket_->pts, AV_TIME_BASE * (int64_t) this->pFormatContext_->streams[0]->time_base.num, this->pFormatContext_->streams[0]->time_base.den );
-// 			qDebug() << av_rescale( this->pPacket_->duration, AV_TIME_BASE * (int64_t) this->pFormatContext_->streams[0]->time_base.num, this->pFormatContext_->streams[0]->time_base.den );
-			while( audio_pkt_size > 0 ) {
-				data_size = sizeof( audio_buf );
-				dp_len = avcodec_decode_audio2( this->pCodecContext_.get(), reinterpret_cast< int16_t * >( audio_buf ), &data_size, audio_pkt_data, audio_pkt_size );
-				if( dp_len < 0 ) {
-					audio_pkt_size = 0;
-					break;
-				}
-				audio_pkt_data += dp_len;
-				audio_pkt_size -= dp_len;
-				if( data_size <= 0 ) {
-					continue;
-				}
-				data.insert( data.end(), audio_buf, audio_buf + data_size );
-				this->nextPts_ += ((int64_t)AV_TIME_BASE/2 * data_size) / (this->pCodecContext_->sample_rate * this->pCodecContext_->channels);
-				qDebug() << this->nextPts_;
-			}
-			if( this->pPacket_->data ) {
-				av_free_packet( this->pPacket_.get() );
-			}
-		} else {
-			this->hasNext_ = false;
-		}
-
-		return data;
-	}
-
-	bool Decoder::hasNext( double timestamp ) const {
-		if( timestamp == 0.0 ) {
-			return this->hasNext_;
-		} else {
-// 			std::cerr << ( ( this->pPacket_->pts + this->pPacket_->duration ) * this->timeBase_ ) << std::endl;
-// 			std::cerr << ( ( this->pPacket_->duration ) * this->timeBase_ ) << std::endl;
-// 			std::cerr << av_rescale( this->pPacket_->pts + this->pPacket_->duration, AV_TIME_BASE * (int64_t) this->pFormatContext_->streams[0]->time_base.num, this->pFormatContext_->streams[0]->time_base.den ) << std::endl;
-// 			std::cerr << av_rescale( this->pPacket_->duration, AV_TIME_BASE * (int64_t) this->pFormatContext_->streams[0]->time_base.num, this->pFormatContext_->streams[0]->time_base.den ) << std::endl;
-			return this->hasNext_ && ( ( ( this->pPacket_->pts + this->pPacket_->duration ) * this->timeBase_ ) < timestamp );
-		}
+	bool Decoder::hasNext() const {
+		return this->hasNext_;
 	}
 
 	bool Decoder::seek( double timestamp ) {

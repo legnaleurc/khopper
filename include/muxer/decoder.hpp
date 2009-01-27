@@ -41,8 +41,7 @@ namespace Khopper {
 
 		void setRange( double begin, double end );
 		ByteArray read();
-		ByteArray next();
-		bool hasNext( double timestamp = 0.0 ) const;
+		bool hasNext() const;
 
 		double getDuration() const;
 
