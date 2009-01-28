@@ -20,6 +20,7 @@ HEADERS += include/info/cuesheet.hpp \
            include/info/track.hpp \
            include/muxer/decoder.hpp \
            include/muxer/encoder.hpp \
+           include/ui/abstractoption.hpp \
            include/ui/mainwindow.hpp \
            include/ui/songlist.hpp \
            include/ui/textcodec.hpp \
@@ -33,6 +34,7 @@ SOURCES += src/khopper.cpp \
            src/info/track.cpp \
            src/muxer/decoder.cpp \
            src/muxer/encoder.cpp \
+           src/ui/abstractoption.cpp \
            src/ui/mainwindow.cpp \
            src/ui/songlist.cpp \
            src/ui/textcodec.cpp \

@@ -11,6 +11,7 @@ int main( int argc, char * argv[] ) {
 	av_register_all();
 	
 	Khopper::MainWindow window;
+	window.setWindowTitle( "Khopper" );
 	window.resize( 640, 480 );
 	window.show();
 	

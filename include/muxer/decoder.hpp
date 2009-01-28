@@ -10,8 +10,6 @@
 #include <loki/Factory.h>
 #include <loki/Singleton.h>
 
-#include <QWidget>
-
 #include <string>
 
 struct AVFormatContext;

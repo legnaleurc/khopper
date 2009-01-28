@@ -11,8 +11,6 @@
 #include <loki/Singleton.h>
 #include <loki/AssocVector.h>
 
-#include <QWidget>
-
 #include <string>
 
 struct AVFormatContext;

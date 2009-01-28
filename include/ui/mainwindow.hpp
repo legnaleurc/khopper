@@ -56,14 +56,14 @@ namespace Khopper {
 		TextCodec * codec_;
 		SongListView * songListView_;
 		QStandardItemModel * songListModel_;
-		QComboBox * outputTypes_;
+		QTabWidget * optionTabs_;
 		QPushButton * action_;
 		QProgressDialog * progress_;
 		ConverterThread * cvt_;
 		QWidget * about_;
-		
+
 		void initMenuBar_();
-		void initOutputTypeList_();
+		void initOptionTabs_();
 		void initHeader_();
 		void initAbout_();
 
@@ -71,7 +71,7 @@ namespace Khopper {
 		void fire_();
 		void runTimeError_( const QString & );
 	};
-	
+
 }
 
 #endif

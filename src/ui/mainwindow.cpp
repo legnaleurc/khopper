@@ -6,6 +6,7 @@
 #include "cuesheet.hpp"
 #include "track.hpp"
 #include "encoder.hpp"
+#include "abstractoption.hpp"
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -26,12 +27,17 @@ Q_DECLARE_METATYPE( Khopper::Track )
 
 namespace Khopper {
 
-	MainWindow::MainWindow( QWidget * parent, Qt::WindowFlags flags ) : QMainWindow( parent, flags ) {
-		// setTitle
-		setWindowTitle( tr( "Khopper" ) );
-
-		initAbout_();
-		codec_ = new TextCodec( this );
+	MainWindow::MainWindow( QWidget * parent, Qt::WindowFlags flags ):
+	QMainWindow( parent, flags ),
+	codec_( new TextCodec( this ) ),
+	songListView_( new SongListView( this ) ),
+	songListModel_( new QStandardItemModel( songListView_ ) ),
+	optionTabs_( new QTabWidget( this ) ),
+	action_( new QPushButton( tr( "Fire!" ), this ) ),
+	progress_( new QProgressDialog( tr( "Converting..." ), tr( "Don\'t touch me!" ), 0, 0, this ) ),
+	cvt_( new ConverterThread( this ) ),
+	about_( new QWidget( this, Qt::Dialog ) ) {
+		this->initAbout_();
 
 		// Setting menu bar
 		initMenuBar_();
@@ -42,8 +48,6 @@ namespace Khopper {
 		setCentralWidget( central );
 
 		// Add song list
-		songListView_ = new SongListView( central );
-		songListModel_ = new QStandardItemModel( songListView_ );
 		central->layout()->addWidget( songListView_ );
 		initHeader_();
 		// Set model
@@ -56,22 +60,18 @@ namespace Khopper {
 		central->layout()->addWidget( bottom );
 
 		// Setting output format select
-		outputTypes_ = new QComboBox( bottom );
-		bottom->layout()->addWidget( outputTypes_ );
-		initOutputTypeList_();
+		bottom->layout()->addWidget( this->optionTabs_ );
+		this->initOptionTabs_();
 
 		// Action button
-		action_ = new QPushButton( tr( "Fire!" ), bottom );
 		connect( action_, SIGNAL( clicked() ), this, SLOT( fire_() ) );
 		bottom->layout()->addWidget( action_ );
 
 		// Progress dialog
-		progress_ = new QProgressDialog( tr( "Converting..." ), tr( "Don\'t touch me!" ), 0, 0, this );
 		progress_->setWindowModality( Qt::WindowModal );
 		progress_->setMinimumDuration( 0 );
 
 		// Converter thread
-		cvt_ = new ConverterThread( this );
 		connect( cvt_, SIGNAL( finished() ), progress_, SLOT( cancel() ) );
 		connect( cvt_, SIGNAL( step( int ) ), progress_, SLOT( setValue( int ) ) );
 		connect( cvt_, SIGNAL( error( const QString & ) ), this, SLOT( runTimeError_( const QString & ) ) );
@@ -112,13 +112,14 @@ namespace Khopper {
 		setMenuBar( menuBar );
 	}
 
-	void MainWindow::initOutputTypeList_() {
+	void MainWindow::initOptionTabs_() {
 		// Take out the output types
-// 		const EncoderList::ObjectType & tm = EncoderList::Instance();
-// 		for( EncoderList::ObjectType::const_iterator it = tm.begin(); it != tm.end(); ++it ) {
+		const EncoderList::ObjectType & tm = EncoderList::Instance();
+		for( EncoderList::ObjectType::const_iterator it = tm.begin(); it != tm.end(); ++it ) {
 // 			outputTypes_->addItem( it->second.c_str(), QVariant( it->first.c_str() ) );
-// 		}
-		this->outputTypes_->addItem( QObject::tr( "mp3" ) );
+			// it->first is object factory key, it->second is display name
+			this->optionTabs_->addTab( UIFactory::Instance().CreateObject( it->first ), QString::fromStdString( it->second ) );
+		}
 	}
 
 	void MainWindow::initHeader_() {
@@ -134,13 +135,15 @@ namespace Khopper {
 // 		QString test = outputTypes_->itemData( outputTypes_->currentIndex() ).toString();
 		// get saving directory
 		QString outDir = QFileDialog::getExistingDirectory( this, tr( "Target Directory" ), QDir::homePath() );
+		AbstractOption * option = dynamic_cast< AbstractOption * >( this->optionTabs_->currentWidget() );
 
-		if( outDir != "" ) {
+		if( outDir != "" && option ) {
 			try {
 				// create encoder object
 				// TODO: need changes
 // 				EncoderSP output( EncoderFactory::Instance().CreateObject( test.toStdString() ) );
-				EncoderSP output( new Encoder );
+				EncoderSP output( option->getEncoder() );
+// 				EncoderSP output( new Encoder );
 
 				// get selected list
 				QModelIndexList selected = this->songListView_->selectionModel()->selectedRows( 0 );
@@ -216,7 +219,6 @@ namespace Khopper {
 	}
 
 	void MainWindow::initAbout_() {
-		about_ = new QWidget( this, Qt::Dialog );
 		about_->setWindowTitle( tr( "About Khopper" ) );
 		about_->resize( 320, 240 );
 		
