@@ -134,15 +134,6 @@ namespace Khopper {
 			this->buffer_.erase( this->buffer_.begin(), this->buffer_.begin() + samples_.size() );
 
 			this->writeFrame_( reinterpret_cast< short * >( &this->samples_[0] ) );
-// 			pkt.size = avcodec_encode_audio( pCC, audio_outbuf, audio_outbuf_size, reinterpret_cast< short * >( &samples_[0] ) );
-// 
-// 			if( pCC->coded_frame->pts != AV_NOPTS_VALUE ) {
-// 				pkt.pts = av_rescale_q( pCC->coded_frame->pts, pCC->time_base, this->pStream_->time_base );
-// 			}
-// 
-// 			if( av_write_frame( this->pFormatContext_.get(), &pkt ) != 0 ) {
-// 				return;
-// 			}
 		}
 	}
 
