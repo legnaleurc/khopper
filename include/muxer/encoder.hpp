@@ -7,7 +7,6 @@
 
 #include "tr1.hpp"
 
-#include <loki/Factory.h>
 #include <loki/Singleton.h>
 #include <loki/AssocVector.h>
 
@@ -108,11 +107,6 @@ namespace Khopper {
 	 * Use TR1 shared pointer.
 	 */
 	typedef std::tr1::shared_ptr< Encoder > EncoderSP;
-
-	/**
-	 * @brief The encoder Object Factory for Converter module
-	 */
-	typedef Loki::SingletonHolder< Loki::Factory< Encoder, std::string >, Loki::CreateUsingNew, Loki::LongevityLifetime::DieAsSmallObjectChild > EncoderFactory;
 
 	/**
 	 * @brief Encoder type list
