@@ -7,14 +7,14 @@
 #include <QFileInfo>
 
 namespace Khopper {
-	
+
 	SongListView::SongListView( QWidget * parent ) : QTableView( parent ) {
 		setAcceptDrops( true );
 		// Set selection behavior
 		setSelectionBehavior( SelectRows );
 		setEditTriggers( DoubleClicked );
 	}
-	
+
 	void SongListView::dragEnterEvent( QDragEnterEvent * event ) {
 		if( event->mimeData()->hasFormat( "text/uri-list" ) ) {
 			event->acceptProposedAction();
@@ -26,7 +26,7 @@ namespace Khopper {
 			event->acceptProposedAction();
 		}
 	}
-	
+
 	void SongListView::dropEvent( QDropEvent * event ) {
 		if( event->mimeData()->hasUrls() ) {
 			const QList< QUrl > & urlList = event->mimeData()->urls();
@@ -39,5 +39,5 @@ namespace Khopper {
 		}
 		event->acceptProposedAction();
 	}
-	
+
 }
