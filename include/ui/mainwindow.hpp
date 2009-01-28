@@ -16,7 +16,6 @@
  */
 namespace Khopper {
 
-	class CUESheet;
 	class ConverterThread;
 	class SongListView;
 	class TextCodec;
