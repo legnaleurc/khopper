@@ -34,10 +34,6 @@ namespace Khopper {
 	}
 
 	void Track::convert( const std::wstring & targetPath, EncoderSP encoder ) const {
-		encoder->setBitRate( 320000 );
-		encoder->setSampleRate( 44100 );
-		encoder->setChannels( 2 );
-
 		this->decoder_->open( this->filePath );
 		encoder->open( targetPath );
 

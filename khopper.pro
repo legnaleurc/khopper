@@ -2,6 +2,7 @@ DEPENDPATH += . \
               src \
               include/info \
               include/muxer \
+              include/muxer/en \
               include/ui \
               include/util \
               src/info \
@@ -12,7 +13,8 @@ INCLUDEPATH += . \
                include/ui \
                include/info \
                include/util \
-               include/muxer
+               include/muxer \
+               include/muxer/en
 
 # Input
 HEADERS += include/info/cuesheet.hpp \
@@ -20,6 +22,7 @@ HEADERS += include/info/cuesheet.hpp \
            include/info/track.hpp \
            include/muxer/decoder.hpp \
            include/muxer/encoder.hpp \
+           include/muxer/en/mp3option.hpp \
            include/ui/abstractoption.hpp \
            include/ui/mainwindow.hpp \
            include/ui/songlist.hpp \
@@ -34,6 +37,7 @@ SOURCES += src/khopper.cpp \
            src/info/track.cpp \
            src/muxer/decoder.cpp \
            src/muxer/encoder.cpp \
+           src/muxer/en/mp3option.cpp \
            src/ui/abstractoption.cpp \
            src/ui/mainwindow.cpp \
            src/ui/songlist.cpp \
