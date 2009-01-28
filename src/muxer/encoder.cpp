@@ -194,8 +194,4 @@ namespace Khopper {
 		return true;
 	}
 
-	QWidget * Encoder::getUI() const {
-		return NULL;
-	}
-
 }

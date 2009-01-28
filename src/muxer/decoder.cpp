@@ -185,8 +185,4 @@ namespace Khopper {
 		return this->duration_;
 	}
 
-	QWidget * Decoder::getUI() const {
-		return NULL;
-	}
-
 }

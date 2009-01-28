@@ -91,12 +91,6 @@ namespace Khopper {
 		 */
 		double getDuration() const;
 
-		/**
-		 * @brief Type specified UI
-		 * @return A GUI object
-		 */
-		virtual QWidget * getUI() const;
-
 	private:
 		bool afterBegin_() const;
 		bool afterEnd_() const;

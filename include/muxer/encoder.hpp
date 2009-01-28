@@ -80,12 +80,6 @@ namespace Khopper {
 		 */
 		void flush();
 
-		/**
-		 * @brief Get Type GUI
-		 * @return GUI object
-		 */
-		virtual QWidget * getUI() const;
-
 	protected:
 		/**
 		 * @brief Get output format setting
