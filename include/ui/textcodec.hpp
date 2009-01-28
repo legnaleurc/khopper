@@ -6,12 +6,8 @@
 #define KHOPPER_UI_TEXTCODEC_HPP
 
 #include <QDialog>
-
-QT_BEGIN_NAMESPACE
-class QByteArray;
-class QComboBox;
-class QDialogButtonBox;
-QT_END_NAMESPACE
+#include <QDialogButtonBox>
+#include <QComboBox>
 
 namespace Khopper {
 

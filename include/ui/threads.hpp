@@ -6,7 +6,6 @@
 #define KHOPPER_UI_THREADS_HPP
 
 #include "track.hpp"
-#include "tr1.hpp"
 #include "encoder.hpp"
 
 #include <QThread>

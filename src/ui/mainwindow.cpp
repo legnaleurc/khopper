@@ -6,7 +6,20 @@
 #include "cuesheet.hpp"
 #include "track.hpp"
 #include "encoder.hpp"
-#include <QtGui>
+
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QMenuBar>
+#include <QMenu>
+#include <QAction>
+#include <QApplication>
+#include <QFileDialog>
+#include <QDir>
+#include <QMessageBox>
+#include <QFileInfo>
+#include <QFile>
+#include <QLabel>
+#include <QTabWidget>
 
 // for Track to QVariant
 Q_DECLARE_METATYPE( Khopper::Track )

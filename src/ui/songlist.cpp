@@ -1,6 +1,10 @@
 #include "songlist.hpp"
 
-#include <QtGui>
+#include <QDragEnterEvent>
+#include <QDragMoveEvent>
+#include <QDropEvent>
+#include <QUrl>
+#include <QFileInfo>
 
 namespace Khopper {
 	

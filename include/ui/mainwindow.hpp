@@ -6,14 +6,10 @@
 #define KHOPPER_UI_MAINWINDOW_HPP
 
 #include <QMainWindow>
-
-QT_BEGIN_NAMESPACE
-class QComboBox;
-class QPushButton;
-class QProgressDialog;
-class QString;
-class QStandardItemModel;
-QT_END_NAMESPACE
+#include <QStandardItemModel>
+#include <QComboBox>
+#include <QPushButton>
+#include <QProgressDialog>
 
 /**
  * @namespace Khopper
