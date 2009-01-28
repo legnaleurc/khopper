@@ -1,5 +1,6 @@
 /**
  * @file cuesheet.hpp
+ * @author Wei-Cheng Pan
  */
 #ifndef KHOPPER_INFO_CUESHEET_HPP
 #define KHOPPER_INFO_CUESHEET_HPP
@@ -13,6 +14,9 @@ namespace Khopper {
 
 	/**
 	 * @brief The CUE parser
+	 *
+	 * This module uses std::wstring to store unicode string.\n
+	 * UTF-16 on Windows(R), UCS4 on POSIX.
 	 */
 	class CUESheet {
 	public:
@@ -59,13 +63,21 @@ namespace Khopper {
 		 */
 		std::wstring toStdWString() const;
 
+		/// Album catalog
 		std::wstring catalog;
+		/// CD Text File
 		std::wstring cdTextFile;
+		/// Album Comments
 		std::map< std::wstring, std::wstring > comments;
+		/// Garbage information
 		std::vector< std::wstring > garbage;
+		/// Album performer
 		std::wstring performer;
+		/// Album writer
 		std::wstring songWriter;
+		/// Album title
 		std::wstring title;
+		/// Album tracks
 		std::vector< Track > tracks;
 
 	private:

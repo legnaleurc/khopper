@@ -1,5 +1,6 @@
 /**
  * @file threads.hpp
+ * @author Wei-Cheng Pan
  */
 #ifndef KHOPPER_UI_THREADS_HPP
 #define KHOPPER_UI_THREADS_HPP
@@ -21,13 +22,13 @@ namespace Khopper {
 	public:
 		/**
 		 * @brief Default constructor
-		 * @param parent parent object
+		 * @param [in] parent parent object
 		 */
 		ConverterThread( QObject * parent = 0 );
 
 		/**
 		 * @brief Set output option
-		 * @param [in] output Decoder object
+		 * @param [in] output Encoder object
 		 * @param [in] outDir Output directory
 		 */
 		void setOutput( EncoderSP output, const QString & outDir );

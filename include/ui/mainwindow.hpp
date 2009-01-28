@@ -1,5 +1,6 @@
 /**
  * @file mainwindow.hpp
+ * @author Wei-Cheng Pan
  */
 #ifndef KHOPPER_UI_MAINWINDOW_HPP
 #define KHOPPER_UI_MAINWINDOW_HPP
@@ -36,8 +37,8 @@ namespace Khopper {
 		public:
 			/**
 			 * @brief Default constructor
-			 * @param parent Parent widget
-			 * @param flags Widget flag
+			 * @param [in] parent Parent widget
+			 * @param [in] flags Widget flag
 			 */
 			MainWindow( QWidget * parent = 0, Qt::WindowFlags flags = 0 );
 		
@@ -48,14 +49,14 @@ namespace Khopper {
 			void showOpenFileDialog();
 			/**
 			 * @brief Add songs the song list
-			 * @param sheet CUE Sheet object
+			 * @param [in] tracks Tracks
 			 */
-			void addSongList( const std::vector< Track > & sheet );
+			void addSongList( const std::vector< Track > & tracks );
 			/**
 			 * @brief Open file
-			 * @param fileName file name
+			 * @param [in] filePath file path
 			 */
-			void open( const QString & fileName );
+			void open( const QString & filePath );
 		
 		private:
 			TextCodec * codec_;

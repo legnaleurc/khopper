@@ -1,3 +1,7 @@
+/**
+ * @file index.hpp
+ * @author Wei-Cheng Pan
+ */
 #ifndef KHOPPER_INFO_INDEX_HPP
 #define KHOPPER_INFO_INDEX_HPP
 
@@ -27,6 +31,10 @@ namespace Khopper {
 			 */
 			Index( short int m, short int s, short int f );
 
+			/**
+			 * @brief Convert from double
+			 * @param [in] seconds
+			 */
 			Index( double d );
 
 			/// minite
@@ -40,10 +48,14 @@ namespace Khopper {
 
 			Index operator -( const Index & that ) const;
 
+			/**
+			 * @brief Convert to double
+			 * @return seconds in double
+			 */
 			double toDouble() const;
 
 			/**
-			 * @brief Convert to QString
+			 * @brief Convert to std::wstring
 			 * @return mm:ss.ff
 			 */
 			std::wstring toStdWString() const;

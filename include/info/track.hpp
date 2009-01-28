@@ -1,3 +1,8 @@
+/**
+ * @file track.hpp
+ * @author Wei-Cheng Pan
+ */
+
 #ifndef KHOPPER_INFO_TRACK_HPP
 #define KHOPPER_INFO_TRACK_HPP
 
@@ -13,12 +18,15 @@ namespace Khopper {
 
 	/**
 	 * @brief Track information
+	 *
+	 * This module uses std::wstring to store unicode string.\n
+	 * UTF-16 on Windows(R), UCS4 on POSIX.
 	 */
 	class Track {
 	public:
 		/**
-		* @brief Type of audio file
-		*/
+		 * @brief Type of audio file
+		 */
 		enum FileType {
 			/// Binary
 			BINARY,
@@ -68,9 +76,17 @@ namespace Khopper {
 			DATA = 0x10000
 		};
 
+		/**
+		 * @brief Default constructor
+		 */
 		Track();
 
-		void convert( const std::wstring & targetPath, EncoderSP encoder ) const;
+		/**
+		 * @brief Convert this track
+		 * @param [in] targetPath output file path
+		 * @param [in] encoder encoder setting
+		 */
+		virtual void convert( const std::wstring & targetPath, EncoderSP encoder ) const;
 
 		/**
 		 * @brief Dump track information
@@ -83,20 +99,35 @@ namespace Khopper {
 		 */
 		static const std::vector< std::wstring > Headers;
 
+		/// Path which is this track refers to.
 		std::wstring filePath;
+		/// Index at album
 		unsigned short int index;
+		/// Start time in that file
 		Index startTime;
+		/// Track comments
 		std::map< std::wstring, std::wstring > comments;
+		/// Audio container type
 		FileType fileType;
+		/// Audio data type
 		DataType dataType;
+		/// Track duration
 		Index duration;
+		/// Extra flags
 		Flag flags;
+		/// Garbage information
 		std::vector< std::wstring > garbage;
+		/// ISRC
 		std::wstring isrc;
+		/// Track performer
 		std::wstring performer;
+		/// Gap to previous track (?)
 		Index postGap;
+		/// Gap to next track (?)
 		Index preGap;
+		/// Song writer
 		std::wstring songWriter;
+		/// Track title
 		std::wstring title;
 
 	private:
