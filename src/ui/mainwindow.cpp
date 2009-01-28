@@ -40,19 +40,19 @@ namespace Khopper {
 		this->initAbout_();
 
 		// Setting menu bar
-		initMenuBar_();
+		this->initMenuBar_();
 
 		// Setting central widget
 		QWidget * central = new QWidget( this );
 		central->setLayout( new QVBoxLayout( central ) );
-		setCentralWidget( central );
+		this->setCentralWidget( central );
 
 		// Add song list
 		central->layout()->addWidget( songListView_ );
-		initHeader_();
+		this->initHeader_();
 		// Set model
-		songListView_->setModel( songListModel_ );
-		connect( songListView_, SIGNAL( openFile( const QString & ) ), this, SLOT( open( const QString & ) ) );
+		this->songListView_->setModel( songListModel_ );
+		connect( this->songListView_, SIGNAL( openFile( const QString & ) ), this, SLOT( open( const QString & ) ) );
 
 		// Set bottom layout
 		QWidget * bottom = new QWidget( central );
@@ -116,7 +116,6 @@ namespace Khopper {
 		// Take out the output types
 		const EncoderList::ObjectType & tm = EncoderList::Instance();
 		for( EncoderList::ObjectType::const_iterator it = tm.begin(); it != tm.end(); ++it ) {
-// 			outputTypes_->addItem( it->second.c_str(), QVariant( it->first.c_str() ) );
 			// it->first is object factory key, it->second is display name
 			this->optionTabs_->addTab( UIFactory::Instance().CreateObject( it->first ), QString::fromStdString( it->second ) );
 		}
@@ -131,19 +130,15 @@ namespace Khopper {
 	}
 
 	void MainWindow::fire_() {
-		// get format
-// 		QString test = outputTypes_->itemData( outputTypes_->currentIndex() ).toString();
 		// get saving directory
 		QString outDir = QFileDialog::getExistingDirectory( this, tr( "Target Directory" ), QDir::homePath() );
+		// TODO: use qobject_cast
 		AbstractOption * option = dynamic_cast< AbstractOption * >( this->optionTabs_->currentWidget() );
 
 		if( outDir != "" && option ) {
 			try {
 				// create encoder object
-				// TODO: need changes
-// 				EncoderSP output( EncoderFactory::Instance().CreateObject( test.toStdString() ) );
 				EncoderSP output( option->getEncoder() );
-// 				EncoderSP output( new Encoder );
 
 				// get selected list
 				QModelIndexList selected = this->songListView_->selectionModel()->selectedRows( 0 );
