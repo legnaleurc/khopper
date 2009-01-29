@@ -2,14 +2,10 @@
  * @file os.hpp
  * @author Wei-Cheng Pan
  */
-#ifndef KHOPPER_UTIL_OS_HPP
-#define KHOPPER_UTIL_OS_HPP
-
-#include "error.hpp"
+#ifndef KHOPPER_OS_HPP
+#define KHOPPER_OS_HPP
 
 #include <string>
-#include <utility>
-#include <vector>
 
 /**
  * @namespace Khopper

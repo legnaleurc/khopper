@@ -7,6 +7,7 @@
 #include "track.hpp"
 #include "encoder.hpp"
 #include "abstractoption.hpp"
+#include "error.hpp"
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>

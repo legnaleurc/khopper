@@ -2,8 +2,8 @@
  * @file error.hpp
  * @author Wei-Cheng Pan
  */
-#ifndef KHOPPER_UTIL_ERROR_HPP
-#define KHOPPER_UTIL_ERROR_HPP
+#ifndef KHOPPER_ERROR_HPP
+#define KHOPPER_ERROR_HPP
 
 #include <exception>
 #include <string>
