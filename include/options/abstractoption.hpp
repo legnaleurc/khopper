@@ -1,5 +1,9 @@
-#ifndef KHOPPER_UI_ABSTRACTOPTION_HPP
-#define KHOPPER_UI_ABSTRACTOPTION_HPP
+/**
+ * @file abstractoption.hpp
+ * @author Wei-Cheng Pan
+ */
+#ifndef KHOPPER_ABSTRACTOPTION_HPP
+#define KHOPPER_ABSTRACTOPTION_HPP
 
 #include "encoder.hpp"
 

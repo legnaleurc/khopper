@@ -2,8 +2,8 @@
  * @file encoder.hpp
  * @author Wei-Cheng Pan
  */
-#ifndef KHOPPER_MUXER_ENCODER_HPP
-#define KHOPPER_MUXER_ENCODER_HPP
+#ifndef KHOPPER_ENCODER_HPP
+#define KHOPPER_ENCODER_HPP
 
 #include "tr1.hpp"
 

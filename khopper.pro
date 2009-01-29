@@ -1,65 +1,66 @@
 DEPENDPATH += . \
+              include/album \
+              include/codec \
+              include/common \
+              include/options \
+              include/widgets \
               src \
-              include/info \
-              include/muxer \
-              include/muxer/en \
-              include/ui \
-              include/util \
-              src/info \
-              src/muxer \
-              src/ui \
-              src/util
+              src/album \
+              src/codec \
+              src/common \
+              src/options \
+              src/widgets
 INCLUDEPATH += . \
-               include/ui \
-               include/info \
-               include/util \
-               include/muxer \
-               include/muxer/en
+               include/album \
+               include/codec \
+               include/common \
+               include/options \
+               include/widgets
 
 # Input
-HEADERS += include/info/cuesheet.hpp \
-           include/info/index.hpp \
-           include/info/track.hpp \
-           include/muxer/decoder.hpp \
-           include/muxer/encoder.hpp \
-           include/muxer/en/mp3option.hpp \
-           include/ui/abstractoption.hpp \
-           include/ui/mainwindow.hpp \
-           include/ui/songlist.hpp \
-           include/ui/textcodec.hpp \
-           include/ui/threads.hpp \
-           include/util/error.hpp \
-           include/util/os.hpp \
-           include/util/tr1.hpp
-SOURCES += src/khopper.cpp \
-           src/info/cuesheet.cpp \
-           src/info/index.cpp \
-           src/info/track.cpp \
-           src/muxer/decoder.cpp \
-           src/muxer/encoder.cpp \
-           src/muxer/en/mp3option.cpp \
-           src/ui/abstractoption.cpp \
-           src/ui/mainwindow.cpp \
-           src/ui/songlist.cpp \
-           src/ui/textcodec.cpp \
-           src/ui/threads.cpp
+HEADERS += include/album/cuesheet.hpp \
+           include/album/index.hpp \
+           include/album/track.hpp \
+           include/codec/decoder.hpp \
+           include/codec/encoder.hpp \
+           include/options/mp3option.hpp \
+           include/options/abstractoption.hpp \
+           include/common/error.hpp \
+           include/common/os.hpp \
+           include/common/tr1.hpp \
+           include/widgets/mainwindow.hpp \
+           include/widgets/songlist.hpp \
+           include/widgets/textcodec.hpp \
+           include/widgets/threads.hpp
+SOURCES += src/album/cuesheet.cpp \
+           src/album/index.cpp \
+           src/album/track.cpp \
+           src/codec/decoder.cpp \
+           src/codec/encoder.cpp \
+           src/options/mp3option.cpp \
+           src/options/abstractoption.cpp \
+           src/widgets/mainwindow.cpp \
+           src/widgets/songlist.cpp \
+           src/widgets/textcodec.cpp \
+           src/widgets/threads.cpp \
+           src/khopper.cpp
 
 # config
 TARGET = khopper
-MOC_DIR = moc
+MOC_DIR = tmp/moc
 DESTDIR = bin
 CONFIG += debug_and_release
 
 CONFIG( debug, debug|release ) {
-    OBJECTS_DIR = obj/debug
+    OBJECTS_DIR = tmp/obj/debug
 } else {
-    OBJECTS_DIR = obj/release
+    OBJECTS_DIR = tmp/obj/release
     DEFINES += QT_NO_DEBUG_OUTPUT
 }
 
 unix {
     TEMPLATE = app
-    SOURCES += src/util/linux.cpp
+    SOURCES += src/common/linux.cpp
     CONFIG += link_pkgconfig
     PKGCONFIG += libavcodec libavformat
     LIBS += -lloki -lboost_regex
@@ -67,7 +68,7 @@ unix {
 
 win32 {
     TEMPLATE = vcapp
-    SOURCES += src/util/windows.cpp
+    SOURCES += src/common/windows.cpp
     debug {
         LIBS += -lloki_D
     }

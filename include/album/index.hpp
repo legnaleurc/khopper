@@ -2,8 +2,8 @@
  * @file index.hpp
  * @author Wei-Cheng Pan
  */
-#ifndef KHOPPER_INFO_INDEX_HPP
-#define KHOPPER_INFO_INDEX_HPP
+#ifndef KHOPPER_INDEX_HPP
+#define KHOPPER_INDEX_HPP
 
 #include <string>
 

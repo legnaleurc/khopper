@@ -2,8 +2,8 @@
  * @file threads.hpp
  * @author Wei-Cheng Pan
  */
-#ifndef KHOPPER_UI_THREADS_HPP
-#define KHOPPER_UI_THREADS_HPP
+#ifndef KHOPPER_THREADS_HPP
+#define KHOPPER_THREADS_HPP
 
 #include "track.hpp"
 #include "encoder.hpp"

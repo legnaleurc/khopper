@@ -2,8 +2,8 @@
  * @file cuesheet.hpp
  * @author Wei-Cheng Pan
  */
-#ifndef KHOPPER_INFO_CUESHEET_HPP
-#define KHOPPER_INFO_CUESHEET_HPP
+#ifndef KHOPPER_CUESHEET_HPP
+#define KHOPPER_CUESHEET_HPP
 
 #include "track.hpp"
 

@@ -2,8 +2,8 @@
  * @file songlist.hpp
  * @author Wei-Cheng Pan
  */
-#ifndef KHOPPER_UI_SONGLIST_HPP
-#define KHOPPER_UI_SONGLIST_HPP
+#ifndef KHOPPER_SONGLIST_HPP
+#define KHOPPER_SONGLIST_HPP
 
 #include <QTableView>
 

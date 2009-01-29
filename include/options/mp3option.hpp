@@ -1,5 +1,9 @@
-#ifndef KHOPPER_MUXER_EN_MP3OPTION_HPP
-#define KHOPPER_MUXER_EN_MP3OPTION_HPP
+/**
+ * @file mp3option.hpp
+ * @author Wei-Cheng Pan
+ */
+#ifndef KHOPPER_MP3OPTION_HPP
+#define KHOPPER_MP3OPTION_HPP
 
 #include "abstractoption.hpp"
 

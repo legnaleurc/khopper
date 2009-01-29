@@ -2,8 +2,8 @@
  * @file mainwindow.hpp
  * @author Wei-Cheng Pan
  */
-#ifndef KHOPPER_UI_MAINWINDOW_HPP
-#define KHOPPER_UI_MAINWINDOW_HPP
+#ifndef KHOPPER_MAINWINDOW_HPP
+#define KHOPPER_MAINWINDOW_HPP
 
 #include <QMainWindow>
 #include <QStandardItemModel>

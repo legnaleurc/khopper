@@ -3,8 +3,8 @@
  * @author Wei-Cheng Pan
  */
 
-#ifndef KHOPPER_INFO_TRACK_HPP
-#define KHOPPER_INFO_TRACK_HPP
+#ifndef KHOPPER_TRACK_HPP
+#define KHOPPER_TRACK_HPP
 
 #include "index.hpp"
 #include "encoder.hpp"

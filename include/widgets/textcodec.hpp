@@ -2,8 +2,8 @@
  * @file textcodec.hpp
  * @author Wei-Cheng Pan
  */
-#ifndef KHOPPER_UI_TEXTCODEC_HPP
-#define KHOPPER_UI_TEXTCODEC_HPP
+#ifndef KHOPPER_TEXTCODEC_HPP
+#define KHOPPER_TEXTCODEC_HPP
 
 #include <QDialog>
 #include <QDialogButtonBox>
