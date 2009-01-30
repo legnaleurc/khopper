@@ -27,7 +27,7 @@ namespace Khopper {
 				this->encoder_->setTitle( this->tracks_[i].title );
 				this->encoder_->setAuthor( this->tracks_[i].performer );
 				this->tracks_[i].convert( nameHack.arg( this->outDir_ ).arg( QString::fromStdWString( tracks_[i].title ) ).toStdWString(), this->encoder_ );
-				emit step( i );
+				emit step( i + 1 );
 			}
 		} catch( std::exception & e ) {
 			emit error( tr( e.what() ) );
