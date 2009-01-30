@@ -31,13 +31,15 @@ namespace Khopper {
 
 	Encoder::Encoder():
 	opening_( false ),
-	filePath_(),
 	samples_(),
 	pFormatContext_(),
 	pStream_( NULL ),
+	filePath_(),
 	bitRate_( -1 ),
 	sampleRate_( -1 ),
-	channels_( -1 ){
+	channels_( -1 ),
+	title_(),
+	author_() {
 	}
 
 	Encoder::~Encoder() {
@@ -58,7 +60,19 @@ namespace Khopper {
 		this->channels_ = channels;
 	}
 
+	void Encoder::setTitle( const std::wstring & title ) {
+		this->title_ = os::encodeString( title );
+	}
+
+	void Encoder::setAuthor( const std::wstring & author ) {
+		this->author_ = os::encodeString( author );
+	}
+
 	void Encoder::open( const std::wstring & filePath ) {
+		if( this->opening_ ) {
+			this->close();
+		}
+
 		this->filePath_ = os::encodeString( filePath );
 		AVOutputFormat * pOF = this->guessFormat();
 		if( pOF == NULL ) {
@@ -70,7 +84,8 @@ namespace Khopper {
 			return;
 		}
 		this->pFormatContext_->oformat = pOF;
-		strncpy( this->pFormatContext_->filename, this->filePath_.c_str(), sizeof( this->pFormatContext_->filename ) );
+		// setting format information
+		std::strncpy( this->pFormatContext_->filename, this->filePath_.c_str(), sizeof( this->pFormatContext_->filename ) );
 
 		AVCodecContext * pCC = NULL;
 
@@ -117,8 +132,10 @@ namespace Khopper {
 
 	void Encoder::close() {
 		this->flush();
-
 		av_write_trailer( this->pFormatContext_.get() );
+		this->pFormatContext_.reset();
+
+		this->closeHook();
 
 		this->opening_ = false;
 	}
@@ -161,7 +178,7 @@ namespace Khopper {
 
 		pkt.size = avcodec_encode_audio( pCC, audio_outbuf, sizeof( audio_outbuf ), samples );
 
-		if( pCC->coded_frame->pts != AV_NOPTS_VALUE ) {
+		if( pCC->coded_frame->pts != static_cast< int >( AV_NOPTS_VALUE ) ) {
 			pkt.pts = av_rescale_q( pCC->coded_frame->pts, pCC->time_base, this->pStream_->time_base );
 		}
 

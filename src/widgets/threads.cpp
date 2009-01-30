@@ -23,7 +23,9 @@ namespace Khopper {
 		QString nameHack( "%1/%2.mp3" );
 		// convert
 		try {
-			for( std::size_t i = 0; i < tracks_.size(); ++i ) {
+			for( std::size_t i = 0; i < this->tracks_.size(); ++i ) {
+				this->encoder_->setTitle( this->tracks_[i].title );
+				this->encoder_->setAuthor( this->tracks_[i].performer );
 				this->tracks_[i].convert( nameHack.arg( this->outDir_ ).arg( QString::fromStdWString( tracks_[i].title ) ).toStdWString(), this->encoder_ );
 				emit step( i );
 			}

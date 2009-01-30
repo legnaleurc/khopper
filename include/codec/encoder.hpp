@@ -66,6 +66,8 @@ namespace Khopper {
 		 * @note Change will ONLY apply on openning.
 		 */
 		void setChannels( int channels );
+		void setTitle( const std::wstring & title );
+		void setAuthor( const std::wstring & author );
 
 		/**
 		 * @brief Write @p data to encoder
@@ -78,6 +80,9 @@ namespace Khopper {
 		void flush();
 
 	protected:
+		std::string getFilePath() const {
+			return this->filePath_;
+		}
 		/**
 		 * @brief Get output format setting
 		 * @return Format handle
@@ -85,20 +90,24 @@ namespace Khopper {
 		 * Override this function to provide your own setting.
 		 */
 		virtual AVOutputFormat * guessFormat() const;
+		virtual void closeHook() {}
 
 	private:
 		bool openAudio_();
 		void writeFrame_( short * );
 
 		bool opening_;
-		std::string filePath_;
 		ByteArray buffer_;
 		ByteArray samples_;
 		std::tr1::shared_ptr< AVFormatContext > pFormatContext_;
 		AVStream * pStream_;
+
+		std::string filePath_;
 		int bitRate_;
 		int sampleRate_;
 		int channels_;
+		std::string title_;
+		std::string author_;
 	};
 
 	/**
