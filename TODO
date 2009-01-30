@@ -3,14 +3,14 @@
 	[完成]輸出檔案的路徑需要詢問；目前是在pwd底下
 	[完成]檢查是否能成功執行動作
 	解除只能開CUE sheet的限制
-	APE的時間計算有點問題
+	[完成]APE的時間計算有點問題
 
 介面：
 	String定義的地方，port Windows的時候再決定要不要額外定義
 	[完成]似乎可以再降低include dependancy
 
 實作：
-	[進行中]指標部分全面使用Smart Pointer（候選：Boost, Loki, QPointer）
+	[完成]指標部分全面使用Smart Pointer（候選：Boost, Loki, QPointer）
 	[完成]拔掉外部執行檔改用FFMpeg的library
 
 文件：
@@ -20,4 +20,4 @@
 	[bug]轉檔時的進度條:
 		取消鍵無作用
 		轉檔進度顯示
-	各輸出格式的設定介面
+	[完成]各輸出格式的設定介面
