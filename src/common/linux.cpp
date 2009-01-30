@@ -24,6 +24,10 @@ namespace Khopper {
 			}
 		}
 
+		std::wstring decodeString( const std::string & local ) {
+			return QString::fromStdString( local ).toStdWString();
+		}
+
 		std::string encodeString( const std::wstring & unicode ) {
 			return QString::fromStdWString( unicode ).toLocal8Bit().constData();
 		}

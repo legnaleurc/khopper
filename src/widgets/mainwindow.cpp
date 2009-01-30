@@ -167,12 +167,12 @@ namespace Khopper {
 			}
 		}
 	}
-	
+
 	void MainWindow::showOpenFileDialog() {
 		QString filePath = QFileDialog::getOpenFileName( this, tr( "Open CUE sheet" ), QDir::homePath(), "*.cue" );
 		this->open( filePath );
 	}
-	
+
 	void MainWindow::open( const QString & filePath ) {
 		if( filePath != "" ) {
 			std::vector< Track > tracks;
@@ -234,7 +234,7 @@ namespace Khopper {
 		about->setTextFormat( Qt::RichText );
 		tw->addTab( about, tr( "&About" ) );
 	}
-	
+
 	void MainWindow::runTimeError_( const QString & msg ) {
 		QMessageBox::critical( this, tr( "Run-time error!" ), msg );
 	}

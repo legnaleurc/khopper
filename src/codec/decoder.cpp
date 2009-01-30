@@ -24,11 +24,19 @@ namespace Khopper {
 	end_( -1 ),
 	nextPts_( -1 ),
 	hasNext_( false ),
-	duration_( 0.0 ),
 	pFormatContext_(),
 	pCodecContext_(),
 	pPacket_( static_cast< AVPacket * >( av_malloc( sizeof( AVPacket ) ) ), p_helper ),
-	timeBase_( 0.0 ) {
+	timeBase_( 0.0 ),
+	duration_( 0.0 ),
+	title_(),
+	author_(),
+	copyright_(),
+	comment_(),
+	album_(),
+	year_( 0 ),
+	index_( 0 ),
+	genre_() {
 		av_init_packet( this->pPacket_.get() );
 	}
 
@@ -51,6 +59,19 @@ namespace Khopper {
 		}
 		// NOTE: format recognization is done
 
+		// getting format information
+		if( this->pFormatContext_->duration != static_cast< int >( AV_NOPTS_VALUE ) ) {
+			this->duration_ = this->pFormatContext_->duration / static_cast< double >( AV_TIME_BASE );
+		}
+		this->title_ = os::decodeString( this->pFormatContext_->title );
+		this->author_ = os::decodeString( this->pFormatContext_->author );
+		this->copyright_ = os::decodeString( this->pFormatContext_->copyright );
+		this->comment_ = os::decodeString( this->pFormatContext_->comment );
+		this->album_ = os::decodeString( this->pFormatContext_->album );
+		this->year_ = this->pFormatContext_->year;
+		this->index_ = this->pFormatContext_->track;
+		this->genre_ = os::decodeString( this->pFormatContext_->genre );
+
 		int a_stream = -1;
 		for( std::size_t i = 0 ; i < pFormatContext_->nb_streams; ++i ) {
 			if( pFormatContext_->streams[i]->codec->codec_type == CODEC_TYPE_AUDIO ) {
@@ -63,10 +84,6 @@ namespace Khopper {
 		}
 		AVCodecContext * pCC = pFormatContext_->streams[a_stream]->codec;
 		this->timeBase_ = av_q2d( this->pFormatContext_->streams[a_stream]->time_base );
-
-		if( this->pFormatContext_->duration != AV_NOPTS_VALUE ) {
-			this->duration_ = this->pFormatContext_->duration / static_cast< double >( AV_TIME_BASE );
-		}
 
 		AVCodec * pC = avcodec_find_decoder( pCC->codec_id );
 		if( pC == NULL ) {
@@ -84,7 +101,18 @@ namespace Khopper {
 	}
 
 	void Decoder::close() {
+		// clear format information
 		this->duration_ = 0.0;
+		this->title_.clear();
+		this->author_.clear();
+		this->copyright_.clear();
+		this->comment_.clear();
+		this->album_.clear();
+		this->year_ = 0;
+		this->index_ = 0;
+		this->genre_.clear();
+
+		// clear native information
 		this->timeBase_ = 0.0;
 		this->begin_ = -1;
 		this->end_ = -1;
@@ -120,7 +148,7 @@ namespace Khopper {
 		if( av_read_frame( this->pFormatContext_.get(), this->pPacket_.get() ) >= 0 ) {
 			audio_pkt_data = this->pPacket_->data;
 			audio_pkt_size = this->pPacket_->size;
-			if( this->pPacket_->pts != AV_NOPTS_VALUE ) {
+			if( this->pPacket_->pts != static_cast< int >( AV_NOPTS_VALUE ) ) {
 				this->nextPts_ = av_rescale( this->pPacket_->pts, AV_TIME_BASE * static_cast< int64_t >( this->pFormatContext_->streams[0]->time_base.num ), this->pFormatContext_->streams[0]->time_base.den );
 			}
 			while( audio_pkt_size > 0 ) {
@@ -179,10 +207,6 @@ namespace Khopper {
 			avcodec_flush_buffers( this->pCodecContext_.get() );
 		}
 		return succeed;
-	}
-
-	double Decoder::getDuration() const {
-		return this->duration_;
 	}
 
 }

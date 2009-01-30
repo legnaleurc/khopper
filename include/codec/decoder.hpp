@@ -87,21 +87,57 @@ namespace Khopper {
 		 * @brief Get sample duration
 		 * @return Duration
 		 */
-		double getDuration() const;
+		double getDuration() const {
+			return this->duration_;
+		}
+		const std::wstring & getTitle() const {
+			return this->title_;
+		}
+		const std::wstring & getAuthor() const {
+			return this->author_;
+		}
+		const std::wstring & getCopyright() const {
+			return this->copyright_;
+		}
+		const std::wstring & getComment() const {
+			return this->comment_;
+		}
+		const std::wstring & getAlbum() const {
+			return this->album_;
+		}
+		int getYear() const {
+			return this->year_;
+		}
+		int getIndex() const {
+			return this->index_;
+		}
+		const std::wstring & getGenre() const {
+			return this->genre_;
+		}
 
 	private:
 		bool afterBegin_() const;
 		bool afterEnd_() const;
+
 		bool opening_;
 		int64_t begin_;
 		int64_t end_;
 		int64_t nextPts_;
 		bool hasNext_;
-		double duration_;
 		std::tr1::shared_ptr< AVFormatContext > pFormatContext_;
 		std::tr1::shared_ptr< AVCodecContext > pCodecContext_;
 		std::tr1::shared_ptr< AVPacket > pPacket_;
 		double timeBase_;
+
+		double duration_;
+		std::wstring title_;
+		std::wstring author_;
+		std::wstring copyright_;
+		std::wstring comment_;
+		std::wstring album_;
+		int year_;
+		int index_;
+		std::wstring genre_;
 	};
 
 	/**
