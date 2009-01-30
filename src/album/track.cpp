@@ -19,16 +19,23 @@ namespace {
 namespace Khopper {
 
 	Track::Track():
-	filePath(),
-	index( 0 ),
+	bitRate( 0 ),
+	channels( 0 ),
 	comments(),
-	fileType( BINARY ),
 	dataType( AUDIO ),
+	duration(),
+	filePath(),
+	fileType( BINARY ),
 	flags( NONE ),
 	garbage(),
+	index( 0 ),
 	isrc(),
 	performer(),
+	postGap(),
+	preGap(),
+	sampleRate(),
 	songWriter(),
+	startTime(),
 	title(),
 	decoder_( new Decoder ) {
 	}

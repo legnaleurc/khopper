@@ -114,6 +114,15 @@ namespace Khopper {
 		const std::wstring & getGenre() const {
 			return this->genre_;
 		}
+		int getBitRate() const {
+			return this->bitRate_;
+		}
+		int getSampleRate() const {
+			return this->sampleRate_;
+		}
+		int getChannels() const {
+			return this->channels_;
+		}
 
 	private:
 		bool afterBegin_() const;
@@ -138,6 +147,9 @@ namespace Khopper {
 		int year_;
 		int index_;
 		std::wstring genre_;
+		int bitRate_;
+		int sampleRate_;
+		int channels_;
 	};
 
 	/**

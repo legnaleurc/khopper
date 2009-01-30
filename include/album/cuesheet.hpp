@@ -34,11 +34,6 @@ namespace Khopper {
 		};
 
 		/**
-		 * @brief Headers of fields
-		 */
-		static const std::vector< std::wstring > Headers;
-
-		/**
 		 * @brief Default constructor
 		 */
 		CUESheet();

@@ -36,7 +36,10 @@ namespace Khopper {
 	album_(),
 	year_( 0 ),
 	index_( 0 ),
-	genre_() {
+	genre_(),
+	bitRate_( 0 ),
+	sampleRate_( 0 ),
+	channels_( 0 ) {
 		av_init_packet( this->pPacket_.get() );
 	}
 
@@ -83,7 +86,11 @@ namespace Khopper {
 			return;
 		}
 		AVCodecContext * pCC = pFormatContext_->streams[a_stream]->codec;
+		// getting codec information
 		this->timeBase_ = av_q2d( this->pFormatContext_->streams[a_stream]->time_base );
+		this->bitRate_ = pCC->bit_rate;
+		this->sampleRate_ = pCC->sample_rate;
+		this->channels_ = pCC->channels;
 
 		AVCodec * pC = avcodec_find_decoder( pCC->codec_id );
 		if( pC == NULL ) {
@@ -111,6 +118,9 @@ namespace Khopper {
 		this->year_ = 0;
 		this->index_ = 0;
 		this->genre_.clear();
+		this->bitRate_ = 0;
+		this->sampleRate_ = 0;
+		this->channels_ = 0;
 
 		// clear native information
 		this->timeBase_ = 0.0;

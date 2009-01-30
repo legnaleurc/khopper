@@ -30,13 +30,6 @@ namespace {
 		}
 	}
 
-	std::vector< wstring > createHeader() {
-		std::vector< wstring > vs;
-		vs.push_back( L"Title" );
-		vs.push_back( L"Performer" );
-		return vs;
-	}
-
 	unsigned short int toUShort( const std::wstring & s ) {
 		std::wistringstream sin( s );
 		unsigned short int usi;
@@ -47,8 +40,6 @@ namespace {
 }
 
 namespace Khopper {
-
-	const std::vector< wstring > CUESheet::Headers = createHeader();
 
 	CUESheet::CUESheet() {}
 
@@ -100,7 +91,11 @@ namespace Khopper {
 		DecoderSP decoder( new Decoder );
 		decoder->open( currentFile.first );
 		if( decoder->is_open() ) {
-			this->tracks.back().duration = Index( decoder->getDuration() ) - this->tracks.back().startTime;
+			Track & last( this->tracks.back() );
+			last.duration = Index( decoder->getDuration() ) - last.startTime;
+			last.bitRate = decoder->getBitRate();
+			last.sampleRate = decoder->getSampleRate();
+			last.channels = decoder->getChannels();
 			decoder->close();
 		}
 	}

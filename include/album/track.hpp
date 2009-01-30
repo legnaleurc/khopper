@@ -99,24 +99,26 @@ namespace Khopper {
 		 */
 		static const std::vector< std::wstring > Headers;
 
-		/// Path which is this track refers to.
-		std::wstring filePath;
-		/// Index at album
-		unsigned short int index;
-		/// Start time in that file
-		Index startTime;
+		/// Bit Rate
+		int bitRate;
+		/// Channels
+		int channels;
 		/// Track comments
 		std::map< std::wstring, std::wstring > comments;
-		/// Audio container type
-		FileType fileType;
 		/// Audio data type
 		DataType dataType;
 		/// Track duration
 		Index duration;
+		/// Path which is this track refers to.
+		std::wstring filePath;
+		/// Audio container type
+		FileType fileType;
 		/// Extra flags
 		Flag flags;
 		/// Garbage information
 		std::vector< std::wstring > garbage;
+		/// Index at album
+		unsigned short int index;
 		/// ISRC
 		std::wstring isrc;
 		/// Track performer
@@ -125,8 +127,12 @@ namespace Khopper {
 		Index postGap;
 		/// Gap to next track (?)
 		Index preGap;
+		/// Sample Rate
+		int sampleRate;
 		/// Song writer
 		std::wstring songWriter;
+		/// Start time in that file
+		Index startTime;
 		/// Track title
 		std::wstring title;
 
