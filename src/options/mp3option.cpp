@@ -30,6 +30,7 @@ namespace Khopper {
 		this->bitRate_->addItem( "128", QVariant( 128000 ) );
 		this->bitRate_->addItem( "256", QVariant( 256000 ) );
 		this->bitRate_->addItem( "320", QVariant( 320000 ) );
+		this->bitRate_->setCurrentIndex( 3 );
 
 		vbox->addWidget( this->sampleRate_ );
 		this->sampleRate_->addItem( "44100", QVariant( 44100 ) );
@@ -37,6 +38,7 @@ namespace Khopper {
 		vbox->addWidget( this->channels_ );
 		this->channels_->addItem( "Mono", QVariant( 1 ) );
 		this->channels_->addItem( "Streao", QVariant( 2 ) );
+		this->channels_->setCurrentIndex( 1 );
 	}
 
 	EncoderSP MP3Option::getEncoder() const {
