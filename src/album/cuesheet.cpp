@@ -93,9 +93,13 @@ namespace Khopper {
 		if( decoder->is_open() ) {
 			Track & last( this->tracks.back() );
 			last.duration = Index( decoder->getDuration() ) - last.startTime;
-			last.bitRate = decoder->getBitRate();
-			last.sampleRate = decoder->getSampleRate();
-			last.channels = decoder->getChannels();
+
+			for( std::vector< Track >::iterator it = tracks.begin(); it != tracks.end(); ++it ) {
+				it->bitRate = decoder->getBitRate();
+				it->sampleRate = decoder->getSampleRate();
+				it->channels = decoder->getChannels();
+			}
+
 			decoder->close();
 		}
 	}

@@ -11,6 +11,10 @@ namespace {
 		std::vector< std::wstring > vs;
 		vs.push_back( L"Title" );
 		vs.push_back( L"Performer" );
+		vs.push_back( L"Duration" );
+		vs.push_back( L"Bit Rate" );
+		vs.push_back( L"Sample Rate" );
+		vs.push_back( L"Channels" );
 		return vs;
 	}
 

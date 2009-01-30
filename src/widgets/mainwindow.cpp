@@ -205,7 +205,11 @@ namespace Khopper {
 		// add all tracks
 		for( std::size_t row = 0; row < tracks.size(); ++row ) {
 			this->songListModel_->setItem( row + offset, 0, new QStandardItem( QString::fromStdWString( tracks[row].title ) ) );
-			this->songListModel_->setItem( row + offset, 1, new QStandardItem( QString::fromStdWString(  tracks[row].performer ) ) );
+			this->songListModel_->setItem( row + offset, 1, new QStandardItem( QString::fromStdWString( tracks[row].performer ) ) );
+			this->songListModel_->setItem( row + offset, 2, new QStandardItem( QString::fromStdWString( tracks[row].duration.toStdWString() ) ) );
+			this->songListModel_->setItem( row + offset, 3, new QStandardItem( QString::number( tracks[row].bitRate ) ) );
+			this->songListModel_->setItem( row + offset, 4, new QStandardItem( QString::number( tracks[row].sampleRate ) ) );
+			this->songListModel_->setItem( row + offset, 5, new QStandardItem( QString::number( tracks[row].channels ) ) );
 
 			// add extra information
 			QVariant data;
