@@ -44,9 +44,6 @@ namespace Khopper {
 	decoder_( new Decoder ) {
 	}
 
-	Track::~Track() {
-	}
-
 	void Track::convert( const std::wstring & targetPath, EncoderSP encoder ) const {
 		this->decoder_->open( this->filePath );
 		encoder->open( targetPath );
@@ -59,26 +56,14 @@ namespace Khopper {
 		double end = begin + this->duration.toDouble();
 		this->decoder_->setRange( begin, end );
 
+		double decoded;
 		while( this->decoder_->hasNext() ) {
-			encoder->write( this->decoder_->read() );
-			emit this->decodeOnce();
+			encoder->write( this->decoder_->read( decoded ) );
+			emit this->decodedTime( static_cast< int >( decoded * 100 ) );
 		}
 
 		encoder->close();
 		this->decoder_->close();
-	}
-
-	int Track::getDecodeTimes() const {
-		int size = 0;
-		this->decoder_->open( this->filePath );
-		if( this->decoder_->is_open() ) {
-			double begin = this->startTime.toDouble();
-			double end = begin + this->duration.toDouble();
-			this->decoder_->setRange( begin, end );
-			size = this->decoder_->getDecodeTimes();
-			this->decoder_->close();
-		}
-		return size;
 	}
 
 	std::wstring Track::toStdWString() const {

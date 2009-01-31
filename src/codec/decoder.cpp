@@ -22,7 +22,6 @@ namespace Khopper {
 	opening_( false ),
 	begin_( -1 ),
 	end_( -1 ),
-	nextPts_( -1 ),
 	hasNext_( false ),
 	pFormatContext_(),
 	pCodecContext_(),
@@ -104,7 +103,6 @@ namespace Khopper {
 
 		opening_ = true;
 		hasNext_ = true;
-		nextPts_ = 0;
 	}
 
 	void Decoder::close() {
@@ -126,7 +124,6 @@ namespace Khopper {
 		this->timeBase_ = 0.0;
 		this->begin_ = -1;
 		this->end_ = -1;
-		this->nextPts_ = -1;
 		this->hasNext_ = false;
 		this->opening_ = false;
 		// free the members in packet, not itself
@@ -142,7 +139,8 @@ namespace Khopper {
 		this->seek( begin );
 	}
 
-	ByteArray Decoder::read() {
+	ByteArray Decoder::read( double & duration ) {
+		duration = 0.0;
 		if( !this->opening_ || !this->hasNext_ ) {
 			return ByteArray();
 		}
@@ -158,11 +156,13 @@ namespace Khopper {
 		if( av_read_frame( this->pFormatContext_.get(), this->pPacket_.get() ) >= 0 ) {
 			audio_pkt_data = this->pPacket_->data;
 			audio_pkt_size = this->pPacket_->size;
+			int64_t nextPts = -1;
+			int64_t decoded = 0;
 			if( this->pPacket_->pts != AV_NOPTS_VALUE ) {
-				this->nextPts_ = av_rescale( this->pPacket_->pts, AV_TIME_BASE * static_cast< int64_t >( this->pFormatContext_->streams[0]->time_base.num ), this->pFormatContext_->streams[0]->time_base.den );
+				nextPts = av_rescale( this->pPacket_->pts, AV_TIME_BASE * static_cast< int64_t >( this->pFormatContext_->streams[0]->time_base.num ), this->pFormatContext_->streams[0]->time_base.den );
 			}
 			while( audio_pkt_size > 0 ) {
-				if( this->afterEnd_() ) {
+				if( this->afterEnd_( nextPts ) ) {
 					this->hasNext_ = false;
 					break;
 				}
@@ -178,14 +178,17 @@ namespace Khopper {
 					continue;
 				}
 				// TODO: this test is too late
-				if( this->afterBegin_() ) {
+				if( this->afterBegin_( nextPts ) ) {
 					data.insert( data.end(), audio_buf, audio_buf + data_size );
+					decoded += (static_cast< int64_t >( AV_TIME_BASE )/2 * data_size) / (this->pCodecContext_->sample_rate * this->pCodecContext_->channels);
 				}
-				this->nextPts_ += (static_cast< int64_t >( AV_TIME_BASE )/2 * data_size) / (this->pCodecContext_->sample_rate * this->pCodecContext_->channels);
+				nextPts += (static_cast< int64_t >( AV_TIME_BASE )/2 * data_size) / (this->pCodecContext_->sample_rate * this->pCodecContext_->channels);
 			}
 			if( this->pPacket_->data ) {
 				av_free_packet( this->pPacket_.get() );
 			}
+
+			duration = static_cast< double >( decoded ) / AV_TIME_BASE;
 		} else {
 			this->hasNext_ = false;
 		}
@@ -193,43 +196,22 @@ namespace Khopper {
 		return data;
 	}
 
-	bool Decoder::afterBegin_() const {
+	bool Decoder::afterBegin_( int64_t pts ) const {
 		if( this->begin_ < 0 ) {
 			return true;
 		}
-		return this->nextPts_ >= this->begin_;
+		return pts >= this->begin_;
 	}
 
-	bool Decoder::afterEnd_() const {
+	bool Decoder::afterEnd_( int64_t pts ) const {
 		if( this->end_ < 0 ) {
 			return false;
 		}
-		return this->nextPts_ >= this->end_;
+		return pts >= this->end_;
 	}
 
 	bool Decoder::hasNext() const {
 		return this->hasNext_;
-	}
-
-	int Decoder::getDecodeTimes() {
-		// TODO: yea, this is ugly
-		int counter = 0;
-
-		while( av_read_frame( this->pFormatContext_.get(), this->pPacket_.get() ) >= 0 ) {
-			++counter;
-			if( this->pPacket_->pts != AV_NOPTS_VALUE ) {
-				this->nextPts_ = av_rescale( this->pPacket_->pts, AV_TIME_BASE * static_cast< int64_t >( this->pFormatContext_->streams[0]->time_base.num ), this->pFormatContext_->streams[0]->time_base.den );
-			}
-			if( this->afterBegin_() ) {
-				if( this->afterEnd_() ) {
-					break;
-				}
-			}
-		}
-
-		this->seek( ( this->begin_ < 0 ) ? 0.0 : ( this->begin_ / AV_TIME_BASE ) );
-
-		return counter;
 	}
 
 	bool Decoder::seek( double timestamp ) {

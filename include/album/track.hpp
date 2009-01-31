@@ -84,7 +84,6 @@ namespace Khopper {
 		 * @brief Default constructor
 		 */
 		Track();
-		virtual ~Track();
 
 		/**
 		 * @brief Convert this track
@@ -92,8 +91,6 @@ namespace Khopper {
 		 * @param [in] encoder encoder setting
 		 */
 		virtual void convert( const std::wstring & targetPath, EncoderSP encoder ) const;
-
-		int getDecodeTimes() const;
 
 		/**
 		 * @brief Dump track information
@@ -144,7 +141,7 @@ namespace Khopper {
 		std::wstring title;
 
 	signals:
-		void decodeOnce() const;
+		void decodedTime( int ) const;
 
 	private:
 		DecoderSP decoder_;

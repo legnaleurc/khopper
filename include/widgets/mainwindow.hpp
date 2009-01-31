@@ -71,7 +71,7 @@ namespace Khopper {
 	private slots:
 		void fire_();
 		void runTimeError_( const QString & );
-		void incProgress_();
+		void incProgress_( int );
 	};
 
 }

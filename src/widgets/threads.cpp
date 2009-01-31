@@ -17,7 +17,7 @@ namespace Khopper {
 	void ConverterThread::setTracks( const std::vector< TrackSP > & tracks ) {
 		this->tracks_ = tracks;
 		for( std::size_t i = 0; i < tracks.size(); ++i ) {
-			connect( tracks[i].get(), SIGNAL( decodeOnce() ), this, SIGNAL( increase() ) );
+			connect( tracks[i].get(), SIGNAL( decodedTime( int ) ), this, SIGNAL( step( int ) ) );
 		}
 	}
 

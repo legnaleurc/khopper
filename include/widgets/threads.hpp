@@ -49,9 +49,7 @@ namespace Khopper {
 		 * @brief Progress notifyer
 		 * @param task Task number
 		 */
-		void step( int task );
-
-		void increase();
+		void step( int duration );
 
 	protected:
 		/**

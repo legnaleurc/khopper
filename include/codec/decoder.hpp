@@ -75,15 +75,13 @@ namespace Khopper {
 		 * @brief Read one frame
 		 * @return Frame raw binary data
 		 */
-		ByteArray read();
+		ByteArray read( double & duration );
 		/**
 		 * @brief Check if there is any readable data
 		 * @retval true Has data to read
 		 * @retval false No data
 		 */
 		bool hasNext() const;
-
-		int getDecodeTimes();
 
 		/**
 		 * @brief Get sample duration
@@ -127,13 +125,12 @@ namespace Khopper {
 		}
 
 	private:
-		bool afterBegin_() const;
-		bool afterEnd_() const;
+		bool afterBegin_( int64_t ) const;
+		bool afterEnd_( int64_t ) const;
 
 		bool opening_;
 		int64_t begin_;
 		int64_t end_;
-		int64_t nextPts_;
 		bool hasNext_;
 		std::tr1::shared_ptr< AVFormatContext > pFormatContext_;
 		std::tr1::shared_ptr< AVCodecContext > pCodecContext_;

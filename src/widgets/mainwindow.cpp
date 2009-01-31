@@ -75,15 +75,14 @@ namespace Khopper {
 
 		// Converter thread
 		connect( cvt_, SIGNAL( finished() ), progress_, SLOT( cancel() ) );
-		connect( cvt_, SIGNAL( step( int ) ), progress_, SLOT( setValue( int ) ) );
-		connect( cvt_, SIGNAL( increase() ), this, SLOT( incProgress_() ) );
+		connect( cvt_, SIGNAL( step( int ) ), this, SLOT( incProgress_( int ) ) );
 		connect( cvt_, SIGNAL( error( const QString & ) ), this, SLOT( runTimeError_( const QString & ) ) );
 		// FIXME: in fact, this don't work
 		connect( progress_, SIGNAL( canceled() ), cvt_, SLOT( terminate() ) );
 	}
 
-	void MainWindow::incProgress_() {
-		this->progress_->setValue( this->progress_->value() + 1 );
+	void MainWindow::incProgress_( int diff ) {
+		this->progress_->setValue( this->progress_->value() + diff );
 	}
 
 	void MainWindow::initMenuBar_() {
@@ -155,12 +154,11 @@ namespace Khopper {
 				int decodeTimes = 0;
 				for( int i = 0; i < selected.size(); ++i ) {
 					tracks[i] = selected[i].data( Qt::UserRole ).value< TrackSP >();
-					decodeTimes += tracks[i]->getDecodeTimes();
+					decodeTimes += static_cast< int >( tracks[i]->duration.toDouble() * 100 );
 				}
 
 				// set progress bar
 				progress_->setRange( 0, decodeTimes );
-				qDebug() << "decodeTimes" << decodeTimes;
 				// set output information
 				// TODO:
 				// not only target directory, but filenames
