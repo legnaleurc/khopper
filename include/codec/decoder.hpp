@@ -83,6 +83,8 @@ namespace Khopper {
 		 */
 		bool hasNext() const;
 
+		int getDecodeTimes();
+
 		/**
 		 * @brief Get sample duration
 		 * @return Duration

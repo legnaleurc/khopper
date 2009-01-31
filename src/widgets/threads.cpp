@@ -14,8 +14,11 @@ namespace Khopper {
 		this->outDir_ = outDir;
 	}
 
-	void ConverterThread::setTracks( const std::vector< Track > & tracks ) {
+	void ConverterThread::setTracks( const std::vector< TrackSP > & tracks ) {
 		this->tracks_ = tracks;
+		for( std::size_t i = 0; i < tracks.size(); ++i ) {
+			connect( tracks[i].get(), SIGNAL( decodeOnce() ), this, SIGNAL( increase() ) );
+		}
 	}
 
 	void ConverterThread::run() {
@@ -24,10 +27,10 @@ namespace Khopper {
 		// convert
 		try {
 			for( std::size_t i = 0; i < this->tracks_.size(); ++i ) {
-				this->encoder_->setTitle( this->tracks_[i].title );
-				this->encoder_->setAuthor( this->tracks_[i].performer );
-				this->tracks_[i].convert( nameHack.arg( this->outDir_ ).arg( QString::fromStdWString( tracks_[i].title ) ).toStdWString(), this->encoder_ );
-				emit step( i + 1 );
+				this->encoder_->setTitle( this->tracks_[i]->title );
+				this->encoder_->setAuthor( this->tracks_[i]->performer );
+				this->tracks_[i]->convert( nameHack.arg( this->outDir_ ).arg( QString::fromStdWString( tracks_[i]->title ) ).toStdWString(), this->encoder_ );
+// 				emit step( i + 1 );
 			}
 		} catch( std::exception & e ) {
 			emit error( tr( e.what() ) );

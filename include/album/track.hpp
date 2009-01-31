@@ -10,6 +10,8 @@
 #include "encoder.hpp"
 #include "decoder.hpp"
 
+#include <QObject>
+
 #include <string>
 #include <vector>
 #include <map>
@@ -22,7 +24,9 @@ namespace Khopper {
 	 * This module uses std::wstring to store unicode string.\n
 	 * UTF-16 on Windows(R), UCS4 on POSIX.
 	 */
-	class Track {
+	class Track : public QObject {
+		Q_OBJECT
+
 	public:
 		/**
 		 * @brief Type of audio file
@@ -80,6 +84,7 @@ namespace Khopper {
 		 * @brief Default constructor
 		 */
 		Track();
+		virtual ~Track();
 
 		/**
 		 * @brief Convert this track
@@ -87,6 +92,8 @@ namespace Khopper {
 		 * @param [in] encoder encoder setting
 		 */
 		virtual void convert( const std::wstring & targetPath, EncoderSP encoder ) const;
+
+		int getDecodeTimes() const;
 
 		/**
 		 * @brief Dump track information
@@ -136,9 +143,14 @@ namespace Khopper {
 		/// Track title
 		std::wstring title;
 
+	signals:
+		void decodeOnce() const;
+
 	private:
 		DecoderSP decoder_;
 	};
+
+	typedef std::tr1::shared_ptr< Track > TrackSP;
 
 }
 

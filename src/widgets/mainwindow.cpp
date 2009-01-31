@@ -22,9 +22,10 @@
 #include <QFile>
 #include <QLabel>
 #include <QTabWidget>
+#include <QtDebug>
 
 // for Track to QVariant
-Q_DECLARE_METATYPE( Khopper::Track )
+Q_DECLARE_METATYPE( Khopper::TrackSP )
 
 namespace Khopper {
 
@@ -75,9 +76,14 @@ namespace Khopper {
 		// Converter thread
 		connect( cvt_, SIGNAL( finished() ), progress_, SLOT( cancel() ) );
 		connect( cvt_, SIGNAL( step( int ) ), progress_, SLOT( setValue( int ) ) );
+		connect( cvt_, SIGNAL( increase() ), this, SLOT( incProgress_() ) );
 		connect( cvt_, SIGNAL( error( const QString & ) ), this, SLOT( runTimeError_( const QString & ) ) );
 		// FIXME: in fact, this don't work
 		connect( progress_, SIGNAL( canceled() ), cvt_, SLOT( terminate() ) );
+	}
+
+	void MainWindow::incProgress_() {
+		this->progress_->setValue( this->progress_->value() + 1 );
 	}
 
 	void MainWindow::initMenuBar_() {
@@ -145,13 +151,16 @@ namespace Khopper {
 				QModelIndexList selected = this->songListView_->selectionModel()->selectedRows( 0 );
 
 				// put selected list
-				std::vector< Track > tracks( selected.size() );
+				std::vector< TrackSP > tracks( selected.size() );
+				int decodeTimes = 0;
 				for( int i = 0; i < selected.size(); ++i ) {
-					tracks[i] = selected[i].data( Qt::UserRole ).value< Track >();
+					tracks[i] = selected[i].data( Qt::UserRole ).value< TrackSP >();
+					decodeTimes += tracks[i]->getDecodeTimes();
 				}
 
 				// set progress bar
-				progress_->setRange( 0, tracks.size() );
+				progress_->setRange( 0, decodeTimes );
+				qDebug() << "decodeTimes" << decodeTimes;
 				// set output information
 				// TODO:
 				// not only target directory, but filenames
@@ -175,7 +184,7 @@ namespace Khopper {
 
 	void MainWindow::open( const QString & filePath ) {
 		if( filePath != "" ) {
-			std::vector< Track > tracks;
+			std::vector< TrackSP > tracks;
 
 			if( QFileInfo( filePath ).suffix() == "cue" ) {
 				QFile fin( filePath );
@@ -199,17 +208,17 @@ namespace Khopper {
 		}
 	}
 
-	void MainWindow::addSongList( const std::vector< Track > & tracks ) {
+	void MainWindow::addSongList( const std::vector< TrackSP > & tracks ) {
 		// get last row number
 		int offset = songListModel_->rowCount();
 		// add all tracks
 		for( std::size_t row = 0; row < tracks.size(); ++row ) {
-			this->songListModel_->setItem( row + offset, 0, new QStandardItem( QString::fromStdWString( tracks[row].title ) ) );
-			this->songListModel_->setItem( row + offset, 1, new QStandardItem( QString::fromStdWString( tracks[row].performer ) ) );
-			this->songListModel_->setItem( row + offset, 2, new QStandardItem( QString::fromStdWString( tracks[row].duration.toStdWString() ) ) );
-			this->songListModel_->setItem( row + offset, 3, new QStandardItem( QString::number( tracks[row].bitRate ) ) );
-			this->songListModel_->setItem( row + offset, 4, new QStandardItem( QString::number( tracks[row].sampleRate ) ) );
-			this->songListModel_->setItem( row + offset, 5, new QStandardItem( QString::number( tracks[row].channels ) ) );
+			this->songListModel_->setItem( row + offset, 0, new QStandardItem( QString::fromStdWString( tracks[row]->title ) ) );
+			this->songListModel_->setItem( row + offset, 1, new QStandardItem( QString::fromStdWString( tracks[row]->performer ) ) );
+			this->songListModel_->setItem( row + offset, 2, new QStandardItem( QString::fromStdWString( tracks[row]->duration.toStdWString() ) ) );
+			this->songListModel_->setItem( row + offset, 3, new QStandardItem( QString::number( tracks[row]->bitRate ) ) );
+			this->songListModel_->setItem( row + offset, 4, new QStandardItem( QString::number( tracks[row]->sampleRate ) ) );
+			this->songListModel_->setItem( row + offset, 5, new QStandardItem( QString::number( tracks[row]->channels ) ) );
 
 			// add extra information
 			QVariant data;

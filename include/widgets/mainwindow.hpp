@@ -5,6 +5,8 @@
 #ifndef KHOPPER_MAINWINDOW_HPP
 #define KHOPPER_MAINWINDOW_HPP
 
+#include "track.hpp"
+
 #include <QMainWindow>
 #include <QStandardItemModel>
 #include <QComboBox>
@@ -19,7 +21,6 @@ namespace Khopper {
 	class ConverterThread;
 	class SongListView;
 	class TextCodec;
-	class Track;
 
 	/**
 	 * @class MainWindow
@@ -45,7 +46,7 @@ namespace Khopper {
 		 * @brief Add songs the song list
 		 * @param [in] tracks Tracks
 		 */
-		void addSongList( const std::vector< Track > & tracks );
+		void addSongList( const std::vector< TrackSP > & tracks );
 		/**
 		 * @brief Open file
 		 * @param [in] filePath file path
@@ -70,6 +71,7 @@ namespace Khopper {
 	private slots:
 		void fire_();
 		void runTimeError_( const QString & );
+		void incProgress_();
 	};
 
 }

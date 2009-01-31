@@ -73,7 +73,7 @@ namespace Khopper {
 		/// Album title
 		std::wstring title;
 		/// Album tracks
-		std::vector< Track > tracks;
+		std::vector< TrackSP > tracks;
 
 	private:
 		void parseCUE_( const std::wstring &, const std::wstring & );

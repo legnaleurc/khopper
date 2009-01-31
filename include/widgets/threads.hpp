@@ -36,7 +36,7 @@ namespace Khopper {
 		 * @brief Set tracks to convert
 		 * @param [in] tracks Tracks information
 		 */
-		void setTracks( const std::vector< Track > & tracks );
+		void setTracks( const std::vector< TrackSP > & tracks );
 
 	signals:
 		/**
@@ -51,6 +51,8 @@ namespace Khopper {
 		 */
 		void step( int task );
 
+		void increase();
+
 	protected:
 		/**
 		 * @brief Action function
@@ -59,7 +61,7 @@ namespace Khopper {
 
 	private:
 		EncoderSP encoder_;
-		std::vector< Track > tracks_;
+		std::vector< TrackSP > tracks_;
 		std::vector< QString > paths_;
 		QString outDir_;
 	};

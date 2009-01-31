@@ -91,13 +91,13 @@ namespace Khopper {
 		DecoderSP decoder( new Decoder );
 		decoder->open( currentFile.first );
 		if( decoder->is_open() ) {
-			Track & last( this->tracks.back() );
-			last.duration = Index( decoder->getDuration() ) - last.startTime;
+			TrackSP last( this->tracks.back() );
+			last->duration = Index( decoder->getDuration() ) - last->startTime;
 
-			for( std::vector< Track >::iterator it = tracks.begin(); it != tracks.end(); ++it ) {
-				it->bitRate = decoder->getBitRate();
-				it->sampleRate = decoder->getSampleRate();
-				it->channels = decoder->getChannels();
+			for( std::vector< TrackSP >::iterator it = tracks.begin(); it != tracks.end(); ++it ) {
+				( *it )->bitRate = decoder->getBitRate();
+				( *it )->sampleRate = decoder->getSampleRate();
+				( *it )->channels = decoder->getChannels();
 			}
 
 			decoder->close();
@@ -116,25 +116,25 @@ namespace Khopper {
 			}
 		} else if( c == L"ISRC" ) {
 			if( trackNO != -1 ) {
-				this->tracks[trackNO].isrc = content;
+				this->tracks[trackNO]->isrc = content;
 			}
 		} else if( c == L"PERFORMER" ) {
 			if( trackNO == -1 ) {
 				this->performer = content;
 			} else {
-				this->tracks[trackNO].performer = content;
+				this->tracks[trackNO]->performer = content;
 			}
 		} else if( c == L"SONGWRITER" ) {
 			if( trackNO == -1 ) {
 				this->songWriter = content;
 			} else {
-				this->tracks[trackNO].songWriter = content;
+				this->tracks[trackNO]->songWriter = content;
 			}
 		} else if( c == L"TITLE" ) {
 			if( trackNO == -1 ) {
 				this->title = content;
 			} else {
-				this->tracks[trackNO].title = content;
+				this->tracks[trackNO]->title = content;
 			}
 		}
 	}
@@ -159,15 +159,15 @@ namespace Khopper {
 	void CUESheet::parseFlags_( const wstring & flag, int trackNO ) {
 		if( trackNO != -1 ) {
 			if( flag == L"DATA" ) {
-				this->tracks[trackNO].flags = static_cast< Track::Flag >( this->tracks[trackNO].flags | Track::DATA );
+				this->tracks[trackNO]->flags = static_cast< Track::Flag >( this->tracks[trackNO]->flags | Track::DATA );
 			} else if( flag == L"DCP" ) {
-				this->tracks[trackNO].flags = static_cast< Track::Flag >( this->tracks[trackNO].flags | Track::DCP );
+				this->tracks[trackNO]->flags = static_cast< Track::Flag >( this->tracks[trackNO]->flags | Track::DCP );
 			} else if( flag == L"4CH" ) {
-				this->tracks[trackNO].flags = static_cast< Track::Flag >( this->tracks[trackNO].flags | Track::CH4 );
+				this->tracks[trackNO]->flags = static_cast< Track::Flag >( this->tracks[trackNO]->flags | Track::CH4 );
 			} else if( flag == L"PRE" ) {
-				this->tracks[trackNO].flags = static_cast< Track::Flag >( this->tracks[trackNO].flags | Track::PRE );
+				this->tracks[trackNO]->flags = static_cast< Track::Flag >( this->tracks[trackNO]->flags | Track::PRE );
 			} else if( flag == L"SCMS" ) {
-				this->tracks[trackNO].flags = static_cast< Track::Flag >( this->tracks[trackNO].flags | Track::SCMS );
+				this->tracks[trackNO]->flags = static_cast< Track::Flag >( this->tracks[trackNO]->flags | Track::SCMS );
 			}
 		}
 	}
@@ -179,17 +179,17 @@ namespace Khopper {
 
 		if( type == L"INDEX" ) {
 			if( toUShort( num ) == 1 ) {
-				this->tracks[trackNO].startTime = Index( minute, second, frame );
+				this->tracks[trackNO]->startTime = Index( minute, second, frame );
 // 				qDebug() << "Song start:" << QString::fromStdWString( this->tracks[trackNO].startTime.toStdWString() );
 			} else {
 // 				qDebug() << "Song end:" << QString::fromStdWString( Index( minute, second, frame ).toStdWString() );
-				this->tracks[trackNO-1].duration = Index( minute, second, frame ) - this->tracks[trackNO-1].startTime;
+				this->tracks[trackNO-1]->duration = Index( minute, second, frame ) - this->tracks[trackNO-1]->startTime;
 // 				qDebug() << "Duration:" << QString::fromStdWString( this->tracks[trackNO-1].duration.toStdWString() );
 			}
 		} else if( type == L"PREGAP" ) {
-			this->tracks[trackNO].preGap = Index( minute, second, frame );
+			this->tracks[trackNO]->preGap = Index( minute, second, frame );
 		} else if( type == L"POSTGAP" ) {
-			this->tracks[trackNO].postGap = Index( minute, second, frame );
+			this->tracks[trackNO]->postGap = Index( minute, second, frame );
 		}
 	}
 
@@ -197,32 +197,32 @@ namespace Khopper {
 		if( trackNO == -1 ) {
 			this->comments[key] = value;
 		} else {
-			this->tracks[trackNO].comments[key] = value;
+			this->tracks[trackNO]->comments[key] = value;
 		}
 	}
 
 	void CUESheet::parseTrack_( const wstring & num, const std::pair< wstring, FileType > & audioData, const wstring & type ) {
-		Track track;
-		track.index = toUShort( num );
-		track.filePath = audioData.first;
+		TrackSP track( new Track );
+		track->index = toUShort( num );
+		track->filePath = audioData.first;
 		if( type == L"AUDIO" ) {
-			track.dataType = Track::AUDIO;
+			track->dataType = Track::AUDIO;
 		} else if( type == L"CDG" ) {
-			track.dataType = Track::CDG;
+			track->dataType = Track::CDG;
 		} else if( type == L"MODE1/2048" ) {
-			track.dataType = Track::MODE1_2048;
+			track->dataType = Track::MODE1_2048;
 		} else if( type == L"MODE1/2352" ) {
-			track.dataType = Track::MODE1_2352;
+			track->dataType = Track::MODE1_2352;
 		} else if( type == L"MODE2/2336" ) {
-			track.dataType = Track::MODE2_2336;
+			track->dataType = Track::MODE2_2336;
 		} else if( type == L"MODE2/2352" ) {
-			track.dataType = Track::MODE2_2352;
+			track->dataType = Track::MODE2_2352;
 		} else if( type == L"CDI/2336" ) {
-			track.dataType = Track::CDI_2336;
+			track->dataType = Track::CDI_2336;
 		} else if( type == L"CDI/2352" ) {
-			track.dataType = Track::CDI_2352;
+			track->dataType = Track::CDI_2352;
 		} else {
-			track.dataType = Track::AUDIO;
+			track->dataType = Track::AUDIO;
 		}
 		this->tracks.push_back( track );
 	}
@@ -231,7 +231,7 @@ namespace Khopper {
 		if( trackNO == -1 ) {
 			this->garbage.push_back( line );
 		} else {
-			this->tracks[trackNO].garbage.push_back( line );
+			this->tracks[trackNO]->garbage.push_back( line );
 		}
 	}
 
@@ -252,8 +252,8 @@ namespace Khopper {
 			sout << L"\t" << *it << L"\n";
 		}
 		sout << L"Tracks:\n";
-		for( std::vector< Track >::const_iterator it = this->tracks.begin(); it != this->tracks.end(); ++it ) {
-			sout << L"\t" << it->toStdWString() << L"\n";
+		for( std::vector< TrackSP >::const_iterator it = this->tracks.begin(); it != this->tracks.end(); ++it ) {
+			sout << L"\t" << ( *it )->toStdWString() << L"\n";
 		}
 		return sout.str();
 	}

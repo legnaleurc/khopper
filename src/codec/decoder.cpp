@@ -158,7 +158,7 @@ namespace Khopper {
 		if( av_read_frame( this->pFormatContext_.get(), this->pPacket_.get() ) >= 0 ) {
 			audio_pkt_data = this->pPacket_->data;
 			audio_pkt_size = this->pPacket_->size;
-			if( this->pPacket_->pts != static_cast< int >( AV_NOPTS_VALUE ) ) {
+			if( this->pPacket_->pts != AV_NOPTS_VALUE ) {
 				this->nextPts_ = av_rescale( this->pPacket_->pts, AV_TIME_BASE * static_cast< int64_t >( this->pFormatContext_->streams[0]->time_base.num ), this->pFormatContext_->streams[0]->time_base.den );
 			}
 			while( audio_pkt_size > 0 ) {
@@ -177,6 +177,7 @@ namespace Khopper {
 				if( data_size <= 0 ) {
 					continue;
 				}
+				// TODO: this test is too late
 				if( this->afterBegin_() ) {
 					data.insert( data.end(), audio_buf, audio_buf + data_size );
 				}
@@ -208,6 +209,27 @@ namespace Khopper {
 
 	bool Decoder::hasNext() const {
 		return this->hasNext_;
+	}
+
+	int Decoder::getDecodeTimes() {
+		// TODO: yea, this is ugly
+		int counter = 0;
+
+		while( av_read_frame( this->pFormatContext_.get(), this->pPacket_.get() ) >= 0 ) {
+			++counter;
+			if( this->pPacket_->pts != AV_NOPTS_VALUE ) {
+				this->nextPts_ = av_rescale( this->pPacket_->pts, AV_TIME_BASE * static_cast< int64_t >( this->pFormatContext_->streams[0]->time_base.num ), this->pFormatContext_->streams[0]->time_base.den );
+			}
+			if( this->afterBegin_() ) {
+				if( this->afterEnd_() ) {
+					break;
+				}
+			}
+		}
+
+		this->seek( ( this->begin_ < 0 ) ? 0.0 : ( this->begin_ / AV_TIME_BASE ) );
+
+		return counter;
 	}
 
 	bool Decoder::seek( double timestamp ) {
