@@ -76,7 +76,7 @@ namespace Khopper {
 		// Converter thread
 		connect( cvt_, SIGNAL( finished() ), progress_, SLOT( cancel() ) );
 		connect( cvt_, SIGNAL( step( int ) ), this, SLOT( incProgress_( int ) ) );
-		connect( cvt_, SIGNAL( error( const QString & ) ), this, SLOT( runTimeError_( const QString & ) ) );
+		connect( cvt_, SIGNAL( error( const QString &, const QString & ) ), this, SLOT( showErrorMessage_( const QString &, const QString & ) ) );
 		// FIXME: in fact, this don't work
 		connect( progress_, SIGNAL( canceled() ), cvt_, SLOT( terminate() ) );
 	}
@@ -168,9 +168,9 @@ namespace Khopper {
 				cvt_->start();
 				progress_->show();
 			} catch( Error< RunTime > & e ) {
-				runTimeError_( tr( e.what() ) );
+				this->showErrorMessage_( tr( "Run-time error!" ), tr( e.what() ) );
 			} catch( std::exception & e ) {
-				QMessageBox::critical( this, tr( "Unknown error!" ), tr( e.what() ) );
+				this->showErrorMessage_( tr( "Unknown error!" ), tr( e.what() ) );
 			}
 		}
 	}
@@ -187,7 +187,7 @@ namespace Khopper {
 			if( QFileInfo( filePath ).suffix() == "cue" ) {
 				QFile fin( filePath );
 				if( !fin.open( QIODevice::ReadOnly | QIODevice::Text ) ) {
-					QMessageBox::critical( this, tr( "File open error!" ), tr( "Could not open the file: `" ) + filePath + "\'" );
+					this->showErrorMessage_( tr( "File open error!" ), tr( "Could not open the file: `" ) + filePath + "\'" );
 				}
 
 				QByteArray raw_input = fin.readAll();
@@ -196,10 +196,14 @@ namespace Khopper {
 				codec_->setEncoded( raw_input );
 
 				if( codec_->exec() ) {
-					tracks = CUESheet( codec_->getDecoded().toStdWString(), QFileInfo( filePath ).absolutePath().toStdWString() ).tracks;
+					try {
+						tracks = CUESheet( codec_->getDecoded().toStdWString(), QFileInfo( filePath ).absolutePath().toStdWString() ).tracks;
+					} catch( std::exception & e ) {
+						this->showErrorMessage_( tr( "Error on parsing CUE Sheet!" ), tr( e.what() ) );
+					}
 				}
 			} else {
-				throw Error< RunTime >( "Not implemented." );
+				this->showErrorMessage_( tr( "Run-time error!" ), tr( "Not implemented." ) );
 			}
 
 			this->addSongList( tracks );
@@ -246,8 +250,8 @@ namespace Khopper {
 		tw->addTab( about, tr( "&About" ) );
 	}
 
-	void MainWindow::runTimeError_( const QString & msg ) {
-		QMessageBox::critical( this, tr( "Run-time error!" ), msg );
+	void MainWindow::showErrorMessage_( const QString & title, const QString & msg ) {
+		QMessageBox::critical( this, title, msg );
 	}
 
 }

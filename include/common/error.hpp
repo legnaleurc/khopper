@@ -61,6 +61,9 @@ namespace Khopper {
 	class System {
 	};
 
+	class IO {
+	};
+
 }
 
 #endif

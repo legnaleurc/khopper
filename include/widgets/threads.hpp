@@ -43,7 +43,7 @@ namespace Khopper {
 		 * @brief Send error message
 		 * @param errMsg Error message
 		 */
-		void error( const QString & errMsg );
+		void error( const QString & title, const QString & errMsg );
 
 		/**
 		 * @brief Progress notifyer

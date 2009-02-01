@@ -70,7 +70,7 @@ namespace Khopper {
 
 	private slots:
 		void fire_();
-		void runTimeError_( const QString & );
+		void showErrorMessage_( const QString &, const QString & );
 		void incProgress_( int );
 	};
 

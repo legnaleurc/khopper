@@ -33,7 +33,7 @@ namespace Khopper {
 // 				emit step( i + 1 );
 			}
 		} catch( std::exception & e ) {
-			emit error( tr( e.what() ) );
+			emit error( tr( "Error on converting!" ), tr( e.what() ) );
 		}
 	}
 

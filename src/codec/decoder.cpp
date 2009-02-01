@@ -1,5 +1,6 @@
 #include "decoder.hpp"
 #include "os.hpp"
+#include "error.hpp"
 
 extern "C" {
 #include <avcodec.h>
@@ -53,7 +54,7 @@ namespace Khopper {
 
 		AVFormatContext * pFC = NULL;
 		if( av_open_input_file( &pFC, fP.c_str(), NULL, 0, NULL ) != 0 ) {
-			return;
+			throw Error< IO >( std::string( "Can not open `" ) + fP + "\'" );
 		}
 		this->pFormatContext_.reset( pFC, av_close_input_file );
 		if( av_find_stream_info( this->pFormatContext_.get() ) < 0 ) {
