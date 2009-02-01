@@ -1,20 +1,31 @@
 #include "os.hpp"
 
-#include <windows.h>
+#include <QString>
 
 namespace Khopper {
 
 	namespace os {
 
-		int getResult( std::pair<std::string,std::string> & msg, const std::vector<std::string> & args, const std::string & input ) {
-			return 0;
+		std::wstring join( const std::wstring & front, const std::wstring & back ) {
+			using namespace std::tr1;
+			const wregex fp( L"(.*)\\*" );
+			wsmatch fr;
+			const wregex bp( L"\\*(.*)" );
+			wsmatch br;
+
+			if( regex_match( front, fr, fp ) && regex_match( back, br, bp ) ) {
+				return fr[1].str() + L"\\" + br[1].str();
+			} else {
+				return L"";
+			}
 		}
 
-		void exists( const std::string & exe ) {
+		std::wstring decodeString( const std::string & local ) {
+			return QString::fromStdString( local ).toStdWString();
 		}
-		
-		std::string join( const std::string & front, const std::string & back ) {
-			return back;
+
+		std::string encodeString( const std::wstring & unicode ) {
+			return QString::fromStdWString( unicode ).toLocal8Bit().constData();
 		}
 
 	}
