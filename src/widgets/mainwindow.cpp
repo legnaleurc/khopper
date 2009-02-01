@@ -241,8 +241,8 @@ namespace Khopper {
 
 		QLabel * about = new QLabel( tr(
 			"An audio converter<br/>"
-			"(C) 2008 ~<br/>"
-			"Present by legnaleurc<br/>"
+			"(C) 2008 ~ 2009<br/>"
+			"Present by Wei-Cheng Pan<br/>"
 			"E-Mail: <a href=\"mailto:legnaleurc@gmail.com\">legnaleurc@gmail.com</a><br/>"
 			"<a href=\"http://legnaleurc.blogspot.com/\">Home Page</a>"
 		), tw );
