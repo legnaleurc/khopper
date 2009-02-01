@@ -36,7 +36,7 @@ namespace Khopper {
 	songListModel_( new QStandardItemModel( songListView_ ) ),
 	optionTabs_( new QTabWidget( this ) ),
 	action_( new QPushButton( tr( "Fire!" ), this ) ),
-	progress_( new QProgressDialog( tr( "Converting..." ), tr( "Don\'t touch me!" ), 0, 0, this ) ),
+	progress_( new QProgressDialog( tr( "Converting..." ), tr( "Cancel" ), 0, 0, this ) ),
 	cvt_( new ConverterThread( this ) ),
 	about_( new QWidget( this, Qt::Dialog ) ) {
 		this->initAbout_();
@@ -77,7 +77,7 @@ namespace Khopper {
 		connect( cvt_, SIGNAL( finished() ), progress_, SLOT( cancel() ) );
 		connect( cvt_, SIGNAL( step( int ) ), this, SLOT( incProgress_( int ) ) );
 		connect( cvt_, SIGNAL( error( const QString &, const QString & ) ), this, SLOT( showErrorMessage_( const QString &, const QString & ) ) );
-		// FIXME: in fact, this don't work
+		// NOTE: works, but danger
 		connect( progress_, SIGNAL( canceled() ), cvt_, SLOT( terminate() ) );
 	}
 
