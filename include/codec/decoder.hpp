@@ -20,6 +20,7 @@ namespace Khopper {
 
 	/**
 	 * @brief Decoder interface
+	 * @sa Encoder
 	 *
 	 * This module uses std::wstring to store unicode string.\n
 	 * UTF-16 on Windows(R), UCS4 on POSIX.
@@ -30,15 +31,15 @@ namespace Khopper {
 		 * @brief Default constructor
 		 */
 		Decoder();
-
 		/**
-		 * @brief Pure virtual destructor
+		 * @brief Virtual destructor
 		 */
 		virtual ~Decoder();
 
 		/**
 		 * @brief Open file
 		 * @param filePath File path
+		 * @throw Error< IO > if no file found
 		 */
 		void open( const std::wstring & filePath );
 		/**
@@ -64,15 +65,13 @@ namespace Khopper {
 
 		/**
 		 * @brief Set decode range
-		 * @param begin Begin time stamp, in seconds
-		 * @param end End time stamp, in seconds
-		 *
-		 * If @p begin is -1, means begin of file, \n
-		 * if @p end is -1, means end of file.
+		 * @param begin Begin time stamp, in seconds, -1 means begin of file
+		 * @param end End time stamp, in seconds, -1 means end of file
 		 */
 		void setRange( double begin, double end );
 		/**
 		 * @brief Read one frame
+		 * @param [out] duration Decoded duration
 		 * @return Frame raw binary data
 		 */
 		ByteArray read( double & duration );

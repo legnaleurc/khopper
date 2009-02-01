@@ -141,7 +141,11 @@ namespace Khopper {
 		std::wstring title;
 
 	signals:
-		void decodedTime( int ) const;
+		/**
+		 * @brief Decoded duration
+		 * @param ms Time in second * 100
+		 */
+		void decodedTime( int ms ) const;
 
 	private:
 		DecoderSP decoder_;

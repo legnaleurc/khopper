@@ -28,7 +28,7 @@ namespace Khopper {
 		 */
 		Encoder();
 		/**
-		 * @brief Pure virtual destructor
+		 * @brief Virtual destructor
 		 */
 		virtual ~Encoder();
 
@@ -80,6 +80,12 @@ namespace Khopper {
 		void flush();
 
 	protected:
+		/**
+		 * @brief Get file path
+		 * @return ENCODED path
+		 *
+		 * Helps derived classes to do something.
+		 */
 		std::string getFilePath() const {
 			return this->filePath_;
 		}
@@ -90,6 +96,11 @@ namespace Khopper {
 		 * Override this function to provide your own setting.
 		 */
 		virtual AVOutputFormat * guessFormat() const;
+		/**
+		 * @brief Hook function after close file
+		 *
+		 * Encoder will call this function after close a file.
+		 */
 		virtual void closeHook() {}
 
 	private:
@@ -119,6 +130,8 @@ namespace Khopper {
 
 	/**
 	 * @brief Encoder type list
+	 *
+	 * Key is identifier, value is display name on tab.
 	 */
 	typedef Loki::SingletonHolder< Loki::AssocVector< std::string, std::string > > EncoderList;
 

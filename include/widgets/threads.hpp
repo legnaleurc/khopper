@@ -41,13 +41,14 @@ namespace Khopper {
 	signals:
 		/**
 		 * @brief Send error message
+		 * @param title Message box title
 		 * @param errMsg Error message
 		 */
 		void error( const QString & title, const QString & errMsg );
 
 		/**
 		 * @brief Progress notifyer
-		 * @param task Task number
+		 * @param duration Convert duration
 		 */
 		void step( int duration );
 

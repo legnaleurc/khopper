@@ -17,6 +17,8 @@ namespace Khopper {
 	public:
 		/**
 		 * @brief Default constructor
+		 * @param parent Parent widget
+		 * @param f Window flags
 		 */
 		TextCodec( QWidget * parent = 0, Qt::WindowFlags f = 0 );
 		/**

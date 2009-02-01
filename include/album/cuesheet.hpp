@@ -20,19 +20,6 @@ namespace Khopper {
 	 */
 	class CUESheet {
 	public:
-		enum FileType {
-			/// Binary
-			BINARY,
-			/// Motorola
-			MOTOROLA,
-			/// AIFF
-			AIFF,
-			/// wave
-			WAVE,
-			/// Mpeg 1 Layer 3
-			MP3
-		};
-
 		/**
 		 * @brief Default constructor
 		 */
@@ -78,11 +65,11 @@ namespace Khopper {
 	private:
 		void parseCUE_( const std::wstring &, const std::wstring & );
 		void parseSingle_( const std::wstring &, const std::wstring &, int );
-		std::pair< std::wstring, FileType > parseFile_( const std::wstring &, const std::wstring &, const std::wstring & );
+		std::pair< std::wstring, Track::FileType > parseFile_( const std::wstring &, const std::wstring &, const std::wstring & );
 		void parseFlags_( const std::wstring &, int );
 		void parseIndex_( const std::wstring &, const std::wstring &, const std::wstring &, const std::wstring &, const std::wstring &, int );
 		void parseComment_( const std::wstring &, const std::wstring &, int );
-		void parseTrack_( const std::wstring &, const std::pair< std::wstring, FileType > &, const std::wstring & );
+		void parseTrack_( const std::wstring &, const std::pair< std::wstring, Track::FileType > &, const std::wstring & );
 		void parseGarbage_( const std::wstring &, int );
 	};
 

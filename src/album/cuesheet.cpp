@@ -44,45 +44,35 @@ namespace Khopper {
 	CUESheet::CUESheet() {}
 
 	CUESheet::CUESheet( const wstring & content, const wstring & dirPath ) {
-// 		qDebug() << "Parsing CUE sheet:" << QString::fromStdWString( dirPath );
 		this->parseCUE_( content, dirPath );
 	}
 
 	void CUESheet::open( const wstring & content, const wstring & dirPath ) {
-// 		qDebug() << "Parsing CUE sheet:" << QString::fromStdWString( dirPath );
 		this->parseCUE_( content, dirPath );
 	}
 
 	void CUESheet::parseCUE_( const wstring & content, const wstring & dirPath ) {
 		int trackNO = -1;
-		std::pair< wstring, FileType > currentFile;
+		std::pair< wstring, Track::FileType > currentFile;
 		std::wistringstream sin( content );
 		wsmatch result;
 		wstring line;
 
 		while( getline( sin, line ) ) {
-// 			qDebug() << QString::fromStdWString( line );
 			if( regex_match( line, result, SINGLE ) ) {
-// 				qDebug() << "Single matched:" << SINGLE.cap( 1 ) << SINGLE.cap( 2 );
 				parseSingle_( result[1], result[2], trackNO );
 			} else if( regex_match( line, result, FILES ) ) {
-// 				qDebug() << "File matched:" << FILES.cap( 1 ) << FILES.cap( 2 );
 				currentFile = parseFile_( result[1], result[2], dirPath );
 			} else if( regex_match( line, result, FLAGS ) ) {
-// 				qDebug() << "Flag matched:" << FLAGS.cap( 1 );
 				parseFlags_( result[1], trackNO );
 			} else if( regex_match( line, result, INDEX ) ) {
-// 				qDebug() << "Index matched:" << INDEX.cap( 3 );
 				parseIndex_( result[1], result[3], result[4], result[5], result[6], trackNO );
 			} else if( regex_match( line, result, COMMENT ) ) {
-// 				qDebug() << "Comment matched:" << COMMENT.cap( 1 ) << COMMENT.cap( 2 );
 				parseComment_( result[1], result[2], trackNO );
 			} else if( regex_match( line, result, TRACK ) ) {
-// 				qDebug() << "Track matched:" << TRACK.cap( 1 ) << TRACK.cap( 2 );
 				++trackNO;
 				parseTrack_( result[1], currentFile, result[2] );
 			} else {
-// 				qDebug( "Nothing matched: garbage" );
 				parseGarbage_( line, trackNO );
 			}
 		}
@@ -139,20 +129,20 @@ namespace Khopper {
 		}
 	}
 
-	std::pair< wstring, CUESheet::FileType > CUESheet::parseFile_( const wstring & fileName, const wstring & type, const wstring & dirPath ) {
+	std::pair< wstring, Track::FileType > CUESheet::parseFile_( const wstring & fileName, const wstring & type, const wstring & dirPath ) {
 		wstring filePath = os::join( dirPath, stripQuote( fileName ) );
 		if( type == L"BINARY" ) {
-			return std::make_pair( filePath, BINARY );
+			return std::make_pair( filePath, Track::BINARY );
 		} else if( type == L"MOTOROLA" ) {
-			return std::make_pair( filePath, MOTOROLA );
+			return std::make_pair( filePath, Track::MOTOROLA );
 		} else if( type == L"AIFF" ) {
-			return std::make_pair( filePath, AIFF );
+			return std::make_pair( filePath, Track::AIFF );
 		} else if( type == L"WAVE" ) {
-			return std::make_pair( filePath, WAVE );
+			return std::make_pair( filePath, Track::WAVE );
 		} else if( type == L"MP3" ) {
-			return std::make_pair( filePath, MP3 );
+			return std::make_pair( filePath, Track::MP3 );
 		} else {
-			return std::make_pair( filePath, BINARY );
+			return std::make_pair( filePath, Track::BINARY );
 		}
 	}
 
@@ -201,7 +191,7 @@ namespace Khopper {
 		}
 	}
 
-	void CUESheet::parseTrack_( const wstring & num, const std::pair< wstring, FileType > & audioData, const wstring & type ) {
+	void CUESheet::parseTrack_( const wstring & num, const std::pair< wstring, Track::FileType > & audioData, const wstring & type ) {
 		TrackSP track( new Track );
 		track->index = toUShort( num );
 		track->filePath = audioData.first;

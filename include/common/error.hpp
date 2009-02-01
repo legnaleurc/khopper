@@ -61,6 +61,9 @@ namespace Khopper {
 	class System {
 	};
 
+	/**
+	 * @brief Dummy error class
+	 */
 	class IO {
 	};
 
