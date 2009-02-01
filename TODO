@@ -2,8 +2,8 @@
 	[完成]拖拉開檔
 	[完成]輸出檔案的路徑需要詢問；目前是在pwd底下
 	[完成]檢查是否能成功執行動作
-	解除只能開CUE sheet的限制
 	[完成]APE的時間計算有點問題
+	解除只能開CUE sheet的限制
 
 介面：
 	String定義的地方，port Windows的時候再決定要不要額外定義
@@ -12,6 +12,8 @@
 實作：
 	[完成]指標部分全面使用Smart Pointer（候選：Boost, Loki, QPointer）
 	[完成]拔掉外部執行檔改用FFMpeg的library
+	輸出路徑方式要再改善
+	輸入檔案方式避免使用switch
 
 文件：
 	[完成]about的地方要放版權宣告和作者訊息
