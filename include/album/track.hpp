@@ -151,6 +151,9 @@ namespace Khopper {
 		DecoderSP decoder_;
 	};
 
+	/**
+	 * @brief Smart pointer of Track
+	 */
 	typedef std::tr1::shared_ptr< Track > TrackSP;
 
 }

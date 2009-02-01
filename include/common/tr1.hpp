@@ -18,6 +18,9 @@ namespace std {
 
 namespace Khopper {
 
+	/**
+	 * @brief Used for storing raw binary data
+	 */
 	typedef std::vector< char > ByteArray;
 
 }

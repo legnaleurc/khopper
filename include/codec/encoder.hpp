@@ -20,6 +20,8 @@ namespace Khopper {
 
 	/**
 	 * @brief Encoder interface
+	 *
+	 * @sa Decoder
 	 */
 	class Encoder {
 	public:
@@ -66,7 +68,17 @@ namespace Khopper {
 		 * @note Change will ONLY apply on openning.
 		 */
 		void setChannels( int channels );
+		/**
+		 * @brief Set title
+		 * @param [in] title
+		 * @note Change will ONLY apply on openning.
+		 */
 		void setTitle( const std::wstring & title );
+		/**
+		 * @brief Set author
+		 * @param [in] author
+		 * @note Change will ONLY apply on openning.
+		 */
 		void setAuthor( const std::wstring & author );
 
 		/**

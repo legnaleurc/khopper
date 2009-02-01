@@ -89,36 +89,80 @@ namespace Khopper {
 		double getDuration() const {
 			return this->duration_;
 		}
+		/**
+		 * @brief Get title
+		 * @return Title
+		 */
 		const std::wstring & getTitle() const {
 			return this->title_;
 		}
+		/**
+		 * @brief Get author
+		 * @return Author
+		 */
 		const std::wstring & getAuthor() const {
 			return this->author_;
 		}
+		/**
+		 * @brief Get copyright
+		 * @return Copyright
+		 */
 		const std::wstring & getCopyright() const {
 			return this->copyright_;
 		}
+		/**
+		 * @brief Get comment
+		 * @return Comment
+		 */
 		const std::wstring & getComment() const {
 			return this->comment_;
 		}
+		/**
+		 * @brief Get album title
+		 * @return Album title
+		 */
 		const std::wstring & getAlbum() const {
 			return this->album_;
 		}
+		/**
+		 * @brief Get year
+		 * @return Year
+		 */
 		int getYear() const {
 			return this->year_;
 		}
+		/**
+		 * @brief Get track index
+		 * @return Track index in album
+		 */
 		int getIndex() const {
 			return this->index_;
 		}
+		/**
+		 * @brief Get genre
+		 * @return Genre
+		 */
 		const std::wstring & getGenre() const {
 			return this->genre_;
 		}
+		/**
+		 * @brief Get bit rate
+		 * @return Bit rate
+		 */
 		int getBitRate() const {
 			return this->bitRate_;
 		}
+		/**
+		 * @brief Get sample rate
+		 * @return Sample rate
+		 */
 		int getSampleRate() const {
 			return this->sampleRate_;
 		}
+		/**
+		 * @brief Get channels
+		 * @return Channels
+		 */
 		int getChannels() const {
 			return this->channels_;
 		}

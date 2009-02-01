@@ -33,9 +33,9 @@ namespace Khopper {
 
 		/**
 		 * @brief Convert from double
-		 * @param [in] seconds
+		 * @param [in] seconds Time stamp in seconds
 		 */
-		Index( double d );
+		Index( double seconds );
 
 		/// minite
 		unsigned short int minute;

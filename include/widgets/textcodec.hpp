@@ -11,6 +11,9 @@
 
 namespace Khopper {
 
+	/**
+	 * @brief Decode string dialog
+	 */
 	class TextCodec : public QDialog {
 		Q_OBJECT
 
