@@ -23,8 +23,8 @@ HEADERS += include/album/cuesheet.hpp \
            include/album/track.hpp \
            include/codec/decoder.hpp \
            include/codec/encoder.hpp \
-           include/options/mp3option.hpp \
            include/options/abstractoption.hpp \
+           include/options/mp3option.hpp \
            include/common/error.hpp \
            include/common/os.hpp \
            include/common/tr1.hpp \
@@ -37,8 +37,8 @@ SOURCES += src/album/cuesheet.cpp \
            src/album/track.cpp \
            src/codec/decoder.cpp \
            src/codec/encoder.cpp \
-           src/options/mp3option.cpp \
            src/options/abstractoption.cpp \
+           src/options/mp3option.cpp \
            src/widgets/mainwindow.cpp \
            src/widgets/songlist.cpp \
            src/widgets/textcodec.cpp \
@@ -61,6 +61,7 @@ CONFIG( debug, debug|release ) {
 unix {
     TEMPLATE = app
     SOURCES += src/common/linux.cpp
+    QMAKE_CXXFLAGS += -std=c++0x
     CONFIG += link_pkgconfig
     PKGCONFIG += libavcodec libavformat
     LIBS += -lloki -lboost_regex

@@ -10,6 +10,15 @@
 
 #include <vector>
 
+/// dirty hack
+#ifndef INT64_C
+# if __WORDSIZE == 64
+#  define INT64_C(c)	c ## L
+# else
+#  define INT64_C(c)	c ## LL
+# endif
+#endif
+
 namespace std {
 
 	namespace tr1 = boost;

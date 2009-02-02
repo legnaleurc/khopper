@@ -7,6 +7,7 @@
 
 #include "abstractoption.hpp"
 
+#include <QButtonGroup>
 #include <QComboBox>
 
 namespace Khopper {
@@ -30,7 +31,9 @@ namespace Khopper {
 		virtual EncoderSP getEncoder() const;
 
 	private:
+		QButtonGroup * brChoise_;
 		QComboBox * bitRate_;
+		QComboBox * level_;
 		QComboBox * sampleRate_;
 		QComboBox * channels_;
 	};

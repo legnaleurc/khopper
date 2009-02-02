@@ -51,6 +51,12 @@ namespace Khopper {
 		void close();
 
 		/**
+		 * @brief Set codec quality (codec dependent)
+		 * @param quality Quality
+		 * @note Change will ONLY apply on openning.
+		 */
+		void setQuality( double quality );
+		/**
 		 * @brief Set bit rate
 		 * @param [in] bit_rate Bit rate
 		 * @note Change will ONLY apply on openning.
@@ -126,6 +132,7 @@ namespace Khopper {
 		AVStream * pStream_;
 
 		std::string filePath_;
+		double quality_;
 		int bitRate_;
 		int sampleRate_;
 		int channels_;

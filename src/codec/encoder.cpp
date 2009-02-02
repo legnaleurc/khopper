@@ -35,6 +35,7 @@ namespace Khopper {
 	pFormatContext_(),
 	pStream_( NULL ),
 	filePath_(),
+	quality_( -1 ),
 	bitRate_( -1 ),
 	sampleRate_( -1 ),
 	channels_( -1 ),
@@ -46,6 +47,10 @@ namespace Khopper {
 		if( this->opening_ ) {
 			this->close();
 		}
+	}
+
+	void Encoder::setQuality( double quality ) {
+		this->quality_ = quality;
 	}
 
 	void Encoder::setBitRate( int bit_rate ) {
@@ -91,7 +96,7 @@ namespace Khopper {
 
 		if( pOF->audio_codec != CODEC_ID_NONE ) {
 			this->pStream_ = av_new_stream( this->pFormatContext_.get(), 1 );
-			if( !pStream_ ) {
+			if( !this->pStream_ ) {
 				return;
 			}
 
@@ -103,6 +108,11 @@ namespace Khopper {
 			pCC->bit_rate = this->bitRate_;
 			pCC->sample_rate = this->sampleRate_;
 			pCC->channels = this->channels_;
+
+			if( this->quality_ > -1 ) {
+				pCC->flags |= CODEC_FLAG_QSCALE;
+				pCC->global_quality = this->pStream_->quality = FF_QP2LAMBDA * this->quality_;
+			}
 		}
 
 		if( av_set_parameters( this->pFormatContext_.get(), NULL ) < 0 ) {
@@ -178,7 +188,7 @@ namespace Khopper {
 
 		pkt.size = avcodec_encode_audio( pCC, audio_outbuf, sizeof( audio_outbuf ), samples );
 
-		if( pCC->coded_frame->pts != static_cast< int >( AV_NOPTS_VALUE ) ) {
+		if( pCC->coded_frame->pts != AV_NOPTS_VALUE ) {
 			pkt.pts = av_rescale_q( pCC->coded_frame->pts, pCC->time_base, this->pStream_->time_base );
 		}
 
