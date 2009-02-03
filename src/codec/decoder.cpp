@@ -169,7 +169,8 @@ namespace Khopper {
 			return ByteArray();
 		}
 
-		uint8_t audio_buf[AVCODEC_MAX_AUDIO_FRAME_SIZE*3/2];
+		// static just for speed
+		static uint8_t audio_buf[AVCODEC_MAX_AUDIO_FRAME_SIZE*3/2];
 		uint8_t * audio_pkt_data = NULL;
 		int audio_pkt_size = 0;
 
@@ -180,13 +181,13 @@ namespace Khopper {
 		if( av_read_frame( this->pFormatContext_.get(), this->pPacket_.get() ) >= 0 ) {
 			audio_pkt_data = this->pPacket_->data;
 			audio_pkt_size = this->pPacket_->size;
-			int64_t nextPts = -1;
+			int64_t curPts = -1;
 			int64_t decoded = 0;
 			if( this->pPacket_->pts != AV_NOPTS_VALUE ) {
-				nextPts = av_rescale( this->pPacket_->pts, AV_TIME_BASE * static_cast< int64_t >( this->pFormatContext_->streams[0]->time_base.num ), this->pFormatContext_->streams[0]->time_base.den );
+				curPts = av_rescale( this->pPacket_->pts, AV_TIME_BASE * static_cast< int64_t >( this->pFormatContext_->streams[0]->time_base.num ), this->pFormatContext_->streams[0]->time_base.den );
 			}
 			while( audio_pkt_size > 0 ) {
-				if( this->afterEnd_( nextPts ) ) {
+				if( this->afterEnd_( curPts ) ) {
 					this->hasNext_ = false;
 					break;
 				}
@@ -201,12 +202,12 @@ namespace Khopper {
 				if( data_size <= 0 ) {
 					continue;
 				}
-				// TODO: this test is too late
-				if( this->afterBegin_( nextPts ) ) {
+				int64_t ptsDiff = (static_cast< int64_t >( AV_TIME_BASE )/2 * data_size) / (this->pCodecContext_->sample_rate * this->pCodecContext_->channels);
+				if( this->afterBegin_( curPts ) ) {
 					data.insert( data.end(), audio_buf, audio_buf + data_size );
-					decoded += (static_cast< int64_t >( AV_TIME_BASE )/2 * data_size) / (this->pCodecContext_->sample_rate * this->pCodecContext_->channels);
+					decoded += ptsDiff;
 				}
-				nextPts += (static_cast< int64_t >( AV_TIME_BASE )/2 * data_size) / (this->pCodecContext_->sample_rate * this->pCodecContext_->channels);
+				curPts += ptsDiff;
 			}
 			if( this->pPacket_->data ) {
 				av_free_packet( this->pPacket_.get() );
