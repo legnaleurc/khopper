@@ -8,20 +8,9 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/regex.hpp>
 
-#include <vector>
-
 namespace std {
 
 	namespace tr1 = boost;
-
-}
-
-namespace Khopper {
-
-	/**
-	 * @brief Used for storing raw binary data
-	 */
-	typedef std::vector< char > ByteArray;
 
 }
 

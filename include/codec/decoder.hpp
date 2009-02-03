@@ -5,6 +5,7 @@
 #ifndef KHOPPER_DECODER_HPP
 #define KHOPPER_DECODER_HPP
 
+#include "codec_base.hpp"
 #include "tr1.hpp"
 
 #include <loki/Factory.h>

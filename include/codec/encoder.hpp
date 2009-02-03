@@ -5,6 +5,7 @@
 #ifndef KHOPPER_ENCODER_HPP
 #define KHOPPER_ENCODER_HPP
 
+#include "codec_base.hpp"
 #include "tr1.hpp"
 
 #include <loki/Singleton.h>
@@ -127,7 +128,7 @@ namespace Khopper {
 
 		bool opening_;
 		ByteArray buffer_;
-		ByteArray samples_;
+		std::vector< char > samples_;
 		std::tr1::shared_ptr< AVFormatContext > pFormatContext_;
 		AVStream * pStream_;
 

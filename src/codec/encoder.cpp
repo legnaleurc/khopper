@@ -1,4 +1,3 @@
-#include <cstdint>
 #include "encoder.hpp"
 #include "os.hpp"
 
@@ -158,8 +157,10 @@ namespace Khopper {
 		}
 
 		while( this->buffer_.size() >= samples_.size() ) {
-			std::copy( this->buffer_.begin(), this->buffer_.begin() + this->samples_.size(), this->samples_.begin() );
-			this->buffer_.erase( this->buffer_.begin(), this->buffer_.begin() + samples_.size() );
+			ByteArray::iterator copyEnd = this->buffer_.begin();
+			std::advance( copyEnd, this->samples_.size() );
+			std::copy( this->buffer_.begin(), copyEnd, this->samples_.begin() );
+			this->buffer_.erase( this->buffer_.begin(), copyEnd );
 
 			this->writeFrame_( reinterpret_cast< short * >( &this->samples_[0] ) );
 		}
@@ -167,7 +168,8 @@ namespace Khopper {
 
 	void Encoder::flush() {
 		if( this->opening_ && !this->buffer_.empty() ) {
-			this->writeFrame_( reinterpret_cast< short * >( &this->buffer_[0] ) );
+			std::copy( this->buffer_.begin(), this->buffer_.end(), this->samples_.begin() );
+			this->writeFrame_( reinterpret_cast< short * >( &this->samples_[0] ) );
 			this->buffer_.clear();
 		}
 	}

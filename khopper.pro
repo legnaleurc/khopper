@@ -21,6 +21,7 @@ INCLUDEPATH += . \
 HEADERS += include/album/cuesheet.hpp \
            include/album/index.hpp \
            include/album/track.hpp \
+           include/codec/codec_base.hpp \
            include/codec/decoder.hpp \
            include/codec/encoder.hpp \
            include/options/abstractoption.hpp \
