@@ -1,3 +1,4 @@
+#include <cstdint>
 #include "decoder.hpp"
 #include "os.hpp"
 #include "error.hpp"
