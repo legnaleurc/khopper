@@ -20,7 +20,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "encoder.hpp"
-#include "os.hpp"
+#include "error.hpp"
 
 extern "C" {
 #include <avcodec.h>
@@ -102,12 +102,12 @@ namespace Khopper {
 		this->filePath_ = os::encodeString( filePath );
 		AVOutputFormat * pOF = this->guessFormat();
 		if( pOF == NULL ) {
-			return;
+			throw Error< Codec >( "Can not recognize output format" );
 		}
 
 		this->pFormatContext_.reset( av_alloc_format_context(), ::fc_helper );
 		if( !this->pFormatContext_ ) {
-			return;
+			throw Error< System >( "Memory allocation error" );
 		}
 		this->pFormatContext_->oformat = pOF;
 		// setting format information
@@ -118,7 +118,7 @@ namespace Khopper {
 		if( pOF->audio_codec != CODEC_ID_NONE ) {
 			this->pStream_ = av_new_stream( this->pFormatContext_.get(), 1 );
 			if( !this->pStream_ ) {
-				return;
+				throw Error< Codec >( "Can not create stream" );
 			}
 
 			pCC = this->pStream_->codec;
@@ -137,16 +137,23 @@ namespace Khopper {
 		}
 
 		if( av_set_parameters( this->pFormatContext_.get(), NULL ) < 0 ) {
-			return;
+			throw Error< Codec >( "Set parameters failed" );
 		}
 
 		// NOTE: set complete
 
-		this->openAudio_();
+		AVCodec * pC = avcodec_find_encoder( pCC->codec_id );
+		if( !pC ) {
+			throw Error< Codec >( "Find no encoder" );
+		}
+
+		if( avcodec_open( pCC, pC ) < 0 ) {
+			throw Error< Codec >( "Can not open encoder" );
+		}
 
 		if( !( pOF->flags & AVFMT_NOFILE ) ) {
 			if( url_fopen( &this->pFormatContext_->pb, this->filePath_.c_str(), URL_WRONLY ) < 0 ) {
-				return;
+				throw Error< IO >( std::wstring( L"Can not open file: `" ) + filePath + L"\'" );
 			}
 		}
 
@@ -217,23 +224,8 @@ namespace Khopper {
 		}
 
 		if( av_write_frame( this->pFormatContext_.get(), &pkt ) != 0 ) {
-			return;
+			throw Error< Codec >( "Can not write frame" );
 		}
-	}
-
-	bool Encoder::openAudio_() {
-		AVCodecContext * pCC = this->pStream_->codec;
-
-		AVCodec * pC = avcodec_find_encoder( pCC->codec_id );
-		if( !pC ) {
-			return false;
-		}
-
-		if( avcodec_open( pCC, pC ) < 0 ) {
-			return false;
-		}
-
-		return true;
 	}
 
 }

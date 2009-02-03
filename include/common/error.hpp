@@ -22,6 +22,8 @@
 #ifndef KHOPPER_ERROR_HPP
 #define KHOPPER_ERROR_HPP
 
+#include "os.hpp"
+
 #include <exception>
 #include <string>
 
@@ -39,6 +41,7 @@ namespace Khopper {
 		 * @param [in] msg Error message
 		 */
 		Error( const std::string & msg ) throw() : msg_( msg ) {}
+		Error( const std::wstring & msg ) throw() : msg_( os::encodeString( msg ) ) {}
 		/**
 		 * @brief Get the error message
 		 * @return Error message

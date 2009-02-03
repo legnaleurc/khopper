@@ -55,6 +55,9 @@ namespace Khopper {
 		/**
 		 * @brief Open encoder
 		 * @param [in] filePath Path of file
+		 * @throw Error<System> memory error
+		 * @throw Error<Codec> encoding error
+		 * @throw Error<IO> file process error
 		 */
 		void open( const std::wstring & filePath );
 		/**
@@ -140,7 +143,6 @@ namespace Khopper {
 		virtual void closeHook() {}
 
 	private:
-		bool openAudio_();
 		void writeFrame_( short * );
 
 		bool opening_;

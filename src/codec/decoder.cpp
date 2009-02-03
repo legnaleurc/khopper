@@ -20,7 +20,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "decoder.hpp"
-#include "os.hpp"
 #include "error.hpp"
 
 extern "C" {
@@ -71,15 +70,18 @@ namespace Khopper {
 	}
 
 	void Decoder::open( const std::wstring & filePath ) {
+		if( this->opening_ ) {
+			this->close();
+		}
 		std::string fP = os::encodeString( filePath );
 
 		AVFormatContext * pFC = NULL;
 		if( av_open_input_file( &pFC, fP.c_str(), NULL, 0, NULL ) != 0 ) {
-			throw Error< IO >( std::string( "Can not open `" ) + fP + "\'" );
+			throw Error< IO >( std::wstring( L"Can not open `" ) + filePath + L"\'!" );
 		}
 		this->pFormatContext_.reset( pFC, av_close_input_file );
 		if( av_find_stream_info( this->pFormatContext_.get() ) < 0 ) {
-			return;
+			throw Error< Codec >( "Can not find codec info!" );
 		}
 		// NOTE: format recognization is done
 
@@ -104,7 +106,7 @@ namespace Khopper {
 			}
 		}
 		if( a_stream == -1 ) {
-			return;
+			throw Error< Codec >( "Find no audio stream!" );
 		}
 		AVCodecContext * pCC = pFormatContext_->streams[a_stream]->codec;
 		// getting codec information
@@ -115,11 +117,11 @@ namespace Khopper {
 
 		AVCodec * pC = avcodec_find_decoder( pCC->codec_id );
 		if( pC == NULL ) {
-			return;
+			throw Error< Codec >( "Find no decoder!" );
 		}
 
 		if( avcodec_open( pCC, pC ) < 0 ) {
-			return;
+			throw Error< Codec >( "Can not open decoder." );
 		}
 		pCodecContext_.reset( pCC, avcodec_close );
 

@@ -32,6 +32,12 @@ namespace Khopper {
 	 */
 	typedef std::list< char > ByteArray;
 
+	/**
+	 * @brief Codec error
+	 */
+	class Codec {
+	};
+
 }
 
 #endif

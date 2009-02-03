@@ -58,6 +58,7 @@ namespace Khopper {
 		 * @brief Open file
 		 * @param filePath File path
 		 * @throw Error<IO> if no file found
+		 * @throw Error<Codec> decoding error
 		 */
 		void open( const std::wstring & filePath );
 		/**
@@ -83,8 +84,8 @@ namespace Khopper {
 
 		/**
 		 * @brief Set decode range
-		 * @param begin Begin time stamp, in seconds, -1 means begin of file
-		 * @param end End time stamp, in seconds, -1 means end of file
+		 * @param begin Begin time stamp in seconds, -1 means begin of file
+		 * @param end End time stamp in seconds, -1 means end of file
 		 */
 		void setRange( double begin, double end );
 		/**
