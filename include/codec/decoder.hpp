@@ -57,7 +57,7 @@ namespace Khopper {
 		/**
 		 * @brief Open file
 		 * @param filePath File path
-		 * @throw Error< IO > if no file found
+		 * @throw Error<IO> if no file found
 		 */
 		void open( const std::wstring & filePath );
 		/**
