@@ -60,8 +60,8 @@ namespace Khopper {
 	progress_( new QProgressDialog( tr( "Converting..." ), tr( "Cancel" ), 0, 0, this ) ),
 	cvt_( new ConverterThread( this ) ),
 	about_( new QWidget( this, Qt::Dialog ) ) {
+		// Setting about widget
 		this->initAbout_();
-
 		// Setting menu bar
 		this->initMenuBar_();
 
@@ -265,7 +265,7 @@ namespace Khopper {
 			"(C) 2008 ~ 2009<br/>"
 			"Present by Wei-Cheng Pan<br/>"
 			"E-Mail: <a href=\"mailto:legnaleurc@gmail.com\">legnaleurc@gmail.com</a><br/>"
-			"<a href=\"http://legnaleurc.blogspot.com/\">Home Page</a>"
+			"<a href=\"http://legnaleurc.blogspot.com/search/label/Khopper\">Home Page</a>"
 		), tw );
 		about->setTextFormat( Qt::RichText );
 		tw->addTab( about, tr( "&About" ) );
