@@ -62,14 +62,14 @@ namespace Khopper {
 		unsigned short int frame;
 
 		/**
-		 * @brief Sub with @p that and assign to self, return self.
-		 * @param that sub
+		 * @brief Subtract assign operator
+		 * @param that Subtrahend
 		 * @return self
 		 */
 		const Index & operator -=( const Index & that );
 		/**
-		 * @brief Sub with @p that and return result.
-		 * @param that sub
+		 * @brief Subtract operator
+		 * @param that Subtrahend
 		 * @return result
 		 */
 		Index operator -( const Index & that ) const;
