@@ -169,6 +169,9 @@ namespace Khopper {
 
 				// get selected list
 				QModelIndexList selected = this->songListView_->selectionModel()->selectedRows( 0 );
+				if( selected.isEmpty() ) {
+					throw Error< RunTime >( "No song selected!" );
+				}
 
 				// put selected list
 				std::vector< TrackSP > tracks( selected.size() );
