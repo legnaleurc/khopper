@@ -65,6 +65,7 @@ unix {
     QMAKE_CXXFLAGS += -std=c++0x
     CONFIG += link_pkgconfig
     PKGCONFIG += libavcodec libavformat
+    INCLUDEPATH += /usr/include/ffmpeg/libavcodec /usr/include/ffmpeg/libavformat
     LIBS += -lloki -lboost_regex
 }
 

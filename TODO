@@ -12,8 +12,6 @@
 	輸入檔案方式避免使用switch
 
 至v0.0釋出為止的待辦事項:
-	建置環境：
-		解決libavcodec, libavformat的路徑問題
 	安裝方式：
 		加入deb包，不過Windows怎麼辦？
 	使用方式：
