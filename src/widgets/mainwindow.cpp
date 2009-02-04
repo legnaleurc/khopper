@@ -48,6 +48,14 @@
 // for Track to QVariant
 Q_DECLARE_METATYPE( Khopper::TrackSP )
 
+namespace {
+
+	bool indexRowCompD( const QModelIndex & l, const QModelIndex & r ) {
+		return l.row() > r.row();
+	}
+
+}
+
 namespace Khopper {
 
 	MainWindow::MainWindow( QWidget * parent, Qt::WindowFlags flags ):
@@ -71,11 +79,15 @@ namespace Khopper {
 		this->setCentralWidget( central );
 
 		// Add song list
-		central->layout()->addWidget( songListView_ );
+		central->layout()->addWidget( this->songListView_ );
 		this->initHeader_();
 		// Set model
-		this->songListView_->setModel( songListModel_ );
+		this->songListView_->setModel( this->songListModel_ );
 		connect( this->songListView_, SIGNAL( openFile( const QString & ) ), this, SLOT( open( const QString & ) ) );
+		QAction * delSong = new QAction( this->songListView_ );
+		delSong->setShortcut( QKeySequence::Delete );
+		this->songListView_->addAction( delSong );
+		connect( delSong, SIGNAL( triggered() ), this, SLOT( delSongList_() ) );
 
 		// Set bottom layout
 		QWidget * bottom = new QWidget( central );
@@ -100,6 +112,15 @@ namespace Khopper {
 		connect( cvt_, SIGNAL( error( const QString &, const QString & ) ), this, SLOT( showErrorMessage_( const QString &, const QString & ) ) );
 		// NOTE: works, but danger
 		connect( progress_, SIGNAL( canceled() ), cvt_, SLOT( terminate() ) );
+	}
+
+	void MainWindow::delSongList_() {
+		QModelIndexList selected = this->songListView_->selectionModel()->selectedRows();
+		std::sort( selected.begin(), selected.end(), ::indexRowCompD );
+		foreach( QModelIndex index, selected ) {
+			this->songListModel_->removeRow( index.row() );
+		}
+		this->songListView_->selectionModel()->clear();
 	}
 
 	void MainWindow::incProgress_( int diff ) {

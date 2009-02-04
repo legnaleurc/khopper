@@ -89,6 +89,7 @@ namespace Khopper {
 		void fire_();
 		void showErrorMessage_( const QString &, const QString & );
 		void incProgress_( int );
+		void delSongList_();
 	};
 
 }
