@@ -37,6 +37,8 @@ namespace Khopper {
 	 * and must register to factory. \n
 	 */
 	class AbstractOption : public QWidget {
+		Q_OBJECT
+
 	public:
 		/**
 		 * @brief Default constructor

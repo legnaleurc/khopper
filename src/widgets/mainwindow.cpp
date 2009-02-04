@@ -187,8 +187,8 @@ namespace Khopper {
 
 		// get saving directory
 		QString outDir = QFileDialog::getExistingDirectory( this, tr( "Target Directory" ), QDir::homePath() );
-		// TODO: use qobject_cast
-		AbstractOption * option = dynamic_cast< AbstractOption * >( this->optionTabs_->currentWidget() );
+		// get option widget
+		AbstractOption * option = qobject_cast< AbstractOption * >( this->optionTabs_->currentWidget() );
 
 		if( outDir != "" && option ) {
 			try {
