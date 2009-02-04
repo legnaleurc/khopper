@@ -67,6 +67,7 @@ namespace Khopper {
 	optionTabs_( new QTabWidget( this ) ),
 	outputPath_( new QLineEdit( QDir::homePath(), this ) ),
 	useSourcePath_( new QCheckBox( tr( "Use source path" ), this ) ),
+	fileNameTemplate_( new QLineEdit( tr( "%t" ), this ) ),
 	progress_( new QProgressDialog( tr( "Converting..." ), tr( "Cancel" ), 0, 0, this ) ),
 	cvt_( new ConverterThread( this ) ),
 	about_( new QWidget( this, Qt::Dialog ) ) {
@@ -77,11 +78,12 @@ namespace Khopper {
 
 		// Setting central widget
 		QWidget * central = new QWidget( this );
-		central->setLayout( new QVBoxLayout( central ) );
+		QVBoxLayout * mainBox = new QVBoxLayout( central );
+		central->setLayout( mainBox );
 		this->setCentralWidget( central );
 
 		// Add song list
-		central->layout()->addWidget( this->songListView_ );
+		mainBox->addWidget( this->songListView_ );
 		this->initHeader_();
 		// Set model
 		this->songListView_->setModel( this->songListModel_ );
@@ -92,27 +94,34 @@ namespace Khopper {
 		connect( delSong, SIGNAL( triggered() ), this, SLOT( delSongList_() ) );
 
 		// Setting output format select
-		central->layout()->addWidget( this->optionTabs_ );
+		mainBox->addWidget( this->optionTabs_ );
 		this->initOptionTabs_();
 
-		// Set bottom layout
-		QWidget * bottom = new QWidget( central );
-		bottom->setLayout( new QHBoxLayout( bottom ) );
-		central->layout()->addWidget( bottom );
+		QHBoxLayout * pathBox = new QHBoxLayout();
+		mainBox->addLayout( pathBox );
 
 		// Output path setting
 		QLabel * outputLabel = new QLabel( tr( "Output to:" ), this );
-		bottom->layout()->addWidget( outputLabel );
-		bottom->layout()->addWidget( this->outputPath_ );
+		pathBox->addWidget( outputLabel );
+		pathBox->addWidget( this->outputPath_ );
 		QPushButton * changePath = new QPushButton( tr( "..." ), this );
-		bottom->layout()->addWidget( changePath );
+		pathBox->addWidget( changePath );
 		connect( changePath, SIGNAL( clicked() ), this, SLOT( changeOutputPath_() ) );
-		bottom->layout()->addWidget( this->useSourcePath_ );
+		pathBox->addWidget( this->useSourcePath_ );
+
+		// Set bottom layout
+		QHBoxLayout * bottomBox = new QHBoxLayout();
+		mainBox->addLayout( bottomBox );
+
+		// Output name template
+		QLabel * tpLabel = new QLabel( tr( "File Name:" ), this );
+		bottomBox->addWidget( tpLabel );
+		bottomBox->addWidget( this->fileNameTemplate_ );
 
 		// Action button
 		QPushButton * action = new QPushButton( tr( "Fire!" ), this );
 		connect( action, SIGNAL( clicked() ), this, SLOT( fire_() ) );
-		bottom->layout()->addWidget( action );
+		bottomBox->addWidget( action );
 
 		// Progress dialog
 		progress_->setWindowModality( Qt::WindowModal );
@@ -196,6 +205,14 @@ namespace Khopper {
 		songListModel_->setHorizontalHeaderLabels( headers );
 	}
 
+	QString MainWindow::applyTemplate_( TrackSP track ) const {
+		QString tmp = this->fileNameTemplate_->text();
+		tmp.replace( "%t", QString::fromStdWString( track->title ) );
+		tmp.replace( "%a", QString::fromStdWString( track->performer ) );
+		tmp.replace( "%%", "%" );
+		return tmp;
+	}
+
 	void MainWindow::fire_() {
 		// get selected list
 		QModelIndexList selected = this->songListView_->selectionModel()->selectedRows( 0 );
@@ -219,9 +236,12 @@ namespace Khopper {
 
 				// put selected list
 				std::vector< TrackSP > tracks( selected.size() );
+				QStringList outputPaths;
 				int decodeTimes = 0;
+				QString ext = this->optionTabs_->tabText( this->optionTabs_->currentIndex() );
 				for( int i = 0; i < selected.size(); ++i ) {
 					tracks[i] = selected[i].data( Qt::UserRole ).value< TrackSP >();
+					outputPaths.push_back( outDir + "/" + this->applyTemplate_( tracks[i] ) + "." + ext );
 					decodeTimes += static_cast< int >( tracks[i]->duration.toDouble() * 100 );
 				}
 
@@ -231,7 +251,7 @@ namespace Khopper {
 				// TODO:
 				// not only target directory, but filenames
 				// I'll let cvt_ to do this, but this really needs change
-				cvt_->setOutput( output, outDir );
+				cvt_->setOutput( output, outputPaths );
 				cvt_->setTracks( tracks );
 				cvt_->start();
 				progress_->show();

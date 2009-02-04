@@ -26,6 +26,7 @@
 #include "encoder.hpp"
 
 #include <QThread>
+#include <QStringList>
 
 namespace Khopper {
 
@@ -45,9 +46,9 @@ namespace Khopper {
 		/**
 		 * @brief Set output option
 		 * @param [in] output Encoder object
-		 * @param [in] outDir Output directory
+		 * @param [in] paths Output file paths
 		 */
-		void setOutput( EncoderSP output, const QString & outDir );
+		void setOutput( EncoderSP output, const QStringList & paths );
 
 		/**
 		 * @brief Set tracks to convert
@@ -78,8 +79,7 @@ namespace Khopper {
 	private:
 		EncoderSP encoder_;
 		std::vector< TrackSP > tracks_;
-		std::vector< QString > paths_;
-		QString outDir_;
+		QStringList paths_;
 	};
 
 }

@@ -30,9 +30,9 @@ namespace Khopper {
 	ConverterThread::ConverterThread( QObject * parent ) : QThread( parent ) {
 	}
 
-	void ConverterThread::setOutput( EncoderSP output, const QString & outDir ) {
+	void ConverterThread::setOutput( EncoderSP output, const QStringList & paths ) {
 		this->encoder_ = output;
-		this->outDir_ = outDir;
+		this->paths_ = paths;
 	}
 
 	void ConverterThread::setTracks( const std::vector< TrackSP > & tracks ) {
@@ -43,14 +43,12 @@ namespace Khopper {
 	}
 
 	void ConverterThread::run() {
-		// TODO: damn hack!
-		QString nameHack( "%1/%2.mp3" );
 		// convert
 		try {
 			for( std::size_t i = 0; i < this->tracks_.size(); ++i ) {
 				this->encoder_->setTitle( this->tracks_[i]->title );
 				this->encoder_->setAuthor( this->tracks_[i]->performer );
-				this->tracks_[i]->convert( nameHack.arg( this->outDir_ ).arg( QString::fromStdWString( tracks_[i]->title ) ).toStdWString(), this->encoder_ );
+				this->tracks_[i]->convert( this->paths_[i].toStdWString(), this->encoder_ );
 // 				emit step( i + 1 );
 			}
 		} catch( std::exception & e ) {

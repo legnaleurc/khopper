@@ -75,6 +75,7 @@ namespace Khopper {
 		QTabWidget * optionTabs_;
 		QLineEdit * outputPath_;
 		QCheckBox * useSourcePath_;
+		QLineEdit * fileNameTemplate_;
 		QProgressDialog * progress_;
 		ConverterThread * cvt_;
 		QWidget * about_;
@@ -83,6 +84,7 @@ namespace Khopper {
 		void initOptionTabs_();
 		void initHeader_();
 		void initAbout_();
+		QString applyTemplate_( TrackSP ) const;
 
 	private slots:
 		void fire_();
