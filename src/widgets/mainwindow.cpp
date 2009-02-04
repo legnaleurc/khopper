@@ -50,7 +50,7 @@ Q_DECLARE_METATYPE( Khopper::TrackSP )
 
 namespace {
 
-	bool indexRowCompD( const QModelIndex & l, const QModelIndex & r ) {
+	inline bool indexRowCompD( const QModelIndex & l, const QModelIndex & r ) {
 		return l.row() > r.row();
 	}
 
@@ -178,6 +178,13 @@ namespace Khopper {
 	}
 
 	void MainWindow::fire_() {
+		// get selected list
+		QModelIndexList selected = this->songListView_->selectionModel()->selectedRows( 0 );
+		if( selected.isEmpty() ) {
+			this->showErrorMessage_( tr( "Run-time error!" ), tr( "No track selected." ) );
+			return;
+		}
+
 		// get saving directory
 		QString outDir = QFileDialog::getExistingDirectory( this, tr( "Target Directory" ), QDir::homePath() );
 		// TODO: use qobject_cast
@@ -187,12 +194,6 @@ namespace Khopper {
 			try {
 				// create encoder object
 				EncoderSP output( option->getEncoder() );
-
-				// get selected list
-				QModelIndexList selected = this->songListView_->selectionModel()->selectedRows( 0 );
-				if( selected.isEmpty() ) {
-					throw Error< RunTime >( "No song selected!" );
-				}
 
 				// put selected list
 				std::vector< TrackSP > tracks( selected.size() );
