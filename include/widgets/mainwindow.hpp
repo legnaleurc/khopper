@@ -27,12 +27,10 @@
 #include <QMainWindow>
 #include <QStandardItemModel>
 #include <QComboBox>
-#include <QPushButton>
 #include <QProgressDialog>
+#include <QLineEdit>
+#include <QCheckBox>
 
-/**
- * @namespace Khopper
- */
 namespace Khopper {
 
 	class ConverterThread;
@@ -75,7 +73,8 @@ namespace Khopper {
 		SongListView * songListView_;
 		QStandardItemModel * songListModel_;
 		QTabWidget * optionTabs_;
-		QPushButton * action_;
+		QLineEdit * outputPath_;
+		QCheckBox * useSourcePath_;
 		QProgressDialog * progress_;
 		ConverterThread * cvt_;
 		QWidget * about_;
@@ -90,6 +89,7 @@ namespace Khopper {
 		void showErrorMessage_( const QString &, const QString & );
 		void incProgress_( int );
 		void delSongList_();
+		void changeOutputPath_();
 	};
 
 }

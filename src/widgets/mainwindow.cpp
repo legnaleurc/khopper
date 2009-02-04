@@ -43,6 +43,7 @@
 #include <QFile>
 #include <QLabel>
 #include <QTabWidget>
+#include <QPushButton>
 #include <QtDebug>
 
 // for Track to QVariant
@@ -62,9 +63,10 @@ namespace Khopper {
 	QMainWindow( parent, flags ),
 	codec_( new TextCodec( this ) ),
 	songListView_( new SongListView( this ) ),
-	songListModel_( new QStandardItemModel( songListView_ ) ),
+	songListModel_( new QStandardItemModel( this->songListView_ ) ),
 	optionTabs_( new QTabWidget( this ) ),
-	action_( new QPushButton( tr( "Fire!" ), this ) ),
+	outputPath_( new QLineEdit( QDir::homePath(), this ) ),
+	useSourcePath_( new QCheckBox( tr( "Use source path" ), this ) ),
 	progress_( new QProgressDialog( tr( "Converting..." ), tr( "Cancel" ), 0, 0, this ) ),
 	cvt_( new ConverterThread( this ) ),
 	about_( new QWidget( this, Qt::Dialog ) ) {
@@ -89,18 +91,28 @@ namespace Khopper {
 		this->songListView_->addAction( delSong );
 		connect( delSong, SIGNAL( triggered() ), this, SLOT( delSongList_() ) );
 
+		// Setting output format select
+		central->layout()->addWidget( this->optionTabs_ );
+		this->initOptionTabs_();
+
 		// Set bottom layout
 		QWidget * bottom = new QWidget( central );
 		bottom->setLayout( new QHBoxLayout( bottom ) );
 		central->layout()->addWidget( bottom );
 
-		// Setting output format select
-		bottom->layout()->addWidget( this->optionTabs_ );
-		this->initOptionTabs_();
+		// Output path setting
+		QLabel * outputLabel = new QLabel( tr( "Output to:" ), this );
+		bottom->layout()->addWidget( outputLabel );
+		bottom->layout()->addWidget( this->outputPath_ );
+		QPushButton * changePath = new QPushButton( tr( "..." ), this );
+		bottom->layout()->addWidget( changePath );
+		connect( changePath, SIGNAL( clicked() ), this, SLOT( changeOutputPath_() ) );
+		bottom->layout()->addWidget( this->useSourcePath_ );
 
 		// Action button
-		connect( action_, SIGNAL( clicked() ), this, SLOT( fire_() ) );
-		bottom->layout()->addWidget( action_ );
+		QPushButton * action = new QPushButton( tr( "Fire!" ), this );
+		connect( action, SIGNAL( clicked() ), this, SLOT( fire_() ) );
+		bottom->layout()->addWidget( action );
 
 		// Progress dialog
 		progress_->setWindowModality( Qt::WindowModal );
@@ -112,6 +124,13 @@ namespace Khopper {
 		connect( cvt_, SIGNAL( error( const QString &, const QString & ) ), this, SLOT( showErrorMessage_( const QString &, const QString & ) ) );
 		// NOTE: works, but danger
 		connect( progress_, SIGNAL( canceled() ), cvt_, SLOT( terminate() ) );
+	}
+
+	void MainWindow::changeOutputPath_() {
+		QString outDir = QFileDialog::getExistingDirectory( this, tr( "Target Directory" ), QDir::homePath() );
+		if( !outDir.isEmpty() ) {
+			this->outputPath_->setText( outDir );
+		}
 	}
 
 	void MainWindow::delSongList_() {
@@ -184,13 +203,16 @@ namespace Khopper {
 			this->showErrorMessage_( tr( "Run-time error!" ), tr( "No track selected." ) );
 			return;
 		}
-
-		// get saving directory
-		QString outDir = QFileDialog::getExistingDirectory( this, tr( "Target Directory" ), QDir::homePath() );
 		// get option widget
 		AbstractOption * option = qobject_cast< AbstractOption * >( this->optionTabs_->currentWidget() );
 
-		if( outDir != "" && option ) {
+		QString outDir = this->outputPath_->text();
+
+		if( !option ) {
+			this->showErrorMessage_( tr( "Run-time error!" ), tr( "Bad output plugin" ) );
+		} else if( outDir.isEmpty() ) {
+			this->showErrorMessage_( tr( "Run-time error!" ), tr( "Bad output path" ) );
+		} else {
 			try {
 				// create encoder object
 				EncoderSP output( option->getEncoder() );
@@ -228,9 +250,15 @@ namespace Khopper {
 
 	void MainWindow::open( const QString & filePath ) {
 		if( filePath != "" ) {
+			QFileInfo fI( filePath );
+
+			if( this->useSourcePath_->isChecked() ) {
+				this->outputPath_->setText( fI.absolutePath() );
+			}
+
 			std::vector< TrackSP > tracks;
 
-			if( QFileInfo( filePath ).suffix() == "cue" ) {
+			if( fI.suffix() == "cue" ) {
 				QFile fin( filePath );
 				if( !fin.open( QIODevice::ReadOnly | QIODevice::Text ) ) {
 					this->showErrorMessage_( tr( "File open error!" ), tr( "Could not open the file: `" ) + filePath + "\'" );
@@ -243,7 +271,7 @@ namespace Khopper {
 
 				if( codec_->exec() ) {
 					try {
-						tracks = CUESheet( codec_->getDecoded().toStdWString(), QFileInfo( filePath ).absolutePath().toStdWString() ).tracks;
+						tracks = CUESheet( codec_->getDecoded().toStdWString(), fI.absolutePath().toStdWString() ).tracks;
 					} catch( std::exception & e ) {
 						this->showErrorMessage_( tr( "Error on parsing CUE Sheet!" ), tr( e.what() ) );
 					}
