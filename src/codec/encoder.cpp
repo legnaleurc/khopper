@@ -87,11 +87,11 @@ namespace Khopper {
 	}
 
 	void Encoder::setTitle( const std::wstring & title ) {
-		this->title_ = os::encodeString( title );
+		this->title_ = os::encodeString( title, 1 );
 	}
 
 	void Encoder::setAuthor( const std::wstring & author ) {
-		this->author_ = os::encodeString( author );
+		this->author_ = os::encodeString( author, 1 );
 	}
 
 	void Encoder::open( const std::wstring & filePath ) {
@@ -112,6 +112,8 @@ namespace Khopper {
 		this->pFormatContext_->oformat = pOF;
 		// setting format information
 		std::strncpy( this->pFormatContext_->filename, this->filePath_.c_str(), sizeof( this->pFormatContext_->filename ) );
+		std::strncpy( this->pFormatContext_->title, this->title_.c_str(), sizeof( this->pFormatContext_->title ) );
+		std::strncpy( this->pFormatContext_->author, this->author_.c_str(), sizeof( this->pFormatContext_->author ) );
 
 		AVCodecContext * pCC = NULL;
 

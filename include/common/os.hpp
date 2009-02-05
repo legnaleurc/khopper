@@ -60,7 +60,7 @@ namespace Khopper {
 		 * On POSIX, @p unicode is UCS4, on Windows(R), @p unicode is UTF-16.\n
 		 * The encoded string will use system locale.
 		 */
-		std::string encodeString( const std::wstring & unicode );
+		std::string encodeString( const std::wstring & unicode, int codec = 0 );
 
 	}
 
