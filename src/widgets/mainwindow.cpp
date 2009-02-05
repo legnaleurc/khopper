@@ -121,6 +121,13 @@ namespace Khopper {
 		// Output name template
 		QLabel * tpLabel = new QLabel( tr( "File Name:" ), this );
 		bottomBox->addWidget( tpLabel );
+		this->fileNameTemplate_->setToolTip( tr(
+			"Keywords:\n"
+			"%t: title\n"
+			"%a: author\n"
+			"%%: \'%\' literal\n"
+			"Extensions will automaticaly append."
+		) );
 		bottomBox->addWidget( this->fileNameTemplate_ );
 
 		// Action button
