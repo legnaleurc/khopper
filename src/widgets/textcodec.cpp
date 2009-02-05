@@ -26,43 +26,53 @@
 #include <QTextCodec>
 #include <QTextStream>
 #include <QVBoxLayout>
+#include <QLabel>
 
 namespace Khopper {
 
-	TextCodec::TextCodec( QWidget *parent, Qt::WindowFlags f ) : QDialog( parent, f ) {
+	TextCodec::TextCodec( QWidget * parent, Qt::WindowFlags f ):
+	QDialog( parent, f ),
+	encoded_(),
+	decoded_(),
+	codecs_( new QComboBox( this ) ),
+	contents_( new QLabel( this ) ) {
 		setWindowTitle( tr( "Choose Encoding" ) );
 
-		codecs_ = new QComboBox( this );
-		codecs_->addItem( "UTF-8", QTextCodec::codecForName( "UTF-8" )->mibEnum() );
-		codecs_->addItem( "Shift-JIS", QTextCodec::codecForName( "Shift-JIS" )->mibEnum() );
-		codecs_->addItem( "Big5", QTextCodec::codecForName( "Big5" )->mibEnum() );
+		this->codecs_->addItem( "UTF-8", QTextCodec::codecForName( "UTF-8" )->mibEnum() );
+		this->codecs_->addItem( "Shift-JIS", QTextCodec::codecForName( "Shift-JIS" )->mibEnum() );
+		this->codecs_->addItem( "Big5", QTextCodec::codecForName( "Big5" )->mibEnum() );
 		//codecs_->addItem( "GB18030-0", QTextCodec::codecForName( "GB18030-0" )->mibEnum() );
-		connect( codecs_, SIGNAL( currentIndexChanged( int ) ), this, SLOT( update( int ) ) );
+		connect( this->codecs_, SIGNAL( currentIndexChanged( int ) ), this, SLOT( update( int ) ) );
 
-		buttons_ = new QDialogButtonBox( QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, this );
-		connect( buttons_, SIGNAL( accepted() ), this, SLOT( accept() ) );
-		connect( buttons_, SIGNAL( rejected() ), this, SLOT( reject() ) );
+		this->contents_->setFixedSize( 200, 200 );
+
+		QDialogButtonBox * buttons = new QDialogButtonBox( QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, this );
+		connect( buttons, SIGNAL( accepted() ), this, SLOT( accept() ) );
+		connect( buttons, SIGNAL( rejected() ), this, SLOT( reject() ) );
 
 		QVBoxLayout * box = new QVBoxLayout( this );
-		setLayout( box );
-		box->addWidget( codecs_ );
-		box->addWidget( buttons_ );
+		this->setLayout( box );
+		box->addWidget( this->codecs_ );
+		box->addWidget( buttons );
+		box->addWidget( this->contents_ );
 	}
 
 	void TextCodec::setEncoded( const QByteArray & encoded ) {
-		encoded_ = encoded;
-		update( codecs_->currentIndex() );
+		this->encoded_ = encoded;
+		update( this->codecs_->currentIndex() );
 	}
 
 	QString TextCodec::getDecoded() const {
-		return decoded_;
+		return this->decoded_;
 	}
 
 	void TextCodec::update( int index ) {
-		int mib = codecs_->itemData( index ).toInt();
-		QTextStream ts( &encoded_ );
+		int mib = this->codecs_->itemData( index ).toInt();
+		QTextStream ts( &this->encoded_ );
 		ts.setCodec( QTextCodec::codecForMib( mib ) );
-		decoded_ = ts.readAll();
+		this->decoded_ = ts.readAll();
+
+		this->contents_->setText( this->decoded_ );
 	}
 
 }

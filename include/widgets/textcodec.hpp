@@ -23,8 +23,8 @@
 #define KHOPPER_TEXTCODEC_HPP
 
 #include <QDialog>
-#include <QDialogButtonBox>
 #include <QComboBox>
+#include <QLabel>
 
 namespace Khopper {
 
@@ -60,7 +60,7 @@ namespace Khopper {
 		QString decoded_;
 
 		QComboBox * codecs_;
-		QDialogButtonBox * buttons_;
+		QLabel * contents_;
 	};
 
 }
