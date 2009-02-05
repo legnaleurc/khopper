@@ -23,14 +23,14 @@
 #define KHOPPER_CODEC_BASE_HPP
 
 #include <cstdint>
-#include <list>
+#include <deque>
 
 namespace Khopper {
 
 	/**
 	 * @brief Used for storing raw binary data
 	 */
-	typedef std::list< char > ByteArray;
+	typedef std::deque< char > ByteArray;
 
 	/**
 	 * @brief Codec error

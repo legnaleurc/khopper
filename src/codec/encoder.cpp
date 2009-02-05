@@ -187,8 +187,7 @@ namespace Khopper {
 		}
 
 		while( this->buffer_.size() >= samples_.size() ) {
-			ByteArray::iterator copyEnd = this->buffer_.begin();
-			std::advance( copyEnd, this->samples_.size() );
+			ByteArray::iterator copyEnd = this->buffer_.begin() + this->samples_.size();
 			std::copy( this->buffer_.begin(), copyEnd, this->samples_.begin() );
 			this->buffer_.erase( this->buffer_.begin(), copyEnd );
 
