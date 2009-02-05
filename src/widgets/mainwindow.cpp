@@ -109,6 +109,11 @@ namespace Khopper {
 		connect( changePath, SIGNAL( clicked() ), this, SLOT( changeOutputPath_() ) );
 		pathBox->addWidget( this->useSourcePath_ );
 
+		this->useSourcePath_->setChecked( true );
+		this->outputPath_->setEnabled( false );
+		connect( this->useSourcePath_, SIGNAL( toggled( bool ) ), this->outputPath_, SLOT( setDisabled( bool ) ) );
+		connect( changePath, SIGNAL( clicked( bool ) ), this->useSourcePath_, SLOT( setChecked( bool ) ) );
+
 		// Set bottom layout
 		QHBoxLayout * bottomBox = new QHBoxLayout();
 		mainBox->addLayout( bottomBox );
@@ -248,9 +253,6 @@ namespace Khopper {
 				// set progress bar
 				progress_->setRange( 0, decodeTimes );
 				// set output information
-				// TODO:
-				// not only target directory, but filenames
-				// I'll let cvt_ to do this, but this really needs change
 				cvt_->setOutput( output, outputPaths );
 				cvt_->setTracks( tracks );
 				cvt_->start();
