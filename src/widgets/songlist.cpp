@@ -20,7 +20,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "songlist.hpp"
-#include "track.hpp"
 
 #include <QDragEnterEvent>
 #include <QDragMoveEvent>
