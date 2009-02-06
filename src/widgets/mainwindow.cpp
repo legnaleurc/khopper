@@ -44,6 +44,7 @@
 #include <QLabel>
 #include <QTabWidget>
 #include <QPushButton>
+#include <QDialogButtonBox>
 #include <QtDebug>
 
 // for Track to QVariant
@@ -64,6 +65,7 @@ namespace Khopper {
 	codec_( new TextCodec( this ) ),
 	songListView_( new SongListView( this ) ),
 	songListModel_( new QStandardItemModel( this->songListView_ ) ),
+	optionWindow_( new QDialog( this ) ),
 	optionTabs_( new QTabWidget( this ) ),
 	outputPath_( new QLineEdit( QDir::homePath(), this ) ),
 	useSourcePath_( new QCheckBox( tr( "Use source path" ), this ) ),
@@ -94,8 +96,7 @@ namespace Khopper {
 		connect( delSong, SIGNAL( triggered() ), this, SLOT( delSongList_() ) );
 
 		// Setting output format select
-		mainBox->addWidget( this->optionTabs_ );
-		this->initOptionTabs_();
+		this->initOptionWindow_();
 
 		QHBoxLayout * pathBox = new QHBoxLayout();
 		mainBox->addLayout( pathBox );
@@ -200,13 +201,22 @@ namespace Khopper {
 		setMenuBar( menuBar );
 	}
 
-	void MainWindow::initOptionTabs_() {
+	void MainWindow::initOptionWindow_() {
+		QVBoxLayout * mainBox = new QVBoxLayout( this->optionWindow_ );
+		this->optionWindow_->setLayout( mainBox );
+
+		mainBox->addWidget( this->optionTabs_ );
 		// Take out the output types
 		const EncoderList::ObjectType & tm = EncoderList::Instance();
 		for( EncoderList::ObjectType::const_iterator it = tm.begin(); it != tm.end(); ++it ) {
 			// it->first is object factory key, it->second is display name
 			this->optionTabs_->addTab( UIFactory::Instance().CreateObject( it->first ), QString::fromStdString( it->second ) );
 		}
+
+		QDialogButtonBox * buttons = new QDialogButtonBox( QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, this );
+		mainBox->addWidget( buttons );
+		connect( buttons, SIGNAL( accepted() ), this->optionWindow_, SLOT( accept() ) );
+		connect( buttons, SIGNAL( rejected() ), this->optionWindow_, SLOT( reject() ) );
 	}
 
 	void MainWindow::initHeader_() {
@@ -232,16 +242,21 @@ namespace Khopper {
 			this->showErrorMessage_( tr( "Run-time error!" ), tr( "No track selected." ) );
 			return;
 		}
-		// get option widget
-		AbstractOption * option = qobject_cast< AbstractOption * >( this->optionTabs_->currentWidget() );
 
 		QString outDir = this->outputPath_->text();
-
-		if( !option ) {
-			this->showErrorMessage_( tr( "Run-time error!" ), tr( "Bad output plugin" ) );
-		} else if( outDir.isEmpty() ) {
+		if( outDir.isEmpty() ) {
 			this->showErrorMessage_( tr( "Run-time error!" ), tr( "Bad output path" ) );
-		} else {
+			return;
+		}
+
+		// get option widget
+		if( this->optionWindow_->exec() ) {
+			AbstractOption * option = qobject_cast< AbstractOption * >( this->optionTabs_->currentWidget() );
+			if( !option ) {
+				this->showErrorMessage_( tr( "Run-time error!" ), tr( "Bad output plugin" ) );
+				return;
+			}
+
 			try {
 				// create encoder object
 				EncoderSP output( option->getEncoder() );

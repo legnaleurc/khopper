@@ -72,6 +72,7 @@ namespace Khopper {
 		TextCodec * codec_;
 		SongListView * songListView_;
 		QStandardItemModel * songListModel_;
+		QDialog * optionWindow_;
 		QTabWidget * optionTabs_;
 		QLineEdit * outputPath_;
 		QCheckBox * useSourcePath_;
@@ -81,7 +82,7 @@ namespace Khopper {
 		QWidget * about_;
 
 		void initMenuBar_();
-		void initOptionTabs_();
+		void initOptionWindow_();
 		void initHeader_();
 		void initAbout_();
 		QString applyTemplate_( TrackSP ) const;
