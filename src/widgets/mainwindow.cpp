@@ -75,6 +75,7 @@ namespace Khopper {
 		// Add song list
 		mainBox->addWidget( this->songList_ );
 		connect( this->songList_, SIGNAL( dropFile( const QString & ) ), this, SLOT( open( const QString & ) ) );
+		connect( this->songList_, SIGNAL( requireConvert() ), this, SLOT( fire_() ) );
 
 		// Setting output format select
 		this->initOptionWindow_();
@@ -111,11 +112,6 @@ namespace Khopper {
 			"Extensions will automaticaly append."
 		) );
 		bottomBox->addWidget( this->fileNameTemplate_ );
-
-		// Action button
-		QPushButton * action = new QPushButton( tr( "Fire!" ), this );
-		connect( action, SIGNAL( clicked() ), this, SLOT( fire_() ) );
-		bottomBox->addWidget( action );
 
 		// Progress dialog
 		progress_->setWindowModality( Qt::WindowModal );

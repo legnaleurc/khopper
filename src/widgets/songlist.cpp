@@ -68,7 +68,9 @@ namespace Khopper {
 		connect( delSong, SIGNAL( triggered() ), this, SLOT( removeSelected_() ) );
 
 		QAction * convert = new QAction( tr( "Convert" ), this );
-		convert->setShortcut( tr( "Ctrl+Enter" ) );
+		convert->setShortcut( Qt::CTRL + Qt::Key_Return );
+		connect( convert, SIGNAL( triggered() ), this, SIGNAL( requireConvert() ) );
+		this->addAction( convert );
 		this->contextMenu_->addAction( convert );
 	}
 

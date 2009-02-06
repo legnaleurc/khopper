@@ -55,6 +55,7 @@ namespace Khopper {
 		 * @param path File path
 		 */
 		void dropFile( const QString & path );
+		void requireConvert();
 
 	protected:
 		virtual void contextMenuEvent( QContextMenuEvent * event );
