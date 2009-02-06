@@ -47,6 +47,12 @@ namespace Khopper {
 		 * @param [in] tracks Tracks
 		 */
 		void appendTracks( const std::vector< TrackSP > & tracks );
+		/**
+		 * @brief Get selected tracks
+		 * @return Selected tracks
+		 *
+		 * The cost may be expansive.
+		 */
 		std::vector< TrackSP > getSelectedTracks() const;
 
 	signals:
@@ -55,24 +61,19 @@ namespace Khopper {
 		 * @param path File path
 		 */
 		void dropFile( const QString & path );
+		/**
+		 * @brief Emmited when convert action is required.
+		 */
 		void requireConvert();
 
 	protected:
+		/// See the documention of Qt toolkit
 		virtual void contextMenuEvent( QContextMenuEvent * event );
-		/**
-		 * @brief Mouse drag enter event handler
-		 * @param event Drag enter event
-		 */
+		/// See the documention of Qt toolkit
 		virtual void dragEnterEvent( QDragEnterEvent * event );
-		/**
-		 * @brief Mouse drag move event handler
-		 * @param event Drag move event
-		 */
+		/// See the documention of Qt toolkit
 		virtual void dragMoveEvent( QDragMoveEvent * event );
-		/**
-		 * @brief Mouse drop event handler
-		 * @param event Drop event
-		 */
+		/// See the documention of Qt toolkit
 		virtual void dropEvent( QDropEvent * event );
 
 	private slots:

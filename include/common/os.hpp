@@ -55,7 +55,8 @@ namespace Khopper {
 		/**
 		 * @brief Encode Unicode string to local 8-bits string
 		 * @param unicode Unicode string
-		 * @return Local 8-bits string
+		 * @param codec Encoding identifier, 0 = locale, 1 = UTF-8
+		 * @return Depends on @p codec
 		 *
 		 * On POSIX, @p unicode is UCS4, on Windows(R), @p unicode is UTF-16.\n
 		 * The encoded string will use system locale.

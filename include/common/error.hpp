@@ -37,10 +37,14 @@ namespace Khopper {
 	class Error : public std::exception, public Type {
 	public:
 		/**
-		 * @brief Constructor that set error message
+		 * @brief Construct with an error message
 		 * @param [in] msg Error message
 		 */
 		Error( const std::string & msg ) throw() : msg_( msg ) {}
+		/**
+		 * @brief Construct with an error message
+		 * @param [in] msg Error message
+		 */
 		Error( const std::wstring & msg ) throw() : msg_( os::encodeString( msg ) ) {}
 		/**
 		 * @brief Get the error message
