@@ -26,6 +26,7 @@
 #include <QGroupBox>
 #include <QRadioButton>
 #include <QVariant>
+#include <QLabel>
 #include <QtDebug>
 
 namespace {
@@ -58,7 +59,7 @@ namespace Khopper {
 		QVBoxLayout * brBox = new QVBoxLayout( brGroup );
 		brGroup->setLayout( brBox );
 
-		QHBoxLayout * cbrBox = new QHBoxLayout();
+		QHBoxLayout * cbrBox = new QHBoxLayout;
 		brBox->addLayout( cbrBox );
 		QRadioButton * cbr = new QRadioButton( tr( "CBR" ), this );
 		cbrBox->addWidget( cbr );
@@ -69,7 +70,7 @@ namespace Khopper {
 		this->bitRate_->setCurrentIndex( 3 );
 		cbrBox->addWidget( this->bitRate_ );
 
-		QHBoxLayout * vbrBox = new QHBoxLayout();
+		QHBoxLayout * vbrBox = new QHBoxLayout;
 		brBox->addLayout( vbrBox );
 		QRadioButton * vbr = new QRadioButton( tr( "VBR" ), this );
 		vbrBox->addWidget( vbr );
@@ -89,14 +90,22 @@ namespace Khopper {
 		cbr->setChecked( true );
 		this->level_->setEnabled( false );
 
-		vbox->addWidget( this->sampleRate_ );
-		this->sampleRate_->addItem( "44100", QVariant( 44100 ) );
-		this->sampleRate_->addItem( "48000", QVariant( 48000 ) );
+		QHBoxLayout * srBox = new QHBoxLayout;
+		vbox->addLayout( srBox );
+		QLabel * srLabel = new QLabel( tr( "Sample Rate:" ) );
+		srBox->addWidget( srLabel );
+		this->sampleRate_->addItem( "44100 Hz", QVariant( 44100 ) );
+		this->sampleRate_->addItem( "48000 Hz", QVariant( 48000 ) );
+		srBox->addWidget( this->sampleRate_ );
 
-		vbox->addWidget( this->channels_ );
+		QHBoxLayout * cBox = new QHBoxLayout;
+		vbox->addLayout( cBox );
+		QLabel * cLabel = new QLabel( tr( "Channel:" ) );
+		cBox->addWidget( cLabel );
 		this->channels_->addItem( "Mono", QVariant( 1 ) );
 		this->channels_->addItem( "Streao", QVariant( 2 ) );
 		this->channels_->setCurrentIndex( 1 );
+		cBox->addWidget( this->channels_ );
 	}
 
 	EncoderSP MP3Option::getEncoder() const {

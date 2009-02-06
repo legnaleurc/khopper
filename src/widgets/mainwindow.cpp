@@ -57,7 +57,7 @@ namespace Khopper {
 	optionWindow_( new QDialog( this ) ),
 	optionTabs_( new QTabWidget( this ) ),
 	outputPath_( new QLineEdit( QDir::homePath(), this ) ),
-	useSourcePath_( new QCheckBox( tr( "Use source path" ), this ) ),
+	useSourcePath_( new QCheckBox( tr( "Same as source files" ), this ) ),
 	fileNameTemplate_( new QLineEdit( tr( "%t" ), this ) ),
 	progress_( new QProgressDialog( tr( "Converting..." ), tr( "Cancel" ), 0, 0, this ) ),
 	cvt_( new ConverterThread( this ) ),
@@ -170,6 +170,8 @@ namespace Khopper {
 	}
 
 	void MainWindow::initOptionWindow_() {
+		this->optionWindow_->setWindowTitle( tr( "Output format setting" ) );
+		this->optionWindow_->resize( 320, 240 );
 		QVBoxLayout * mainBox = new QVBoxLayout( this->optionWindow_ );
 		this->optionWindow_->setLayout( mainBox );
 
