@@ -327,8 +327,9 @@ namespace Khopper {
 			"An audio converter<br/>"
 			"(C) 2008 ~ 2009<br/>"
 			"Present by Wei-Cheng Pan<br/>"
+			"<a href=\"http://legnaleurc.blogspot.com/search/label/Khopper\">Home Page</a><br/>"
+			"This program is a part of FoolproofProject<br/>"
 			"E-Mail: <a href=\"mailto:legnaleurc@gmail.com\">legnaleurc@gmail.com</a><br/>"
-			"<a href=\"http://legnaleurc.blogspot.com/search/label/Khopper\">Home Page</a>"
 		), tw );
 		about->setTextFormat( Qt::RichText );
 		tw->addTab( about, tr( "&About" ) );
