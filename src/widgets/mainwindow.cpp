@@ -45,6 +45,7 @@
 #include <QTabWidget>
 #include <QPushButton>
 #include <QDialogButtonBox>
+#include <QGroupBox>
 #include <QtDebug>
 
 namespace Khopper {
@@ -60,11 +61,16 @@ namespace Khopper {
 	fileNameTemplate_( new QLineEdit( tr( "%t" ), this ) ),
 	progress_( new QProgressDialog( tr( "Converting..." ), tr( "Cancel" ), 0, 0, this ) ),
 	cvt_( new ConverterThread( this ) ),
+	preference_( new QWidget( this, Qt::Dialog ) ),
 	about_( new QWidget( this, Qt::Dialog ) ) {
-		// Setting about widget
-		this->initAbout_();
 		// Setting menu bar
 		this->initMenuBar_();
+		// Setting about widget
+		this->initAbout_();
+		// Setting preference widget
+		this->initPreference_();
+		// Setting output format select
+		this->initOptionWindow_();
 
 		// Setting central widget
 		QWidget * central = new QWidget( this );
@@ -76,9 +82,6 @@ namespace Khopper {
 		mainBox->addWidget( this->songList_ );
 		connect( this->songList_, SIGNAL( dropFile( const QString & ) ), this, SLOT( open( const QString & ) ) );
 		connect( this->songList_, SIGNAL( requireConvert() ), this, SLOT( fire_() ) );
-
-		// Setting output format select
-		this->initOptionWindow_();
 
 		QHBoxLayout * pathBox = new QHBoxLayout();
 		mainBox->addLayout( pathBox );
@@ -100,18 +103,6 @@ namespace Khopper {
 		// Set bottom layout
 		QHBoxLayout * bottomBox = new QHBoxLayout();
 		mainBox->addLayout( bottomBox );
-
-		// Output name template
-		QLabel * tpLabel = new QLabel( tr( "File Name:" ), this );
-		bottomBox->addWidget( tpLabel );
-		this->fileNameTemplate_->setToolTip( tr(
-			"Keywords:\n"
-			"%t: title\n"
-			"%a: author\n"
-			"%%: \'%\' literal\n"
-			"Extensions will automaticaly append."
-		) );
-		bottomBox->addWidget( this->fileNameTemplate_ );
 
 		// Progress dialog
 		progress_->setWindowModality( Qt::WindowModal );
@@ -151,11 +142,20 @@ namespace Khopper {
 		menuBar->addMenu( file );
 		// file menu done
 
+		// setting tool menu
+		QMenu * tool = new QMenu( tr( "&Tool" ), menuBar );
+		menuBar->addMenu( tool );
+
+		QAction * preference = new QAction( tr( "&Preference" ), this );
+		tool->addAction( preference );
+		connect( preference, SIGNAL( triggered() ), this->preference_, SLOT( show() ) );
+		// tool menu done
+
 		// setting help menu
 		QMenu * help = new QMenu( tr( "&Help" ), menuBar );
 
 		QAction * about = new QAction( tr( "&About Khopper" ), this );
-		connect( about, SIGNAL( triggered() ), about_, SLOT( show() ) );
+		connect( about, SIGNAL( triggered() ), this->about_, SLOT( show() ) );
 		help->addAction( about );
 
 		QAction * aboutQt = new QAction( tr( "About &Qt" ), this );
@@ -269,9 +269,9 @@ namespace Khopper {
 				QByteArray raw_input = fin.readAll();
 				fin.close();
 
-				codec_->setEncoded( raw_input );
+				this->codec_->setEncoded( raw_input );
 
-				if( codec_->exec() ) {
+				if( this->codec_->exec() ) {
 					try {
 						tracks = CUESheet( codec_->getDecoded().toStdWString(), fI.absolutePath().toStdWString() ).tracks;
 					} catch( std::exception & e ) {
@@ -286,14 +286,41 @@ namespace Khopper {
 		}
 	}
 
-	void MainWindow::initAbout_() {
-		about_->setWindowTitle( tr( "About Khopper" ) );
-		about_->resize( 320, 240 );
-		
-		QVBoxLayout * vbl = new QVBoxLayout( about_ );
-		about_->setLayout( vbl );
+	void MainWindow::initPreference_() {
+		this->preference_->setWindowTitle( tr( "Preference" ) );
 
-		QTabWidget * tw = new QTabWidget( about_ );
+		QVBoxLayout * mainBox = new QVBoxLayout( this->preference_ );
+		this->preference_->setLayout( mainBox );
+
+		QGroupBox * fnGroup = new QGroupBox( tr( "File name template" ), this );
+		mainBox->addWidget( fnGroup );
+
+		QVBoxLayout * fnBox = new QVBoxLayout( fnGroup );
+		fnGroup->setLayout( fnBox );
+
+		// Output name template
+		this->fileNameTemplate_->setToolTip( tr(
+			"Keywords:\n"
+			"%t: title\n"
+			"%a: author\n"
+			"%%: \'%\' literal\n"
+			"Extensions will automaticaly append."
+		) );
+		fnBox->addWidget( this->fileNameTemplate_ );
+
+		QDialogButtonBox * buttons = new QDialogButtonBox( QDialogButtonBox::Ok, Qt::Horizontal, this );
+		mainBox->addWidget( buttons );
+		connect( buttons, SIGNAL( accepted() ), this->preference_, SLOT( close() ) );
+	}
+
+	void MainWindow::initAbout_() {
+		this->about_->setWindowTitle( tr( "About Khopper" ) );
+		this->about_->resize( 320, 240 );
+
+		QVBoxLayout * vbl = new QVBoxLayout( this->about_ );
+		this->about_->setLayout( vbl );
+
+		QTabWidget * tw = new QTabWidget( this->about_ );
 		vbl->addWidget( tw );
 
 		QLabel * about = new QLabel( tr(

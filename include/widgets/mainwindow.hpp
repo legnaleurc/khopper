@@ -72,10 +72,12 @@ namespace Khopper {
 		QLineEdit * fileNameTemplate_;
 		QProgressDialog * progress_;
 		ConverterThread * cvt_;
+		QWidget * preference_;
 		QWidget * about_;
 
 		void initMenuBar_();
 		void initOptionWindow_();
+		void initPreference_();
 		void initAbout_();
 		QString applyTemplate_( TrackSP ) const;
 
