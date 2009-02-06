@@ -45,8 +45,16 @@ namespace Khopper {
 			return QString::fromStdString( local ).toStdWString();
 		}
 
-		std::string encodeString( const std::wstring & unicode ) {
-			return QString::fromStdWString( unicode ).toLocal8Bit().constData();
+		std::string encodeString( const std::wstring & unicode, int codec ) {
+			QString tmp = QString::fromStdWString( unicode );
+			switch( codec ) {
+			case 0:
+				return tmp.toLocal8Bit().constData();
+			case 1:
+				return tmp.toUtf8().constData();
+			default:
+				return "";
+			}
 		}
 
 	}
