@@ -25,7 +25,6 @@
 #include "track.hpp"
 
 #include <QMainWindow>
-#include <QStandardItemModel>
 #include <QComboBox>
 #include <QProgressDialog>
 #include <QLineEdit>
@@ -34,7 +33,7 @@
 namespace Khopper {
 
 	class ConverterThread;
-	class SongListView;
+	class SongList;
 	class TextCodec;
 
 	/**
@@ -58,11 +57,6 @@ namespace Khopper {
 		 */
 		void showOpenFileDialog();
 		/**
-		 * @brief Add songs the song list
-		 * @param [in] tracks Tracks
-		 */
-		void addSongList( const std::vector< TrackSP > & tracks );
-		/**
 		 * @brief Open file
 		 * @param [in] filePath file path
 		 */
@@ -70,8 +64,7 @@ namespace Khopper {
 
 	private:
 		TextCodec * codec_;
-		SongListView * songListView_;
-		QStandardItemModel * songListModel_;
+		SongList * songList_;
 		QDialog * optionWindow_;
 		QTabWidget * optionTabs_;
 		QLineEdit * outputPath_;
@@ -83,7 +76,6 @@ namespace Khopper {
 
 		void initMenuBar_();
 		void initOptionWindow_();
-		void initHeader_();
 		void initAbout_();
 		QString applyTemplate_( TrackSP ) const;
 
@@ -91,7 +83,6 @@ namespace Khopper {
 		void fire_();
 		void showErrorMessage_( const QString &, const QString & );
 		void incProgress_( int );
-		void delSongList_();
 		void changeOutputPath_();
 	};
 

@@ -47,24 +47,12 @@
 #include <QDialogButtonBox>
 #include <QtDebug>
 
-// for Track to QVariant
-Q_DECLARE_METATYPE( Khopper::TrackSP )
-
-namespace {
-
-	inline bool indexRowCompD( const QModelIndex & l, const QModelIndex & r ) {
-		return l.row() > r.row();
-	}
-
-}
-
 namespace Khopper {
 
 	MainWindow::MainWindow( QWidget * parent, Qt::WindowFlags flags ):
 	QMainWindow( parent, flags ),
 	codec_( new TextCodec( this ) ),
-	songListView_( new SongListView( this ) ),
-	songListModel_( new QStandardItemModel( this->songListView_ ) ),
+	songList_( new SongList( this ) ),
 	optionWindow_( new QDialog( this ) ),
 	optionTabs_( new QTabWidget( this ) ),
 	outputPath_( new QLineEdit( QDir::homePath(), this ) ),
@@ -85,15 +73,8 @@ namespace Khopper {
 		this->setCentralWidget( central );
 
 		// Add song list
-		mainBox->addWidget( this->songListView_ );
-		this->initHeader_();
-		// Set model
-		this->songListView_->setModel( this->songListModel_ );
-		connect( this->songListView_, SIGNAL( openFile( const QString & ) ), this, SLOT( open( const QString & ) ) );
-		QAction * delSong = new QAction( this->songListView_ );
-		delSong->setShortcut( QKeySequence::Delete );
-		this->songListView_->addAction( delSong );
-		connect( delSong, SIGNAL( triggered() ), this, SLOT( delSongList_() ) );
+		mainBox->addWidget( this->songList_ );
+		connect( this->songList_, SIGNAL( dropFile( const QString & ) ), this, SLOT( open( const QString & ) ) );
 
 		// Setting output format select
 		this->initOptionWindow_();
@@ -155,15 +136,6 @@ namespace Khopper {
 		}
 	}
 
-	void MainWindow::delSongList_() {
-		QModelIndexList selected = this->songListView_->selectionModel()->selectedRows();
-		std::sort( selected.begin(), selected.end(), ::indexRowCompD );
-		foreach( QModelIndex index, selected ) {
-			this->songListModel_->removeRow( index.row() );
-		}
-		this->songListView_->selectionModel()->clear();
-	}
-
 	void MainWindow::incProgress_( int diff ) {
 		this->progress_->setValue( this->progress_->value() + diff );
 	}
@@ -219,14 +191,6 @@ namespace Khopper {
 		connect( buttons, SIGNAL( rejected() ), this->optionWindow_, SLOT( reject() ) );
 	}
 
-	void MainWindow::initHeader_() {
-		QStringList headers;
-		for( std::vector< std::wstring >::const_iterator it = Track::Headers.begin(); it != Track::Headers.end(); ++it ) {
-			headers.push_back( QString::fromStdWString( *it ) );
-		}
-		songListModel_->setHorizontalHeaderLabels( headers );
-	}
-
 	QString MainWindow::applyTemplate_( TrackSP track ) const {
 		QString tmp = this->fileNameTemplate_->text();
 		tmp.replace( "%t", QString::fromStdWString( track->title ) );
@@ -237,8 +201,8 @@ namespace Khopper {
 
 	void MainWindow::fire_() {
 		// get selected list
-		QModelIndexList selected = this->songListView_->selectionModel()->selectedRows( 0 );
-		if( selected.isEmpty() ) {
+		std::vector< TrackSP > tracks = this->songList_->getSelectedTracks();
+		if( tracks.empty() ) {
 			this->showErrorMessage_( tr( "Run-time error!" ), tr( "No track selected." ) );
 			return;
 		}
@@ -262,12 +226,10 @@ namespace Khopper {
 				EncoderSP output( option->getEncoder() );
 
 				// put selected list
-				std::vector< TrackSP > tracks( selected.size() );
 				QStringList outputPaths;
 				int decodeTimes = 0;
 				QString ext = this->optionTabs_->tabText( this->optionTabs_->currentIndex() );
-				for( int i = 0; i < selected.size(); ++i ) {
-					tracks[i] = selected[i].data( Qt::UserRole ).value< TrackSP >();
+				for( std::size_t i = 0; i < tracks.size(); ++i ) {
 					outputPaths.push_back( outDir + "/" + this->applyTemplate_( tracks[i] ) + "." + ext );
 					decodeTimes += static_cast< int >( tracks[i]->duration.toDouble() * 100 );
 				}
@@ -324,26 +286,7 @@ namespace Khopper {
 				this->showErrorMessage_( tr( "Run-time error!" ), tr( "Not implemented." ) );
 			}
 
-			this->addSongList( tracks );
-		}
-	}
-
-	void MainWindow::addSongList( const std::vector< TrackSP > & tracks ) {
-		// get last row number
-		int offset = songListModel_->rowCount();
-		// add all tracks
-		for( std::size_t row = 0; row < tracks.size(); ++row ) {
-			this->songListModel_->setItem( row + offset, 0, new QStandardItem( QString::fromStdWString( tracks[row]->title ) ) );
-			this->songListModel_->setItem( row + offset, 1, new QStandardItem( QString::fromStdWString( tracks[row]->performer ) ) );
-			this->songListModel_->setItem( row + offset, 2, new QStandardItem( QString::fromStdWString( tracks[row]->duration.toStdWString() ) ) );
-			this->songListModel_->setItem( row + offset, 3, new QStandardItem( QString::number( tracks[row]->bitRate ) ) );
-			this->songListModel_->setItem( row + offset, 4, new QStandardItem( QString::number( tracks[row]->sampleRate ) ) );
-			this->songListModel_->setItem( row + offset, 5, new QStandardItem( QString::number( tracks[row]->channels ) ) );
-
-			// add extra information
-			QVariant data;
-			data.setValue( tracks[row] );
-			this->songListModel_->item( row + offset, 0 )->setData( data, Qt::UserRole );
+			this->songList_->appendTracks( tracks );
 		}
 	}
 

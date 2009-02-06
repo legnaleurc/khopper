@@ -22,14 +22,17 @@
 #ifndef KHOPPER_SONGLIST_HPP
 #define KHOPPER_SONGLIST_HPP
 
+#include "track.hpp"
+
 #include <QTableView>
+#include <QStandardItemModel>
 
 namespace Khopper {
 
 	/**
 	 * @brief The song list view in the center widget
 	 */
-	class SongListView : public QTableView {
+	class SongList : public QTableView {
 		Q_OBJECT
 
 	public:
@@ -37,33 +40,47 @@ namespace Khopper {
 		 * @brief Default constructor
 		 * @param [in] parent Parent widget
 		 */
-		SongListView( QWidget * parent = 0 );
+		SongList( QWidget * parent = 0 );
+
+		/**
+		 * @brief Append tracks to the song list
+		 * @param [in] tracks Tracks
+		 */
+		void appendTracks( const std::vector< TrackSP > & tracks );
+		std::vector< TrackSP > getSelectedTracks() const;
 
 	signals:
 		/**
-		 * @brief Open a file by path
-		 * @param [in] path File path
+		 * @brief Emitted when drop an openable file
+		 * @param path File path
 		 */
-		void openFile( const QString & path );
+		void dropFile( const QString & path );
 
 	protected:
+		virtual void contextMenuEvent( QContextMenuEvent * event );
 		/**
 		 * @brief Mouse drag enter event handler
 		 * @param event Drag enter event
 		 */
 		virtual void dragEnterEvent( QDragEnterEvent * event );
-
 		/**
 		 * @brief Mouse drag move event handler
 		 * @param event Drag move event
 		 */
 		virtual void dragMoveEvent( QDragMoveEvent * event );
-
 		/**
 		 * @brief Mouse drop event handler
 		 * @param event Drop event
 		 */
 		virtual void dropEvent( QDropEvent * event );
+
+	private slots:
+		void removeSelected_();
+
+	private:
+		QStandardItemModel * model_;
+		QMenu * contextMenu_;
+		std::vector< TrackSP > tracks_;
 	};
 
 }
