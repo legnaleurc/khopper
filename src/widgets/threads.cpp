@@ -49,8 +49,11 @@ namespace Khopper {
 				this->encoder_->setTitle( this->tracks_[i]->title );
 				this->encoder_->setAuthor( this->tracks_[i]->performer );
 				this->encoder_->setAlbum( this->tracks_[i]->album );
+				emit taskName( QString::fromStdWString( this->tracks_[i]->title ) );
+				emit taskGoal( this->tracks_[i]->duration.toDouble() * 100 );
+				emit currentTask( i + 1 );
+
 				this->tracks_[i]->convert( this->paths_[i].toStdWString(), this->encoder_ );
-// 				emit step( i + 1 );
 			}
 		} catch( std::exception & e ) {
 			emit error( tr( "Error on converting!" ), tr( e.what() ) );

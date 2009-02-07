@@ -65,6 +65,18 @@ namespace Khopper {
 		void error( const QString & title, const QString & errMsg );
 
 		/**
+		 * @brief Send task name
+		 */
+		void taskName( const QString & Title );
+		/**
+		 * @brief Send task goal
+		 */
+		void taskGoal( int duration );
+		/**
+		 * @brief Send current task count
+		 */
+		void currentTask( int number );
+		/**
 		 * @brief Progress notifyer
 		 * @param duration Convert duration
 		 */

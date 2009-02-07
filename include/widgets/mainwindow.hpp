@@ -33,6 +33,7 @@
 namespace Khopper {
 
 	class ConverterThread;
+	class Progress;
 	class SongList;
 	class TextCodec;
 
@@ -70,7 +71,7 @@ namespace Khopper {
 		QLineEdit * outputPath_;
 		QCheckBox * useSourcePath_;
 		QLineEdit * fileNameTemplate_;
-		QProgressDialog * progress_;
+		Progress * progress_;
 		ConverterThread * cvt_;
 		QWidget * preference_;
 		QWidget * about_;

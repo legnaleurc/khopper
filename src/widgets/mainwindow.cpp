@@ -23,6 +23,7 @@
 #include "songlist.hpp"
 #include "threads.hpp"
 #include "textcodec.hpp"
+#include "progress.hpp"
 #include "os.hpp"
 #include "cuesheet.hpp"
 #include "track.hpp"
@@ -59,7 +60,7 @@ namespace Khopper {
 	outputPath_( new QLineEdit( QDir::homePath(), this ) ),
 	useSourcePath_( new QCheckBox( tr( "Same as source files" ), this ) ),
 	fileNameTemplate_( new QLineEdit( tr( "%t" ), this ) ),
-	progress_( new QProgressDialog( tr( "Converting..." ), tr( "Cancel" ), 0, 0, this ) ),
+	progress_( new Progress( this ) ),
 	cvt_( new ConverterThread( this ) ),
 	preference_( new QWidget( this, Qt::Dialog ) ),
 	about_( new QWidget( this, Qt::Dialog ) ) {
@@ -102,14 +103,16 @@ namespace Khopper {
 
 		// Progress dialog
 		progress_->setWindowModality( Qt::WindowModal );
-		progress_->setMinimumDuration( 0 );
 
 		// Converter thread
-		connect( cvt_, SIGNAL( finished() ), progress_, SLOT( cancel() ) );
-		connect( cvt_, SIGNAL( step( int ) ), this, SLOT( incProgress_( int ) ) );
-		connect( cvt_, SIGNAL( error( const QString &, const QString & ) ), this, SLOT( showErrorMessage_( const QString &, const QString & ) ) );
+		connect( this->cvt_, SIGNAL( taskName( const QString & ) ), this->progress_, SLOT( setItemName( const QString & ) ) );
+		connect( this->cvt_, SIGNAL( taskGoal( int ) ), this->progress_, SLOT( setMaximum( int ) ) );
+		connect( this->cvt_, SIGNAL( currentTask( int ) ), this->progress_, SLOT( setCurrent( int ) ) );
+		connect( this->cvt_, SIGNAL( step( int ) ), this, SLOT( incProgress_( int ) ) );
+		connect( this->cvt_, SIGNAL( finished() ), this->progress_, SLOT( accept() ) );
+		connect( this->cvt_, SIGNAL( error( const QString &, const QString & ) ), this, SLOT( showErrorMessage_( const QString &, const QString & ) ) );
 		// NOTE: works, but danger
-		connect( progress_, SIGNAL( canceled() ), cvt_, SLOT( terminate() ) );
+		connect( this->progress_, SIGNAL( rejected() ), this->cvt_, SLOT( terminate() ) );
 	}
 
 	void MainWindow::changeOutputPath_() {
@@ -120,7 +123,7 @@ namespace Khopper {
 	}
 
 	void MainWindow::incProgress_( int diff ) {
-		this->progress_->setValue( this->progress_->value() + diff );
+		this->progress_->setValue( this->progress_->getValue() + diff );
 	}
 
 	void MainWindow::initMenuBar_() {
@@ -221,19 +224,17 @@ namespace Khopper {
 
 				// put selected list
 				QStringList outputPaths;
-				int decodeTimes = 0;
 				for( std::size_t i = 0; i < tracks.size(); ++i ) {
 					outputPaths.push_back( outDir + "/" + this->applyTemplate_( tracks[i] ) + "." + option->getSuffix() );
-					decodeTimes += static_cast< int >( tracks[i]->duration.toDouble() * 100 );
 				}
 
 				// set progress bar
-				this->progress_->setRange( 0, decodeTimes );
+				this->progress_->setTotal( tracks.size() );
 				// set output information
 				this->cvt_->setOutput( output, outputPaths );
 				this->cvt_->setTracks( tracks );
 				this->cvt_->start();
-				this->progress_->show();
+				this->progress_->exec();
 			} catch( Error< RunTime > & e ) {
 				this->showErrorMessage_( tr( "Run-time error!" ), tr( e.what() ) );
 			} catch( std::exception & e ) {
