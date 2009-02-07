@@ -87,6 +87,7 @@ namespace Khopper {
 		void showErrorMessage_( const QString &, const QString & );
 		void incProgress_( int );
 		void changeOutputPath_();
+		QString getOutDir_( TrackSP ) const;
 	};
 
 }

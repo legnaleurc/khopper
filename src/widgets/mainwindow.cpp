@@ -196,17 +196,19 @@ namespace Khopper {
 		return tmp;
 	}
 
+	QString MainWindow::getOutDir_( TrackSP track ) const {
+		if( this->useSourcePath_->isChecked() ) {
+			return QFileInfo( QString::fromStdWString( track->filePath ) ).absolutePath();
+		} else {
+			return this->outputPath_->text();
+		}
+	}
+
 	void MainWindow::fire_() {
 		// get selected list
 		std::vector< TrackSP > tracks = this->songList_->getSelectedTracks();
 		if( tracks.empty() ) {
 			this->showErrorMessage_( tr( "Run-time error!" ), tr( "No track selected." ) );
-			return;
-		}
-
-		QString outDir = this->outputPath_->text();
-		if( outDir.isEmpty() ) {
-			this->showErrorMessage_( tr( "Run-time error!" ), tr( "Bad output path" ) );
 			return;
 		}
 
@@ -222,10 +224,10 @@ namespace Khopper {
 				// create encoder object
 				EncoderSP output( option->getEncoder() );
 
-				// put selected list
+				// generate output paths
 				QStringList outputPaths;
 				for( std::size_t i = 0; i < tracks.size(); ++i ) {
-					outputPaths.push_back( outDir + "/" + this->applyTemplate_( tracks[i] ) + "." + option->getSuffix() );
+					outputPaths.push_back( this->getOutDir_( tracks[i] ) + "/" + this->applyTemplate_( tracks[i] ) + "." + option->getSuffix() );
 				}
 
 				// set progress bar
@@ -251,10 +253,6 @@ namespace Khopper {
 	void MainWindow::open( const QString & filePath ) {
 		if( filePath != "" ) {
 			QFileInfo fI( filePath );
-
-			if( this->useSourcePath_->isChecked() ) {
-				this->outputPath_->setText( fI.absolutePath() );
-			}
 
 			std::vector< TrackSP > tracks;
 
