@@ -100,10 +100,6 @@ namespace Khopper {
 		connect( this->useSourcePath_, SIGNAL( toggled( bool ) ), this->outputPath_, SLOT( setDisabled( bool ) ) );
 		connect( changePath, SIGNAL( clicked( bool ) ), this->useSourcePath_, SLOT( setChecked( bool ) ) );
 
-		// Set bottom layout
-		QHBoxLayout * bottomBox = new QHBoxLayout();
-		mainBox->addLayout( bottomBox );
-
 		// Progress dialog
 		progress_->setWindowModality( Qt::WindowModal );
 		progress_->setMinimumDuration( 0 );
@@ -232,12 +228,12 @@ namespace Khopper {
 				}
 
 				// set progress bar
-				progress_->setRange( 0, decodeTimes );
+				this->progress_->setRange( 0, decodeTimes );
 				// set output information
-				cvt_->setOutput( output, outputPaths );
-				cvt_->setTracks( tracks );
-				cvt_->start();
-				progress_->show();
+				this->cvt_->setOutput( output, outputPaths );
+				this->cvt_->setTracks( tracks );
+				this->cvt_->start();
+				this->progress_->show();
 			} catch( Error< RunTime > & e ) {
 				this->showErrorMessage_( tr( "Run-time error!" ), tr( e.what() ) );
 			} catch( std::exception & e ) {
