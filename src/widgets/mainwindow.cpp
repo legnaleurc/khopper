@@ -58,7 +58,7 @@ namespace Khopper {
 	optionWindow_( new QDialog( this ) ),
 	optionTabs_( new QTabWidget( this ) ),
 	outputPath_( new QLineEdit( QDir::homePath(), this ) ),
-	useSourcePath_( new QCheckBox( tr( "Same as source files" ), this ) ),
+	useSourcePath_( new QCheckBox( tr( "Same as source directories" ), this ) ),
 	fileNameTemplate_( new QLineEdit( tr( "%t" ), this ) ),
 	progress_( new Progress( this ) ),
 	cvt_( new ConverterThread( this ) ),
@@ -132,7 +132,7 @@ namespace Khopper {
 		// setting file menu
 		QMenu * file = new QMenu( tr( "&File" ), menuBar );
 
-		QAction * open = new QAction( tr( "&Open..." ), this );
+		QAction * open = new QAction( tr( "&Open album" ), this );
 		open->setShortcut( tr( "Ctrl+O" ) );
 		connect( open, SIGNAL( triggered() ), this, SLOT( showOpenFileDialog() ) );
 		file->addAction( open );
@@ -321,7 +321,7 @@ namespace Khopper {
 
 		QLabel * about = new QLabel( tr(
 			"An audio converter<br/>"
-			"(C) 2008 ~ 2009<br/>"
+			"(C) 2008<br/>"
 			"Present by Wei-Cheng Pan<br/>"
 			"<a href=\"http://legnaleurc.blogspot.com/search/label/Khopper\">Home Page</a><br/>"
 			"This program is a part of FoolproofProject<br/>"
