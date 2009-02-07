@@ -119,6 +119,7 @@ namespace Khopper {
 		 */
 		static const std::vector< std::wstring > Headers;
 
+		/// Album title
 		std::wstring album;
 		/// Bit Rate
 		int bitRate;

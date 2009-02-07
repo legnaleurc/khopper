@@ -46,6 +46,10 @@ namespace Khopper {
 		 * @return Smart pointer to Encoder
 		 */
 		virtual EncoderSP getEncoder() const;
+		/**
+		 * @brief Get file suffix
+		 * @return File extension, without leading '.'
+		 */
 		virtual QString getSuffix() const;
 
 	private:
