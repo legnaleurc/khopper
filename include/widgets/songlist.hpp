@@ -78,6 +78,7 @@ namespace Khopper {
 
 	private slots:
 		void removeSelected_();
+		void editTrackField_( QStandardItem * );
 
 	private:
 		QStandardItemModel * model_;

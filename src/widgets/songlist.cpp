@@ -61,6 +61,7 @@ namespace Khopper {
 
 		// Set model
 		this->setModel( this->model_ );
+		connect( this->model_, SIGNAL( itemChanged( QStandardItem * ) ), this, SLOT( editTrackField_( QStandardItem * ) ) );
 		QAction * delSong = new QAction( this );
 		delSong->setShortcut( QKeySequence::Delete );
 		this->addAction( delSong );
@@ -74,6 +75,8 @@ namespace Khopper {
 	}
 
 	void SongList::appendTracks( const std::vector< TrackSP > & tracks ) {
+		this->tracks_.insert( this->tracks_.end(), tracks.begin(), tracks.end() );
+
 		// get last row number
 		int offset = this->model_->rowCount();
 		// add all tracks
@@ -81,13 +84,17 @@ namespace Khopper {
 			this->model_->setItem( row + offset, 0, new QStandardItem( QString::fromStdWString( tracks[row]->title ) ) );
 			this->model_->setItem( row + offset, 1, new QStandardItem( QString::fromStdWString( tracks[row]->performer ) ) );
 			this->model_->setItem( row + offset, 2, new QStandardItem( QString::fromStdWString( tracks[row]->album ) ) );
-			this->model_->setItem( row + offset, 3, new QStandardItem( QString::fromStdWString( tracks[row]->duration.toStdWString() ) ) );
-			this->model_->setItem( row + offset, 4, new QStandardItem( QString::number( tracks[row]->bitRate ) ) );
-			this->model_->setItem( row + offset, 5, new QStandardItem( QString::number( tracks[row]->sampleRate ) ) );
-			this->model_->setItem( row + offset, 6, new QStandardItem( QString::number( tracks[row]->channels ) ) );
-		}
 
-		this->tracks_.insert( this->tracks_.end(), tracks.begin(), tracks.end() );
+			// fields should not be editable
+			this->model_->setItem( row + offset, 3, new QStandardItem( QString::fromStdWString( tracks[row]->duration.toStdWString() ) ) );
+			this->model_->item( row + offset, 3 )->setEditable( false );
+			this->model_->setItem( row + offset, 4, new QStandardItem( QString::number( tracks[row]->bitRate ) ) );
+			this->model_->item( row + offset, 4 )->setEditable( false );
+			this->model_->setItem( row + offset, 5, new QStandardItem( QString::number( tracks[row]->sampleRate ) ) );
+			this->model_->item( row + offset, 5 )->setEditable( false );
+			this->model_->setItem( row + offset, 6, new QStandardItem( QString::number( tracks[row]->channels ) ) );
+			this->model_->item( row + offset, 6 )->setEditable( false );
+		}
 	}
 
 	std::vector< TrackSP > SongList::getSelectedTracks() const {
@@ -109,6 +116,24 @@ namespace Khopper {
 			this->model_->removeRow( index.row() );
 		}
 		this->selectionModel()->clear();
+	}
+
+	void SongList::editTrackField_( QStandardItem * item ) {
+		TrackSP track = this->tracks_.at( item->row() );
+		switch( item->column() ) {
+		case 0:
+			track->title = item->text().toStdWString();
+			break;
+		case 1:
+			track->performer = item->text().toStdWString();
+			break;
+		case 2:
+			track->album = item->text().toStdWString();
+			break;
+		default:
+			// other fields should not be editable
+			;
+		}
 	}
 
 	void SongList::contextMenuEvent( QContextMenuEvent * event ) {
