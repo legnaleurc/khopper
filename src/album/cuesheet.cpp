@@ -98,6 +98,11 @@ namespace Khopper {
 			}
 		}
 
+		// set the album name for tracks, if any
+		for( std::vector< TrackSP >::iterator it = tracks.begin(); it != tracks.end(); ++it ) {
+			( *it )->album = this->title;
+		}
+
 		// get the total length, because cue sheet don't provide it
 		DecoderSP decoder( new Decoder );
 		decoder->open( currentFile.first );
@@ -191,11 +196,8 @@ namespace Khopper {
 		if( type == L"INDEX" ) {
 			if( toUShort( num ) == 1 ) {
 				this->tracks[trackNO]->startTime = Index( minute, second, frame );
-// 				qDebug() << "Song start:" << QString::fromStdWString( this->tracks[trackNO].startTime.toStdWString() );
 			} else {
-// 				qDebug() << "Song end:" << QString::fromStdWString( Index( minute, second, frame ).toStdWString() );
 				this->tracks[trackNO-1]->duration = Index( minute, second, frame ) - this->tracks[trackNO-1]->startTime;
-// 				qDebug() << "Duration:" << QString::fromStdWString( this->tracks[trackNO-1].duration.toStdWString() );
 			}
 		} else if( type == L"PREGAP" ) {
 			this->tracks[trackNO]->preGap = Index( minute, second, frame );

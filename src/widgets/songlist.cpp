@@ -80,10 +80,11 @@ namespace Khopper {
 		for( std::size_t row = 0; row < tracks.size(); ++row ) {
 			this->model_->setItem( row + offset, 0, new QStandardItem( QString::fromStdWString( tracks[row]->title ) ) );
 			this->model_->setItem( row + offset, 1, new QStandardItem( QString::fromStdWString( tracks[row]->performer ) ) );
-			this->model_->setItem( row + offset, 2, new QStandardItem( QString::fromStdWString( tracks[row]->duration.toStdWString() ) ) );
-			this->model_->setItem( row + offset, 3, new QStandardItem( QString::number( tracks[row]->bitRate ) ) );
-			this->model_->setItem( row + offset, 4, new QStandardItem( QString::number( tracks[row]->sampleRate ) ) );
-			this->model_->setItem( row + offset, 5, new QStandardItem( QString::number( tracks[row]->channels ) ) );
+			this->model_->setItem( row + offset, 2, new QStandardItem( QString::fromStdWString( tracks[row]->album ) ) );
+			this->model_->setItem( row + offset, 3, new QStandardItem( QString::fromStdWString( tracks[row]->duration.toStdWString() ) ) );
+			this->model_->setItem( row + offset, 4, new QStandardItem( QString::number( tracks[row]->bitRate ) ) );
+			this->model_->setItem( row + offset, 5, new QStandardItem( QString::number( tracks[row]->sampleRate ) ) );
+			this->model_->setItem( row + offset, 6, new QStandardItem( QString::number( tracks[row]->channels ) ) );
 		}
 
 		this->tracks_.insert( this->tracks_.end(), tracks.begin(), tracks.end() );

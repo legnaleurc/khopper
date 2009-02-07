@@ -107,6 +107,12 @@ namespace Khopper {
 		 * @note Change will ONLY apply on openning.
 		 */
 		void setAuthor( const std::wstring & author );
+		/**
+		 * @brief Set album title
+		 * @param [in] album
+		 * @note Change will ONLY apply on openning.
+		 */
+		void setAlbum( const std::wstring & album );
 
 		/**
 		 * @brief Write @p data to encoder
@@ -158,6 +164,7 @@ namespace Khopper {
 		int channels_;
 		std::string title_;
 		std::string author_;
+		std::string album_;
 	};
 
 	/**

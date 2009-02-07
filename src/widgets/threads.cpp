@@ -48,6 +48,7 @@ namespace Khopper {
 			for( std::size_t i = 0; i < this->tracks_.size(); ++i ) {
 				this->encoder_->setTitle( this->tracks_[i]->title );
 				this->encoder_->setAuthor( this->tracks_[i]->performer );
+				this->encoder_->setAlbum( this->tracks_[i]->album );
 				this->tracks_[i]->convert( this->paths_[i].toStdWString(), this->encoder_ );
 // 				emit step( i + 1 );
 			}
