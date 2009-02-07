@@ -127,4 +127,8 @@ namespace Khopper {
 		return EncoderSP( encoder );
 	}
 
+	QString MP3Option::getSuffix() const {
+		return "mp3";
+	}
+
 }

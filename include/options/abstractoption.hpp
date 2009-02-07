@@ -56,6 +56,7 @@ namespace Khopper {
 		 * @return Smart pointer contains Encoder
 		 */
 		virtual EncoderSP getEncoder() const = 0;
+		virtual QString getSuffix() const = 0;
 	};
 
 	/**

@@ -226,9 +226,8 @@ namespace Khopper {
 				// put selected list
 				QStringList outputPaths;
 				int decodeTimes = 0;
-				QString ext = this->optionTabs_->tabText( this->optionTabs_->currentIndex() );
 				for( std::size_t i = 0; i < tracks.size(); ++i ) {
-					outputPaths.push_back( outDir + "/" + this->applyTemplate_( tracks[i] ) + "." + ext );
+					outputPaths.push_back( outDir + "/" + this->applyTemplate_( tracks[i] ) + "." + option->getSuffix() );
 					decodeTimes += static_cast< int >( tracks[i]->duration.toDouble() * 100 );
 				}
 

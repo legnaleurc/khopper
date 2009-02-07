@@ -46,6 +46,7 @@ namespace Khopper {
 		 * @return Smart pointer to Encoder
 		 */
 		virtual EncoderSP getEncoder() const;
+		virtual QString getSuffix() const;
 
 	private:
 		QButtonGroup * brChoise_;
