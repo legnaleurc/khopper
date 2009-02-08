@@ -80,4 +80,5 @@ win32 {
     release {
         LIBS += -lloki
     }
+    LIBS += -lavcodec-52 -lavformat-52 -lavutil-49
 }

@@ -55,11 +55,11 @@ namespace Khopper {
 		Index( double seconds );
 
 		/// minite
-		unsigned short int minute;
+		short int minute;
 		/// second
-		unsigned short int second;
+		short int second;
 		/// frame
-		unsigned short int frame;
+		short int frame;
 
 		/**
 		 * @brief Subtract assign operator

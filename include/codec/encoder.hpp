@@ -22,8 +22,8 @@
 #ifndef KHOPPER_ENCODER_HPP
 #define KHOPPER_ENCODER_HPP
 
-#include "codec_base.hpp"
 #include "tr1.hpp"
+#include "codec_base.hpp"
 
 #include <loki/Singleton.h>
 #include <loki/AssocVector.h>

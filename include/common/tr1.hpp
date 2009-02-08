@@ -22,7 +22,17 @@
 #ifndef KHOPPER_TR1_HPP
 #define KHOPPER_TR1_HPP
 
-#include <boost/shared_ptr.hpp>
+#if ( __GNUC__ >= 4 )
+#include <cstdint>
+#else
+#define __STDC_CONSTANT_MACROS
+#include <boost/cstdint.hpp>
+
+using boost::int64_t;
+#endif
+
+//#include <boost/shared_ptr.hpp>
+#ifdef __GNUC__
 #include <boost/regex.hpp>
 
 namespace std {
@@ -30,5 +40,8 @@ namespace std {
 	namespace tr1 = boost;
 
 }
+#else
+#include <regex>
+#endif
 
 #endif

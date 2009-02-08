@@ -51,11 +51,11 @@ namespace {
 		}
 	}
 
-	unsigned short int toUShort( const std::wstring & s ) {
+	short int toShort( const std::wstring & s ) {
 		std::wistringstream sin( s );
-		unsigned short int usi;
-		sin >> usi;
-		return usi;
+		short int si;
+		sin >> si;
+		return si;
 	}
 
 }
@@ -189,15 +189,18 @@ namespace Khopper {
 	}
 
 	void CUESheet::parseIndex_( const wstring & type, const wstring & num, const wstring & m, const wstring & s, const wstring & f, int trackNO ) {
-		unsigned short int minute = toUShort( m );
-		unsigned short int second = toUShort( s );
-		unsigned short int frame = toUShort( f );
+		short int minute = ::toShort( m );
+		short int second = ::toShort( s );
+		short int frame = ::toShort( f );
 
 		if( type == L"INDEX" ) {
-			if( toUShort( num ) == 1 ) {
+			short int n = ::toShort( num );
+			if( n == 1 ) {
 				this->tracks[trackNO]->startTime = Index( minute, second, frame );
-			} else {
+			} else if( n == 0 ) {
 				this->tracks[trackNO-1]->duration = Index( minute, second, frame ) - this->tracks[trackNO-1]->startTime;
+			} else {
+				throw Error< Parsing >( "Index value error!" );
 			}
 		} else if( type == L"PREGAP" ) {
 			this->tracks[trackNO]->preGap = Index( minute, second, frame );
@@ -216,7 +219,7 @@ namespace Khopper {
 
 	void CUESheet::parseTrack_( const wstring & num, const std::pair< wstring, Track::FileType > & audioData, const wstring & type ) {
 		TrackSP track( new Track );
-		track->index = toUShort( num );
+		track->index = ::toShort( num );
 		track->filePath = audioData.first;
 		if( type == L"AUDIO" ) {
 			track->dataType = Track::AUDIO;

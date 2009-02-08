@@ -22,7 +22,6 @@
 #ifndef KHOPPER_CODEC_BASE_HPP
 #define KHOPPER_CODEC_BASE_HPP
 
-#include <cstdint>
 #include <deque>
 
 namespace Khopper {
