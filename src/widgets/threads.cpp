@@ -27,7 +27,12 @@
 
 namespace Khopper {
 
-	ConverterThread::ConverterThread( QObject * parent ) : QThread( parent ) {
+	ConverterThread::ConverterThread( QObject * parent ):
+	QThread( parent ),
+	encoder_(),
+	tracks_(),
+	paths_(),
+	canceled_( false ) {
 	}
 
 	void ConverterThread::setOutput( EncoderSP output, const QStringList & paths ) {
@@ -42,6 +47,10 @@ namespace Khopper {
 		}
 	}
 
+	void ConverterThread::cancel() {
+		this->canceled_ = true;
+	}
+
 	void ConverterThread::run() {
 		// convert
 		try {
@@ -54,6 +63,10 @@ namespace Khopper {
 				emit currentTask( i + 1 );
 
 				this->tracks_[i]->convert( this->paths_[i].toStdWString(), this->encoder_ );
+				if( this->canceled_ ) {
+					this->canceled_ = false;
+					break;
+				}
 			}
 		} catch( std::exception & e ) {
 			emit error( tr( "Error on converting!" ), tr( e.what() ) );

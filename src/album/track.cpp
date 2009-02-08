@@ -63,10 +63,11 @@ namespace Khopper {
 	songWriter(),
 	startTime(),
 	title(),
-	decoder_( new Decoder ) {
+	decoder_( new Decoder ),
+	canceled_( false ) {
 	}
 
-	void Track::convert( const std::wstring & targetPath, EncoderSP encoder ) const {
+	void Track::convert( const std::wstring & targetPath, EncoderSP encoder ) {
 		this->decoder_->open( this->filePath );
 		encoder->open( targetPath );
 
@@ -80,12 +81,20 @@ namespace Khopper {
 
 		double decoded;
 		while( this->decoder_->hasNext() ) {
+			if( this->canceled_ ) {
+				break;
+			}
 			encoder->write( this->decoder_->read( decoded ) );
 			emit this->decodedTime( static_cast< int >( decoded * 100 ) );
 		}
 
+		this->canceled_ = false;
 		encoder->close();
 		this->decoder_->close();
+	}
+
+	void Track::cancel() {
+		this->canceled_ = true;
 	}
 
 	std::wstring Track::toStdWString() const {

@@ -56,6 +56,9 @@ namespace Khopper {
 		 */
 		void setTracks( const std::vector< TrackSP > & tracks );
 
+	public slots:
+		void cancel();
+
 	signals:
 		/**
 		 * @brief Send error message
@@ -92,6 +95,7 @@ namespace Khopper {
 		EncoderSP encoder_;
 		std::vector< TrackSP > tracks_;
 		QStringList paths_;
+		bool canceled_;
 	};
 
 }

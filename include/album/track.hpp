@@ -106,7 +106,7 @@ namespace Khopper {
 		 * @param [in] targetPath output file path
 		 * @param [in] encoder encoder setting
 		 */
-		virtual void convert( const std::wstring & targetPath, EncoderSP encoder ) const;
+		virtual void convert( const std::wstring & targetPath, EncoderSP encoder );
 
 		/**
 		 * @brief Dump track information
@@ -158,6 +158,9 @@ namespace Khopper {
 		/// Track title
 		std::wstring title;
 
+	public slots:
+		void cancel();
+
 	signals:
 		/**
 		 * @brief Decoded duration
@@ -167,6 +170,7 @@ namespace Khopper {
 
 	private:
 		DecoderSP decoder_;
+		bool canceled_;
 	};
 
 	/**
