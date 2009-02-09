@@ -136,9 +136,9 @@ namespace Khopper {
 			}
 		} else if( c == L"PERFORMER" ) {
 			if( trackNO == -1 ) {
-				this->performer = content;
+				this->artist = content;
 			} else {
-				this->tracks[trackNO]->performer = content;
+				this->tracks[trackNO]->artist = content;
 			}
 		} else if( c == L"SONGWRITER" ) {
 			if( trackNO == -1 ) {
@@ -254,7 +254,7 @@ namespace Khopper {
 	wstring CUESheet::toStdWString() const {
 		std::wostringstream sout;
 		sout << L"Title:\t" << this->title << L"\n";
-		sout << L"Performer:\t" << this->performer << L"\n";
+		sout << L"Artist:\t" << this->artist << L"\n";
 		sout << L"Song Writer:\t" << this->songWriter << L"\n";
 		sout << L"Catalog:\t" << this->catalog << L"\n";
 		sout << L"CD text:\t" << this->cdTextFile << L"\n";

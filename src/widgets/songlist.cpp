@@ -82,7 +82,7 @@ namespace Khopper {
 		// add all tracks
 		for( std::size_t row = 0; row < tracks.size(); ++row ) {
 			this->model_->setItem( row + offset, 0, new QStandardItem( QString::fromStdWString( tracks[row]->title ) ) );
-			this->model_->setItem( row + offset, 1, new QStandardItem( QString::fromStdWString( tracks[row]->performer ) ) );
+			this->model_->setItem( row + offset, 1, new QStandardItem( QString::fromStdWString( tracks[row]->artist ) ) );
 			this->model_->setItem( row + offset, 2, new QStandardItem( QString::fromStdWString( tracks[row]->album ) ) );
 
 			// fields should not be editable
@@ -125,7 +125,7 @@ namespace Khopper {
 			track->title = item->text().toStdWString();
 			break;
 		case 1:
-			track->performer = item->text().toStdWString();
+			track->artist = item->text().toStdWString();
 			break;
 		case 2:
 			track->album = item->text().toStdWString();

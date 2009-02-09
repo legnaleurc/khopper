@@ -45,6 +45,7 @@ namespace {
 namespace Khopper {
 
 	Track::Track():
+	artist(),
 	bitRate( 0 ),
 	channels( 0 ),
 	comments(),
@@ -56,7 +57,6 @@ namespace Khopper {
 	garbage(),
 	index( 0 ),
 	isrc(),
-	performer(),
 	postGap(),
 	preGap(),
 	sampleRate(),
@@ -100,7 +100,7 @@ namespace Khopper {
 	std::wstring Track::toStdWString() const {
 		std::wostringstream sout;
 		sout << L"Title:\t" << this->title << L"\n";
-		sout << L"Performer:\t" << this->performer << L"\n";
+		sout << L"Artist:\t" << this->artist << L"\n";
 		sout << L"Song Writer:\t" << this->songWriter << L"\n";
 		sout << L"Track index:\t" << this->index << L"\n";
 		sout << L"ISRC:\t" << this->isrc << L"\n";

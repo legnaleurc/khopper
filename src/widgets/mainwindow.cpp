@@ -191,7 +191,7 @@ namespace Khopper {
 	QString MainWindow::applyTemplate_( TrackSP track ) const {
 		QString tmp = this->fileNameTemplate_->text();
 		tmp.replace( "%t", QString::fromStdWString( track->title ) );
-		tmp.replace( "%a", QString::fromStdWString( track->performer ) );
+		tmp.replace( "%a", QString::fromStdWString( track->artist ) );
 		tmp.replace( "%%", "%" );
 		return tmp;
 	}
