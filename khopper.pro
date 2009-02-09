@@ -24,11 +24,11 @@ HEADERS += include/album/cuesheet.hpp \
            include/codec/codec_base.hpp \
            include/codec/decoder.hpp \
            include/codec/encoder.hpp \
-           include/options/abstractoption.hpp \
-           include/options/mp3option.hpp \
            include/common/error.hpp \
            include/common/os.hpp \
            include/common/tr1.hpp \
+           include/options/abstractoption.hpp \
+           include/options/mp3option.hpp \
            include/widgets/mainwindow.hpp \
            include/widgets/progress.hpp \
            include/widgets/songlist.hpp \
@@ -39,6 +39,7 @@ SOURCES += src/album/cuesheet.cpp \
            src/album/track.cpp \
            src/codec/decoder.cpp \
            src/codec/encoder.cpp \
+           src/common/error.cpp \
            src/options/abstractoption.cpp \
            src/options/mp3option.cpp \
            src/widgets/mainwindow.cpp \

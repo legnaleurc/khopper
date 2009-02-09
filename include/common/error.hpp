@@ -22,43 +22,52 @@
 #ifndef KHOPPER_ERROR_HPP
 #define KHOPPER_ERROR_HPP
 
-#include "os.hpp"
-
 #include <exception>
 #include <string>
 
 namespace Khopper {
 
 	/**
-	 * @brief Prototype of all errors
-	 * @tparam Type Custom error extension
+	 * @brief Base class of error types
+	 *
+	 * This class is the common code of error types,
+	 * to avoid
 	 */
-	template< typename Type >
-	class Error : public std::exception, public Type {
+	class ErrorBase : public std::exception {
 	public:
 		/**
 		 * @brief Construct with an error message
 		 * @param [in] msg Error message
 		 */
-		Error( const std::string & msg ) throw() : msg_( msg ) {}
+		ErrorBase( const std::string & msg ) throw();
 		/**
 		 * @brief Construct with an error message
 		 * @param [in] msg Error message
 		 */
-		Error( const std::wstring & msg ) throw() : msg_( os::encodeString( msg ) ) {}
+		ErrorBase( const std::wstring & msg ) throw();
+		/**
+		 * @brief Dummy destructor
+		 */
+		virtual ~ErrorBase() throw();
+
 		/**
 		 * @brief Get the error message
 		 * @return Error message
 		 */
-		virtual const char * what() const throw() {
-			return msg_.c_str();
-		}
-		/**
-		 * @brief Dummy destructor
-		 */
-		virtual ~Error() throw() {}
+		virtual const char * what() throw();
 	private:
 		std::string msg_;
+	};
+
+	/**
+	 * @brief Error class
+	 * @tparam Type Custom error extension
+	 */
+	template< typename Type >
+	class Error : public ErrorBase, public Type {
+	public:
+		Error( const std::string & msg ) throw() : ErrorBase( msg ) {}
+		Error( const std::wstring & msg ) throw() : ErrorBase( msg ) {}
 	};
 	
 	/**

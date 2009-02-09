@@ -21,6 +21,7 @@
  */
 #include "encoder.hpp"
 #include "error.hpp"
+#include "os.hpp"
 
 extern "C" {
 #include <avcodec.h>
