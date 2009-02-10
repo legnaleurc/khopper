@@ -87,8 +87,10 @@ namespace Khopper {
 		// NOTE: format recognization is done
 
 		// getting format information
-		if( this->pFormatContext_->duration != static_cast< int >( AV_NOPTS_VALUE ) ) {
+		if( this->pFormatContext_->duration != AV_NOPTS_VALUE ) {
 			this->duration_ = this->pFormatContext_->duration / static_cast< double >( AV_TIME_BASE );
+		} else {
+			throw Error< Codec >( "Can not get duration!" );
 		}
 		this->title_ = os::decodeString( this->pFormatContext_->title );
 		this->author_ = os::decodeString( this->pFormatContext_->author );
