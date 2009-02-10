@@ -31,7 +31,7 @@ namespace Khopper {
 	 * @brief Base class of error types
 	 *
 	 * This class is the common code of error types,
-	 * to avoid
+	 * to avoid duplicate code generation.
 	 */
 	class ErrorBase : public std::exception {
 	public:
@@ -46,7 +46,7 @@ namespace Khopper {
 		 */
 		ErrorBase( const std::wstring & msg ) throw();
 		/**
-		 * @brief Dummy destructor
+		 * @brief Virtual destructor
 		 */
 		virtual ~ErrorBase() throw();
 
@@ -80,12 +80,6 @@ namespace Khopper {
 	 * @brief Dummy error class
 	 */
 	class RunTime {
-	};
-
-	/**
-	 * @brief Dummy error class
-	 */
-	class Parsing {
 	};
 
 	/**

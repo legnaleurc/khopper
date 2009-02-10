@@ -90,6 +90,12 @@ namespace Khopper {
 		void parseGarbage_( const std::wstring &, int );
 	};
 
+	/**
+	 * @brief Parsing error class
+	 */
+	class Parsing {
+	};
+
 }
 
 #endif
