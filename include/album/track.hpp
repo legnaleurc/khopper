@@ -121,6 +121,8 @@ namespace Khopper {
 
 		/// Album title
 		std::wstring album;
+		/// Track artist
+		std::wstring artist;
 		/// Bit Rate
 		int bitRate;
 		/// Channels
@@ -143,8 +145,6 @@ namespace Khopper {
 		unsigned short int index;
 		/// ISRC
 		std::wstring isrc;
-		/// Track performer
-		std::wstring performer;
 		/// Gap to previous track (?)
 		Index postGap;
 		/// Gap to next track (?)

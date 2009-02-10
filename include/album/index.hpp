@@ -37,7 +37,6 @@ namespace Khopper {
 		 * Initialize to 0:0.0.
 		 */
 		Index();
-
 		/**
 		 * @brief Custom constructor
 		 * @param [in] m minute
@@ -47,7 +46,6 @@ namespace Khopper {
 		 * Initialize to m:s.f.
 		 */
 		Index( short int m, short int s, short int f );
-
 		/**
 		 * @brief Convert from double
 		 * @param [in] seconds Time stamp in seconds
@@ -79,7 +77,6 @@ namespace Khopper {
 		 * @return seconds in double
 		 */
 		double toDouble() const;
-
 		/**
 		 * @brief Convert to std::wstring
 		 * @return mm:ss.ff

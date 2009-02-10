@@ -62,6 +62,8 @@ namespace Khopper {
 		 */
 		std::wstring toStdWString() const;
 
+		/// Album performer
+		std::wstring artist;
 		/// Album catalog
 		std::wstring catalog;
 		/// CD Text File
@@ -70,8 +72,6 @@ namespace Khopper {
 		std::map< std::wstring, std::wstring > comments;
 		/// Garbage information
 		std::vector< std::wstring > garbage;
-		/// Album performer
-		std::wstring performer;
 		/// Album writer
 		std::wstring songWriter;
 		/// Album title

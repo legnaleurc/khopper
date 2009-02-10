@@ -98,22 +98,28 @@ namespace Khopper {
 			}
 		}
 
-		// set the album name for tracks, if any
-		for( std::vector< TrackSP >::iterator it = tracks.begin(); it != tracks.end(); ++it ) {
-			( *it )->album = this->title;
-		}
-
 		// get the total length, because cue sheet don't provide it
 		DecoderSP decoder( new Decoder );
 		decoder->open( currentFile.first );
 		if( decoder->is_open() ) {
-			TrackSP last( this->tracks.back() );
-			last->duration = Index( decoder->getDuration() ) - last->startTime;
-
 			for( std::vector< TrackSP >::iterator it = tracks.begin(); it != tracks.end(); ++it ) {
+				// cue information
+				( *it )->album = this->title;
+
+				// codec information
 				( *it )->bitRate = decoder->getBitRate();
 				( *it )->sampleRate = decoder->getSampleRate();
 				( *it )->channels = decoder->getChannels();
+
+				// duration hack
+				if( ( *it )->duration.toDouble() == 0.0 ) {
+					if( ( it + 1 ) != tracks.end() ) {
+						( *it )->duration = ( *(it+1) )->startTime - ( *it )->startTime;
+					} else {
+						TrackSP last( this->tracks.back() );
+						last->duration = Index( decoder->getDuration() ) - last->startTime;
+					}
+				}
 			}
 
 			decoder->close();
@@ -136,9 +142,9 @@ namespace Khopper {
 			}
 		} else if( c == L"PERFORMER" ) {
 			if( trackNO == -1 ) {
-				this->performer = content;
+				this->artist = content;
 			} else {
-				this->tracks[trackNO]->performer = content;
+				this->tracks[trackNO]->artist = content;
 			}
 		} else if( c == L"SONGWRITER" ) {
 			if( trackNO == -1 ) {
@@ -254,7 +260,7 @@ namespace Khopper {
 	wstring CUESheet::toStdWString() const {
 		std::wostringstream sout;
 		sout << L"Title:\t" << this->title << L"\n";
-		sout << L"Performer:\t" << this->performer << L"\n";
+		sout << L"Artist:\t" << this->artist << L"\n";
 		sout << L"Song Writer:\t" << this->songWriter << L"\n";
 		sout << L"Catalog:\t" << this->catalog << L"\n";
 		sout << L"CD text:\t" << this->cdTextFile << L"\n";
