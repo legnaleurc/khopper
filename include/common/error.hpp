@@ -66,30 +66,38 @@ namespace Khopper {
 	template< typename Type >
 	class Error : public ErrorBase, public Type {
 	public:
+		/**
+		 * @brief Construct with an error message
+		 * @param [in] msg Error message
+		 */
 		Error( const std::string & msg ) throw() : ErrorBase( msg ) {}
+		/**
+		 * @brief Construct with an error message
+		 * @param [in] msg Error message
+		 */
 		Error( const std::wstring & msg ) throw() : ErrorBase( msg ) {}
 	};
 	
 	/**
-	 * @brief Dummy error class
+	 * @brief Operating system error class
 	 */
 	class OS {
 	};
 	
 	/**
-	 * @brief Dummy error class
+	 * @brief Run-time error class
 	 */
 	class RunTime {
 	};
 
 	/**
-	 * @brief Dummy error class
+	 * @brief System error class
 	 */
 	class System {
 	};
 
 	/**
-	 * @brief Dummy error class
+	 * @brief Input/Ouput error class
 	 */
 	class IO {
 	};

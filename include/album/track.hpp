@@ -159,6 +159,9 @@ namespace Khopper {
 		std::wstring title;
 
 	public slots:
+		/**
+		 * @brief Cancel converting
+		 */
 		void cancel();
 
 	signals:

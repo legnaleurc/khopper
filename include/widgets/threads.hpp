@@ -57,6 +57,9 @@ namespace Khopper {
 		void setTracks( const std::vector< TrackSP > & tracks );
 
 	public slots:
+		/**
+		 * @brief Cancel converting
+		 */
 		void cancel();
 
 	signals:

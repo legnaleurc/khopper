@@ -1,6 +1,10 @@
 /**
  * @file tr1.hpp
  * @author Wei-Cheng Pan
+ * @attention If you need me, include me FIRST!
+ *
+ * This File is used to provide TR1 and C99 compatibility for
+ * different compilers.
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
  *
@@ -23,17 +27,16 @@
 #define KHOPPER_TR1_HPP
 
 #if ( __GNUC__ >= 4 )
-#include <cstdint>
+// gcc 4.x
+# include <cstdint>
 #else
-#define __STDC_CONSTANT_MACROS
-#include <boost/cstdint.hpp>
-
+# define __STDC_CONSTANT_MACROS
+# include <boost/cstdint.hpp>
 using boost::int64_t;
 #endif
 
-//#include <boost/shared_ptr.hpp>
 #ifdef __GNUC__
-#include <boost/regex.hpp>
+# include <boost/regex.hpp>
 
 namespace std {
 
@@ -41,7 +44,7 @@ namespace std {
 
 }
 #else
-#include <regex>
+# include <regex>
 #endif
 
 #endif
