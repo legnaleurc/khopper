@@ -112,7 +112,7 @@ namespace Khopper {
 		connect( this->cvt_, SIGNAL( finished() ), this->progress_, SLOT( accept() ) );
 		connect( this->cvt_, SIGNAL( error( const QString &, const QString & ) ), this, SLOT( showErrorMessage_( const QString &, const QString & ) ) );
 		// NOTE: works, but danger
-		connect( this->progress_, SIGNAL( rejected() ), this->cvt_, SLOT( terminate() ) );
+		connect( this->progress_, SIGNAL( rejected() ), this->cvt_, SLOT( cancel() ) );
 	}
 
 	void MainWindow::changeOutputPath_() {

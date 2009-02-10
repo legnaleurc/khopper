@@ -63,6 +63,7 @@ namespace Khopper {
 		void cancel();
 
 	signals:
+		void canceled();
 		/**
 		 * @brief Send error message
 		 * @param title Message box title

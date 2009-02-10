@@ -44,11 +44,13 @@ namespace Khopper {
 		this->tracks_ = tracks;
 		for( std::size_t i = 0; i < tracks.size(); ++i ) {
 			connect( tracks[i].get(), SIGNAL( decodedTime( int ) ), this, SIGNAL( step( int ) ) );
+			connect( this, SIGNAL( canceled() ), tracks[i].get(), SLOT( cancel() ) );
 		}
 	}
 
 	void ConverterThread::cancel() {
 		this->canceled_ = true;
+		emit canceled();
 	}
 
 	void ConverterThread::run() {

@@ -70,6 +70,7 @@ namespace Khopper {
 	void Track::convert( const std::wstring & targetPath, EncoderSP encoder ) {
 		this->decoder_->open( this->filePath );
 		encoder->open( targetPath );
+		this->canceled_ = false;
 
 		if( !this->decoder_->is_open() || !encoder->is_open() ) {
 			throw Error< RunTime >( "Can not open decoder or encoder!" );
@@ -88,7 +89,6 @@ namespace Khopper {
 			emit this->decodedTime( static_cast< int >( decoded * 100 ) );
 		}
 
-		this->canceled_ = false;
 		encoder->close();
 		this->decoder_->close();
 	}
