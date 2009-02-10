@@ -54,7 +54,7 @@ namespace Khopper {
 		 * @brief Get the error message
 		 * @return Error message
 		 */
-		virtual const char * what() throw();
+		virtual const char * what() const throw();
 	private:
 		std::string msg_;
 	};
