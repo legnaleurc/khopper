@@ -63,6 +63,9 @@ namespace Khopper {
 		void cancel();
 
 	signals:
+		/**
+		 * @brief Emited when convertion is canceled.
+		 */
 		void canceled();
 		/**
 		 * @brief Send error message
