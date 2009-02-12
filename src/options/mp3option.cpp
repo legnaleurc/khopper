@@ -106,6 +106,9 @@ namespace Khopper {
 		this->channels_->addItem( "Streao", QVariant( 2 ) );
 		this->channels_->setCurrentIndex( 1 );
 		cBox->addWidget( this->channels_ );
+
+		// FIXME: please correct VBR
+		vbr->setDisabled( true );
 	}
 
 	EncoderSP MP3Option::getEncoder() const {
