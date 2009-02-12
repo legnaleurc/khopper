@@ -80,7 +80,7 @@ namespace Khopper {
 		void initOptionWindow_();
 		void initPreference_();
 		void initAbout_();
-		QString applyTemplate_( TrackSP ) const;
+		QString parseTemplate_() const;
 
 	private slots:
 		void fire_();

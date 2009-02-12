@@ -31,6 +31,8 @@
 #include "abstractoption.hpp"
 #include "error.hpp"
 
+#include <boost/format.hpp>
+
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QMenuBar>
@@ -48,6 +50,15 @@
 #include <QDialogButtonBox>
 #include <QGroupBox>
 #include <QtDebug>
+
+namespace {
+
+	QString applyFormat( QString tpl, Khopper::TrackCSP track ) {
+		std::wstring result = ( boost::wformat( tpl.toStdWString() ) % track->title % track->artist % track->index ).str();
+		return QString::fromStdWString( result );
+	}
+
+}
 
 namespace Khopper {
 
@@ -188,10 +199,11 @@ namespace Khopper {
 		connect( buttons, SIGNAL( rejected() ), this->optionWindow_, SLOT( reject() ) );
 	}
 
-	QString MainWindow::applyTemplate_( TrackSP track ) const {
+	QString MainWindow::parseTemplate_() const {
 		QString tmp = this->fileNameTemplate_->text();
-		tmp.replace( "%t", QString::fromStdWString( track->title ) );
-		tmp.replace( "%a", QString::fromStdWString( track->artist ) );
+		tmp.replace( "%t", "%1%" );
+		tmp.replace( "%a", "%2%" );
+		tmp.replace( QRegExp( "%(\\d*)i" ), "%|3$0\\1|" );
 		tmp.replace( "%%", "%" );
 		return tmp;
 	}
@@ -226,8 +238,9 @@ namespace Khopper {
 
 				// generate output paths
 				QStringList outputPaths;
+				QString tpl = this->parseTemplate_();
 				for( std::size_t i = 0; i < tracks.size(); ++i ) {
-					outputPaths.push_back( this->getOutDir_( tracks[i] ) + "/" + this->applyTemplate_( tracks[i] ) + "." + option->getSuffix() );
+					outputPaths.push_back( this->getOutDir_( tracks[i] ) + "/" + ::applyFormat( tpl, tracks[i] ) + "." + option->getSuffix() );
 				}
 
 				// set progress bar
