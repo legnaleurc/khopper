@@ -142,7 +142,7 @@ namespace Khopper {
 		/// Garbage information
 		std::vector< std::wstring > garbage;
 		/// Index at album
-		unsigned short int index;
+		short int index;
 		/// ISRC
 		std::wstring isrc;
 		/// Gap to previous track (?)
@@ -180,6 +180,10 @@ namespace Khopper {
 	 * @brief Smart pointer of Track
 	 */
 	typedef std::tr1::shared_ptr< Track > TrackSP;
+	/**
+	 * @brief Smart pointer of const Track
+	 */
+	typedef std::tr1::shared_ptr< const Track > TrackCSP;
 
 }
 
