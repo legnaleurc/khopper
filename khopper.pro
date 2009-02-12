@@ -18,42 +18,44 @@ INCLUDEPATH += . \
                include/widgets
 
 # Input
-HEADERS += include/album/cuesheet.hpp \
-           include/album/index.hpp \
-           include/album/track.hpp \
-           include/codec/codec_base.hpp \
-           include/codec/decoder.hpp \
-           include/codec/encoder.hpp \
-           include/common/error.hpp \
-           include/common/os.hpp \
-           include/common/tr1.hpp \
-           include/options/abstractoption.hpp \
-           include/options/mp3option.hpp \
-           include/widgets/mainwindow.hpp \
-           include/widgets/preference.hpp \
-           include/widgets/progress.hpp \
-           include/widgets/songlist.hpp \
-           include/widgets/textcodec.hpp \
-           include/widgets/threads.hpp
-SOURCES += src/album/cuesheet.cpp \
-           src/album/index.cpp \
-           src/album/track.cpp \
-           src/codec/decoder.cpp \
-           src/codec/encoder.cpp \
-           src/common/error.cpp \
-           src/options/abstractoption.cpp \
-           src/options/mp3option.cpp \
-           src/widgets/mainwindow.cpp \
-           src/widgets/preference.cpp \
-           src/widgets/progress.cpp \
-           src/widgets/songlist.cpp \
-           src/widgets/textcodec.cpp \
-           src/widgets/threads.cpp \
-           src/khopper.cpp
+HEADERS   += include/album/cuesheet.hpp \
+             include/album/index.hpp \
+             include/album/track.hpp \
+             include/codec/codec_base.hpp \
+             include/codec/decoder.hpp \
+             include/codec/encoder.hpp \
+             include/common/error.hpp \
+             include/common/os.hpp \
+             include/common/tr1.hpp \
+             include/options/abstractoption.hpp \
+             include/options/mp3option.hpp \
+             include/widgets/mainwindow.hpp \
+             include/widgets/preference.hpp \
+             include/widgets/progress.hpp \
+             include/widgets/songlist.hpp \
+             include/widgets/textcodec.hpp \
+             include/widgets/threads.hpp
+SOURCES   += src/album/cuesheet.cpp \
+             src/album/index.cpp \
+             src/album/track.cpp \
+             src/codec/decoder.cpp \
+             src/codec/encoder.cpp \
+             src/common/error.cpp \
+             src/options/abstractoption.cpp \
+             src/options/mp3option.cpp \
+             src/widgets/mainwindow.cpp \
+             src/widgets/preference.cpp \
+             src/widgets/progress.cpp \
+             src/widgets/songlist.cpp \
+             src/widgets/textcodec.cpp \
+             src/widgets/threads.cpp \
+             src/khopper.cpp
+RESOURCES += khopper.qrc
 
 # config
-TARGET = khopper
+TARGET  = khopper
 MOC_DIR = tmp/moc
+RCC_DIR = tmp/rcc
 DESTDIR = bin
 CONFIG += debug_and_release
 

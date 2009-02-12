@@ -285,24 +285,61 @@ namespace Khopper {
 
 	void MainWindow::initAbout_() {
 		this->about_->setWindowTitle( tr( "About Khopper" ) );
-		this->about_->resize( 320, 240 );
 
-		QVBoxLayout * vbl = new QVBoxLayout( this->about_ );
-		this->about_->setLayout( vbl );
+		QVBoxLayout * mainBox = new QVBoxLayout( this->about_ );
+		this->about_->setLayout( mainBox );
+
+		QHBoxLayout * topBox = new QHBoxLayout;
+		mainBox->addLayout( topBox );
+
+		QLabel * logo = new QLabel( this->about_ );
+		logo->setPixmap( QPixmap( ":/image/logo.svg" ).scaled( 60, 60 ) );
+		topBox->addWidget( logo );
+
+		QLabel * version = new QLabel( this->about_ );
+		version->setText( tr(
+			"<h1>Khopper</h1>"
+			"Version 0.1.0<br/>"
+			"Part of FoolproofProject<br/>"
+		) );
+		topBox->addWidget( version );
 
 		QTabWidget * tw = new QTabWidget( this->about_ );
-		vbl->addWidget( tw );
+		mainBox->addWidget( tw );
 
 		QLabel * about = new QLabel( tr(
 			"An audio converter<br/>"
+			"<br/>"
 			"(C) 2008<br/>"
+			"<br/>"
 			"Present by Wei-Cheng Pan<br/>"
 			"<a href=\"http://legnaleurc.blogspot.com/search/label/Khopper\">Home Page</a><br/>"
-			"This program is a part of FoolproofProject<br/>"
-			"E-Mail: <a href=\"mailto:legnaleurc@gmail.com\">legnaleurc@gmail.com</a><br/>"
 		), tw );
 		about->setTextFormat( Qt::RichText );
 		tw->addTab( about, tr( "&About" ) );
+
+		QLabel * authors = new QLabel( this->about_ );
+		authors->setText( tr(
+			"Wei-Cheng Pan<br/>"
+			"&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"http://legnaleurc.blogspot.com\">http://legnaleurc.blogspot.com</a><br/>"
+			"&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"mailto:legnaleurc@gmail.com\">legnaleurc@gmail.com</a><br/>"
+			"<br/>"
+			"Meng-Lin Jhuang<br/>"
+			"<br/>"
+			"Jheng-Syuan Lin<br/>"
+			"<br/>"
+			"Zih-Jie Jhou<br/>"
+			"<br/>"
+			"Wei-Ru Zeng<br/>"
+			"<br/>"
+		) );
+		authors->setTextFormat( Qt::RichText );
+		tw->addTab( authors, tr( "A&uthors" ) );
+
+		QLabel * womm = new QLabel( this->about_ );
+		womm->setPixmap( QPixmap( ":/image/womm.png" ) );
+		womm->setAlignment( Qt::AlignCenter );
+		tw->addTab( womm, tr( "&Certification" ) );
 	}
 
 	void MainWindow::showErrorMessage_( const QString & title, const QString & msg ) {

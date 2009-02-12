@@ -37,6 +37,7 @@ int main( int argc, char * argv[] ) {
 	QApplication app( argc, argv );
 	av_register_all();
 
+	QApplication::setWindowIcon( QIcon( ":/image/logo.svg" ) );
 	QApplication::setOrganizationName( "FoolproofProject" );
 	QApplication::setApplicationName( "Khopper" );
 	QSettings::setDefaultFormat( QSettings::IniFormat );

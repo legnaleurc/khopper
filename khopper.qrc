@@ -1,0 +1,6 @@
+<!DOCTYPE RCC><RCC version="1.0">
+	<qresource prefix="/">
+		<file>image/logo.svg</file>
+		<file>image/womm.png</file>
+	</qresource>
+</RCC>
