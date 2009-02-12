@@ -63,7 +63,7 @@ namespace Khopper {
 				this->encoder_->setAuthor( this->tracks_[i]->artist );
 				this->encoder_->setAlbum( this->tracks_[i]->album );
 				emit taskName( QString::fromStdWString( this->tracks_[i]->title ) );
-				emit taskGoal( this->tracks_[i]->duration.toDouble() * 100 );
+				emit taskGoal( this->tracks_[i]->duration.toDouble() * 10000 );
 				emit currentTask( i + 1 );
 
 				this->tracks_[i]->convert( this->paths_[i].toStdWString(), this->encoder_ );

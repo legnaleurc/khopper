@@ -86,7 +86,7 @@ namespace Khopper {
 				break;
 			}
 			encoder->write( this->decoder_->read( decoded ) );
-			emit this->decodedTime( static_cast< int >( decoded * 100 ) );
+			emit this->decodedTime( static_cast< int >( decoded * 10000 ) );
 		}
 
 		encoder->close();
