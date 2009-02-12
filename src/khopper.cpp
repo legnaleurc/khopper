@@ -26,6 +26,7 @@
 #include "mainwindow.hpp"
 
 #include <QApplication>
+#include <QSettings>
 
 extern "C" {
 #include <avformat.h>
@@ -35,11 +36,15 @@ extern "C" {
 int main( int argc, char * argv[] ) {
 	QApplication app( argc, argv );
 	av_register_all();
-	
+
+	QApplication::setOrganizationName( "FoolproofProject" );
+	QApplication::setApplicationName( "Khopper" );
+	QSettings::setDefaultFormat( QSettings::IniFormat );
+
 	Khopper::MainWindow window;
 	window.setWindowTitle( "Khopper" );
 	window.resize( 640, 480 );
 	window.show();
-	
+
 	return app.exec();
 }

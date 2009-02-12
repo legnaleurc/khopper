@@ -30,6 +30,7 @@ HEADERS += include/album/cuesheet.hpp \
            include/options/abstractoption.hpp \
            include/options/mp3option.hpp \
            include/widgets/mainwindow.hpp \
+           include/widgets/preference.hpp \
            include/widgets/progress.hpp \
            include/widgets/songlist.hpp \
            include/widgets/textcodec.hpp \
@@ -43,6 +44,7 @@ SOURCES += src/album/cuesheet.cpp \
            src/options/abstractoption.cpp \
            src/options/mp3option.cpp \
            src/widgets/mainwindow.cpp \
+           src/widgets/preference.cpp \
            src/widgets/progress.cpp \
            src/widgets/songlist.cpp \
            src/widgets/textcodec.cpp \

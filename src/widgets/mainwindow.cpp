@@ -30,6 +30,7 @@
 #include "encoder.hpp"
 #include "abstractoption.hpp"
 #include "error.hpp"
+#include "preference.hpp"
 
 #include <boost/format.hpp>
 
@@ -48,7 +49,6 @@
 #include <QTabWidget>
 #include <QPushButton>
 #include <QDialogButtonBox>
-#include <QGroupBox>
 #include <QtDebug>
 
 namespace {
@@ -70,17 +70,14 @@ namespace Khopper {
 	optionTabs_( new QTabWidget( this ) ),
 	outputPath_( new QLineEdit( QDir::homePath(), this ) ),
 	useSourcePath_( new QCheckBox( tr( "Same as source directories" ), this ) ),
-	fileNameTemplate_( new QLineEdit( tr( "%2i_%t" ), this ) ),
 	progress_( new Progress( this ) ),
 	cvt_( new ConverterThread( this ) ),
-	preference_( new QWidget( this, Qt::Dialog ) ),
+	preference_( new Preference( this ) ),
 	about_( new QWidget( this, Qt::Dialog ) ) {
 		// Setting menu bar
 		this->initMenuBar_();
 		// Setting about widget
 		this->initAbout_();
-		// Setting preference widget
-		this->initPreference_();
 		// Setting output format select
 		this->initOptionWindow_();
 
@@ -158,7 +155,7 @@ namespace Khopper {
 
 		QAction * preference = new QAction( tr( "&Preference" ), this );
 		tool->addAction( preference );
-		connect( preference, SIGNAL( triggered() ), this->preference_, SLOT( show() ) );
+		connect( preference, SIGNAL( triggered() ), this->preference_, SLOT( exec() ) );
 		// tool menu done
 
 		// setting help menu
@@ -199,15 +196,6 @@ namespace Khopper {
 		connect( buttons, SIGNAL( rejected() ), this->optionWindow_, SLOT( reject() ) );
 	}
 
-	QString MainWindow::parseTemplate_() const {
-		QString tmp = this->fileNameTemplate_->text();
-		tmp.replace( "%t", "%1%" );
-		tmp.replace( "%a", "%2%" );
-		tmp.replace( QRegExp( "%(\\d*)i" ), "%|3$0\\1|" );
-		tmp.replace( "%%", "%" );
-		return tmp;
-	}
-
 	QString MainWindow::getOutDir_( TrackSP track ) const {
 		if( this->useSourcePath_->isChecked() ) {
 			return QFileInfo( QString::fromStdWString( track->filePath ) ).absolutePath();
@@ -238,7 +226,7 @@ namespace Khopper {
 
 				// generate output paths
 				QStringList outputPaths;
-				QString tpl = this->parseTemplate_();
+				QString tpl = this->preference_->getTemplate();
 				for( std::size_t i = 0; i < tracks.size(); ++i ) {
 					outputPaths.push_back( this->getOutDir_( tracks[i] ) + "/" + ::applyFormat( tpl, tracks[i] ) + "." + option->getSuffix() );
 				}
@@ -293,34 +281,6 @@ namespace Khopper {
 
 			this->songList_->appendTracks( tracks );
 		}
-	}
-
-	void MainWindow::initPreference_() {
-		this->preference_->setWindowTitle( tr( "Preference" ) );
-
-		QVBoxLayout * mainBox = new QVBoxLayout( this->preference_ );
-		this->preference_->setLayout( mainBox );
-
-		QGroupBox * fnGroup = new QGroupBox( tr( "File name template" ), this );
-		mainBox->addWidget( fnGroup );
-
-		QVBoxLayout * fnBox = new QVBoxLayout( fnGroup );
-		fnGroup->setLayout( fnBox );
-
-		// Output name template
-		this->fileNameTemplate_->setToolTip( tr(
-			"Keywords:\n"
-			"%t: title\n"
-			"%a: artist\n"
-			"%Ni: index of track, N means width\n"
-			"%%: \'%\' literal\n"
-			"Extensions will automaticaly append."
-		) );
-		fnBox->addWidget( this->fileNameTemplate_ );
-
-		QDialogButtonBox * buttons = new QDialogButtonBox( QDialogButtonBox::Ok, Qt::Horizontal, this );
-		mainBox->addWidget( buttons );
-		connect( buttons, SIGNAL( accepted() ), this->preference_, SLOT( close() ) );
 	}
 
 	void MainWindow::initAbout_() {

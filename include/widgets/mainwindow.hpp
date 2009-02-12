@@ -26,7 +26,6 @@
 
 #include <QMainWindow>
 #include <QComboBox>
-#include <QProgressDialog>
 #include <QLineEdit>
 #include <QCheckBox>
 
@@ -36,6 +35,7 @@ namespace Khopper {
 	class Progress;
 	class SongList;
 	class TextCodec;
+	class Preference;
 
 	/**
 	 * @class MainWindow
@@ -70,17 +70,14 @@ namespace Khopper {
 		QTabWidget * optionTabs_;
 		QLineEdit * outputPath_;
 		QCheckBox * useSourcePath_;
-		QLineEdit * fileNameTemplate_;
 		Progress * progress_;
 		ConverterThread * cvt_;
-		QWidget * preference_;
+		Preference * preference_;
 		QWidget * about_;
 
 		void initMenuBar_();
 		void initOptionWindow_();
-		void initPreference_();
 		void initAbout_();
-		QString parseTemplate_() const;
 
 	private slots:
 		void fire_();
