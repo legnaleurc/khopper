@@ -70,7 +70,7 @@ namespace Khopper {
 	optionTabs_( new QTabWidget( this ) ),
 	outputPath_( new QLineEdit( QDir::homePath(), this ) ),
 	useSourcePath_( new QCheckBox( tr( "Same as source directories" ), this ) ),
-	fileNameTemplate_( new QLineEdit( tr( "%t" ), this ) ),
+	fileNameTemplate_( new QLineEdit( tr( "%2i_%t" ), this ) ),
 	progress_( new Progress( this ) ),
 	cvt_( new ConverterThread( this ) ),
 	preference_( new QWidget( this, Qt::Dialog ) ),
@@ -311,7 +311,8 @@ namespace Khopper {
 		this->fileNameTemplate_->setToolTip( tr(
 			"Keywords:\n"
 			"%t: title\n"
-			"%a: author\n"
+			"%a: artist\n"
+			"%Ni: index of track, N means width\n"
 			"%%: \'%\' literal\n"
 			"Extensions will automaticaly append."
 		) );
