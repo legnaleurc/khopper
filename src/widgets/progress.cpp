@@ -40,6 +40,7 @@ namespace Khopper {
 		mainBox->setAlignment( Qt::AlignCenter );
 
 		mainBox->addWidget( this->itemName_ );
+		this->itemName_->setAlignment( Qt::AlignCenter );
 
 		QHBoxLayout * midBox = new QHBoxLayout;
 		mainBox->addLayout( midBox );

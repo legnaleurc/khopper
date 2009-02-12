@@ -150,7 +150,7 @@ namespace Khopper {
 		// file menu done
 
 		// setting tool menu
-		QMenu * tool = new QMenu( tr( "&Tool" ), menuBar );
+		QMenu * tool = new QMenu( tr( "&Tools" ), menuBar );
 		menuBar->addMenu( tool );
 
 		QAction * preference = new QAction( tr( "&Preference" ), this );
