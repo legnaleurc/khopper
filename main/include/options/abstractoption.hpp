@@ -72,4 +72,6 @@ namespace Khopper {
 
 }
 
+Q_DECLARE_INTERFACE( Khopper::AbstractOption, "org.foolproof.Plugin.AbstractOption/1.0" );
+
 #endif

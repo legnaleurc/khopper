@@ -33,6 +33,9 @@ namespace Khopper {
 	 * @brief Mp3 option widget
 	 */
 	class MP3Option : public AbstractOption {
+		Q_OBJECT
+		Q_INTERFACES( AbstractOption )
+
 	public:
 		/**
 		 * @brief Default constructor
