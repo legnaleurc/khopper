@@ -211,7 +211,7 @@ namespace Khopper {
 			if( plugin ) {
 				AbstractOption * option = qobject_cast< AbstractOption * >( plugin );
 				if( option ) {
-					this->optionTabs_->addTab( option, "test" );
+					this->optionTabs_->addTab( option, option->getTitle() );
 				}
 			}
 		}

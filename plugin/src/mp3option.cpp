@@ -137,4 +137,8 @@ namespace Khopper {
 		return "mp3";
 	}
 
+	QString MP3Option::getTitle() const {
+		return "MPeg layer 3";
+	}
+
 }

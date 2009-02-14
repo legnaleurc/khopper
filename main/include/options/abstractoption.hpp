@@ -61,6 +61,7 @@ namespace Khopper {
 		 * @return File extension, without leading '.'
 		 */
 		virtual QString getSuffix() const = 0;
+		virtual QString getTitle() const = 0;
 	};
 
 	/**

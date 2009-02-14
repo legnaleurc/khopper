@@ -54,6 +54,7 @@ namespace Khopper {
 		 * @return File extension, without leading '.'
 		 */
 		virtual QString getSuffix() const;
+		virtual QString getTitle() const;
 
 	private:
 		QButtonGroup * brChoise_;
