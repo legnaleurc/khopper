@@ -24,8 +24,6 @@
 
 #include "encoder.hpp"
 
-#include <loki/Factory.h>
-
 #include <QWidget>
 
 namespace Khopper {
@@ -63,13 +61,6 @@ namespace Khopper {
 		virtual QString getSuffix() const = 0;
 		virtual QString getTitle() const = 0;
 	};
-
-	/**
-	 * @brief AbstractOption factory
-	 *
-	 * Register by yourself.
-	 */
-	typedef Loki::SingletonHolder< Loki::Factory< AbstractOption, std::string >, Loki::CreateUsingNew, Loki::LongevityLifetime::DieAsSmallObjectChild > UIFactory;
 
 }
 

@@ -32,19 +32,6 @@
 
 Q_EXPORT_PLUGIN2( mp3option, Khopper::MP3Option );
 
-namespace {
-
-	Khopper::MP3Option * CreateMp3() {
-		return new Khopper::MP3Option;
-	}
-
-	const char * const MP3 = "mp3";
-
-	const bool reg_type = Khopper::EncoderList::Instance().insert( Khopper::EncoderList::ObjectType::value_type( MP3, "mp3" ) ).second;
-	const bool reg_fac = Khopper::UIFactory::Instance().Register( MP3, CreateMp3 );
-
-}
-
 namespace Khopper {
 
 	MP3Option::MP3Option( QWidget * parent, Qt::WindowFlags f ):

@@ -184,12 +184,7 @@ namespace Khopper {
 		this->optionWindow_->setLayout( mainBox );
 
 		mainBox->addWidget( this->optionTabs_ );
-// 		// Take out the output types
-// 		const EncoderList::ObjectType & tm = EncoderList::Instance();
-// 		for( EncoderList::ObjectType::const_iterator it = tm.begin(); it != tm.end(); ++it ) {
-// 			// it->first is object factory key, it->second is display name
-// 			this->optionTabs_->addTab( UIFactory::Instance().CreateObject( it->first ), QString::fromStdString( it->second ) );
-// 		}
+		// Take out the output types
 		QDir piDir( qApp->applicationDirPath() );
 #if defined(Q_OS_WIN)
 		if( piDir.dirName().toLower() == "debug" || piDir.dirName().toLower() == "release" ) {

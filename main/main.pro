@@ -72,17 +72,11 @@ unix {
     CONFIG += link_pkgconfig
     PKGCONFIG += libavcodec libavformat
     INCLUDEPATH += /usr/include/ffmpeg/libavcodec /usr/include/ffmpeg/libavformat
-    LIBS += -lloki -lboost_regex
+    LIBS += -lboost_regex
 }
 
 win32 {
     TEMPLATE = vcapp
     SOURCES += src/common/windows.cpp
-    debug {
-        LIBS += -lloki_D
-    }
-    release {
-        LIBS += -lloki
-    }
     LIBS += -lavcodec-52 -lavformat-52 -lavutil-49
 }

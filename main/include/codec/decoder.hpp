@@ -25,9 +25,6 @@
 #include "tr1.hpp"
 #include "codec_base.hpp"
 
-#include <loki/Factory.h>
-#include <loki/Singleton.h>
-
 #include <string>
 
 struct AVFormatContext;
@@ -219,11 +216,6 @@ namespace Khopper {
 	 * Use TR1 shared pointer.
 	 */
 	typedef std::tr1::shared_ptr< Decoder > DecoderSP;
-
-	/**
-	 * @brief The decoder Object Factory for Converter module
-	 */
-	typedef Loki::SingletonHolder< Loki::Factory< Decoder, std::string >, Loki::CreateUsingNew, Loki::LongevityLifetime::DieAsSmallObjectChild > DecoderFactory;
 
 }
 

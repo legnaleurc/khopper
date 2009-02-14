@@ -25,9 +25,6 @@
 #include "tr1.hpp"
 #include "codec_base.hpp"
 
-#include <loki/Singleton.h>
-#include <loki/AssocVector.h>
-
 #include <string>
 
 struct AVFormatContext;
@@ -173,13 +170,6 @@ namespace Khopper {
 	 * Use TR1 shared pointer.
 	 */
 	typedef std::tr1::shared_ptr< Encoder > EncoderSP;
-
-	/**
-	 * @brief Encoder type list
-	 *
-	 * Key is identifier, value is display name on tab.
-	 */
-	typedef Loki::SingletonHolder< Loki::AssocVector< std::string, std::string > > EncoderList;
 
 }
 
