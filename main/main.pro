@@ -68,7 +68,7 @@ CONFIG( debug, debug|release ) {
 unix {
     TEMPLATE = app
     SOURCES += src/common/linux.cpp
-    QMAKE_CXXFLAGS += -std=c++0x
+    QMAKE_CXXFLAGS += -std=c++0x -fPIC
     CONFIG += link_pkgconfig
     PKGCONFIG += libavcodec libavformat
     INCLUDEPATH += /usr/include/ffmpeg/libavcodec /usr/include/ffmpeg/libavformat

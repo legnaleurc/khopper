@@ -7,6 +7,8 @@ INCLUDEPATH += include \
 DEPANDPATH += include \
               src \
               ../main/include/options \
+              ../main/include/common \
+              ../main/src/common \
               ../main/src/options \
               ../main/include/codec \
               ../main/src/codec

@@ -207,6 +207,7 @@ namespace Khopper {
 			qDebug() << fileName;
 			QPluginLoader piLoader( piDir.absoluteFilePath( fileName ) );
 			QObject * plugin = piLoader.instance();
+			qDebug() << piLoader.errorString();
 			if( plugin ) {
 				AbstractOption * option = qobject_cast< AbstractOption * >( plugin );
 				if( option ) {
