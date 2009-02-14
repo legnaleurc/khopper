@@ -204,10 +204,14 @@ namespace Khopper {
 #endif
 		piDir.cd( "plugins" );
 		foreach( QString fileName, piDir.entryList( QDir::Files ) ) {
+			qDebug() << fileName;
 			QPluginLoader piLoader( piDir.absoluteFilePath( fileName ) );
-			AbstractOption * plugin = qobject_cast< AbstractOption * >( piLoader.instance() );
+			QObject * plugin = piLoader.instance();
 			if( plugin ) {
-				this->optionTabs_->addTab( plugin, "test" );
+				AbstractOption * option = qobject_cast< AbstractOption * >( plugin );
+				if( option ) {
+					this->optionTabs_->addTab( option, "test" );
+				}
 			}
 		}
 
