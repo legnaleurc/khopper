@@ -17,7 +17,8 @@ HEADERS = include/mp3option.hpp \
           ../main/include/codec/encoder.hpp
 SOURCES = src/mp3option.cpp \
           ../main/src/options/abstractoption.cpp \
-          ../main/src/codec/encoder.cpp
+          ../main/src/codec/encoder.cpp \
+          ../main/src/common/error.cpp
 TARGET = $$qtLibraryTarget(mp3option)
 MOC_DIR = ../tmp/moc
 
