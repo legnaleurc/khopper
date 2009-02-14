@@ -28,8 +28,9 @@
 #include <QVariant>
 #include <QLabel>
 #include <QtDebug>
+#include <QtPlugin>
 
-Q_EXPORT_PLUGIN2( mp3option, MP3Option );
+Q_EXPORT_PLUGIN2( mp3option, Khopper::MP3Option );
 
 namespace {
 

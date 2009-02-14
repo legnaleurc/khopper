@@ -28,7 +28,6 @@ HEADERS   += include/album/cuesheet.hpp \
              include/common/os.hpp \
              include/common/tr1.hpp \
              include/options/abstractoption.hpp \
-             include/options/mp3option.hpp \
              include/widgets/mainwindow.hpp \
              include/widgets/preference.hpp \
              include/widgets/progress.hpp \
@@ -42,7 +41,6 @@ SOURCES   += src/album/cuesheet.cpp \
              src/codec/encoder.cpp \
              src/common/error.cpp \
              src/options/abstractoption.cpp \
-             src/options/mp3option.cpp \
              src/widgets/mainwindow.cpp \
              src/widgets/preference.cpp \
              src/widgets/progress.cpp \
@@ -50,19 +48,20 @@ SOURCES   += src/album/cuesheet.cpp \
              src/widgets/textcodec.cpp \
              src/widgets/threads.cpp \
              src/khopper.cpp
-RESOURCES += khopper.qrc
+RESOURCES += main.qrc
 
 # config
 TARGET  = khopper
-MOC_DIR = tmp/moc
-RCC_DIR = tmp/rcc
-DESTDIR = bin
+MOC_DIR = ../tmp/moc
+RCC_DIR = ../tmp/rcc
 CONFIG += debug_and_release
 
 CONFIG( debug, debug|release ) {
-    OBJECTS_DIR = tmp/obj/debug
+    DESTDIR = ../bin/debug
+    OBJECTS_DIR = ../tmp/obj/debug
 } else {
-    OBJECTS_DIR = tmp/obj/release
+    DESTDIR = ../bin/release
+    OBJECTS_DIR = ../tmp/obj/release
     DEFINES += QT_NO_DEBUG_OUTPUT
 }
 

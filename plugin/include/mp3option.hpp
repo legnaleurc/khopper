@@ -34,7 +34,7 @@ namespace Khopper {
 	 */
 	class MP3Option : public AbstractOption {
 		Q_OBJECT
-		Q_INTERFACES( AbstractOption )
+		Q_INTERFACES( Khopper::AbstractOption )
 
 	public:
 		/**
