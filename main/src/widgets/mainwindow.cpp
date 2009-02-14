@@ -50,6 +50,7 @@
 #include <QPushButton>
 #include <QDialogButtonBox>
 #include <QtDebug>
+#include <QPluginLoader>
 
 namespace {
 
@@ -183,11 +184,31 @@ namespace Khopper {
 		this->optionWindow_->setLayout( mainBox );
 
 		mainBox->addWidget( this->optionTabs_ );
-		// Take out the output types
-		const EncoderList::ObjectType & tm = EncoderList::Instance();
-		for( EncoderList::ObjectType::const_iterator it = tm.begin(); it != tm.end(); ++it ) {
-			// it->first is object factory key, it->second is display name
-			this->optionTabs_->addTab( UIFactory::Instance().CreateObject( it->first ), QString::fromStdString( it->second ) );
+// 		// Take out the output types
+// 		const EncoderList::ObjectType & tm = EncoderList::Instance();
+// 		for( EncoderList::ObjectType::const_iterator it = tm.begin(); it != tm.end(); ++it ) {
+// 			// it->first is object factory key, it->second is display name
+// 			this->optionTabs_->addTab( UIFactory::Instance().CreateObject( it->first ), QString::fromStdString( it->second ) );
+// 		}
+		QDir piDir( qApp->applicationDirPath() );
+#if defined(Q_OS_WIN)
+		if( piDir.dirName().toLower() == "debug" || piDir.dirName().toLower() == "release" ) {
+			piDir.cdUp();
+		}
+#elif defined(Q_OS_MAC)
+		if( piDir.dirName() == "MacOS" ) {
+			piDir.cdUp();
+			piDir.cdUp();
+			piDir.cdUp();
+		}
+#endif
+		piDir.cd( "plugins" );
+		foreach( QString fileName, piDir.entryList( QDir::Files ) ) {
+			QPluginLoader piLoader( piDir.absoluteFilePath( fileName ) );
+			AbstractOption * plugin = qobject_cast< AbstractOption * >( piLoader.instance() );
+			if( plugin ) {
+				this->optionTabs_->addTab( plugin, "test" );
+			}
 		}
 
 		QDialogButtonBox * buttons = new QDialogButtonBox( QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, this );
