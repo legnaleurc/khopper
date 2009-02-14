@@ -1,5 +1,5 @@
 TEMPLATE = lib
-CONFIG += plugin
+CONFIG += plugin debug_and_release
 INCLUDEPATH += include \
                ../main/include/common \
                ../main/include/options \
@@ -17,9 +17,16 @@ SOURCES = src/mp3option.cpp \
           ../main/src/options/abstractoption.cpp \
           ../main/src/codec/encoder.cpp
 TARGET = $$qtLibraryTarget(mp3option)
-DESTDIR = ../plugins
-OBJECTS_DIR = ../tmp/obj
 MOC_DIR = ../tmp/moc
+
+CONFIG( debug, debug|release ) {
+    DESTDIR = ../bin/debug/plugins
+    OBJECTS_DIR = ../tmp/obj/debug
+} else {
+    DESTDIR = ../bin/release/plugins
+    OBJECTS_DIR = ../tmp/obj/release
+    DEFINES += QT_NO_DEBUG_OUTPUT
+}
 
 unix {
     QMAKE_CXXFLAGS += -std=c++0x
