@@ -62,7 +62,7 @@ namespace Khopper {
 	sampleRate_( -1 ),
 	channels_( -1 ),
 	title_(),
-	author_(),
+	artist_(),
 	album_() {
 	}
 
@@ -92,8 +92,8 @@ namespace Khopper {
 		this->title_ = os::encodeString( title, 1 );
 	}
 
-	void Encoder::setAuthor( const std::wstring & author ) {
-		this->author_ = os::encodeString( author, 1 );
+	void Encoder::setArtist( const std::wstring & artist ) {
+		this->artist_ = os::encodeString( artist, 1 );
 	}
 
 	void Encoder::setAlbum( const std::wstring & album ) {
@@ -119,7 +119,7 @@ namespace Khopper {
 		// setting format information
 		std::strncpy( this->pFormatContext_->filename, this->filePath_.c_str(), sizeof( this->pFormatContext_->filename ) );
 		std::strncpy( this->pFormatContext_->title, this->title_.c_str(), sizeof( this->pFormatContext_->title ) );
-		std::strncpy( this->pFormatContext_->author, this->author_.c_str(), sizeof( this->pFormatContext_->author ) );
+		std::strncpy( this->pFormatContext_->author, this->artist_.c_str(), sizeof( this->pFormatContext_->author ) );
 		std::strncpy( this->pFormatContext_->album, this->album_.c_str(), sizeof( this->pFormatContext_->album ) );
 
 		AVCodecContext * pCC = NULL;

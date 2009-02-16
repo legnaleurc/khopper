@@ -117,10 +117,10 @@ namespace Khopper {
 		}
 		/**
 		 * @brief Get author
-		 * @return Author
+		 * @return Artist
 		 */
-		const std::wstring & getAuthor() const {
-			return this->author_;
+		const std::wstring & getArtist() const {
+			return this->artist_;
 		}
 		/**
 		 * @brief Get copyright
@@ -201,7 +201,7 @@ namespace Khopper {
 
 		double duration_;
 		std::wstring title_;
-		std::wstring author_;
+		std::wstring artist_;
 		std::wstring copyright_;
 		std::wstring comment_;
 		std::wstring album_;

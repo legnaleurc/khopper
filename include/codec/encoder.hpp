@@ -102,11 +102,11 @@ namespace Khopper {
 		 */
 		void setTitle( const std::wstring & title );
 		/**
-		 * @brief Set author
-		 * @param [in] author
+		 * @brief Set artist
+		 * @param [in] artist
 		 * @note Change will ONLY apply on openning.
 		 */
-		void setAuthor( const std::wstring & author );
+		void setArtist( const std::wstring & artist );
 		/**
 		 * @brief Set album title
 		 * @param [in] album
@@ -163,7 +163,7 @@ namespace Khopper {
 		int sampleRate_;
 		int channels_;
 		std::string title_;
-		std::string author_;
+		std::string artist_;
 		std::string album_;
 	};
 

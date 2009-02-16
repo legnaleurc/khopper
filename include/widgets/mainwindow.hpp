@@ -56,11 +56,12 @@ namespace Khopper {
 		/**
 		 * @brief Open the file widget
 		 */
-		void showOpenFileDialog();
+		void showOpenFilesDialog();
 		/**
-		 * @brief Open file
-		 * @param [in] filePath file path
+		 * @brief Open files
+		 * @param [in] filePaths file path
 		 */
+		void open( const QStringList & filePaths );
 		void open( const QString & filePath );
 
 	private:

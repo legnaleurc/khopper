@@ -60,7 +60,7 @@ namespace Khopper {
 		try {
 			for( std::size_t i = 0; i < this->tracks_.size(); ++i ) {
 				this->encoder_->setTitle( this->tracks_[i]->title );
-				this->encoder_->setAuthor( this->tracks_[i]->artist );
+				this->encoder_->setArtist( this->tracks_[i]->artist );
 				this->encoder_->setAlbum( this->tracks_[i]->album );
 				emit taskName( QString::fromStdWString( this->tracks_[i]->title ) );
 				emit taskGoal( this->tracks_[i]->duration.toDouble() * 10000 );

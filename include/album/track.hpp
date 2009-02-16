@@ -101,6 +101,8 @@ namespace Khopper {
 		 */
 		Track();
 
+		void open( const std::wstring & filePath );
+
 		/**
 		 * @brief Convert this track
 		 * @param [in] targetPath output file path
@@ -172,7 +174,7 @@ namespace Khopper {
 		void decodedTime( int ms ) const;
 
 	private:
-		DecoderSP decoder_;
+// 		DecoderSP decoder_;
 		bool canceled_;
 	};
 

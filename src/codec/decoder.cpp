@@ -51,7 +51,7 @@ namespace Khopper {
 	timeBase_( 0.0 ),
 	duration_( 0.0 ),
 	title_(),
-	author_(),
+	artist_(),
 	copyright_(),
 	comment_(),
 	album_(),
@@ -93,7 +93,7 @@ namespace Khopper {
 			throw Error< Codec >( "Can not get duration!" );
 		}
 		this->title_ = os::decodeString( this->pFormatContext_->title );
-		this->author_ = os::decodeString( this->pFormatContext_->author );
+		this->artist_ = os::decodeString( this->pFormatContext_->author );
 		this->copyright_ = os::decodeString( this->pFormatContext_->copyright );
 		this->comment_ = os::decodeString( this->pFormatContext_->comment );
 		this->album_ = os::decodeString( this->pFormatContext_->album );
@@ -136,7 +136,7 @@ namespace Khopper {
 		// clear format information
 		this->duration_ = 0.0;
 		this->title_.clear();
-		this->author_.clear();
+		this->artist_.clear();
 		this->copyright_.clear();
 		this->comment_.clear();
 		this->album_.clear();

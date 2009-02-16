@@ -63,34 +63,53 @@ namespace Khopper {
 	songWriter(),
 	startTime(),
 	title(),
-	decoder_( new Decoder ),
 	canceled_( false ) {
 	}
 
+	void Track::open( const std::wstring & filePath ) {
+		this->filePath = filePath;
+
+		DecoderSP decoder( new Decoder );
+		decoder->open( this->filePath );
+		if( decoder->is_open() ) {
+			this->artist = decoder->getArtist();
+			this->bitRate = decoder->getBitRate();
+			this->channels = decoder->getChannels();
+			this->duration = decoder->getDuration();
+			this->sampleRate = decoder->getSampleRate();
+			this->title = decoder->getTitle();
+
+			decoder->close();
+		} else {
+			throw Error< Codec >( "Can not open file!" );
+		}
+	}
+
 	void Track::convert( const std::wstring & targetPath, EncoderSP encoder ) {
-		this->decoder_->open( this->filePath );
+		DecoderSP decoder( new Decoder );
+		decoder->open( this->filePath );
 		encoder->open( targetPath );
 		this->canceled_ = false;
 
-		if( !this->decoder_->is_open() || !encoder->is_open() ) {
+		if( !decoder->is_open() || !encoder->is_open() ) {
 			throw Error< RunTime >( "Can not open decoder or encoder!" );
 		}
 
 		double begin = this->startTime.toDouble();
 		double end = begin + this->duration.toDouble();
-		this->decoder_->setRange( begin, end );
+		decoder->setRange( begin, end );
 
 		double decoded;
-		while( this->decoder_->hasNext() ) {
+		while( decoder->hasNext() ) {
 			if( this->canceled_ ) {
 				break;
 			}
-			encoder->write( this->decoder_->read( decoded ) );
+			encoder->write( decoder->read( decoded ) );
 			emit this->decodedTime( static_cast< int >( decoded * 10000 ) );
 		}
 
 		encoder->close();
-		this->decoder_->close();
+		decoder->close();
 	}
 
 	void Track::cancel() {
