@@ -27,7 +27,7 @@ namespace Khopper {
 	ErrorBase::ErrorBase( const std::string & msg ) throw() : msg_( msg ) {
 	}
 
-	ErrorBase::ErrorBase( const std::wstring & msg ) throw() : msg_( os::encodeString( msg ) ) {
+	ErrorBase::ErrorBase( const std::wstring & msg ) throw() : msg_( os::encodeString( msg, 1 ) ) {
 	}
 
 	ErrorBase::~ErrorBase() throw() {

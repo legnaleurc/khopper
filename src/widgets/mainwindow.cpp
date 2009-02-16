@@ -239,9 +239,9 @@ namespace Khopper {
 				this->cvt_->start();
 				this->progress_->exec();
 			} catch( Error< RunTime > & e ) {
-				this->showErrorMessage_( tr( "Run-time error!" ), tr( e.what() ) );
+				this->showErrorMessage_( tr( "Run-time error!" ), trUtf8( e.what() ) );
 			} catch( std::exception & e ) {
-				this->showErrorMessage_( tr( "Unknown error!" ), tr( e.what() ) );
+				this->showErrorMessage_( tr( "Unknown error!" ), trUtf8( e.what() ) );
 			}
 		}
 	}
@@ -272,7 +272,7 @@ namespace Khopper {
 					try {
 						tracks = CUESheet( codec_->getDecoded().toStdWString(), fI.absolutePath().toStdWString() ).tracks;
 					} catch( std::exception & e ) {
-						this->showErrorMessage_( tr( "Error on parsing CUE Sheet!" ), tr( e.what() ) );
+						this->showErrorMessage_( tr( "Error on parsing CUE Sheet!" ), trUtf8( e.what() ) );
 					}
 				}
 			} else {

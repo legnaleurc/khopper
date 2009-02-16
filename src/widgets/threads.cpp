@@ -73,7 +73,7 @@ namespace Khopper {
 				}
 			}
 		} catch( std::exception & e ) {
-			emit error( tr( "Error on converting!" ), tr( e.what() ) );
+			emit error( tr( "Error on converting!" ), trUtf8( e.what() ) );
 		}
 	}
 
