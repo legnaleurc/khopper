@@ -26,6 +26,7 @@ HEADERS   += include/album/cuesheet.hpp \
              include/codec/encoder.hpp \
              include/common/error.hpp \
              include/common/os.hpp \
+             include/common/text.hpp \
              include/common/tr1.hpp \
              include/options/abstractoption.hpp \
              include/options/mp3option.hpp \
@@ -42,6 +43,7 @@ SOURCES   += src/album/cuesheet.cpp \
              src/codec/decoder.cpp \
              src/codec/encoder.cpp \
              src/common/error.cpp \
+             src/common/text.cpp \
              src/options/abstractoption.cpp \
              src/options/mp3option.cpp \
              src/widgets/converter.cpp \

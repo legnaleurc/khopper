@@ -21,6 +21,7 @@
  */
 #include "track.hpp"
 #include "decoder.hpp"
+#include "text.hpp"
 #include "error.hpp"
 
 #include <QtDebug>
@@ -46,6 +47,7 @@ namespace {
 namespace Khopper {
 
 	Track::Track():
+	album(),
 	artist(),
 	bitRate( 0 ),
 	channels( 0 ),
@@ -72,12 +74,13 @@ namespace Khopper {
 		DecoderSP decoder( new Decoder );
 		decoder->open( this->filePath );
 		if( decoder->is_open() ) {
-			this->artist = decoder->getArtist();
+			this->album = text::fromUTF8( decoder->getAlbum() );
+			this->artist = text::fromUTF8( decoder->getArtist() );
 			this->bitRate = decoder->getBitRate();
 			this->channels = decoder->getChannels();
 			this->duration = decoder->getDuration();
 			this->sampleRate = decoder->getSampleRate();
-			this->title = decoder->getTitle();
+			this->title = text::fromUTF8( decoder->getTitle() );
 
 			decoder->close();
 		} else {

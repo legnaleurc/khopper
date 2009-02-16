@@ -39,9 +39,6 @@ namespace Khopper {
 	/**
 	 * @brief Decoder interface
 	 * @sa Encoder
-	 *
-	 * This module uses std::wstring to store unicode string.\n
-	 * UTF-16 on Windows(R), UCS4 on POSIX.
 	 */
 	class Decoder {
 	public:
@@ -112,35 +109,35 @@ namespace Khopper {
 		 * @brief Get title
 		 * @return Title
 		 */
-		const std::wstring & getTitle() const {
+		const std::string & getTitle() const {
 			return this->title_;
 		}
 		/**
 		 * @brief Get author
 		 * @return Artist
 		 */
-		const std::wstring & getArtist() const {
+		const std::string & getArtist() const {
 			return this->artist_;
 		}
 		/**
 		 * @brief Get copyright
 		 * @return Copyright
 		 */
-		const std::wstring & getCopyright() const {
+		const std::string & getCopyright() const {
 			return this->copyright_;
 		}
 		/**
 		 * @brief Get comment
 		 * @return Comment
 		 */
-		const std::wstring & getComment() const {
+		const std::string & getComment() const {
 			return this->comment_;
 		}
 		/**
 		 * @brief Get album title
 		 * @return Album title
 		 */
-		const std::wstring & getAlbum() const {
+		const std::string & getAlbum() const {
 			return this->album_;
 		}
 		/**
@@ -161,7 +158,7 @@ namespace Khopper {
 		 * @brief Get genre
 		 * @return Genre
 		 */
-		const std::wstring & getGenre() const {
+		const std::string & getGenre() const {
 			return this->genre_;
 		}
 		/**
@@ -200,14 +197,14 @@ namespace Khopper {
 		double timeBase_;
 
 		double duration_;
-		std::wstring title_;
-		std::wstring artist_;
-		std::wstring copyright_;
-		std::wstring comment_;
-		std::wstring album_;
+		std::string title_;
+		std::string artist_;
+		std::string copyright_;
+		std::string comment_;
+		std::string album_;
 		int year_;
 		int index_;
-		std::wstring genre_;
+		std::string genre_;
 		int bitRate_;
 		int sampleRate_;
 		int channels_;

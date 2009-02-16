@@ -38,7 +38,6 @@ namespace Khopper {
 
 	/**
 	 * @brief Encoder interface
-	 *
 	 * @sa Decoder
 	 */
 	class Encoder {

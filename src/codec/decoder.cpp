@@ -92,14 +92,14 @@ namespace Khopper {
 		} else {
 			throw Error< Codec >( "Can not get duration!" );
 		}
-		this->title_ = os::decodeString( this->pFormatContext_->title );
-		this->artist_ = os::decodeString( this->pFormatContext_->author );
-		this->copyright_ = os::decodeString( this->pFormatContext_->copyright );
-		this->comment_ = os::decodeString( this->pFormatContext_->comment );
-		this->album_ = os::decodeString( this->pFormatContext_->album );
+		this->title_ = this->pFormatContext_->title;
+		this->artist_ = this->pFormatContext_->author;
+		this->copyright_ = this->pFormatContext_->copyright;
+		this->comment_ = this->pFormatContext_->comment;
+		this->album_ = this->pFormatContext_->album;
 		this->year_ = this->pFormatContext_->year;
 		this->index_ = this->pFormatContext_->track;
-		this->genre_ = os::decodeString( this->pFormatContext_->genre );
+		this->genre_ = this->pFormatContext_->genre;
 
 		int a_stream = -1;
 		for( std::size_t i = 0 ; i < pFormatContext_->nb_streams; ++i ) {
