@@ -79,13 +79,13 @@ namespace Khopper {
 		 */
 		Error( const std::wstring & msg ) throw() : ErrorBase( msg ) {}
 	};
-	
+
 	/**
 	 * @brief Operating system error class
 	 */
 	class OS {
 	};
-	
+
 	/**
 	 * @brief Run-time error class
 	 */
