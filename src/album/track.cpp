@@ -20,6 +20,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "track.hpp"
+#include "decoder.hpp"
 #include "error.hpp"
 
 #include <QtDebug>
@@ -62,11 +63,10 @@ namespace Khopper {
 	sampleRate(),
 	songWriter(),
 	startTime(),
-	title(),
-	canceled_( false ) {
+	title() {
 	}
 
-	void Track::open( const std::wstring & filePath ) {
+	void Track::load( const std::wstring & filePath ) {
 		this->filePath = filePath;
 
 		DecoderSP decoder( new Decoder );
@@ -83,37 +83,6 @@ namespace Khopper {
 		} else {
 			throw Error< Codec >( "Can not open file!" );
 		}
-	}
-
-	void Track::convert( const std::wstring & targetPath, EncoderSP encoder ) {
-		DecoderSP decoder( new Decoder );
-		decoder->open( this->filePath );
-		encoder->open( targetPath );
-		this->canceled_ = false;
-
-		if( !decoder->is_open() || !encoder->is_open() ) {
-			throw Error< RunTime >( "Can not open decoder or encoder!" );
-		}
-
-		double begin = this->startTime.toDouble();
-		double end = begin + this->duration.toDouble();
-		decoder->setRange( begin, end );
-
-		double decoded;
-		while( decoder->hasNext() ) {
-			if( this->canceled_ ) {
-				break;
-			}
-			encoder->write( decoder->read( decoded ) );
-			emit this->decodedTime( static_cast< int >( decoded * 10000 ) );
-		}
-
-		encoder->close();
-		decoder->close();
-	}
-
-	void Track::cancel() {
-		this->canceled_ = true;
 	}
 
 	std::wstring Track::toStdWString() const {

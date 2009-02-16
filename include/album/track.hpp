@@ -22,11 +22,8 @@
 #ifndef KHOPPER_TRACK_HPP
 #define KHOPPER_TRACK_HPP
 
+#include "tr1.hpp"
 #include "index.hpp"
-#include "encoder.hpp"
-#include "decoder.hpp"
-
-#include <QObject>
 
 #include <string>
 #include <vector>
@@ -40,9 +37,7 @@ namespace Khopper {
 	 * This module uses std::wstring to store unicode string.\n
 	 * UTF-16 on Windows(R), UCS4 on POSIX.
 	 */
-	class Track : public QObject {
-		Q_OBJECT
-
+	class Track {
 	public:
 		/**
 		 * @brief Type of audio file
@@ -101,14 +96,7 @@ namespace Khopper {
 		 */
 		Track();
 
-		void open( const std::wstring & filePath );
-
-		/**
-		 * @brief Convert this track
-		 * @param [in] targetPath output file path
-		 * @param [in] encoder encoder setting
-		 */
-		virtual void convert( const std::wstring & targetPath, EncoderSP encoder );
+		void load( const std::wstring & filePath );
 
 		/**
 		 * @brief Dump track information
@@ -159,23 +147,6 @@ namespace Khopper {
 		Index startTime;
 		/// Track title
 		std::wstring title;
-
-	public slots:
-		/**
-		 * @brief Cancel converting
-		 */
-		void cancel();
-
-	signals:
-		/**
-		 * @brief Decoded duration
-		 * @param ms Time in second * 10000
-		 */
-		void decodedTime( int ms ) const;
-
-	private:
-// 		DecoderSP decoder_;
-		bool canceled_;
 	};
 
 	/**

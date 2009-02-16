@@ -281,7 +281,7 @@ namespace Khopper {
 					TrackSP track( new Track );
 
 					try {
-						track->open( filePath.toStdWString() );
+						track->load( filePath.toStdWString() );
 						tracks.push_back( track );
 					} catch( std::exception & e ) {
 						this->showErrorMessage_( tr( "Can not decode this file!" ), trUtf8( e.what() ) );

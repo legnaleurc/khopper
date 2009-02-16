@@ -24,6 +24,7 @@
 
 #include "track.hpp"
 #include "encoder.hpp"
+#include "converter.hpp"
 
 #include <QThread>
 #include <QStringList>
@@ -103,6 +104,7 @@ namespace Khopper {
 		std::vector< TrackSP > tracks_;
 		QStringList paths_;
 		bool canceled_;
+		Converter converter_;
 	};
 
 }

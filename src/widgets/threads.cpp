@@ -32,7 +32,10 @@ namespace Khopper {
 	encoder_(),
 	tracks_(),
 	paths_(),
-	canceled_( false ) {
+	canceled_( false ),
+	converter_( this ) {
+		connect( &this->converter_, SIGNAL( decodedTime( int ) ), this, SIGNAL( step( int ) ) );
+		connect( this, SIGNAL( canceled() ), &this->converter_, SLOT( cancel() ) );
 	}
 
 	void ConverterThread::setOutput( EncoderSP output, const QStringList & paths ) {
@@ -42,12 +45,6 @@ namespace Khopper {
 
 	void ConverterThread::setTracks( const std::vector< TrackSP > & tracks ) {
 		this->tracks_ = tracks;
-		for( std::size_t i = 0; i < tracks.size(); ++i ) {
-			disconnect( tracks[i].get(), 0, this, 0 );
-			disconnect( this, 0, tracks[i].get(), 0 );
-			connect( tracks[i].get(), SIGNAL( decodedTime( int ) ), this, SIGNAL( step( int ) ) );
-			connect( this, SIGNAL( canceled() ), tracks[i].get(), SLOT( cancel() ) );
-		}
 	}
 
 	void ConverterThread::cancel() {
@@ -56,7 +53,6 @@ namespace Khopper {
 	}
 
 	void ConverterThread::run() {
-		// convert
 		try {
 			for( std::size_t i = 0; i < this->tracks_.size(); ++i ) {
 				this->encoder_->setTitle( this->tracks_[i]->title );
@@ -66,7 +62,7 @@ namespace Khopper {
 				emit taskGoal( this->tracks_[i]->duration.toDouble() * 10000 );
 				emit currentTask( i + 1 );
 
-				this->tracks_[i]->convert( this->paths_[i].toStdWString(), this->encoder_ );
+				this->converter_.convert( this->tracks_[i], this->paths_[i].toStdWString(), this->encoder_ );
 				if( this->canceled_ ) {
 					this->canceled_ = false;
 					break;

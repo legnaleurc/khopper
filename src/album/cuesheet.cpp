@@ -21,9 +21,9 @@
  */
 #include "cuesheet.hpp"
 #include "track.hpp"
+#include "decoder.hpp"
 #include "error.hpp"
 #include "os.hpp"
-#include "tr1.hpp"
 
 #include <QtDebug>
 
