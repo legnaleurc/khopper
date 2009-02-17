@@ -29,8 +29,7 @@ namespace Khopper {
 	/**
 	 * @brief Track index information
 	 */
-	class Index {
-	public:
+	struct Index {
 		/**
 		 * @brief Default constructor
 		 *

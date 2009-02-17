@@ -37,8 +37,7 @@ namespace Khopper {
 	 * This module uses std::wstring to store unicode string.\n
 	 * UTF-16 on Windows(R), UCS4 on POSIX.
 	 */
-	class Track {
-	public:
+	struct Track {
 		/**
 		 * @brief Type of audio file
 		 */
