@@ -21,7 +21,7 @@
  */
 #include "encoder.hpp"
 #include "error.hpp"
-#include "os.hpp"
+#include "text.hpp"
 
 extern "C" {
 #include <avcodec.h>
@@ -89,15 +89,15 @@ namespace Khopper {
 	}
 
 	void Encoder::setTitle( const std::wstring & title ) {
-		this->title_ = os::encodeString( title, 1 );
+		this->title_ = text::toUTF8( title );
 	}
 
 	void Encoder::setArtist( const std::wstring & artist ) {
-		this->artist_ = os::encodeString( artist, 1 );
+		this->artist_ = text::toUTF8( artist );
 	}
 
 	void Encoder::setAlbum( const std::wstring & album ) {
-		this->album_ = os::encodeString( album, 1 );
+		this->album_ = text::toUTF8( album );
 	}
 
 	void Encoder::open( const std::wstring & filePath ) {
@@ -105,7 +105,7 @@ namespace Khopper {
 			this->close();
 		}
 
-		this->filePath_ = os::encodeString( filePath );
+		this->filePath_ = text::toLocale( filePath );
 		AVOutputFormat * pOF = this->guessFormat();
 		if( pOF == NULL ) {
 			throw Error< Codec >( "Can not recognize output format" );

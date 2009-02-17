@@ -24,9 +24,6 @@
 
 #include <string>
 
-/**
- * @namespace Khopper
- */
 namespace Khopper {
 
 	/**
@@ -41,27 +38,6 @@ namespace Khopper {
 		 * @return Complete path
 		 */
 		std::wstring join( const std::wstring & front, const std::wstring & back );
-
-		/**
-		 * @brief Decode local 8-bit string to Unicode
-		 * @param local Local 8-bit string
-		 * @return Unicode string
-		 *
-		 * On POSIX, @p unicode is UCS4, on Windows(R), @p unicode is UTF-16.\n
-		 * The decoded string will use system locale.
-		 */
-		std::wstring decodeString( const std::string & local );
-
-		/**
-		 * @brief Encode Unicode string to local 8-bits string
-		 * @param unicode Unicode string
-		 * @param codec Encoding identifier, 0 = locale, 1 = UTF-8
-		 * @return Depends on @p codec
-		 *
-		 * On POSIX, @p unicode is UCS4, on Windows(R), @p unicode is UTF-16.\n
-		 * The encoded string will use system locale.
-		 */
-		std::string encodeString( const std::wstring & unicode, int codec = 0 );
 
 	}
 

@@ -21,7 +21,7 @@
  */
 #include "decoder.hpp"
 #include "error.hpp"
-#include "os.hpp"
+#include "text.hpp"
 
 extern "C" {
 #include <avcodec.h>
@@ -74,7 +74,7 @@ namespace Khopper {
 		if( this->opening_ ) {
 			this->close();
 		}
-		std::string fP = os::encodeString( filePath );
+		std::string fP = text::toLocale( filePath );
 
 		AVFormatContext * pFC = NULL;
 		if( av_open_input_file( &pFC, fP.c_str(), NULL, 0, NULL ) != 0 ) {
