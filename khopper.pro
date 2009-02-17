@@ -62,6 +62,7 @@ MOC_DIR = tmp/moc
 RCC_DIR = tmp/rcc
 DESTDIR = bin
 CONFIG += debug_and_release
+QT += phonon
 
 CONFIG( debug, debug|release ) {
     OBJECTS_DIR = tmp/obj/debug

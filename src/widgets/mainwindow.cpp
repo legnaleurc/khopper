@@ -84,12 +84,29 @@ namespace Khopper {
 		central->setLayout( mainBox );
 		this->setCentralWidget( central );
 
+		// Setting player panel
+		QHBoxLayout * playerBox = new QHBoxLayout;
+		mainBox->addLayout( playerBox );
+
+		QPushButton * play = new QPushButton( tr( "Play" ), this );
+		connect( play, SIGNAL( clicked() ), this->songList_, SLOT( play() ) );
+		playerBox->addWidget( play );
+		QPushButton * pause = new QPushButton( tr( "Pause" ), this );
+		connect( pause, SIGNAL( clicked() ), this->songList_, SLOT( pause() ) );
+		playerBox->addWidget( pause );
+		QPushButton * stop = new QPushButton( tr( "Stop" ), this );
+		connect( stop, SIGNAL( clicked() ), this->songList_, SLOT( stop() ) );
+		playerBox->addWidget( stop );
+
+		playerBox->addWidget( this->songList_->getSeekSlider() );
+		playerBox->addWidget( this->songList_->getVolumeSlider() );
+
 		// Add song list
 		mainBox->addWidget( this->songList_ );
 		connect( this->songList_, SIGNAL( dropFile( const QString & ) ), this, SLOT( open( const QString & ) ) );
 		connect( this->songList_, SIGNAL( requireConvert() ), this, SLOT( fire_() ) );
 
-		QHBoxLayout * pathBox = new QHBoxLayout();
+		QHBoxLayout * pathBox = new QHBoxLayout;
 		mainBox->addLayout( pathBox );
 
 		// Output path setting
