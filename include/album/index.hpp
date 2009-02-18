@@ -63,7 +63,7 @@ namespace Khopper {
 		 * @param that Subtrahend
 		 * @return self
 		 */
-		const Index & operator -=( const Index & that );
+		Index & operator -=( const Index & that );
 		/**
 		 * @brief Subtract operator
 		 * @param that Subtrahend

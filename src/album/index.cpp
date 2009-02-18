@@ -44,7 +44,7 @@ namespace Khopper {
 		this->frame = std::floor( d * 100 );
 	}
 
-	const Index & Index::operator -=( const Index & that ) {
+	Index & Index::operator -=( const Index & that ) {
 		if( this->frame < that.frame ) {
 			--this->second;
 			this->frame += 100 - that.frame;
