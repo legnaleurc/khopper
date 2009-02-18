@@ -20,6 +20,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "mp3option.hpp"
+#include "defaultaudiowriter.hpp"
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -37,7 +38,7 @@ namespace {
 
 	const char * const MP3 = "mp3";
 
-	const bool reg_type = Khopper::EncoderList::Instance().insert( Khopper::EncoderList::ObjectType::value_type( MP3, "mp3" ) ).second;
+	const bool reg_type = Khopper::codec::AudioWriterList::Instance().insert( Khopper::codec::AudioWriterList::ObjectType::value_type( MP3, "mp3" ) ).second;
 	const bool reg_fac = Khopper::UIFactory::Instance().Register( MP3, CreateMp3 );
 
 }
@@ -111,8 +112,8 @@ namespace Khopper {
 		vbr->setDisabled( true );
 	}
 
-	EncoderSP MP3Option::getEncoder() const {
-		Encoder * encoder = new Encoder;
+	codec::AudioWriterSP MP3Option::getAudioWriter() const {
+		codec::AudioWriterSP encoder( new codec::DefaultAudioWriter );
 
 		switch( this->brChoise_->checkedId() ) {
 		case 0:
@@ -127,7 +128,7 @@ namespace Khopper {
 		encoder->setSampleRate( this->sampleRate_->itemData( this->sampleRate_->currentIndex() ).toInt() );
 		encoder->setChannels( this->channels_->itemData( this->channels_->currentIndex() ).toInt() );
 
-		return EncoderSP( encoder );
+		return encoder;
 	}
 
 	QString MP3Option::getSuffix() const {

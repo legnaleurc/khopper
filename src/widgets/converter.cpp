@@ -22,6 +22,7 @@
 #include "converter.hpp"
 #include "decoder.hpp"
 #include "error.hpp"
+#include "text.hpp"
 
 namespace Khopper {
 
@@ -30,13 +31,13 @@ namespace Khopper {
 	canceled_( false ) {
 	}
 
-	void Converter::convert( TrackSP track, const std::wstring & targetPath, EncoderSP encoder ) {
-		DecoderSP decoder( new Decoder );
+	void Converter::convert( TrackSP track, const std::wstring & targetPath, codec::AudioWriterSP encoder ) {
+		codec::DecoderSP decoder( new codec::Decoder );
 		decoder->open( track->filePath );
-		encoder->open( targetPath );
+		encoder->open( text::toLocale( targetPath ) );
 		this->canceled_ = false;
 
-		if( !decoder->is_open() || !encoder->is_open() ) {
+		if( !decoder->is_open() || !encoder->isOpen() ) {
 			throw Error< RunTime >( "Can not open decoder or encoder!" );
 		}
 

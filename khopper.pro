@@ -21,9 +21,10 @@ INCLUDEPATH += . \
 HEADERS   += include/album/cuesheet.hpp \
              include/album/index.hpp \
              include/album/track.hpp \
+             include/codec/abstractaudiowriter.hpp \
              include/codec/codec_base.hpp \
              include/codec/decoder.hpp \
-             include/codec/encoder.hpp \
+             include/codec/defaultaudiowriter.hpp \
              include/common/error.hpp \
              include/common/os.hpp \
              include/common/text.hpp \
@@ -40,8 +41,9 @@ HEADERS   += include/album/cuesheet.hpp \
 SOURCES   += src/album/cuesheet.cpp \
              src/album/index.cpp \
              src/album/track.cpp \
+             src/codec/abstractaudiowriter.cpp \
              src/codec/decoder.cpp \
-             src/codec/encoder.cpp \
+             src/codec/defaultaudiowriter.cpp \
              src/common/error.cpp \
              src/common/text.cpp \
              src/options/abstractoption.cpp \

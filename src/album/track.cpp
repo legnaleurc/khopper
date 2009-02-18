@@ -71,7 +71,7 @@ namespace Khopper {
 	void Track::load( const std::wstring & filePath ) {
 		this->filePath = filePath;
 
-		DecoderSP decoder( new Decoder );
+		codec::DecoderSP decoder( new codec::Decoder );
 		decoder->open( this->filePath );
 		if( decoder->is_open() ) {
 			this->album = text::fromUTF8( decoder->getAlbum() );
@@ -84,7 +84,7 @@ namespace Khopper {
 
 			decoder->close();
 		} else {
-			throw Error< Codec >( "Can not open file!" );
+			throw Error< codec::Codec >( "Can not open file!" );
 		}
 	}
 

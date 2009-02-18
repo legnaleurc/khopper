@@ -99,7 +99,7 @@ namespace Khopper {
 		}
 
 		// get the total length, because cue sheet don't provide it
-		DecoderSP decoder( new Decoder );
+		codec::DecoderSP decoder( new codec::Decoder );
 		decoder->open( currentFile.first );
 		if( decoder->is_open() ) {
 			for( std::vector< TrackSP >::iterator it = tracks.begin(); it != tracks.end(); ++it ) {
