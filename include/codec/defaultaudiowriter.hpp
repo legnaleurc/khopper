@@ -42,6 +42,7 @@ namespace Khopper {
 			 * @brief Default constructor
 			 */
 			DefaultAudioWriter();
+			virtual ~DefaultAudioWriter();
 
 			/**
 			 * @brief Write @p data to encoder

@@ -58,6 +58,12 @@ namespace Khopper {
 		pStream_( NULL ) {
 		}
 
+		DefaultAudioWriter::~DefaultAudioWriter() {
+			if( this->isOpen() ) {
+				this->close();
+			}
+		}
+
 		void DefaultAudioWriter::setupMuxer_() {
 			AVOutputFormat * pOF = guess_format( NULL, this->getFilePath().c_str(), NULL );
 			if( pOF == NULL ) {

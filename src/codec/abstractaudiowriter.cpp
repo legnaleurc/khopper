@@ -40,9 +40,6 @@ namespace Khopper {
 		}
 
 		AbstractAudioWriter::~AbstractAudioWriter() {
-			if( this->opening_ ) {
-				this->close();
-			}
 		}
 
 		void AbstractAudioWriter::open( const std::string & filePath ) {

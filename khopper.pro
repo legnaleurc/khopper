@@ -25,7 +25,6 @@ HEADERS   += include/album/cuesheet.hpp \
              include/codec/codec_base.hpp \
              include/codec/decoder.hpp \
              include/codec/defaultaudiowriter.hpp \
-             include/common/error.hpp \
              include/common/os.hpp \
              include/common/text.hpp \
              include/common/tr1.hpp \
