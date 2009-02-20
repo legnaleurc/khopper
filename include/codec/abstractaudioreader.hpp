@@ -34,23 +34,59 @@ namespace Khopper {
 
 	namespace codec {
 
+		/**
+		 * @brief Audio reader interface
+		 */
 		class AbstractAudioReader {
 		public:
+			/**
+			 * @brief Default constructor
+			 */
 			AbstractAudioReader();
+			/**
+			 * @brief Virtual destructor
+			 */
 			virtual ~AbstractAudioReader();
 
+			/**
+			 * @brief Open file
+			 * @param [in] filePath
+			 *
+			 * AbstractAudioReader do not handle path encoding,
+			 * so you should help yourself.
+			 */
 			void open( const std::string & filePath );
+			/// Check if audio reader is opening
 			bool isOpen() const {
 				return this->opening_;
 			}
+			/**
+			 * @brief Close file
+			 * @note No fail!
+			 */
 			void close();
 
+			/**
+			 * @brief Seek to @p timestamp
+			 * @return succeed of failed
+			 */
 			bool seek( double timestamp );
+			/**
+			 * @brief Set decode range
+			 */
 			void setRange( double begin, double end ) {
 				this->begin_ = begin;
 				this->end_ = end;
 			}
+			/**
+			 * @brief Read frame
+			 * @param [out] decoded
+			 * @return raw data
+			 */
 			ByteArray read( double & decoded );
+			/**
+			 * @brief Checks if there is any data to read
+			 */
 			bool hasNext() const {
 				return this->hasNext_;
 			}
@@ -64,127 +100,184 @@ namespace Khopper {
 			}
 			/**
 			 * @brief Get author
-			 * @return Artist
+			 * @sa setArtist
 			 */
 			const std::string & getArtist() const {
 				return this->artist_;
 			}
 			/**
 			 * @brief Get bit rate
-			 * @return Bit rate
+			 * @sa setBitRate
 			 */
 			int getBitRate() const {
 				return this->bitRate_;
 			}
 			/**
 			 * @brief Get channels
-			 * @return Channels
+			 * @sa setChannels
 			 */
 			int getChannels() const {
 				return this->channels_;
 			}
 			/**
 			 * @brief Get comment
-			 * @return Comment
+			 * @sa setComment
 			 */
 			const std::string & getComment() const {
 				return this->comment_;
 			}
 			/**
 			 * @brief Get copyright
-			 * @return Copyright
+			 * @sa setCopyright
 			 */
 			const std::string & getCopyright() const {
 				return this->copyright_;
 			}
 			/**
 			 * @brief Get sample duration
-			 * @return Duration
+			 * @sa setDuration
 			 */
 			double getDuration() const {
 				return this->duration_;
 			}
 			/**
 			 * @brief Get genre
-			 * @return Genre
+			 * @sa setGenre
 			 */
 			const std::string & getGenre() const {
 				return this->genre_;
 			}
 			/**
 			 * @brief Get track index
-			 * @return Track index in album
+			 * @sa setIndex
 			 */
 			int getIndex() const {
 				return this->index_;
 			}
 			/**
 			 * @brief Get sample rate
-			 * @return Sample rate
+			 * @sa setSampleRate
 			 */
 			int getSampleRate() const {
 				return this->sampleRate_;
 			}
 			/**
 			 * @brief Get title
-			 * @return Title
+			 * @sa setTitle
 			 */
 			const std::string & getTitle() const {
 				return this->title_;
 			}
 			/**
 			 * @brief Get year
-			 * @return Year
+			 * @sa setYear
 			 */
 			int getYear() const {
 				return this->year_;
 			}
 
 		protected:
+			/// If @p timestamp is after decoding begin timestamp
 			bool afterBegin( double timestamp ) const;
+			/// If @p timestamp is after decoding end timestamp
 			bool afterEnd( double timestamp ) const;
 
+			/**
+			 * @brief Set album
+			 * @sa getAlbum
+			 */
 			void setAlbum( const std::string & album ) {
 				this->album_ = album;
 			}
+			/**
+			 * @brief Set artist
+			 * @sa getArtist
+			 */
 			void setArtist( const std::string & artist ) {
 				this->artist_ = artist;
 			}
+			/**
+			 * @brief Set bit rate
+			 * @sa getBitRate
+			 */
 			void setBitRate( int bitRate ) {
 				this->bitRate_ = bitRate;
 			}
+			/**
+			 * @brief Set channels
+			 * @sa getChannels
+			 */
 			void setChannels( int channels ) {
 				this->channels_ = channels;
 			}
+			/**
+			 * @brief Set comment
+			 * @sa getComment
+			 */
 			void setComment( const std::string & comment ) {
 				this->comment_ = comment;
 			}
+			/**
+			 * @brief Set copyright
+			 * @sa getCopyright
+			 */
 			void setCopyright( const std::string & copyright ) {
 				this->copyright_ = copyright;
 			}
+			/**
+			 * @brief Set duration
+			 * @sa getDuration
+			 */
 			void setDuration( double duration ) {
 				this->duration_ = duration;
 			}
+			/**
+			 * @brief Get file path
+			 */
 			const std::string & getFilePath() const {
 				return this->filePath_;
 			}
+			/**
+			 * @brief Set genre
+			 * @sa getGenre
+			 */
 			void setGenre( const std::string & genre ) {
 				this->genre_ = genre;
 			}
+			/**
+			 * @brief Set track index
+			 * @sa getIndex
+			 */
 			void setIndex( int index ) {
 				this->index_ = index;
 			}
+			/**
+			 * @brief Set sample rate
+			 * @sa getSampleRate
+			 */
 			void setSampleRate( int sampleRate ) {
 				this->sampleRate_ = sampleRate;
 			}
+			/**
+			 * @brief Set track title
+			 * @sa getTitle
+			 */
 			void setTitle( const std::string & title ) {
 				this->title_ = title;
 			}
+			/**
+			 * @brief Set year
+			 * @sa getYear
+			 */
 			void setYear( int year ) {
 				this->year_ = year;
 			}
 
 		private:
+			// prevent copying
+			AbstractAudioReader( const AbstractAudioReader & );
+			AbstractAudioReader & operator =( const AbstractAudioReader & );
+
 			virtual void openResource_() = 0;
 			virtual void closeResource_() = 0;
 			virtual void setupDemuxer_() = 0;
@@ -213,15 +306,15 @@ namespace Khopper {
 		};
 
 		/**
-		* @brief Decoder smart pointer
-		*
-		* Use TR1 shared pointer.
-		*/
+		 * @brief AbstractAudioReader smart pointer
+		 *
+		 * Use TR1 shared pointer.
+		 */
 		typedef std::tr1::shared_ptr< AbstractAudioReader > AudioReaderSP;
 
 		/**
-		* @brief The decoder Object Factory for Converter module
-		*/
+		 * @brief The audio reader factory
+		 */
 		typedef Loki::SingletonHolder< Loki::Factory< AbstractAudioReader, std::string >, Loki::CreateUsingNew, Loki::LongevityLifetime::DieAsSmallObjectChild > AudioReaderFactory;
 
 	}

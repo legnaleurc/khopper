@@ -31,7 +31,7 @@ namespace Khopper {
 	canceled_( false ) {
 	}
 
-	void Converter::convert( TrackSP track, const std::wstring & targetPath, codec::AudioWriterSP encoder ) {
+	void Converter::convert( TrackCSP track, const std::wstring & targetPath, codec::AudioWriterSP encoder ) {
 		codec::AudioReaderSP decoder( new codec::DefaultAudioReader );
 		decoder->open( text::toLocale( track->filePath ) );
 		encoder->open( text::toLocale( targetPath ) );

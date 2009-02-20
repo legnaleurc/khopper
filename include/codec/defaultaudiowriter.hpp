@@ -33,8 +33,10 @@ namespace Khopper {
 	namespace codec {
 
 		/**
-		 * @brief Encoder interface
-		 * @sa Decoder
+		 * @brief Default audio writer
+		 * @sa DefaultAudioReader
+		 *
+		 * This class provides a default audio writer implementation.
 		 */
 		class DefaultAudioWriter : public AbstractAudioWriter {
 		public:
@@ -42,21 +44,12 @@ namespace Khopper {
 			 * @brief Default constructor
 			 */
 			DefaultAudioWriter();
+			/**
+			 * @brief Virtual destructor
+			 */
 			virtual ~DefaultAudioWriter();
 
-			/**
-			 * @brief Write @p data to encoder
-			 * @param [in] data Raw binary data
-			 */
-			void write( const ByteArray & data );
-			/**
-			 * @brief Write unwrited data in buffer.
-			 */
-			void flush();
-
 		private:
-			void writeFrame_( short * );
-
 			virtual void setupMuxer_();
 			virtual void setupEncoder_();
 			virtual void openResouse_();
@@ -64,8 +57,6 @@ namespace Khopper {
 			virtual void writeHeader_();
 			virtual void writeFrame_( const char *, std::size_t );
 
-			ByteArray buffer_;
-			std::vector< char > samples_;
 			std::tr1::shared_ptr< AVFormatContext > pFormatContext_;
 			AVStream * pStream_;
 		};

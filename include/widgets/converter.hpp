@@ -29,18 +29,25 @@
 
 namespace Khopper {
 
+	/**
+	 * @brief Controller of converting
+	 */
 	class Converter : public QObject {
 		Q_OBJECT
 
 	public:
+		/**
+		 * @brief Default constructor
+		 */
 		Converter( QObject * parent = 0 );
 
 		/**
-		 * @brief Convert this track
+		 * @brief Convert @p track
+		 * @param [in] track track to convert
 		 * @param [in] targetPath output file path
 		 * @param [in] encoder encoder setting
 		 */
-		void convert( TrackSP track, const std::wstring & targetPath, codec::AudioWriterSP encoder );
+		void convert( TrackCSP track, const std::wstring & targetPath, codec::AudioWriterSP encoder );
 
 	public slots:
 		/**
