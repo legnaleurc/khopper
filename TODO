@@ -1,11 +1,9 @@
 功能：
-	解除只能開CUE sheet的限制
+	播放器的使用者介面要再微調
+	模組轉為plugin
 	MP3 VBR功能是不完整的
 	至網路拿取音樂資料
 	CUE sheet寫入功能
-
-介面：
-	String定義的地方，port Windows的時候再決定要不要額外定義
 
 實作：
 	輸入檔案方式避免使用switch
