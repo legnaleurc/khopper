@@ -20,7 +20,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "track.hpp"
-#include "decoder.hpp"
+#include "defaultaudioreader.hpp"
 #include "text.hpp"
 #include "error.hpp"
 
@@ -71,9 +71,9 @@ namespace Khopper {
 	void Track::load( const std::wstring & filePath ) {
 		this->filePath = filePath;
 
-		DecoderSP decoder( new Decoder );
-		decoder->open( this->filePath );
-		if( decoder->is_open() ) {
+		codec::AudioReaderSP decoder( new codec::DefaultAudioReader );
+		decoder->open( text::toLocale( this->filePath ) );
+		if( decoder->isOpen() ) {
 			this->album = text::fromUTF8( decoder->getAlbum() );
 			this->artist = text::fromUTF8( decoder->getArtist() );
 			this->bitRate = decoder->getBitRate();
@@ -84,7 +84,7 @@ namespace Khopper {
 
 			decoder->close();
 		} else {
-			throw Error< Codec >( "Can not open file!" );
+			throw Error< codec::Codec >( "Can not open file!" );
 		}
 	}
 

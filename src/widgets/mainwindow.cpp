@@ -181,8 +181,8 @@ namespace Khopper {
 
 		mainBox->addWidget( this->optionTabs_ );
 		// Take out the output types
-		const EncoderList::ObjectType & tm = EncoderList::Instance();
-		for( EncoderList::ObjectType::const_iterator it = tm.begin(); it != tm.end(); ++it ) {
+		const codec::AudioWriterList::ObjectType & tm = codec::AudioWriterList::Instance();
+		for( codec::AudioWriterList::ObjectType::const_iterator it = tm.begin(); it != tm.end(); ++it ) {
 			// it->first is object factory key, it->second is display name
 			this->optionTabs_->addTab( UIFactory::Instance().CreateObject( it->first ), QString::fromStdString( it->second ) );
 		}
@@ -228,7 +228,7 @@ namespace Khopper {
 				// set progress bar
 				this->progress_->setTotal( tracks.size() );
 				// set output information
-				this->cvt_->setOutput( option->getEncoder(), outputPaths );
+				this->cvt_->setOutput( option->getAudioWriter(), outputPaths );
 				this->cvt_->setTracks( tracks );
 				this->cvt_->start();
 				this->progress_->exec();

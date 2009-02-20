@@ -26,16 +26,20 @@
 
 namespace Khopper {
 
-	/**
-	 * @brief Used for storing raw binary data
-	 */
-	typedef std::deque< char > ByteArray;
+	namespace codec {
 
-	/**
-	 * @brief Codec error
-	 */
-	class Codec {
-	};
+		/**
+		 * @brief Used for storing raw binary data
+		 */
+		typedef std::deque< char > ByteArray;
+
+		/**
+		 * @brief Codec error
+		 */
+		class Codec {
+		};
+
+	}
 
 }
 

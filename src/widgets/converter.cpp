@@ -20,8 +20,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "converter.hpp"
-#include "decoder.hpp"
+#include "defaultaudioreader.hpp"
 #include "error.hpp"
+#include "text.hpp"
 
 namespace Khopper {
 
@@ -30,19 +31,22 @@ namespace Khopper {
 	canceled_( false ) {
 	}
 
-	void Converter::convert( TrackSP track, const std::wstring & targetPath, EncoderSP encoder ) {
-		DecoderSP decoder( new Decoder );
-		decoder->open( track->filePath );
-		encoder->open( targetPath );
+	void Converter::convert( TrackSP track, const std::wstring & targetPath, codec::AudioWriterSP encoder ) {
+		codec::AudioReaderSP decoder( new codec::DefaultAudioReader );
+		decoder->open( text::toLocale( track->filePath ) );
+		encoder->open( text::toLocale( targetPath ) );
 		this->canceled_ = false;
 
-		if( !decoder->is_open() || !encoder->is_open() ) {
+		if( !decoder->isOpen() || !encoder->isOpen() ) {
 			throw Error< RunTime >( "Can not open decoder or encoder!" );
 		}
 
 		double begin = track->startTime.toDouble();
 		double end = begin + track->duration.toDouble();
 		decoder->setRange( begin, end );
+		if( !decoder->seek( begin ) ) {
+			throw Error< codec::Codec >( "Invalid start point" );
+		}
 
 		double decoded;
 		while( decoder->hasNext() ) {

@@ -22,7 +22,7 @@
 #ifndef KHOPPER_ABSTRACTOPTION_HPP
 #define KHOPPER_ABSTRACTOPTION_HPP
 
-#include "encoder.hpp"
+#include "abstractaudiowriter.hpp"
 
 #include <loki/Factory.h>
 
@@ -55,7 +55,7 @@ namespace Khopper {
 		 * @brief Get encoder setting object
 		 * @return Smart pointer contains Encoder
 		 */
-		virtual EncoderSP getEncoder() const = 0;
+		virtual codec::AudioWriterSP getAudioWriter() const = 0;
 		/**
 		 * @brief Get file suffix
 		 * @return File extension, without leading '.'
