@@ -21,9 +21,10 @@
  */
 #include "cuesheet.hpp"
 #include "track.hpp"
-#include "decoder.hpp"
+#include "defaultaudioreader.hpp"
 #include "error.hpp"
 #include "os.hpp"
+#include "text.hpp"
 
 #include <QtDebug>
 
@@ -99,9 +100,9 @@ namespace Khopper {
 		}
 
 		// get the total length, because cue sheet don't provide it
-		codec::DecoderSP decoder( new codec::Decoder );
-		decoder->open( currentFile.first );
-		if( decoder->is_open() ) {
+		codec::AudioReaderSP decoder( new codec::DefaultAudioReader );
+		decoder->open( text::toLocale( currentFile.first ) );
+		if( decoder->isOpen() ) {
 			for( std::vector< TrackSP >::iterator it = tracks.begin(); it != tracks.end(); ++it ) {
 				// cue information
 				( *it )->album = this->title;
