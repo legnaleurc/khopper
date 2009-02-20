@@ -69,7 +69,7 @@ namespace Khopper {
 				throw Error< Codec >( "Can not recognize output format" );
 			}
 
-			this->pFormatContext_.reset( av_alloc_format_context(), ::fc_helper );
+			this->pFormatContext_.reset( avformat_alloc_context(), ::fc_helper );
 			if( !this->pFormatContext_ ) {
 				throw Error< System >( "Memory allocation error" );
 			}
