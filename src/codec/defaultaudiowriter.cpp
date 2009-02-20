@@ -53,7 +53,6 @@ namespace Khopper {
 	namespace codec {
 
 		DefaultAudioWriter::DefaultAudioWriter():
-		samples_(),
 		pFormatContext_(),
 		pStream_( NULL ) {
 		}
