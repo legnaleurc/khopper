@@ -26,6 +26,9 @@
 
 namespace Khopper {
 
+	/**
+	 * @brief codec module
+	 */
 	namespace codec {
 
 		/**

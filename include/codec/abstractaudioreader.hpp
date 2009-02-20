@@ -36,6 +36,7 @@ namespace Khopper {
 
 		/**
 		 * @brief Audio reader interface
+		 * @sa AbstractAudioWriter
 		 */
 		class AbstractAudioReader {
 		public:

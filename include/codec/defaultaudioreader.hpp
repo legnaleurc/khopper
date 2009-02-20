@@ -33,18 +33,20 @@ namespace Khopper {
 	namespace codec {
 
 		/**
-		* @brief Decoder interface
-		* @sa Encoder
-		*/
+		 * @brief Default audio reader
+		 * @sa DefaultAudioWriter
+		 *
+		 * This class provides a default audio reader implementation.
+		 */
 		class DefaultAudioReader : public AbstractAudioReader {
 		public:
 			/**
-			* @brief Default constructor
-			*/
+			 * @brief Default constructor
+			 */
 			DefaultAudioReader();
 			/**
-			* @brief Virtual destructor
-			*/
+			 * @brief Virtual destructor
+			 */
 			virtual ~DefaultAudioReader();
 
 		private:

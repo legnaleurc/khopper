@@ -95,6 +95,9 @@ namespace Khopper {
 		 */
 		Track();
 
+		/**
+		 * @brief Load track from @p filePath
+		 */
 		void load( const std::wstring & filePath );
 
 		/**

@@ -62,6 +62,7 @@ namespace Khopper {
 		 * @param [in] filePaths file path
 		 */
 		void open( const QStringList & filePaths );
+		/// @brief Convinence slot
 		void open( const QString & filePath );
 
 	private:

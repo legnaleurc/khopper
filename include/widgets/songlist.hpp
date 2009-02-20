@@ -56,12 +56,21 @@ namespace Khopper {
 		 */
 		std::vector< TrackSP > getSelectedTracks() const;
 
+		/**
+		 * @brief Get player seek slider
+		 */
 		Phonon::SeekSlider * getSeekSlider() const;
+		/**
+		 * @brief Get player volume slider
+		 */
 		Phonon::VolumeSlider * getVolumeSlider() const;
 
 	public slots:
+		/// play
 		void play();
+		/// pause
 		void pause();
+		/// stop
 		void stop();
 
 	signals:
