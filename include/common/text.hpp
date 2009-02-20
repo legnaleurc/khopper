@@ -26,6 +26,9 @@
 
 namespace Khopper {
 
+	/**
+	 * @brief Text processing
+	 */
 	namespace text {
 
 		/// @brief Convert @p utf8 to Unicode
