@@ -37,6 +37,7 @@ namespace Khopper {
 
 		/**
 		 * @brief Audio writer interface
+		 * @ingroup Codecs
 		 * @sa AbstractAudioReader
 		 */
 		class AbstractAudioWriter {
@@ -219,6 +220,8 @@ namespace Khopper {
 
 		/**
 		 * @brief AbstractAudioWriter smart pointer
+		 * @ingroup Codecs
+		 * @sa AbstractAudioWriter
 		 *
 		 * Use TR1 shared pointer.
 		 */
@@ -226,6 +229,7 @@ namespace Khopper {
 
 		/**
 		 * @brief AbstractAudioWriter type list
+		 * @ingroup Codecs
 		 *
 		 * Key is identifier, value is display name on tab.
 		 */

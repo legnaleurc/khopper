@@ -36,6 +36,7 @@ namespace Khopper {
 
 		/**
 		 * @brief Audio reader interface
+		 * @ingroup Codecs
 		 * @sa AbstractAudioWriter
 		 */
 		class AbstractAudioReader {
@@ -308,6 +309,8 @@ namespace Khopper {
 
 		/**
 		 * @brief AbstractAudioReader smart pointer
+		 * @ingroup Codecs
+		 * @sa AbstractAudioReader
 		 *
 		 * Use TR1 shared pointer.
 		 */
@@ -315,6 +318,7 @@ namespace Khopper {
 
 		/**
 		 * @brief The audio reader factory
+		 * @ingroup Codecs
 		 */
 		typedef Loki::SingletonHolder< Loki::Factory< AbstractAudioReader, std::string >, Loki::CreateUsingNew, Loki::LongevityLifetime::DieAsSmallObjectChild > AudioReaderFactory;
 

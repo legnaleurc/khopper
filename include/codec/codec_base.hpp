@@ -26,18 +26,24 @@
 
 namespace Khopper {
 
+	/// @defgroup Codecs De/Muxers and De/Encoders
+	// @{
+	// @}
 	/**
-	 * @brief codec module
+	 * @brief Contains Codecs module
+	 * @ingroup Codecs
 	 */
 	namespace codec {
 
 		/**
 		 * @brief Used for storing raw binary data
+		 * @ingroup Codecs
 		 */
 		typedef std::deque< char > ByteArray;
 
 		/**
 		 * @brief Codec error
+		 * @ingroup Codecs
 		 */
 		class Codec {
 		};
