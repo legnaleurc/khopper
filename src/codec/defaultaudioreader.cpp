@@ -76,7 +76,7 @@ namespace Khopper {
 				throw Error< Codec >( "Can not find codec info!" );
 			}
 
-			if( this->pFormatContext_->duration != AV_NOPTS_VALUE ) {
+			if( this->pFormatContext_->duration != static_cast< int64_t >( AV_NOPTS_VALUE ) ) {
 				this->setDuration( this->pFormatContext_->duration / static_cast< double >( AV_TIME_BASE ) );
 			} else {
 				throw Error< Codec >( "Can not get duration!" );
@@ -150,7 +150,7 @@ namespace Khopper {
 				audio_pkt_size = this->pPacket_->size;
 				int64_t curPts = -1;
 				int64_t decoded = 0;
-				if( this->pPacket_->pts != AV_NOPTS_VALUE ) {
+				if( this->pPacket_->pts != static_cast< int64_t >( AV_NOPTS_VALUE ) ) {
 					curPts = av_rescale( this->pPacket_->pts, AV_TIME_BASE * static_cast< int64_t >( this->pFormatContext_->streams[0]->time_base.num ), this->pFormatContext_->streams[0]->time_base.den );
 				}
 				while( audio_pkt_size > 0 ) {

@@ -156,7 +156,7 @@ namespace Khopper {
 			const void * samples = sample;
 			pkt.size = avcodec_encode_audio( pCC, audio_outbuf, sizeof( audio_outbuf ), static_cast< const short * >( samples ) );
 
-			if( pCC->coded_frame->pts != AV_NOPTS_VALUE ) {
+			if( pCC->coded_frame->pts != static_cast< int64_t >( AV_NOPTS_VALUE ) ) {
 				pkt.pts = av_rescale_q( pCC->coded_frame->pts, pCC->time_base, this->pStream_->time_base );
 			}
 
