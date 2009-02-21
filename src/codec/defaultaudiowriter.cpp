@@ -99,7 +99,8 @@ namespace Khopper {
 			pCC->channels = this->getChannels();
 			if( this->getQuality() > -1 ) {
 				pCC->flags |= CODEC_FLAG_QSCALE;
-				pCC->global_quality = this->pStream_->quality = FF_QP2LAMBDA * this->getQuality();
+				this->pStream_->quality = static_cast< float >( FF_QP2LAMBDA * this->getQuality() );
+				pCC->global_quality = static_cast< int >( this->pStream_->quality );
 			}
 			if( av_set_parameters( this->pFormatContext_.get(), NULL ) < 0 ) {
 				throw Error< Codec >( "Set parameters failed" );

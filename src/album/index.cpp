@@ -37,11 +37,11 @@ namespace Khopper {
 	}
 
 	Index::Index( double d ) {
-		this->minute = std::floor( d / 60 );
+		this->minute = static_cast< short >( std::floor( d / 60 ) );
 		d -= this->minute * 60;
-		this->second = std::floor( d );
+		this->second = static_cast< short >( std::floor( d ) );
 		d -= this->second;
-		this->frame = std::floor( d * 100 );
+		this->frame = static_cast< short >( std::floor( d * 100 ) );
 	}
 
 	Index & Index::operator -=( const Index & that ) {

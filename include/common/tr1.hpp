@@ -31,8 +31,6 @@
 # include <cstdint>
 #else
 # define __STDC_CONSTANT_MACROS
-# include <boost/cstdint.hpp>
-using boost::int64_t;
 #endif
 
 #ifdef __GNUC__
