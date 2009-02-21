@@ -21,8 +21,9 @@
  */
 #include "index.hpp"
 
+#include <boost/format.hpp>
+
 #include <sstream>
-#include <iomanip>
 #include <cmath>
 
 namespace Khopper {
@@ -71,11 +72,8 @@ namespace Khopper {
 	}
 
 	std::wstring Index::toStdWString() const {
-		std::wostringstream sout;
-		sout << this->minute << L':';
-		sout << std::setfill( L'0' ) << std::setw( 2 ) << this->second;
-		sout << L'.' << std::setfill( L'0' ) << std::setw( 2 ) << this->frame;
-		return sout.str();
+		boost::wformat tpl( L"%1%:%|2$02|.%|3$02|" );
+		return ( tpl % this->minute % this->second % this->frame ).str();
 	}
 
 }
