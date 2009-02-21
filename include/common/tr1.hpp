@@ -26,12 +26,8 @@
 #ifndef KHOPPER_TR1_HPP
 #define KHOPPER_TR1_HPP
 
-#if ( __GNUC__ >= 4 )
-// gcc 4.x
-# include <cstdint>
-#else
-# define __STDC_CONSTANT_MACROS
-#endif
+// for stdint.h in C99
+#define __STDC_CONSTANT_MACROS
 
 #ifdef __GNUC__
 # include <boost/regex.hpp>
