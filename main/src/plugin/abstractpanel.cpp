@@ -1,5 +1,5 @@
 /**
- * @file abstractoption.cpp
+ * @file abstractpanel.cpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,14 +19,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "abstractoption.hpp"
+#include "abstractpanel.hpp"
 
 namespace Khopper {
 
-	AbstractOption::AbstractOption( QWidget * parent, Qt::WindowFlags f ) : QWidget( parent, f ) {
-	}
-
-	AbstractOption::~AbstractOption() {
+	AbstractPanel::AbstractPanel( QWidget * parent, Qt::WindowFlags f ) : QWidget( parent, f ) {
 	}
 
 }

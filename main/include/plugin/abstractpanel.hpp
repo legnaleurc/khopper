@@ -1,5 +1,5 @@
 /**
- * @file mp3option.hpp
+ * @file abstractpanel.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,47 +19,51 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_MP3OPTION_HPP
-#define KHOPPER_MP3OPTION_HPP
+#ifndef KHOPPER_ABSTRACTPANEL_HPP
+#define KHOPPER_ABSTRACTPANEL_HPP
 
-#include "abstractoption.hpp"
+#include "abstractaudiowriter.hpp"
 
-#include <QButtonGroup>
-#include <QComboBox>
+#include <QWidget>
 
 namespace Khopper {
 
 	/**
-	 * @brief Mp3 option widget
+	 * @brief Abstract panel widget
+	 *
+	 * All output option panel will inherit this class, \n
+	 * and must register to factory. \n
 	 */
-	class MP3Option : public AbstractOption {
+	class AbstractPanel : public QWidget {
+		Q_OBJECT
+
 	public:
 		/**
 		 * @brief Default constructor
 		 * @param parent Parent widget
 		 * @param f Window flags
 		 */
-		MP3Option( QWidget * parent = 0, Qt::WindowFlags f = 0 );
+		AbstractPanel( QWidget * parent = 0, Qt::WindowFlags f = 0 );
 
 		/**
-		 * @brief Get Encoder setting
-		 * @return Smart pointer to Encoder
+		 * @brief Get encoder setting object
+		 * @return Smart pointer contains AbstractAudioWriter
 		 */
-		virtual codec::AudioWriterSP getAudioWriter() const;
+		virtual codec::AudioWriterSP getAudioWriter() const = 0;
 		/**
 		 * @brief Get file suffix
 		 * @return File extension, without leading '.'
 		 */
-		virtual QString getSuffix() const;
-
-	private:
-		QButtonGroup * brChoise_;
-		QComboBox * bitRate_;
-		QComboBox * level_;
-		QComboBox * sampleRate_;
-		QComboBox * channels_;
+		virtual QString getSuffix() const = 0;
+		/**
+		 * @brief Get tab title
+		 * @return Title use in tab widget
+		 */
+		virtual QString getTitle() const = 0;
 	};
 
 }
+
+Q_DECLARE_INTERFACE( Khopper::AbstractPanel, "org.foolproof.Plugin.AbstractPanel/1.0" );
 
 #endif

@@ -1,5 +1,5 @@
 /**
- * @file abstractoption.hpp
+ * @file mp3panel.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,25 +19,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_ABSTRACTOPTION_HPP
-#define KHOPPER_ABSTRACTOPTION_HPP
+#ifndef KHOPPER_MP3PANEL_HPP
+#define KHOPPER_MP3PANEL_HPP
 
-#include "abstractaudiowriter.hpp"
+#include "abstractpanel.hpp"
 
-#include <loki/Factory.h>
-
-#include <QWidget>
+#include <QButtonGroup>
+#include <QComboBox>
 
 namespace Khopper {
 
 	/**
-	 * @brief Abstract option widget
-	 *
-	 * All output format option will inherit this class, \n
-	 * and must register to factory. \n
+	 * @brief Mp3 option widget
 	 */
-	class AbstractOption : public QWidget {
+	class MP3Panel : public AbstractPanel {
 		Q_OBJECT
+		Q_INTERFACES( Khopper::AbstractPanel )
 
 	public:
 		/**
@@ -45,30 +42,31 @@ namespace Khopper {
 		 * @param parent Parent widget
 		 * @param f Window flags
 		 */
-		AbstractOption( QWidget * parent = 0, Qt::WindowFlags f = 0 );
-		/**
-		 * @brief Virtual destructor
-		 */
-		virtual ~AbstractOption();
+		MP3Panel( QWidget * parent = 0, Qt::WindowFlags f = 0 );
 
 		/**
 		 * @brief Get encoder setting object
-		 * @return Smart pointer contains Encoder
+		 * @return Smart pointer contains AbstractAudioWriter
 		 */
-		virtual codec::AudioWriterSP getAudioWriter() const = 0;
+		virtual codec::AudioWriterSP getAudioWriter() const;
 		/**
 		 * @brief Get file suffix
 		 * @return File extension, without leading '.'
 		 */
-		virtual QString getSuffix() const = 0;
-	};
+		virtual QString getSuffix() const;
+		/**
+		 * @brief Get tab title
+		 * @return Title use in tab widget
+		 */
+		virtual QString getTitle() const;
 
-	/**
-	 * @brief AbstractOption factory
-	 *
-	 * Register by yourself.
-	 */
-	typedef Loki::SingletonHolder< Loki::Factory< AbstractOption, std::string >, Loki::CreateUsingNew, Loki::LongevityLifetime::DieAsSmallObjectChild > UIFactory;
+	private:
+		QButtonGroup * brChoise_;
+		QComboBox * bitRate_;
+		QComboBox * level_;
+		QComboBox * sampleRate_;
+		QComboBox * channels_;
+	};
 
 }
 

@@ -25,7 +25,7 @@
 #include "textcodec.hpp"
 #include "progress.hpp"
 #include "cuesheet.hpp"
-#include "abstractoption.hpp"
+#include "abstractpanel.hpp"
 #include "error.hpp"
 #include "preference.hpp"
 
@@ -47,6 +47,7 @@
 #include <QPushButton>
 #include <QDialogButtonBox>
 #include <QtDebug>
+#include <QPluginLoader>
 
 namespace {
 
@@ -198,10 +199,30 @@ namespace Khopper {
 
 		mainBox->addWidget( this->optionTabs_ );
 		// Take out the output types
-		const codec::AudioWriterList::ObjectType & tm = codec::AudioWriterList::Instance();
-		for( codec::AudioWriterList::ObjectType::const_iterator it = tm.begin(); it != tm.end(); ++it ) {
-			// it->first is object factory key, it->second is display name
-			this->optionTabs_->addTab( UIFactory::Instance().CreateObject( it->first ), QString::fromStdString( it->second ) );
+		QDir piDir( qApp->applicationDirPath() );
+#if defined(Q_OS_WIN)
+		if( piDir.dirName().toLower() == "debug" || piDir.dirName().toLower() == "release" ) {
+			piDir.cdUp();
+		}
+#elif defined(Q_OS_MAC)
+		if( piDir.dirName() == "MacOS" ) {
+			piDir.cdUp();
+			piDir.cdUp();
+			piDir.cdUp();
+		}
+#endif
+		piDir.cd( "plugins" );
+		foreach( QString fileName, piDir.entryList( QDir::Files ) ) {
+			qDebug() << fileName;
+			QPluginLoader piLoader( piDir.absoluteFilePath( fileName ) );
+			QObject * plugin = piLoader.instance();
+			qDebug() << piLoader.errorString();
+			if( plugin ) {
+				AbstractPanel * option = qobject_cast< AbstractPanel * >( plugin );
+				if( option ) {
+					this->optionTabs_->addTab( option, option->getTitle() );
+				}
+			}
 		}
 
 		QDialogButtonBox * buttons = new QDialogButtonBox( QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, this );
@@ -228,7 +249,7 @@ namespace Khopper {
 
 		// get option widget
 		if( this->optionWindow_->exec() ) {
-			AbstractOption * option = qobject_cast< AbstractOption * >( this->optionTabs_->currentWidget() );
+			AbstractPanel * option = qobject_cast< AbstractPanel * >( this->optionTabs_->currentWidget() );
 			if( !option ) {
 				this->showErrorMessage_( tr( "Run-time error!" ), tr( "Bad output plugin" ) );
 				return;
@@ -324,7 +345,7 @@ namespace Khopper {
 		QLabel * version = new QLabel( this->about_ );
 		version->setText( tr(
 			"<h1>Khopper</h1>"
-			"Version 0.1.0<br/>"
+			"Version 0.1.60<br/>"
 			"Part of FoolproofProject<br/>"
 		) );
 		topBox->addWidget( version );
