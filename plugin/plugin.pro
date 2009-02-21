@@ -12,14 +12,16 @@ DEPANDPATH += include \
               ../main/src/plugin \
               ../main/include/codec \
               ../main/src/codec
-HEADERS = include/mp3option.hpp \
-          ../main/include/plugin/abstractoption.hpp \
+HEADERS = include/mp3panel.hpp \
+          ../main/include/plugin/abstractpanel.hpp \
+          ../main/include/plugin/abstractaudiowriter.hpp \
           ../main/include/codec/defaultaudiowriter.hpp
-SOURCES = src/mp3option.cpp \
-          ../main/src/plugin/abstractoption.cpp \
+SOURCES = src/mp3panel.cpp \
+          ../main/src/plugin/abstractpanel.cpp \
+          ../main/src/plugin/abstractaudiowriter.cpp \
           ../main/src/codec/defaultaudiowriter.cpp \
           ../main/src/common/error.cpp
-TARGET = $$qtLibraryTarget(mp3option)
+TARGET = $$qtLibraryTarget(khopper_panel_mp3)
 MOC_DIR = ../tmp/moc
 
 CONFIG( debug, debug|release ) {

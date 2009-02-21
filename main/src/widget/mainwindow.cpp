@@ -25,7 +25,7 @@
 #include "textcodec.hpp"
 #include "progress.hpp"
 #include "cuesheet.hpp"
-#include "abstractoption.hpp"
+#include "abstractpanel.hpp"
 #include "error.hpp"
 #include "preference.hpp"
 
@@ -218,7 +218,7 @@ namespace Khopper {
 			QObject * plugin = piLoader.instance();
 			qDebug() << piLoader.errorString();
 			if( plugin ) {
-				AbstractOption * option = qobject_cast< AbstractOption * >( plugin );
+				AbstractPanel * option = qobject_cast< AbstractPanel * >( plugin );
 				if( option ) {
 					this->optionTabs_->addTab( option, option->getTitle() );
 				}
@@ -249,7 +249,7 @@ namespace Khopper {
 
 		// get option widget
 		if( this->optionWindow_->exec() ) {
-			AbstractOption * option = qobject_cast< AbstractOption * >( this->optionTabs_->currentWidget() );
+			AbstractPanel * option = qobject_cast< AbstractPanel * >( this->optionTabs_->currentWidget() );
 			if( !option ) {
 				this->showErrorMessage_( tr( "Run-time error!" ), tr( "Bad output plugin" ) );
 				return;
@@ -345,7 +345,7 @@ namespace Khopper {
 		QLabel * version = new QLabel( this->about_ );
 		version->setText( tr(
 			"<h1>Khopper</h1>"
-			"Version 0.1.0<br/>"
+			"Version 0.1.60<br/>"
 			"Part of FoolproofProject<br/>"
 		) );
 		topBox->addWidget( version );

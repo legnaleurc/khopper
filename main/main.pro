@@ -30,7 +30,7 @@ HEADERS   += include/album/cuesheet.hpp \
              include/plugin/abstractaudiowriter.hpp \
              include/codec/defaultaudioreader.hpp \
              include/codec/defaultaudiowriter.hpp \
-             include/plugin/abstractoption.hpp \
+             include/plugin/abstractpanel.hpp \
              include/widget/converter.hpp \
              include/widget/mainwindow.hpp \
              include/widget/preference.hpp \
@@ -47,7 +47,7 @@ SOURCES   += src/album/cuesheet.cpp \
              src/plugin/abstractaudiowriter.cpp \
              src/codec/defaultaudioreader.cpp \
              src/codec/defaultaudiowriter.cpp \
-             src/plugin/abstractoption.cpp \
+             src/plugin/abstractpanel.cpp \
              src/widget/converter.cpp \
              src/widget/mainwindow.cpp \
              src/widget/preference.cpp \

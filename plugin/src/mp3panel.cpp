@@ -1,5 +1,5 @@
 /**
- * @file mp3option.cpp
+ * @file mp3panel.cpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,7 +19,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "mp3option.hpp"
+#include "mp3panel.hpp"
 #include "defaultaudiowriter.hpp"
 
 #include <QVBoxLayout>
@@ -31,12 +31,12 @@
 #include <QtDebug>
 #include <QtPlugin>
 
-Q_EXPORT_PLUGIN2( mp3option, Khopper::MP3Option );
+Q_EXPORT_PLUGIN2( khopper_panel_mp3, Khopper::MP3Panel );
 
 namespace Khopper {
 
-	MP3Option::MP3Option( QWidget * parent, Qt::WindowFlags f ):
-	AbstractOption( parent, f ),
+	MP3Panel::MP3Panel( QWidget * parent, Qt::WindowFlags f ):
+	AbstractPanel( parent, f ),
 	brChoise_( new QButtonGroup( this ) ),
 	bitRate_( new QComboBox( this ) ),
 	level_( new QComboBox( this ) ),
@@ -102,7 +102,7 @@ namespace Khopper {
 		vbr->setDisabled( true );
 	}
 
-	codec::AudioWriterSP MP3Option::getAudioWriter() const {
+	codec::AudioWriterSP MP3Panel::getAudioWriter() const {
 		codec::AudioWriterSP encoder( new codec::DefaultAudioWriter );
 
 		switch( this->brChoise_->checkedId() ) {
@@ -121,11 +121,11 @@ namespace Khopper {
 		return encoder;
 	}
 
-	QString MP3Option::getSuffix() const {
+	QString MP3Panel::getSuffix() const {
 		return "mp3";
 	}
 
-	QString MP3Option::getTitle() const {
+	QString MP3Panel::getTitle() const {
 		return "MPeg layer 3";
 	}
 
