@@ -21,8 +21,9 @@
  */
 #include "index.hpp"
 
+#include <boost/format.hpp>
+
 #include <sstream>
-#include <iomanip>
 #include <cmath>
 
 namespace Khopper {
@@ -37,14 +38,14 @@ namespace Khopper {
 	}
 
 	Index::Index( double d ) {
-		this->minute = std::floor( d / 60 );
+		this->minute = static_cast< short >( std::floor( d / 60 ) );
 		d -= this->minute * 60;
-		this->second = std::floor( d );
+		this->second = static_cast< short >( std::floor( d ) );
 		d -= this->second;
-		this->frame = std::floor( d * 100 );
+		this->frame = static_cast< short >( std::floor( d * 100 ) );
 	}
 
-	const Index & Index::operator -=( const Index & that ) {
+	Index & Index::operator -=( const Index & that ) {
 		if( this->frame < that.frame ) {
 			--this->second;
 			this->frame += 100 - that.frame;
@@ -71,11 +72,8 @@ namespace Khopper {
 	}
 
 	std::wstring Index::toStdWString() const {
-		std::wostringstream sout;
-		sout << this->minute << L':';
-		sout << std::setfill( L'0' ) << std::setw( 2 ) << this->second;
-		sout << L'.' << std::setfill( L'0' ) << std::setw( 2 ) << this->frame;
-		return sout.str();
+		boost::wformat tpl( L"%1%:%|2$02|.%|3$02|" );
+		return ( tpl % this->minute % this->second % this->frame ).str();
 	}
 
 }

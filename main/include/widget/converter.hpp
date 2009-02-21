@@ -1,5 +1,5 @@
 /**
- * @file os.hpp
+ * @file converter.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,27 +19,52 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_OS_HPP
-#define KHOPPER_OS_HPP
+#ifndef KHOPPER_CONVERTER_HPP
+#define KHOPPER_CONVERTER_HPP
 
-#include <string>
+#include "track.hpp"
+#include "abstractaudiowriter.hpp"
+
+#include <QObject>
 
 namespace Khopper {
 
 	/**
-	 * @brief Operating System dependant system code
+	 * @brief Controller of converting
 	 */
-	namespace os {
+	class Converter : public QObject {
+		Q_OBJECT
+
+	public:
+		/**
+		 * @brief Default constructor
+		 */
+		Converter( QObject * parent = 0 );
 
 		/**
-		 * @brief Join paths to one path
-		 * @param [in] front front part
-		 * @param [in] back back part
-		 * @return Complete path
+		 * @brief Convert @p track
+		 * @param [in] track track to convert
+		 * @param [in] targetPath output file path
+		 * @param [in] encoder encoder setting
 		 */
-		std::wstring join( const std::wstring & front, const std::wstring & back );
+		void convert( TrackCSP track, const std::wstring & targetPath, codec::AudioWriterSP encoder );
 
-	}
+	public slots:
+		/**
+		 * @brief Cancel converting
+		 */
+		void cancel();
+
+	signals:
+		/**
+		 * @brief Decoded duration
+		 * @param ms Time in second * 10000
+		 */
+		void decodedTime( int ms ) const;
+
+	private:
+		bool canceled_;
+	};
 
 }
 

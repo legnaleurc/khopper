@@ -20,6 +20,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "mp3option.hpp"
+#include "defaultaudiowriter.hpp"
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -101,8 +102,8 @@ namespace Khopper {
 		vbr->setDisabled( true );
 	}
 
-	EncoderSP MP3Option::getEncoder() const {
-		Encoder * encoder = new Encoder;
+	codec::AudioWriterSP MP3Option::getAudioWriter() const {
+		codec::AudioWriterSP encoder( new codec::DefaultAudioWriter );
 
 		switch( this->brChoise_->checkedId() ) {
 		case 0:
@@ -117,7 +118,7 @@ namespace Khopper {
 		encoder->setSampleRate( this->sampleRate_->itemData( this->sampleRate_->currentIndex() ).toInt() );
 		encoder->setChannels( this->channels_->itemData( this->channels_->currentIndex() ).toInt() );
 
-		return EncoderSP( encoder );
+		return encoder;
 	}
 
 	QString MP3Option::getSuffix() const {

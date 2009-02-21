@@ -2,22 +2,22 @@ TEMPLATE = lib
 CONFIG += plugin debug_and_release
 INCLUDEPATH += include \
                ../main/include/common \
-               ../main/include/options \
+               ../main/include/plugin \
                ../main/include/codec
 DEPANDPATH += include \
               src \
-              ../main/include/options \
+              ../main/include/plugin \
               ../main/include/common \
               ../main/src/common \
-              ../main/src/options \
+              ../main/src/plugin \
               ../main/include/codec \
               ../main/src/codec
 HEADERS = include/mp3option.hpp \
-          ../main/include/options/abstractoption.hpp \
-          ../main/include/codec/encoder.hpp
+          ../main/include/plugin/abstractoption.hpp \
+          ../main/include/codec/defaultaudiowriter.hpp
 SOURCES = src/mp3option.cpp \
-          ../main/src/options/abstractoption.cpp \
-          ../main/src/codec/encoder.cpp \
+          ../main/src/plugin/abstractoption.cpp \
+          ../main/src/codec/defaultaudiowriter.cpp \
           ../main/src/common/error.cpp
 TARGET = $$qtLibraryTarget(mp3option)
 MOC_DIR = ../tmp/moc

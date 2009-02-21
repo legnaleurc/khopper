@@ -32,6 +32,8 @@ namespace Khopper {
 	 *
 	 * This class is the common code of error types,
 	 * to avoid duplicate code generation.
+	 *
+	 * Message will encode to UTF-8.
 	 */
 	class ErrorBase : public std::exception {
 	public:
@@ -77,13 +79,13 @@ namespace Khopper {
 		 */
 		Error( const std::wstring & msg ) throw() : ErrorBase( msg ) {}
 	};
-	
+
 	/**
 	 * @brief Operating system error class
 	 */
 	class OS {
 	};
-	
+
 	/**
 	 * @brief Run-time error class
 	 */

@@ -29,8 +29,7 @@ namespace Khopper {
 	/**
 	 * @brief Track index information
 	 */
-	class Index {
-	public:
+	struct Index {
 		/**
 		 * @brief Default constructor
 		 *
@@ -64,7 +63,7 @@ namespace Khopper {
 		 * @param that Subtrahend
 		 * @return self
 		 */
-		const Index & operator -=( const Index & that );
+		Index & operator -=( const Index & that );
 		/**
 		 * @brief Subtract operator
 		 * @param that Subtrahend

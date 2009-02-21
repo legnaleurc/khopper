@@ -48,7 +48,7 @@ namespace Khopper {
 		 * @brief Get Encoder setting
 		 * @return Smart pointer to Encoder
 		 */
-		virtual EncoderSP getEncoder() const;
+		virtual codec::AudioWriterSP getAudioWriter() const;
 		/**
 		 * @brief Get file suffix
 		 * @return File extension, without leading '.'

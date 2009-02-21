@@ -20,6 +20,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "track.hpp"
+#include "defaultaudioreader.hpp"
+#include "text.hpp"
 #include "error.hpp"
 
 #include <QtDebug>
@@ -45,6 +47,7 @@ namespace {
 namespace Khopper {
 
 	Track::Track():
+	album(),
 	artist(),
 	bitRate( 0 ),
 	channels( 0 ),
@@ -62,39 +65,27 @@ namespace Khopper {
 	sampleRate(),
 	songWriter(),
 	startTime(),
-	title(),
-	decoder_( new Decoder ),
-	canceled_( false ) {
+	title() {
 	}
 
-	void Track::convert( const std::wstring & targetPath, EncoderSP encoder ) {
-		this->decoder_->open( this->filePath );
-		encoder->open( targetPath );
-		this->canceled_ = false;
+	void Track::load( const std::wstring & filePath ) {
+		this->filePath = filePath;
 
-		if( !this->decoder_->is_open() || !encoder->is_open() ) {
-			throw Error< RunTime >( "Can not open decoder or encoder!" );
+		codec::AudioReaderSP decoder( new codec::DefaultAudioReader );
+		decoder->open( text::toLocale( this->filePath ) );
+		if( decoder->isOpen() ) {
+			this->album = text::fromUTF8( decoder->getAlbum() );
+			this->artist = text::fromUTF8( decoder->getArtist() );
+			this->bitRate = decoder->getBitRate();
+			this->channels = decoder->getChannels();
+			this->duration = decoder->getDuration();
+			this->sampleRate = decoder->getSampleRate();
+			this->title = text::fromUTF8( decoder->getTitle() );
+
+			decoder->close();
+		} else {
+			throw Error< codec::Codec >( "Can not open file!" );
 		}
-
-		double begin = this->startTime.toDouble();
-		double end = begin + this->duration.toDouble();
-		this->decoder_->setRange( begin, end );
-
-		double decoded;
-		while( this->decoder_->hasNext() ) {
-			if( this->canceled_ ) {
-				break;
-			}
-			encoder->write( this->decoder_->read( decoded ) );
-			emit this->decodedTime( static_cast< int >( decoded * 10000 ) );
-		}
-
-		encoder->close();
-		this->decoder_->close();
-	}
-
-	void Track::cancel() {
-		this->canceled_ = true;
 	}
 
 	std::wstring Track::toStdWString() const {

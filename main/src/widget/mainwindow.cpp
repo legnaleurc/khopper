@@ -24,10 +24,7 @@
 #include "threads.hpp"
 #include "textcodec.hpp"
 #include "progress.hpp"
-#include "os.hpp"
 #include "cuesheet.hpp"
-#include "track.hpp"
-#include "encoder.hpp"
 #include "abstractoption.hpp"
 #include "error.hpp"
 #include "preference.hpp"
@@ -88,12 +85,29 @@ namespace Khopper {
 		central->setLayout( mainBox );
 		this->setCentralWidget( central );
 
+		// Setting player panel
+		QHBoxLayout * playerBox = new QHBoxLayout;
+		mainBox->addLayout( playerBox );
+
+		QPushButton * play = new QPushButton( tr( "Play" ), this );
+		connect( play, SIGNAL( clicked() ), this->songList_, SLOT( play() ) );
+		playerBox->addWidget( play );
+		QPushButton * pause = new QPushButton( tr( "Pause" ), this );
+		connect( pause, SIGNAL( clicked() ), this->songList_, SLOT( pause() ) );
+		playerBox->addWidget( pause );
+		QPushButton * stop = new QPushButton( tr( "Stop" ), this );
+		connect( stop, SIGNAL( clicked() ), this->songList_, SLOT( stop() ) );
+		playerBox->addWidget( stop );
+
+		playerBox->addWidget( this->songList_->getSeekSlider() );
+		playerBox->addWidget( this->songList_->getVolumeSlider() );
+
 		// Add song list
 		mainBox->addWidget( this->songList_ );
 		connect( this->songList_, SIGNAL( dropFile( const QString & ) ), this, SLOT( open( const QString & ) ) );
 		connect( this->songList_, SIGNAL( requireConvert() ), this, SLOT( fire_() ) );
 
-		QHBoxLayout * pathBox = new QHBoxLayout();
+		QHBoxLayout * pathBox = new QHBoxLayout;
 		mainBox->addLayout( pathBox );
 
 		// Output path setting
@@ -141,9 +155,9 @@ namespace Khopper {
 		// setting file menu
 		QMenu * file = new QMenu( tr( "&File" ), menuBar );
 
-		QAction * open = new QAction( tr( "&Open album" ), this );
+		QAction * open = new QAction( tr( "&Open files" ), this );
 		open->setShortcut( tr( "Ctrl+O" ) );
-		connect( open, SIGNAL( triggered() ), this, SLOT( showOpenFileDialog() ) );
+		connect( open, SIGNAL( triggered() ), this, SLOT( showOpenFilesDialog() ) );
 		file->addAction( open );
 
 		// add file menu to menu bar
@@ -242,9 +256,6 @@ namespace Khopper {
 			}
 
 			try {
-				// create encoder object
-				EncoderSP output( option->getEncoder() );
-
 				// generate output paths
 				QStringList outputPaths;
 				QString tpl = this->preference_->getTemplate();
@@ -255,53 +266,67 @@ namespace Khopper {
 				// set progress bar
 				this->progress_->setTotal( tracks.size() );
 				// set output information
-				this->cvt_->setOutput( output, outputPaths );
+				this->cvt_->setOutput( option->getAudioWriter(), outputPaths );
 				this->cvt_->setTracks( tracks );
 				this->cvt_->start();
 				this->progress_->exec();
 			} catch( Error< RunTime > & e ) {
-				this->showErrorMessage_( tr( "Run-time error!" ), tr( e.what() ) );
+				this->showErrorMessage_( tr( "Run-time error!" ), trUtf8( e.what() ) );
 			} catch( std::exception & e ) {
-				this->showErrorMessage_( tr( "Unknown error!" ), tr( e.what() ) );
+				this->showErrorMessage_( tr( "Unknown error!" ), trUtf8( e.what() ) );
 			}
 		}
 	}
 
-	void MainWindow::showOpenFileDialog() {
-		QString filePath = QFileDialog::getOpenFileName( this, tr( "Open CUE sheet" ), QDir::homePath(), "*.cue" );
-		this->open( filePath );
+	void MainWindow::showOpenFilesDialog() {
+		QStringList filePaths = QFileDialog::getOpenFileNames( this, tr( "Open audio" ), QDir::homePath() );
+		this->open( filePaths );
 	}
 
 	void MainWindow::open( const QString & filePath ) {
-		if( filePath != "" ) {
-			QFileInfo fI( filePath );
+		this->open( QStringList( filePath ) );
+	}
 
-			std::vector< TrackSP > tracks;
+	void MainWindow::open( const QStringList & filePaths ) {
+		std::vector< TrackSP > tracks;
 
-			if( fI.suffix() == "cue" ) {
-				QFile fin( filePath );
-				if( !fin.open( QIODevice::ReadOnly | QIODevice::Text ) ) {
-					this->showErrorMessage_( tr( "File open error!" ), tr( "Could not open the file: `" ) + filePath + "\'" );
-				}
+		foreach( QString filePath, filePaths ) {
+			if( filePath != "" ) {
+				QFileInfo fI( filePath );
 
-				QByteArray raw_input = fin.readAll();
-				fin.close();
+				if( fI.suffix() == "cue" ) {
+					QFile fin( filePath );
+					if( !fin.open( QIODevice::ReadOnly | QIODevice::Text ) ) {
+						this->showErrorMessage_( tr( "File open error!" ), tr( "Could not open the file: `" ) + filePath + "\'" );
+					}
 
-				this->codec_->setEncoded( raw_input );
+					QByteArray raw_input = fin.readAll();
+					fin.close();
 
-				if( this->codec_->exec() ) {
+					this->codec_->setEncoded( raw_input );
+
+					if( this->codec_->exec() ) {
+						try {
+							CUESheet sheet( codec_->getDecoded().toStdWString(), fI.absolutePath().toStdWString() );
+							tracks.insert( tracks.end(), sheet.tracks.begin(), sheet.tracks.end() );
+						} catch( std::exception & e ) {
+							this->showErrorMessage_( tr( "Error on parsing CUE Sheet!" ), trUtf8( e.what() ) );
+						}
+					}
+				} else {
+					TrackSP track( new Track );
+
 					try {
-						tracks = CUESheet( codec_->getDecoded().toStdWString(), fI.absolutePath().toStdWString() ).tracks;
+						track->load( filePath.toStdWString() );
+						tracks.push_back( track );
 					} catch( std::exception & e ) {
-						this->showErrorMessage_( tr( "Error on parsing CUE Sheet!" ), tr( e.what() ) );
+						this->showErrorMessage_( tr( "Can not decode this file!" ), trUtf8( e.what() ) );
 					}
 				}
-			} else {
-				this->showErrorMessage_( tr( "Run-time error!" ), tr( "Not implemented." ) );
 			}
-
-			this->songList_->appendTracks( tracks );
 		}
+
+		this->songList_->appendTracks( tracks );
 	}
 
 	void MainWindow::initAbout_() {

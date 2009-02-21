@@ -1,5 +1,5 @@
 /**
- * @file linux.cpp
+ * @file codec_base.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,33 +19,31 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "tr1.hpp"
-#include "os.hpp"
+#ifndef KHOPPER_CODEC_BASE_HPP
+#define KHOPPER_CODEC_BASE_HPP
 
-#include <QString>
-#include <QtDebug>
+#include <deque>
 
 namespace Khopper {
 
-	namespace os {
+	/**
+	 * @brief codec module
+	 */
+	namespace codec {
 
-		std::wstring join( const std::wstring & front, const std::wstring & back ) {
-			// kill all tail '/' in front
-			// kill all lead '/' in back
-			// return front + '/' + back
-			using namespace std::tr1;
-			const wregex fp( L"(.*)/*" );
-			wsmatch fr;
-			const wregex bp( L"/*(.*)" );
-			wsmatch br;
+		/**
+		 * @brief Used for storing raw binary data
+		 */
+		typedef std::deque< char > ByteArray;
 
-			if( regex_match( front, fr, fp ) && regex_match( back, br, bp ) ) {
-				return fr[1].str() + L"/" + br[1].str();
-			} else {
-				return L"";
-			}
-		}
+		/**
+		 * @brief Codec error
+		 */
+		class Codec {
+		};
 
 	}
 
 }
+
+#endif

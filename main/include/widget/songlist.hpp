@@ -26,6 +26,7 @@
 
 #include <QTableView>
 #include <QStandardItemModel>
+#include <Phonon>
 
 namespace Khopper {
 
@@ -54,6 +55,23 @@ namespace Khopper {
 		 * The cost may be expansive.
 		 */
 		std::vector< TrackSP > getSelectedTracks() const;
+
+		/**
+		 * @brief Get player seek slider
+		 */
+		Phonon::SeekSlider * getSeekSlider() const;
+		/**
+		 * @brief Get player volume slider
+		 */
+		Phonon::VolumeSlider * getVolumeSlider() const;
+
+	public slots:
+		/// play
+		void play();
+		/// pause
+		void pause();
+		/// stop
+		void stop();
 
 	signals:
 		/**
@@ -84,6 +102,9 @@ namespace Khopper {
 		QStandardItemModel * model_;
 		QMenu * contextMenu_;
 		std::vector< TrackSP > tracks_;
+		Phonon::MediaObject * player_;
+		Phonon::SeekSlider * seeker_;
+		Phonon::VolumeSlider * volume_;
 	};
 
 }

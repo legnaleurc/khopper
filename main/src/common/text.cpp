@@ -1,5 +1,5 @@
 /**
- * @file khopper.cpp
+ * @file text.cpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,33 +19,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-/**
- * @namespace Khopper
- * @brief All componets in this program
- */
-#include "mainwindow.hpp"
+#include "text.hpp"
 
-#include <QApplication>
-#include <QSettings>
+#include <QString>
 
-extern "C" {
-#include <avformat.h>
-}
+namespace Khopper {
 
-/// Main program
-int main( int argc, char * argv[] ) {
-	QApplication app( argc, argv );
-	av_register_all();
+	namespace text {
 
-	QApplication::setWindowIcon( QIcon( ":/image/logo.svg" ) );
-	QApplication::setOrganizationName( "FoolproofProject" );
-	QApplication::setApplicationName( "Khopper" );
-	QSettings::setDefaultFormat( QSettings::IniFormat );
+		std::wstring fromUTF8( const std::string & utf8 ) {
+			return QString::fromUtf8( utf8.c_str() ).toStdWString();
+		}
 
-	Khopper::MainWindow window;
-	window.setWindowTitle( "Khopper" );
-	window.resize( 640, 480 );
-	window.show();
+		std::string toUTF8( const std::wstring & unicode ) {
+			return QString::fromStdWString( unicode ).toUtf8().constData();
+		}
 
-	return app.exec();
+		std::wstring fromLocale( const std::string & locale ) {
+			return QString::fromLocal8Bit( locale.c_str() ).toStdWString();
+		}
+		std::string toLocale( const std::wstring & unicode ) {
+			return QString::fromStdWString( unicode ).toLocal8Bit().constData();
+		}
+
+	}
+
 }

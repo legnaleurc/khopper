@@ -1,5 +1,5 @@
 /**
- * @file codec_base.hpp
+ * @file text.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,23 +19,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_CODEC_BASE_HPP
-#define KHOPPER_CODEC_BASE_HPP
+#ifndef KHOPPER_TEXT_HPP
+#define KHOPPER_TEXT_HPP
 
-#include <deque>
+#include <string>
 
 namespace Khopper {
 
 	/**
-	 * @brief Used for storing raw binary data
+	 * @brief Text processing
 	 */
-	typedef std::deque< char > ByteArray;
+	namespace text {
 
-	/**
-	 * @brief Codec error
-	 */
-	class Codec {
-	};
+		/// @brief Convert @p utf8 to Unicode
+		std::wstring fromUTF8( const std::string & utf8 );
+		/// @brief Convert @p unicode to UTF-8
+		std::string toUTF8( const std::wstring & unicode );
+
+		/// @brief Convert @p locale to Unicode
+		std::wstring fromLocale( const std::string & locale );
+		/// @brief Convert @p unicode to system locale
+		std::string toLocale( const std::wstring & unicode );
+
+	}
 
 }
 

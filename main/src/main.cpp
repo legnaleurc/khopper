@@ -1,5 +1,5 @@
 /**
- * @file linux.cpp
+ * @file main.cpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,33 +19,33 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "tr1.hpp"
-#include "os.hpp"
+/**
+ * @namespace Khopper
+ * @brief All componets in this program
+ */
+#include "mainwindow.hpp"
 
-#include <QString>
-#include <QtDebug>
+#include <QApplication>
+#include <QSettings>
 
-namespace Khopper {
+extern "C" {
+#include <avformat.h>
+}
 
-	namespace os {
+/// Main program
+int main( int argc, char * argv[] ) {
+	QApplication app( argc, argv );
+	av_register_all();
 
-		std::wstring join( const std::wstring & front, const std::wstring & back ) {
-			// kill all tail '/' in front
-			// kill all lead '/' in back
-			// return front + '/' + back
-			using namespace std::tr1;
-			const wregex fp( L"(.*)/*" );
-			wsmatch fr;
-			const wregex bp( L"/*(.*)" );
-			wsmatch br;
+	QApplication::setWindowIcon( QIcon( ":/image/logo.svg" ) );
+	QApplication::setOrganizationName( "FoolproofProject" );
+	QApplication::setApplicationName( "Khopper" );
+	QSettings::setDefaultFormat( QSettings::IniFormat );
 
-			if( regex_match( front, fr, fp ) && regex_match( back, br, bp ) ) {
-				return fr[1].str() + L"/" + br[1].str();
-			} else {
-				return L"";
-			}
-		}
+	Khopper::MainWindow window;
+	window.setWindowTitle( "Khopper" );
+	window.resize( 640, 480 );
+	window.show();
 
-	}
-
+	return app.exec();
 }

@@ -20,14 +20,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "error.hpp"
-#include "os.hpp"
+#include "text.hpp"
 
 namespace Khopper {
 
 	ErrorBase::ErrorBase( const std::string & msg ) throw() : msg_( msg ) {
 	}
 
-	ErrorBase::ErrorBase( const std::wstring & msg ) throw() : msg_( os::encodeString( msg ) ) {
+	ErrorBase::ErrorBase( const std::wstring & msg ) throw() : msg_( text::toUTF8( msg ) ) {
 	}
 
 	ErrorBase::~ErrorBase() throw() {
