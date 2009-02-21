@@ -1,4 +1,4 @@
 TEMPLATE = subdirs
 SUBDIRS = main \
-          plugin
+          plugins
 CONFIG += debug_and_release
