@@ -201,11 +201,19 @@ namespace Khopper {
 
 		if( type == L"INDEX" ) {
 			short int n = ::toShort( num );
-			if( n == 1 ) {
+			switch( n ) {
+			case 1:
+				// track start time
 				this->tracks[trackNO]->startTime = Index( minute, second, frame );
-			} else if( n == 0 ) {
-				this->tracks[trackNO-1]->duration = Index( minute, second, frame ) - this->tracks[trackNO-1]->startTime;
-			} else {
+				break;
+			case 0:
+				// prevous track end time
+				if( trackNO > 0 ) {
+					this->tracks[trackNO-1]->duration = Index( minute, second, frame ) - this->tracks[trackNO-1]->startTime;
+				}
+				break;
+			default:
+				// other values implies error
 				throw Error< Parsing >( "Index value error!" );
 			}
 		} else if( type == L"PREGAP" ) {
