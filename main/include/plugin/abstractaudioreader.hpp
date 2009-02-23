@@ -310,11 +310,19 @@ namespace Khopper {
 		/**
 		 * @brief AbstractAudioReader smart pointer
 		 * @ingroup Codecs
-		 * @sa AbstractAudioReader
+		 * @sa AbstractAudioReader AudioReaderCSP
 		 *
 		 * Use TR1 shared pointer.
 		 */
 		typedef std::tr1::shared_ptr< AbstractAudioReader > AudioReaderSP;
+		/**
+		 * @brief AbstractAudioReader const smart pointer
+		 * @ingroup Codecs
+		 * @sa AbstractAudioReader AudioReaderSP
+		 *
+		 * Use TR1 shared pointer.
+		 */
+		typedef std::tr1::shared_ptr< const AbstractAudioReader > AudioReaderCSP;
 
 		/**
 		 * @brief The audio reader factory

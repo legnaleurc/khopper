@@ -69,14 +69,14 @@ namespace {
 	};
 
 	struct setBCS {
-		setBCS( Khopper::codec::AudioReaderSP decoder ) : decoder_( decoder ) {}
+		setBCS( Khopper::codec::AudioReaderCSP decoder ) : decoder_( decoder ) {}
 		void operator ()( Khopper::TrackSP track ) {
 			track->bitRate = this->decoder_->getBitRate();
 			track->sampleRate = this->decoder_->getSampleRate();
 			track->channels = this->decoder_->getChannels();
 		}
 	private:
-		Khopper::codec::AudioReaderSP decoder_;
+		Khopper::codec::AudioReaderCSP decoder_;
 	};
 
 }

@@ -218,11 +218,19 @@ namespace Khopper {
 		/**
 		 * @brief AbstractAudioWriter smart pointer
 		 * @ingroup Codecs
-		 * @sa AbstractAudioWriter
+		 * @sa AbstractAudioWriter AudioWriterCSP
 		 *
 		 * Use TR1 shared pointer.
 		 */
 		typedef std::tr1::shared_ptr< AbstractAudioWriter > AudioWriterSP;
+		/**
+		 * @brief AbstractAudioWriter const smart pointer
+		 * @ingroup Codecs
+		 * @sa AbstractAudioWriter AudioWriterSP
+		 *
+		 * Use TR1 shared pointer.
+		 */
+		typedef std::tr1::shared_ptr< const AbstractAudioWriter > AudioWriterCSP;
 
 	}
 
