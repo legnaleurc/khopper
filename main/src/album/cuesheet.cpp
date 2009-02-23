@@ -44,7 +44,7 @@ namespace {
 	const wregex TRACK( L"\\s*TRACK\\s+(\\d+)\\s+(AUDIO)\\s*" );
 	const wregex INDEX( L"\\s*(INDEX|PREGAP|POSTGAP)\\s+((\\d+)\\s+)?(\\d+):(\\d+):(\\d+)\\s*" );
 
-	wstring stripQuote( const wstring & s ) {
+	inline wstring stripQuote( const wstring & s ) {
 		if( s[0] == '\"' && s[s.length()-1] == '\"' ) {
 			return s.substr( 1, s.length() - 2 );
 		} else {
@@ -52,12 +52,32 @@ namespace {
 		}
 	}
 
-	short int toShort( const std::wstring & s ) {
+	inline short int toShort( const std::wstring & s ) {
 		std::wistringstream sin( s );
 		short int si;
 		sin >> si;
 		return si;
 	}
+
+	struct setAlbum {
+		setAlbum( const std::wstring & title ) : title_( title ) {}
+		void operator ()( Khopper::TrackSP track ) {
+			track->album = this->title_;
+		}
+	private:
+		const std::wstring & title_;
+	};
+
+	struct setBCS {
+		setBCS( Khopper::codec::AudioReaderSP decoder ) : decoder_( decoder ) {}
+		void operator ()( Khopper::TrackSP track ) {
+			track->bitRate = this->decoder_->getBitRate();
+			track->sampleRate = this->decoder_->getSampleRate();
+			track->channels = this->decoder_->getChannels();
+		}
+	private:
+		Khopper::codec::AudioReaderSP decoder_;
+	};
 
 }
 
@@ -99,29 +119,17 @@ namespace Khopper {
 			}
 		}
 
+		// set track album
+		std::for_each( this->tracks.begin(), this->tracks.end(), ::setAlbum( this->title ) );
+
 		// get the total length, because cue sheet don't provide it
 		codec::AudioReaderSP decoder( new codec::DefaultAudioReader );
 		decoder->open( text::toLocale( currentFile.first ) );
 		if( decoder->isOpen() ) {
-			for( std::vector< TrackSP >::iterator it = tracks.begin(); it != tracks.end(); ++it ) {
-				// cue information
-				( *it )->album = this->title;
+			std::for_each( this->tracks.begin(), this->tracks.end(), ::setBCS( decoder ) );
 
-				// codec information
-				( *it )->bitRate = decoder->getBitRate();
-				( *it )->sampleRate = decoder->getSampleRate();
-				( *it )->channels = decoder->getChannels();
-
-				// duration hack
-				if( ( *it )->duration.toDouble() == 0.0 ) {
-					if( ( it + 1 ) != tracks.end() ) {
-						( *it )->duration = ( *(it+1) )->startTime - ( *it )->startTime;
-					} else {
-						TrackSP last( this->tracks.back() );
-						last->duration = Index( decoder->getDuration() ) - last->startTime;
-					}
-				}
-			}
+			TrackSP last( this->tracks.back() );
+			last->duration = Index( decoder->getDuration() ) - last->startTime;
 
 			decoder->close();
 		}
@@ -202,11 +210,22 @@ namespace Khopper {
 
 		if( type == L"INDEX" ) {
 			short int n = ::toShort( num );
-			if( n == 1 ) {
+			switch( n ) {
+			case 1:
+				// track start time
 				this->tracks[trackNO]->startTime = Index( minute, second, frame );
-			} else if( n == 0 ) {
-				this->tracks[trackNO-1]->duration = Index( minute, second, frame ) - this->tracks[trackNO-1]->startTime;
-			} else {
+				if( trackNO > 0 && this->tracks[trackNO-1]->duration.toDouble() == 0.0 ) {
+					this->tracks[trackNO-1]->duration =  this->tracks[trackNO]->startTime - this->tracks[trackNO-1]->startTime;
+				}
+				break;
+			case 0:
+				// prevous track end time
+				if( trackNO > 0 ) {
+					this->tracks[trackNO-1]->duration = Index( minute, second, frame ) - this->tracks[trackNO-1]->startTime;
+				}
+				break;
+			default:
+				// other values implies error
 				throw Error< Parsing >( "Index value error!" );
 			}
 		} else if( type == L"PREGAP" ) {
