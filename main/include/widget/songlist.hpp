@@ -26,7 +26,6 @@
 
 #include <QTableView>
 #include <QStandardItemModel>
-#include <Phonon>
 
 namespace Khopper {
 
@@ -48,6 +47,7 @@ namespace Khopper {
 		 * @param [in] tracks Tracks
 		 */
 		void appendTracks( const std::vector< TrackSP > & tracks );
+		const std::vector< TrackSP > & getTracks() const;
 		/**
 		 * @brief Get selected tracks
 		 * @return Selected tracks
@@ -56,29 +56,12 @@ namespace Khopper {
 		 */
 		std::vector< TrackSP > getSelectedTracks() const;
 
-		/**
-		 * @brief Get player seek slider
-		 */
-		Phonon::SeekSlider * getSeekSlider() const;
-		/**
-		 * @brief Get player volume slider
-		 */
-		Phonon::VolumeSlider * getVolumeSlider() const;
-
-	public slots:
-		/// play
-		void play();
-		/// pause
-		void pause();
-		/// stop
-		void stop();
-
 	signals:
 		/**
 		 * @brief Emitted when drop an openable file
-		 * @param path File path
+		 * @param paths File path
 		 */
-		void dropFile( const QString & path );
+		void dropFile( const QStringList & paths );
 		/**
 		 * @brief Emmited when convert action is required.
 		 */
@@ -102,9 +85,6 @@ namespace Khopper {
 		QStandardItemModel * model_;
 		QMenu * contextMenu_;
 		std::vector< TrackSP > tracks_;
-		Phonon::MediaObject * player_;
-		Phonon::SeekSlider * seeker_;
-		Phonon::VolumeSlider * volume_;
 	};
 
 }

@@ -33,7 +33,7 @@ namespace Khopper {
 
 	class ConverterThread;
 	class Progress;
-	class SongList;
+	class Player;
 	class TextCodec;
 	class Preference;
 
@@ -62,12 +62,10 @@ namespace Khopper {
 		 * @param [in] filePaths file path
 		 */
 		void open( const QStringList & filePaths );
-		/// @brief Convinence slot
-		void open( const QString & filePath );
 
 	private:
 		TextCodec * codec_;
-		SongList * songList_;
+		Player * player_;
 		QDialog * optionWindow_;
 		QTabWidget * optionTabs_;
 		QLineEdit * outputPath_;

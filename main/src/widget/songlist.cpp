@@ -44,10 +44,7 @@ namespace Khopper {
 	QTableView( parent ),
 	model_( new QStandardItemModel( this ) ),
 	contextMenu_( new QMenu( this ) ),
-	tracks_(),
-	player_( new Phonon::MediaObject( this ) ),
-	seeker_( new Phonon::SeekSlider( this->player_, this ) ),
-	volume_( new Phonon::VolumeSlider( this ) ) {
+	tracks_() {
 		// Set drag and drop
 		this->setAcceptDrops( true );
 
@@ -75,11 +72,6 @@ namespace Khopper {
 		connect( convert, SIGNAL( triggered() ), this, SIGNAL( requireConvert() ) );
 		this->addAction( convert );
 		this->contextMenu_->addAction( convert );
-
-		// Set player
-		Phonon::AudioOutput * ao = new Phonon::AudioOutput( Phonon::MusicCategory, this );
-		Phonon::createPath( this->player_, ao );
-		this->volume_->setAudioOutput( ao );
 	}
 
 	void SongList::appendTracks( const std::vector< TrackSP > & tracks ) {
@@ -105,8 +97,13 @@ namespace Khopper {
 		}
 	}
 
+	const std::vector< TrackSP > & SongList::getTracks() const {
+		return this->tracks_;
+	}
+
 	std::vector< TrackSP > SongList::getSelectedTracks() const {
 		QModelIndexList selected = this->selectionModel()->selectedRows( 0 );
+		std::sort( selected.begin(), selected.end(), ::indexRowCompD );
 		std::vector< TrackSP > result( selected.size() );
 
 		for( std::size_t i = 0; i < result.size(); ++i ) {
@@ -114,40 +111,6 @@ namespace Khopper {
 		}
 
 		return result;
-	}
-
-	Phonon::SeekSlider * SongList::getSeekSlider() const {
-		return this->seeker_;
-	}
-
-	Phonon::VolumeSlider * SongList::getVolumeSlider() const {
-		return this->volume_;
-	}
-
-	void SongList::play() {
-		QModelIndexList selected = this->selectionModel()->selectedRows();
-		std::sort( selected.begin(), selected.end(), ::indexRowCompD );
-
-		if( !this->tracks_.empty() ) {
-			if( selected.isEmpty() ) {
-				this->player_->setCurrentSource( QString::fromStdWString( this->tracks_[0]->filePath ) );
-			} else {
-				this->player_->setCurrentSource( QString::fromStdWString( this->tracks_.at( selected[0].row() )->filePath ) );
-			}
-			this->player_->play();
-		}
-	}
-
-	void SongList::pause() {
-		if( this->player_->state() == Phonon::PausedState ) {
-			this->player_->play();
-		} else {
-			this->player_->pause();
-		}
-	}
-
-	void SongList::stop() {
-		this->player_->stop();
 	}
 
 	void SongList::removeSelected_() {
@@ -196,13 +159,18 @@ namespace Khopper {
 
 	void SongList::dropEvent( QDropEvent * event ) {
 		if( event->mimeData()->hasUrls() ) {
-			const QList< QUrl > & urlList = event->mimeData()->urls();
-			for( QList< QUrl >::const_iterator it = urlList.begin(); it != urlList.end(); ++it ) {
-				if( QFileInfo( it->toLocalFile() ).suffix() == "cue" ) {
-					emit dropFile( it->toLocalFile() );
-					break;
-				}
+// 			const QList< QUrl > & urlList = event->mimeData()->urls();
+			QStringList local;
+			foreach( QUrl url, event->mimeData()->urls() ) {
+				local.push_back( url.toLocalFile() );
 			}
+			emit dropFile( local );
+// 			for( QList< QUrl >::const_iterator it = urlList.begin(); it != urlList.end(); ++it ) {
+// 				if( QFileInfo( it->toLocalFile() ).suffix() == "cue" ) {
+// 					emit dropFile( it->toLocalFile() );
+// 					break;
+// 				}
+// 			}
 		}
 		event->acceptProposedAction();
 	}

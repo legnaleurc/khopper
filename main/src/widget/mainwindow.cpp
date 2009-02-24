@@ -20,7 +20,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "mainwindow.hpp"
-#include "songlist.hpp"
+#include "player.hpp"
 #include "threads.hpp"
 #include "textcodec.hpp"
 #include "progress.hpp"
@@ -63,7 +63,7 @@ namespace Khopper {
 	MainWindow::MainWindow( QWidget * parent, Qt::WindowFlags flags ):
 	QMainWindow( parent, flags ),
 	codec_( new TextCodec( this ) ),
-	songList_( new SongList( this ) ),
+	player_( new Player( this ) ),
 	optionWindow_( new QDialog( this ) ),
 	optionTabs_( new QTabWidget( this ) ),
 	outputPath_( new QLineEdit( QDir::homePath(), this ) ),
@@ -85,27 +85,10 @@ namespace Khopper {
 		central->setLayout( mainBox );
 		this->setCentralWidget( central );
 
-		// Setting player panel
-		QHBoxLayout * playerBox = new QHBoxLayout;
-		mainBox->addLayout( playerBox );
-
-		QPushButton * play = new QPushButton( tr( "Play" ), this );
-		connect( play, SIGNAL( clicked() ), this->songList_, SLOT( play() ) );
-		playerBox->addWidget( play );
-		QPushButton * pause = new QPushButton( tr( "Pause" ), this );
-		connect( pause, SIGNAL( clicked() ), this->songList_, SLOT( pause() ) );
-		playerBox->addWidget( pause );
-		QPushButton * stop = new QPushButton( tr( "Stop" ), this );
-		connect( stop, SIGNAL( clicked() ), this->songList_, SLOT( stop() ) );
-		playerBox->addWidget( stop );
-
-		playerBox->addWidget( this->songList_->getSeekSlider() );
-		playerBox->addWidget( this->songList_->getVolumeSlider() );
-
 		// Add song list
-		mainBox->addWidget( this->songList_ );
-		connect( this->songList_, SIGNAL( dropFile( const QString & ) ), this, SLOT( open( const QString & ) ) );
-		connect( this->songList_, SIGNAL( requireConvert() ), this, SLOT( fire_() ) );
+		mainBox->addWidget( this->player_ );
+		connect( this->player_, SIGNAL( dropFile( const QStringList & ) ), this, SLOT( open( const QStringList & ) ) );
+		connect( this->player_, SIGNAL( requireConvert() ), this, SLOT( fire_() ) );
 
 		QHBoxLayout * pathBox = new QHBoxLayout;
 		mainBox->addLayout( pathBox );
@@ -241,7 +224,7 @@ namespace Khopper {
 
 	void MainWindow::fire_() {
 		// get selected list
-		std::vector< TrackSP > tracks = this->songList_->getSelectedTracks();
+		std::vector< TrackSP > tracks = this->player_->getSelectedTracks();
 		if( tracks.empty() ) {
 			this->showErrorMessage_( tr( "Run-time error!" ), tr( "No track selected." ) );
 			return;
@@ -283,10 +266,6 @@ namespace Khopper {
 		this->open( filePaths );
 	}
 
-	void MainWindow::open( const QString & filePath ) {
-		this->open( QStringList( filePath ) );
-	}
-
 	void MainWindow::open( const QStringList & filePaths ) {
 		std::vector< TrackSP > tracks;
 
@@ -326,7 +305,7 @@ namespace Khopper {
 			}
 		}
 
-		this->songList_->appendTracks( tracks );
+		this->player_->appendTracks( tracks );
 	}
 
 	void MainWindow::initAbout_() {
