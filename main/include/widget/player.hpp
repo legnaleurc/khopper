@@ -55,9 +55,10 @@ namespace Khopper {
 
 	private slots:
 		void playOrPause_();
+		void stop_();
 
 	private:
-		void play_();
+		bool play_();
 
 		Phonon::MediaObject * player_;
 		Phonon::SeekSlider * seeker_;

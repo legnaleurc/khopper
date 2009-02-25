@@ -50,7 +50,7 @@ namespace Khopper {
 		connect( this->ppb_, SIGNAL( clicked() ), this, SLOT( playOrPause_() ) );
 		playerBox->addWidget( ppb_ );
 		QPushButton * stop = new QPushButton( tr( "Stop" ), this );
-		connect( stop, SIGNAL( clicked() ), this->player_, SLOT( stop() ) );
+		connect( stop, SIGNAL( clicked() ), this, SLOT( stop_() ) );
 		playerBox->addWidget( stop );
 
 		playerBox->addWidget( this->seeker_ );
@@ -73,23 +73,40 @@ namespace Khopper {
 		this->songList_->appendTracks( tracks );
 	}
 
-	void Player::play_() {
+	bool Player::play_() {
 		const std::vector< TrackSP > & tracks( this->songList_->getTracks() );
-		if( !tracks.empty() ) {
+
+		if( tracks.empty() ) {
+			return false;
+		} else {
 			std::vector< TrackSP > selected( this->songList_->getSelectedTracks() );
 			if( selected.empty() ) {
 				this->player_->setCurrentSource( QString::fromStdWString( tracks[0]->filePath ) );
 			} else {
 				this->player_->setCurrentSource( QString::fromStdWString( selected[0]->filePath ) );
 			}
+
 			this->player_->play();
+			if( this->player_->state() == Phonon::ErrorState ) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	void Player::stop_() {
+		if( this->player_->state() != Phonon::StoppedState ) {
+			this->ppb_->setText( tr( "Play" ) );
+			this->player_->stop();
 		}
 	}
 
 	void Player::playOrPause_() {
 		if( this->player_->state() != Phonon::PlayingState ) {
-			this->ppb_->setText( tr( "Pause" ) );
-			this->play_();
+			if( this->play_() ) {
+				this->ppb_->setText( tr( "Pause" ) );
+			}
 		} else {
 			this->ppb_->setText( tr( "Play" ) );
 			this->player_->pause();
