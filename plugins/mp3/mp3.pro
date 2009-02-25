@@ -20,7 +20,8 @@ SOURCES = src/mp3panel.cpp \
           ../../main/src/plugin/abstractpanel.cpp \
           ../../main/src/plugin/abstractaudiowriter.cpp \
           ../../main/src/codec/defaultaudiowriter.cpp \
-          ../../main/src/common/error.cpp
+          ../../main/src/common/error.cpp \
+          ../../main/src/common/text.cpp
 TARGET = $$qtLibraryTarget(khopper_panel_mp3)
 MOC_DIR = ../../tmp/moc
 
@@ -36,6 +37,6 @@ CONFIG( debug, debug|release ) {
 unix {
     QMAKE_CXXFLAGS += -std=c++0x
     CONFIG += link_pkgconfig
-    PKGCONFIG += libavcodec libavformat
+    PKGCONFIG += libavcodec libavformat libavutil
     INCLUDEPATH += /usr/include/ffmpeg/libavcodec /usr/include/ffmpeg/libavformat
 }
