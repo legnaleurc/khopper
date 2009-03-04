@@ -7,6 +7,15 @@ unix {
     SOURCES -= ./src/common/windows.cpp
 }
 
+win32 {
+    INC_DIRS = $$system( DIR /B /S /A:D .\include )
+    SRC_DIRS = $$system( DIR /B /S /A:D .\src )
+
+    HEADERS += $$system( DIR /B /S .\include\*.hpp )
+    SOURCES += $$system( DIR /B /S .\src\*.cpp )
+    SOURCES -= ./src/common/linux.cpp
+}
+
 DEPENDPATH  += $$INC_DIRS $$SRC_DIRS
 INCLUDEPATH += $$INC_DIRS
 
@@ -40,6 +49,5 @@ unix {
 
 win32 {
     TEMPLATE = vcapp
-    SOURCES += src/common/windows.cpp
     LIBS += -lavcodec-52 -lavformat-52 -lavutil-49
 }
