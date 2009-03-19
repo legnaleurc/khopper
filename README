@@ -10,8 +10,6 @@
 		http://www.boost.org/
 	FFMpeg Libraries after 2008:
 		http://www.ffmpeg.org/
-	Lame library:
-		http://lame.sourceforge.net/
 On Debian-based system:
 	# apt-get install libloki-dev libqt4-dev libboost-regex-dev libavcodec-dev libavformat-dev
 注意：
