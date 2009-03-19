@@ -43,6 +43,13 @@ namespace {
 		return static_cast< double >( timestamp ) / AV_TIME_BASE;
 	}
 
+	inline bool initFFmpeg() {
+		av_register_all();
+		return true;
+	}
+
+	const bool INITIALIZED = initFFmpeg();
+
 }
 
 namespace Khopper {

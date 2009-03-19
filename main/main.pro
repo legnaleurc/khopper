@@ -1,53 +1,74 @@
-unix {
-    INC_DIRS = $$system( find ./include -maxdepth 1 -type d )
-    SRC_DIRS = $$system( find ./src -maxdepth 1 -type d )
+# Path setting
+ROOT_PATH = ..
+CORE_PATH = $${ROOT_PATH}/core
+INC_DIRS =	\
+	$${CORE_PATH}/include/codec	\
+	$${CORE_PATH}/include/common	\
+	$${CORE_PATH}/include/widget	\
+	./include/album	\
+	./include/widget
+SRC_DIRS =	\
+	./src/album	\
+	./src/widget
 
-    HEADERS += $$system( find ./include -name '*.hpp' )
-    SOURCES += $$system( find ./src -name '*.cpp' )
-    SOURCES -= ./src/common/windows.cpp
-}
+DEPENDPATH  += $${INC_DIRS} $${SRC_DIRS}
+INCLUDEPATH += $${INC_DIRS}
+MOC_DIR      = $${ROOT_PATH}/tmp/moc
+RCC_DIR      = $${ROOT_PATH}/tmp/rcc
 
-win32 {
-    INC_DIRS = $$system( DIR /B /S /A:D .\include )
-    SRC_DIRS = $$system( DIR /B /S /A:D .\src )
+# Input files
+HEADERS +=	\
+	./include/album/cuesheet.hpp	\
+	./include/album/index.hpp	\
+	./include/album/track.hpp	\
+	./include/widget/converter.hpp	\
+	./include/widget/mainwindow.hpp	\
+	./include/widget/player.hpp	\
+	./include/widget/preference.hpp	\
+	./include/widget/progress.hpp	\
+	./include/widget/songlist.hpp	\
+	./include/widget/textcodec.hpp	\
+	./include/widget/threads.hpp
+SOURCES +=	\
+	./src/album/cuesheet.cpp	\
+	./src/album/index.cpp	\
+	./src/album/track.cpp	\
+	./src/main.cpp	\
+	./src/widget/converter.cpp	\
+	./src/widget/mainwindow.cpp	\
+	./src/widget/player.cpp	\
+	./src/widget/preference.cpp	\
+	./src/widget/progress.cpp	\
+	./src/widget/songlist.cpp	\
+	./src/widget/textcodec.cpp	\
+	./src/widget/threads.cpp
 
-    HEADERS += $$system( DIR /B /S .\include\*.hpp )
-    SOURCES += $$system( DIR /B /S .\src\*.cpp )
-    SOURCES -= ./src/common/linux.cpp
-}
-
-DEPENDPATH  += $$INC_DIRS $$SRC_DIRS
-INCLUDEPATH += $$INC_DIRS
-
-# Input
 RESOURCES += main.qrc
 
 # config
 TARGET  = khopper
-MOC_DIR = ../tmp/moc
-RCC_DIR = ../tmp/rcc
 CONFIG += debug_and_release
 QT     += phonon
 
 CONFIG( debug, debug|release ) {
-    DESTDIR = ../bin/debug
-    OBJECTS_DIR = ../tmp/obj/debug
+	DESTDIR     = $${ROOT_PATH}/bin/debug
+	OBJECTS_DIR = $${ROOT_PATH}/tmp/obj/debug
+
+	unix:LIBS  += -L$${ROOT_PATH}/lib/debug -lkhopper
 } else {
-    DESTDIR = ../bin/release
-    OBJECTS_DIR = ../tmp/obj/release
-    DEFINES += QT_NO_DEBUG_OUTPUT
+	DESTDIR     = $${ROOT_PATH}/bin/release
+	OBJECTS_DIR = $${ROOT_PATH}/tmp/obj/release
+	DEFINES    += QT_NO_DEBUG_OUTPUT
+
+	unix:LIBS  += -L../lib/release -lkhopper
 }
 
 unix {
-    TEMPLATE = app
-    QMAKE_CXXFLAGS += -std=c++0x -fPIC
-    CONFIG += link_pkgconfig
-    PKGCONFIG += libavcodec libavformat
-    INCLUDEPATH += /usr/include/ffmpeg/libavcodec /usr/include/ffmpeg/libavformat
-    LIBS += -lboost_regex
+	TEMPLATE = app
+	QMAKE_CXXFLAGS += -std=c++0x
+	LIBS += -lboost_regex
 }
 
 win32 {
-    TEMPLATE = vcapp
-    LIBS += -lavcodec-52 -lavformat-52 -lavutil-49
+	TEMPLATE = vcapp
 }
