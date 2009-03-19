@@ -1,4 +1,3 @@
 TEMPLATE = subdirs
-SUBDIRS = main \
-          plugins
-CONFIG += debug_and_release
+SUBDIRS = core main plugins
+CONFIG += ordered debug_and_release
