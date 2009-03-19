@@ -1,4 +1,5 @@
 # Path settings
+ROOT_PATH = ..
 INC_DIRS =	\
 	./include/codec	\
 	./include/common	\
@@ -8,9 +9,9 @@ SRC_DIRS =	\
 	./src/common	\
 	./src/widget
 
-DEPENDPATH  += $$INC_DIRS $$SRC_DIRS
-INCLUDEPATH += $$INC_DIRS
-MOC_DIR      = ../tmp/moc
+DEPENDPATH  += $${INC_DIRS} $${SRC_DIRS}
+INCLUDEPATH += $${INC_DIRS}
+MOC_DIR      = $${ROOT_PATH}/tmp/moc
 
 # Input files
 HEADERS +=	\
@@ -40,24 +41,26 @@ CONFIG  += debug_and_release
 VERSION  = 0.1.60
 
 CONFIG( debug, debug|release ) {
-	DESTDIR = ../lib/debug
-	OBJECTS_DIR = ../tmp/obj/debug
+	DESTDIR     = $${ROOT_PATH}/lib/debug
+	OBJECTS_DIR = $${ROOT_PATH}/tmp/obj/debug
 } else {
-	DESTDIR = ../lib/release
-	OBJECTS_DIR = ../tmp/obj/release
-	DEFINES += QT_NO_DEBUG_OUTPUT
+	DESTDIR     = $${ROOT_PATH}/lib/release
+	OBJECTS_DIR = $${ROOT_PATH}/tmp/obj/release
+	DEFINES    += QT_NO_DEBUG_OUTPUT
 }
 
 unix {
 	QMAKE_CXXFLAGS += -std=c++0x
-	CONFIG += link_pkgconfig
-	PKGCONFIG += libavcodec libavformat libavutil
+
+	CONFIG      += link_pkgconfig
+	PKGCONFIG   += libavcodec libavformat libavutil
 	INCLUDEPATH += /usr/include/ffmpeg/libavcodec /usr/include/ffmpeg/libavformat
+	LIBS        += -lboost_regex
+
 	SOURCES += ./src/common/linux.cpp
-	LIBS += -lboost_regex
 }
 
 win32 {
-	LIBS += -lavcodec-52 -lavformat-52 -lavutil-49
+	LIBS    += -lavcodec-52 -lavformat-52 -lavutil-49
 	SOURCES += ./src/common/windows.cpp
 }

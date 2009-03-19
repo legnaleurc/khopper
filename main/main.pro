@@ -1,18 +1,20 @@
 # Path setting
+ROOT_PATH = ..
+CORE_PATH = $${ROOT_PATH}/core
 INC_DIRS =	\
+	$${CORE_PATH}/include/codec	\
+	$${CORE_PATH}/include/common	\
+	$${CORE_PATH}/include/widget	\
 	./include/album	\
-	../core/include/codec	\
-	../core/include/common	\
-	../core/include/widget	\
 	./include/widget
 SRC_DIRS =	\
 	./src/album	\
 	./src/widget
 
-DEPENDPATH  += $$INC_DIRS $$SRC_DIRS
-INCLUDEPATH += $$INC_DIRS
-MOC_DIR = ../tmp/moc
-RCC_DIR = ../tmp/rcc
+DEPENDPATH  += $${INC_DIRS} $${SRC_DIRS}
+INCLUDEPATH += $${INC_DIRS}
+MOC_DIR      = $${ROOT_PATH}/tmp/moc
+RCC_DIR      = $${ROOT_PATH}/tmp/rcc
 
 # Input files
 HEADERS +=	\
@@ -49,16 +51,16 @@ CONFIG += debug_and_release
 QT     += phonon
 
 CONFIG( debug, debug|release ) {
-	DESTDIR = ../bin/debug
-	OBJECTS_DIR = ../tmp/obj/debug
+	DESTDIR     = $${ROOT_PATH}/bin/debug
+	OBJECTS_DIR = $${ROOT_PATH}/tmp/obj/debug
 
-	unix:LIBS += -L../lib/debug -lkhopper
+	unix:LIBS  += -L$${ROOT_PATH}/lib/debug -lkhopper
 } else {
-	DESTDIR = ../bin/release
-	OBJECTS_DIR = ../tmp/obj/release
-	DEFINES += QT_NO_DEBUG_OUTPUT
+	DESTDIR     = $${ROOT_PATH}/bin/release
+	OBJECTS_DIR = $${ROOT_PATH}/tmp/obj/release
+	DEFINES    += QT_NO_DEBUG_OUTPUT
 
-	unix:LIBS += -L../lib/release -lkhopper
+	unix:LIBS  += -L../lib/release -lkhopper
 }
 
 unix {
