@@ -46,6 +46,13 @@ namespace {
 		av_freep( &oc );
 	}
 
+	inline bool initFFmpeg() {
+		av_register_all();
+		return true;
+	}
+
+	const bool INITIALIZED = initFFmpeg();
+
 }
 
 namespace Khopper {
