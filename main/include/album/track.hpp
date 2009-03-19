@@ -25,7 +25,9 @@
 #include "tr1.hpp"
 #include "index.hpp"
 
-#include <string>
+#include <QByteArray>
+#include <QTextCodec>
+
 #include <vector>
 #include <map>
 
@@ -33,9 +35,6 @@ namespace Khopper {
 
 	/**
 	 * @brief Track information
-	 *
-	 * This module uses std::wstring to store unicode string.\n
-	 * UTF-16 on Windows(R), UCS4 on POSIX.
 	 */
 	struct Track {
 		/**
@@ -98,45 +97,45 @@ namespace Khopper {
 		/**
 		 * @brief Load track from @p filePath
 		 */
-		void load( const std::wstring & filePath );
+		void load( const QByteArray & filePath );
 
 		/**
 		 * @brief Dump track information
 		 * @return Formated string
 		 */
-		std::wstring toStdWString() const;
+// 		QByteArray toStdWString() const;
 
 		/**
 		 * @brief Headers of fields
 		 */
-		static const std::vector< std::wstring > Headers;
+		static const std::vector< QByteArray > Headers;
 
 		/// Album title
-		std::wstring album;
+		QByteArray album;
 		/// Track artist
-		std::wstring artist;
+		QByteArray artist;
 		/// Bit Rate
 		int bitRate;
 		/// Channels
 		int channels;
 		/// Track comments
-		std::map< std::wstring, std::wstring > comments;
+		std::map< QByteArray, QByteArray > comments;
 		/// Audio data type
 		DataType dataType;
 		/// Track duration
 		Index duration;
 		/// Path which is this track refers to.
-		std::wstring filePath;
+		QByteArray filePath;
 		/// Audio container type
 		FileType fileType;
 		/// Extra flags
 		Flag flags;
 		/// Garbage information
-		std::vector< std::wstring > garbage;
+		std::vector< QByteArray > garbage;
 		/// Index at album
 		short int index;
 		/// ISRC
-		std::wstring isrc;
+		QByteArray isrc;
 		/// Gap to previous track (?)
 		Index postGap;
 		/// Gap to next track (?)
@@ -144,11 +143,13 @@ namespace Khopper {
 		/// Sample Rate
 		int sampleRate;
 		/// Song writer
-		std::wstring songWriter;
+		QByteArray songWriter;
 		/// Start time in that file
 		Index startTime;
+		/// Text codec number
+		QTextCodec * textCodec;
 		/// Track title
-		std::wstring title;
+		QByteArray title;
 	};
 
 	/**

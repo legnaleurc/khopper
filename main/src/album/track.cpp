@@ -30,8 +30,8 @@
 
 namespace {
 
-	std::vector< std::wstring > createHeader() {
-		std::vector< std::wstring > vs;
+	std::vector< QByteArray > createHeader() {
+		std::vector< QByteArray > vs;
 		vs.push_back( L"Title" );
 		vs.push_back( L"Performer" );
 		vs.push_back( L"Album" );
@@ -65,17 +65,18 @@ namespace Khopper {
 	sampleRate(),
 	songWriter(),
 	startTime(),
+	textCodec( QTextCodec::codecForName( "UTF-8" ) ),
 	title() {
 	}
 
-	void Track::load( const std::wstring & filePath ) {
+	void Track::load( const QByteArray & filePath ) {
 		this->filePath = filePath;
 
 		codec::AudioReaderSP decoder( new codec::DefaultAudioReader );
-		decoder->open( text::toLocale( this->filePath ) );
+		decoder->open( this->filePath );
 		if( decoder->isOpen() ) {
-			this->album = text::fromUTF8( decoder->getAlbum() );
-			this->artist = text::fromUTF8( decoder->getArtist() );
+			this->album = decoder->getAlbum();
+			this->artist = decoder->getArtist() );
 			this->bitRate = decoder->getBitRate();
 			this->channels = decoder->getChannels();
 			this->duration = decoder->getDuration();
@@ -88,30 +89,30 @@ namespace Khopper {
 		}
 	}
 
-	std::wstring Track::toStdWString() const {
-		std::wostringstream sout;
-		sout << L"Title:\t" << this->title << L"\n";
-		sout << L"Artist:\t" << this->artist << L"\n";
-		sout << L"Song Writer:\t" << this->songWriter << L"\n";
-		sout << L"Track index:\t" << this->index << L"\n";
-		sout << L"ISRC:\t" << this->isrc << L"\n";
-		sout << L"Start:\t" << this->startTime.toStdWString() << L"\n";
-		sout << L"End:\t" << this->duration.toStdWString() << L"\n";
-		sout << L"Pregap:\t" << this->preGap.toStdWString() << L"\n";
-		sout << L"Postgap:\t" << this->postGap.toStdWString() << L"\n";
-		sout << L"Type:\t" << this->dataType << L"\n";
-		sout << L"Comments:\n";
-		for( std::map< std::wstring, std::wstring >::const_iterator it = this->comments.begin(); it != this->comments.end(); ++it ) {
-			sout << L"\t" << it->first << L":\t" << it->second << L"\n";
-		}
-		sout << L"Garbage:\n";
-		for( std::vector< std::wstring >::const_iterator it = this->garbage.begin(); it != this->garbage.end(); ++it ) {
-			sout << L"\t" << *it << L"\n";
-		}
-		sout << L"Flags:\t" << this->flags << L"\n";
-		return sout.str();
-	}
+// 	QByteArray Track::toStdWString() const {
+// 		std::wostringstream sout;
+// 		sout << L"Title:\t" << this->title << L"\n";
+// 		sout << L"Artist:\t" << this->artist << L"\n";
+// 		sout << L"Song Writer:\t" << this->songWriter << L"\n";
+// 		sout << L"Track index:\t" << this->index << L"\n";
+// 		sout << L"ISRC:\t" << this->isrc << L"\n";
+// 		sout << L"Start:\t" << this->startTime.toStdWString() << L"\n";
+// 		sout << L"End:\t" << this->duration.toStdWString() << L"\n";
+// 		sout << L"Pregap:\t" << this->preGap.toStdWString() << L"\n";
+// 		sout << L"Postgap:\t" << this->postGap.toStdWString() << L"\n";
+// 		sout << L"Type:\t" << this->dataType << L"\n";
+// 		sout << L"Comments:\n";
+// 		for( std::map< QByteArray, QByteArray >::const_iterator it = this->comments.begin(); it != this->comments.end(); ++it ) {
+// 			sout << L"\t" << it->first << L":\t" << it->second << L"\n";
+// 		}
+// 		sout << L"Garbage:\n";
+// 		for( std::vector< QByteArray >::const_iterator it = this->garbage.begin(); it != this->garbage.end(); ++it ) {
+// 			sout << L"\t" << *it << L"\n";
+// 		}
+// 		sout << L"Flags:\t" << this->flags << L"\n";
+// 		return sout.str();
+// 	}
 
-	const std::vector< std::wstring > Track::Headers = createHeader();
+// 	const std::vector< QByteArray > Track::Headers = createHeader();
 
 }
