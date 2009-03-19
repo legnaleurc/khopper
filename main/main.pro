@@ -51,16 +51,18 @@ CONFIG += debug_and_release
 QT     += phonon
 
 CONFIG( debug, debug|release ) {
-	DESTDIR     = $${ROOT_PATH}/bin/debug
+	DESTDIR     = $${ROOT_PATH}/build/debug
 	OBJECTS_DIR = $${ROOT_PATH}/tmp/obj/debug
 
-	unix:LIBS  += -L$${ROOT_PATH}/lib/debug -lkhopper
+	unix:LIBS  += -L$${ROOT_PATH}/build/debug -lkhopper
 } else {
-	DESTDIR     = $${ROOT_PATH}/bin/release
+	DESTDIR     = $${ROOT_PATH}/build/release
 	OBJECTS_DIR = $${ROOT_PATH}/tmp/obj/release
 	DEFINES    += QT_NO_DEBUG_OUTPUT
 
-	unix:LIBS  += -L../lib/release -lkhopper
+	unix:LIBS  += -L$${ROOT_PATH}/build/release -lkhopper
+
+	unix:QMAKE_POST_LINK = strip $${DESTDIR}/$${TARGET}
 }
 
 unix {
