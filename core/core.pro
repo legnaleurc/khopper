@@ -41,12 +41,14 @@ CONFIG  += debug_and_release
 VERSION  = 0.1.60
 
 CONFIG( debug, debug|release ) {
-	DESTDIR     = $${ROOT_PATH}/lib/debug
+	DESTDIR     = $${ROOT_PATH}/build/debug
 	OBJECTS_DIR = $${ROOT_PATH}/tmp/obj/debug
 } else {
-	DESTDIR     = $${ROOT_PATH}/lib/release
+	DESTDIR     = $${ROOT_PATH}/build/release
 	OBJECTS_DIR = $${ROOT_PATH}/tmp/obj/release
 	DEFINES    += QT_NO_DEBUG_OUTPUT
+
+	unix:QMAKE_POST_LINK = strip $${DESTDIR}/lib$${TARGET}.so
 }
 
 unix {
