@@ -21,7 +21,7 @@
  */
 #include "cuesheet.hpp"
 #include "track.hpp"
-#include "defaultaudioreader.hpp"
+#include "abstractaudioreader.hpp"
 #include "error.hpp"
 #include "os.hpp"
 #include "text.hpp"
@@ -123,7 +123,7 @@ namespace Khopper {
 		std::for_each( this->tracks.begin(), this->tracks.end(), ::setAlbum( this->title ) );
 
 		// get the total length, because cue sheet don't provide it
-		codec::AudioReaderSP decoder( new codec::DefaultAudioReader );
+		codec::AudioReaderSP decoder( codec::AudioReaderFactory::Instance().CreateObject( text::getSuffix( currentFile.first ) ) );
 		decoder->open( text::toLocale( currentFile.first ) );
 		if( decoder->isOpen() ) {
 			std::for_each( this->tracks.begin(), this->tracks.end(), ::setBCS( decoder ) );

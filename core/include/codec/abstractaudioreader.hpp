@@ -24,9 +24,12 @@
 
 #include "tr1.hpp"
 #include "codec_base.hpp"
+#include "error.hpp"
 
 #include <loki/Factory.h>
 #include <loki/Singleton.h>
+
+#include <QPluginLoader>
 
 #include <string>
 
@@ -39,7 +42,7 @@ namespace Khopper {
 		 * @ingroup Codecs
 		 * @sa AbstractAudioWriter
 		 */
-		class AbstractAudioReader {
+		class AbstractAudioReader : public QObject {
 		public:
 			/**
 			 * @brief Default constructor
@@ -324,14 +327,39 @@ namespace Khopper {
 		 */
 		typedef std::tr1::shared_ptr< const AbstractAudioReader > AudioReaderCSP;
 
+		template< typename IdentifierType, class AbstractProduct >
+		struct ReaderFactoryError {
+			static AbstractProduct * OnUnknownType( IdentifierType ) {
+				// FIXME: change directory first
+				// FIXME: diffirent file names on diffirent system
+				QPluginLoader pl( "libkarp_default.so" );
+				AbstractProduct * d = qobject_cast< AbstractProduct * >( pl.instance() );
+				if( !d ) {
+					throw Error< RunTime >( pl.errorString().toStdString() );
+				}
+				return d;
+			}
+		};
+
 		/**
 		 * @brief The audio reader factory
 		 * @ingroup Codecs
 		 */
-		typedef Loki::SingletonHolder< Loki::Factory< AbstractAudioReader, std::string >, Loki::CreateUsingNew, Loki::LongevityLifetime::DieAsSmallObjectChild > AudioReaderFactory;
+		typedef Loki::SingletonHolder<
+			Loki::Factory<
+				AbstractAudioReader,
+				std::string,
+				Loki::NullType,
+				ReaderFactoryError
+			>,
+			Loki::CreateUsingNew,
+			Loki::LongevityLifetime::DieAsSmallObjectChild
+		> AudioReaderFactory;
 
 	}
 
 }
+
+Q_DECLARE_INTERFACE( Khopper::codec::AbstractAudioReader, "org.foolproof.Plugin.AudioReader/1.0" )
 
 #endif

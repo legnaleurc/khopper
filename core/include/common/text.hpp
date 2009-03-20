@@ -41,6 +41,8 @@ namespace Khopper {
 		/// @brief Convert @p unicode to system locale
 		std::string toLocale( const std::wstring & unicode );
 
+		std::string getSuffix( const std::wstring & filePath );
+
 	}
 
 }

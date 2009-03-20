@@ -27,6 +27,8 @@ extern "C" {
 #include <avformat.h>
 }
 
+#include <QtPlugin>
+
 namespace {
 
 	inline void fc_helper( AVFormatContext * oc ) {
@@ -54,6 +56,8 @@ namespace {
 	const bool INITIALIZED = initFFmpeg();
 
 }
+
+Q_EXPORT_PLUGIN2( kawp_default, Khopper::codec::DefaultAudioWriter )
 
 namespace Khopper {
 

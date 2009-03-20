@@ -68,7 +68,7 @@ CONFIG( debug, debug|release ) {
 unix {
 	TEMPLATE = app
 	QMAKE_CXXFLAGS += -std=c++0x
-	LIBS += -lboost_regex
+	LIBS += -lboost_regex -lloki
 }
 
 win32 {

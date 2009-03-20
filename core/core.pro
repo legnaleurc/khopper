@@ -18,8 +18,6 @@ HEADERS +=	\
 	./include/codec/abstractaudioreader.hpp	\
 	./include/codec/abstractaudiowriter.hpp	\
 	./include/codec/codec_base.hpp	\
-	./include/codec/defaultaudioreader.hpp	\
-	./include/codec/defaultaudiowriter.hpp	\
 	./include/common/error.hpp	\
 	./include/common/os.hpp	\
 	./include/common/text.hpp	\
@@ -28,8 +26,6 @@ HEADERS +=	\
 SOURCES +=	\
 	./src/codec/abstractaudioreader.cpp	\
 	./src/codec/abstractaudiowriter.cpp	\
-	./src/codec/defaultaudioreader.cpp	\
-	./src/codec/defaultaudiowriter.cpp	\
 	./src/common/error.cpp	\
 	./src/common/text.cpp	\
 	./src/widget/abstractpanel.cpp
@@ -53,16 +49,10 @@ CONFIG( debug, debug|release ) {
 
 unix {
 	QMAKE_CXXFLAGS += -std=c++0x
-
-	CONFIG      += link_pkgconfig
-	PKGCONFIG   += libavcodec libavformat libavutil
-	INCLUDEPATH += /usr/include/ffmpeg/libavcodec /usr/include/ffmpeg/libavformat
 	LIBS        += -lboost_regex
-
 	SOURCES += ./src/common/linux.cpp
 }
 
 win32 {
-	LIBS    += -lavcodec-52 -lavformat-52 -lavutil-49
 	SOURCES += ./src/common/windows.cpp
 }

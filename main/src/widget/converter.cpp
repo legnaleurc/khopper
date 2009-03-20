@@ -20,7 +20,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "converter.hpp"
-#include "defaultaudioreader.hpp"
+#include "abstractaudioreader.hpp"
 #include "error.hpp"
 #include "text.hpp"
 
@@ -32,7 +32,7 @@ namespace Khopper {
 	}
 
 	void Converter::convert( TrackCSP track, const std::wstring & targetPath, codec::AudioWriterSP encoder ) {
-		codec::AudioReaderSP decoder( new codec::DefaultAudioReader );
+		codec::AudioReaderSP decoder( codec::AudioReaderFactory::Instance().CreateObject( text::getSuffix( track->filePath ) ) );
 		decoder->open( text::toLocale( track->filePath ) );
 		encoder->open( text::toLocale( targetPath ) );
 		this->canceled_ = false;

@@ -27,7 +27,7 @@ extern "C" {
 #include <avformat.h>
 }
 
-#include <QtDebug>
+#include <QtPlugin>
 
 namespace {
 
@@ -51,6 +51,8 @@ namespace {
 	const bool INITIALIZED = initFFmpeg();
 
 }
+
+Q_EXPORT_PLUGIN2( karp_default, Khopper::codec::DefaultAudioReader )
 
 namespace Khopper {
 

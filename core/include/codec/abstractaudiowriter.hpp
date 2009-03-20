@@ -24,6 +24,12 @@
 
 #include "tr1.hpp"
 #include "codec_base.hpp"
+#include "error.hpp"
+
+#include <loki/Factory.h>
+#include <loki/Singleton.h>
+
+#include <QPluginLoader>
 
 #include <string>
 #include <vector>
@@ -37,7 +43,7 @@ namespace Khopper {
 		 * @ingroup Codecs
 		 * @sa AbstractAudioReader
 		 */
-		class AbstractAudioWriter {
+		class AbstractAudioWriter : public QObject {
 		public:
 			/**
 			 * @brief Default constructor
@@ -232,8 +238,39 @@ namespace Khopper {
 		 */
 		typedef std::tr1::shared_ptr< const AbstractAudioWriter > AudioWriterCSP;
 
+		template< typename IdentifierType, class AbstractProduct >
+		struct WriterFactoryError {
+			static AbstractProduct * OnUnknownType( IdentifierType ) {
+				// FIXME: change directory first
+				// FIXME: diffirent file names on diffirent system
+				QPluginLoader pl( "libkawp_default.so" );
+				AbstractProduct * d = qobject_cast< AbstractProduct * >( pl.instance() );
+				if( !d ) {
+					throw Error< RunTime >( pl.errorString().toStdString() );
+				}
+				return d;
+			}
+		};
+
+		/**
+		 * @brief The audio writer factory
+		 * @ingroup Codecs
+		 */
+		typedef Loki::SingletonHolder<
+			Loki::Factory<
+				AbstractAudioWriter,
+				std::string,
+				Loki::NullType,
+				WriterFactoryError
+			>,
+			Loki::CreateUsingNew,
+			Loki::LongevityLifetime::DieAsSmallObjectChild
+		> AudioWriterFactory;
+
 	}
 
 }
+
+Q_DECLARE_INTERFACE( Khopper::codec::AbstractAudioWriter, "org.foolproof.Plugin.AudioWriter/1.0" )
 
 #endif

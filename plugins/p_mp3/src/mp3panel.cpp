@@ -20,7 +20,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "mp3panel.hpp"
-#include "defaultaudiowriter.hpp"
+#include "abstractaudiowriter.hpp"
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -31,7 +31,7 @@
 #include <QtDebug>
 #include <QtPlugin>
 
-Q_EXPORT_PLUGIN2( kp_mp3panel, Khopper::MP3Panel );
+Q_EXPORT_PLUGIN2( kpp_mp3, Khopper::MP3Panel )
 
 namespace Khopper {
 
@@ -103,7 +103,7 @@ namespace Khopper {
 	}
 
 	codec::AudioWriterSP MP3Panel::getAudioWriter() const {
-		codec::AudioWriterSP encoder( new codec::DefaultAudioWriter );
+		codec::AudioWriterSP encoder( codec::AudioWriterFactory::Instance().CreateObject( "mp3" ) );
 
 		switch( this->brChoise_->checkedId() ) {
 		case 0:
