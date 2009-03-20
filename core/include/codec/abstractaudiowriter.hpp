@@ -271,6 +271,6 @@ namespace Khopper {
 
 }
 
-Q_DECLARE_INTERFACE( Khopper::codec::AbstractAudioWriter, "org.foolproof.Plugin.AudioWriter/1.0" )
+Q_DECLARE_INTERFACE( Khopper::codec::AbstractAudioWriter, "org.FoolproofProject.Khopper.Plugin.AudioWriter/0.2" )
 
 #endif

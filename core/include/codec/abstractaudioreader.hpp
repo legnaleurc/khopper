@@ -360,6 +360,6 @@ namespace Khopper {
 
 }
 
-Q_DECLARE_INTERFACE( Khopper::codec::AbstractAudioReader, "org.foolproof.Plugin.AudioReader/1.0" )
+Q_DECLARE_INTERFACE( Khopper::codec::AbstractAudioReader, "org.FoolproofProject.Khopper.Plugin.AudioReader/0.2" )
 
 #endif
