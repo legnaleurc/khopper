@@ -36,6 +36,7 @@ namespace Khopper {
 	class Player;
 	class TextCodec;
 	class Preference;
+	class OutputOption;
 
 	/**
 	 * @class MainWindow
@@ -66,8 +67,7 @@ namespace Khopper {
 	private:
 		TextCodec * codec_;
 		Player * player_;
-		QDialog * optionWindow_;
-		QTabWidget * optionTabs_;
+		OutputOption * optionWindow_;
 		QLineEdit * outputPath_;
 		QCheckBox * useSourcePath_;
 		Progress * progress_;

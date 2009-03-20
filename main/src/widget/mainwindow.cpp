@@ -28,6 +28,7 @@
 #include "abstractpanel.hpp"
 #include "error.hpp"
 #include "preference.hpp"
+#include "outputoption.hpp"
 
 #include <boost/format.hpp>
 
@@ -45,9 +46,7 @@
 #include <QLabel>
 #include <QTabWidget>
 #include <QPushButton>
-#include <QDialogButtonBox>
 #include <QtDebug>
-#include <QPluginLoader>
 
 namespace {
 
@@ -64,8 +63,7 @@ namespace Khopper {
 	QMainWindow( parent, flags ),
 	codec_( new TextCodec( this ) ),
 	player_( new Player( this ) ),
-	optionWindow_( new QDialog( this ) ),
-	optionTabs_( new QTabWidget( this ) ),
+	optionWindow_( new OutputOption( this ) ),
 	outputPath_( new QLineEdit( QDir::homePath(), this ) ),
 	useSourcePath_( new QCheckBox( tr( "Same as source directories" ), this ) ),
 	progress_( new Progress( this ) ),
@@ -76,8 +74,6 @@ namespace Khopper {
 		this->initMenuBar_();
 		// Setting about widget
 		this->initAbout_();
-		// Setting output format select
-		this->initOptionWindow_();
 
 		// Setting central widget
 		QWidget * central = new QWidget( this );
@@ -174,46 +170,6 @@ namespace Khopper {
 		setMenuBar( menuBar );
 	}
 
-	void MainWindow::initOptionWindow_() {
-		this->optionWindow_->setWindowTitle( tr( "Output format setting" ) );
-		this->optionWindow_->resize( 320, 240 );
-		QVBoxLayout * mainBox = new QVBoxLayout( this->optionWindow_ );
-		this->optionWindow_->setLayout( mainBox );
-
-		mainBox->addWidget( this->optionTabs_ );
-		// Take out the output types
-		QDir piDir( qApp->applicationDirPath() );
-#if defined(Q_OS_WIN)
-		if( piDir.dirName().toLower() == "debug" || piDir.dirName().toLower() == "release" ) {
-			piDir.cdUp();
-		}
-#elif defined(Q_OS_MAC)
-		if( piDir.dirName() == "MacOS" ) {
-			piDir.cdUp();
-			piDir.cdUp();
-			piDir.cdUp();
-		}
-#endif
-		piDir.cd( "plugins" );
-		foreach( QString fileName, piDir.entryList( QDir::Files ) ) {
-			qDebug() << fileName;
-			QPluginLoader piLoader( piDir.absoluteFilePath( fileName ) );
-			QObject * plugin = piLoader.instance();
-			qDebug() << piLoader.errorString();
-			if( plugin ) {
-				AbstractPanel * option = qobject_cast< AbstractPanel * >( plugin );
-				if( option ) {
-					this->optionTabs_->addTab( option, option->getTitle() );
-				}
-			}
-		}
-
-		QDialogButtonBox * buttons = new QDialogButtonBox( QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, this );
-		mainBox->addWidget( buttons );
-		connect( buttons, SIGNAL( accepted() ), this->optionWindow_, SLOT( accept() ) );
-		connect( buttons, SIGNAL( rejected() ), this->optionWindow_, SLOT( reject() ) );
-	}
-
 	QString MainWindow::getOutDir_( TrackSP track ) const {
 		if( this->useSourcePath_->isChecked() ) {
 			return QFileInfo( QString::fromStdWString( track->filePath ) ).absolutePath();
@@ -232,11 +188,7 @@ namespace Khopper {
 
 		// get option widget
 		if( this->optionWindow_->exec() ) {
-			AbstractPanel * option = qobject_cast< AbstractPanel * >( this->optionTabs_->currentWidget() );
-			if( !option ) {
-				this->showErrorMessage_( tr( "Run-time error!" ), tr( "Bad output plugin" ) );
-				return;
-			}
+			AbstractPanel * option = this->optionWindow_->getCurrent();
 
 			try {
 				// generate output paths
