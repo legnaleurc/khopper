@@ -26,87 +26,91 @@
 #include <QGroupBox>
 #include <QVBoxLayout>
 
-namespace Khopper {
+namespace khopper {
 
-	Preference::Preference( QWidget * parent ):
-	QDialog( parent ),
-	fnTpl_( new QLineEdit( this ) ),
-	buttons_( new QDialogButtonBox( QDialogButtonBox::Ok | QDialogButtonBox::Apply | QDialogButtonBox::Cancel, Qt::Horizontal, this ) ) {
-		QSettings setting;
-		setting.beginGroup( "preference" );
+	namespace widget {
 
-		this->setWindowTitle( tr( "Preference" ) );
+		Preference::Preference( QWidget * parent ):
+		QDialog( parent ),
+		fnTpl_( new QLineEdit( this ) ),
+		buttons_( new QDialogButtonBox( QDialogButtonBox::Ok | QDialogButtonBox::Apply | QDialogButtonBox::Cancel, Qt::Horizontal, this ) ) {
+			QSettings setting;
+			setting.beginGroup( "preference" );
 
-		QVBoxLayout * mainBox = new QVBoxLayout( this );
-		this->setLayout( mainBox );
+			this->setWindowTitle( tr( "Preference" ) );
 
-		QGroupBox * fnGroup = new QGroupBox( tr( "File name template" ), this );
-		mainBox->addWidget( fnGroup );
+			QVBoxLayout * mainBox = new QVBoxLayout( this );
+			this->setLayout( mainBox );
 
-		QVBoxLayout * fnBox = new QVBoxLayout( fnGroup );
-		fnGroup->setLayout( fnBox );
+			QGroupBox * fnGroup = new QGroupBox( tr( "File name template" ), this );
+			mainBox->addWidget( fnGroup );
 
-		// Output name template
-		this->fnTpl_->setText( setting.value( "filename", "%2i_%t" ).toString() );
-		this->fnTpl_->setToolTip( tr(
-			"Keywords:\n"
-			"%t: title\n"
-			"%a: artist\n"
-			"%Ni: index of track, N means width\n"
-			"%%: \'%\' literal\n"
-			"Extensions will automaticaly append."
-		) );
-		fnBox->addWidget( this->fnTpl_ );
+			QVBoxLayout * fnBox = new QVBoxLayout( fnGroup );
+			fnGroup->setLayout( fnBox );
 
-		mainBox->addWidget( this->buttons_ );
-		connect( this->buttons_, SIGNAL( clicked( QAbstractButton * ) ), this, SLOT( perform_( QAbstractButton * ) ) );
+			// Output name template
+			this->fnTpl_->setText( setting.value( "filename", "%2i_%t" ).toString() );
+			this->fnTpl_->setToolTip( tr(
+				"Keywords:\n"
+				"%t: title\n"
+				"%a: artist\n"
+				"%Ni: index of track, N means width\n"
+				"%%: \'%\' literal\n"
+				"Extensions will automaticaly append."
+			) );
+			fnBox->addWidget( this->fnTpl_ );
 
-		setting.endGroup();
-	}
+			mainBox->addWidget( this->buttons_ );
+			connect( this->buttons_, SIGNAL( clicked( QAbstractButton * ) ), this, SLOT( perform_( QAbstractButton * ) ) );
 
-	QString Preference::getTemplate() const {
-		QString tmp = this->fnTpl_->text();
-		tmp.replace( "%t", "%1%" );
-		tmp.replace( "%a", "%2%" );
-		tmp.replace( QRegExp( "%(\\d*)i" ), "%|3$0\\1|" );
-		tmp.replace( "%%", "%" );
-		return tmp;
-	}
+			setting.endGroup();
+		}
 
-	void Preference::perform_( QAbstractButton * button ) {
-		switch( this->buttons_->buttonRole( button ) ) {
-		case QDialogButtonBox::AcceptRole:
-			this->apply_();
-			this->accept();
-			break;
-		case QDialogButtonBox::RejectRole:
-			this->revert_();
-			this->reject();
-			break;
-		case QDialogButtonBox::ApplyRole:
-			this->apply_();
-			break;
-		default:
-			;
-		};
-	}
+		QString Preference::getTemplate() const {
+			QString tmp = this->fnTpl_->text();
+			tmp.replace( "%t", "%1%" );
+			tmp.replace( "%a", "%2%" );
+			tmp.replace( QRegExp( "%(\\d*)i" ), "%|3$0\\1|" );
+			tmp.replace( "%%", "%" );
+			return tmp;
+		}
 
-	void Preference::apply_() {
-		QSettings setting;
-		setting.beginGroup( "preference" );
+		void Preference::perform_( QAbstractButton * button ) {
+			switch( this->buttons_->buttonRole( button ) ) {
+			case QDialogButtonBox::AcceptRole:
+				this->apply_();
+				this->accept();
+				break;
+			case QDialogButtonBox::RejectRole:
+				this->revert_();
+				this->reject();
+				break;
+			case QDialogButtonBox::ApplyRole:
+				this->apply_();
+				break;
+			default:
+				;
+			};
+		}
 
-		setting.setValue( "filename", this->fnTpl_->text() );
+		void Preference::apply_() {
+			QSettings setting;
+			setting.beginGroup( "preference" );
 
-		setting.endGroup();
-	}
+			setting.setValue( "filename", this->fnTpl_->text() );
 
-	void Preference::revert_() {
-		QSettings setting;
-		setting.beginGroup( "preference" );
+			setting.endGroup();
+		}
 
-		this->fnTpl_->setText( setting.value( "filename", "%2i_%t" ).toString() );
+		void Preference::revert_() {
+			QSettings setting;
+			setting.beginGroup( "preference" );
 
-		setting.endGroup();
+			this->fnTpl_->setText( setting.value( "filename", "%2i_%t" ).toString() );
+
+			setting.endGroup();
+		}
+
 	}
 
 }

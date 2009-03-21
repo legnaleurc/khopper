@@ -35,7 +35,7 @@
 #include <string>
 #include <vector>
 
-namespace Khopper {
+namespace khopper {
 
 	namespace codec {
 
@@ -272,6 +272,6 @@ namespace Khopper {
 
 }
 
-Q_DECLARE_INTERFACE( Khopper::codec::AbstractAudioWriter, "org.FoolproofProject.Khopper.Plugin.AudioWriter/0.2" )
+Q_DECLARE_INTERFACE( khopper::codec::AbstractAudioWriter, "org.FoolproofProject.Khopper.Plugin.AudioWriter/0.2" )
 
 #endif

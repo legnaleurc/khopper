@@ -25,7 +25,7 @@
 #include <exception>
 #include <string>
 
-namespace Khopper {
+namespace khopper {
 
 	/**
 	 * @brief Base class of error types

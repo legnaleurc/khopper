@@ -31,102 +31,106 @@
 #include <QtDebug>
 #include <QtPlugin>
 
-Q_EXPORT_PLUGIN2( kpp_mp3, Khopper::MP3Panel )
+Q_EXPORT_PLUGIN2( kpp_mp3, khopper::widget::MP3Panel )
 
-namespace Khopper {
+namespace khopper {
 
-	MP3Panel::MP3Panel( QWidget * parent, Qt::WindowFlags f ):
-	AbstractPanel( parent, f ),
-	brChoise_( new QButtonGroup( this ) ),
-	bitRate_( new QComboBox( this ) ),
-	level_( new QComboBox( this ) ),
-	sampleRate_( new QComboBox( this ) ),
-	channels_( new QComboBox( this ) ) {
-		QVBoxLayout * vbox = new QVBoxLayout( this );
-		this->setLayout( vbox );
+	namespace widget {
 
-		QGroupBox * brGroup = new QGroupBox( tr( "Bit Rate" ), this );
-		vbox->addWidget( brGroup );
-		QVBoxLayout * brBox = new QVBoxLayout( brGroup );
-		brGroup->setLayout( brBox );
+		MP3Panel::MP3Panel( QWidget * parent, Qt::WindowFlags f ):
+		AbstractPanel( parent, f ),
+		brChoise_( new QButtonGroup( this ) ),
+		bitRate_( new QComboBox( this ) ),
+		level_( new QComboBox( this ) ),
+		sampleRate_( new QComboBox( this ) ),
+		channels_( new QComboBox( this ) ) {
+			QVBoxLayout * vbox = new QVBoxLayout( this );
+			this->setLayout( vbox );
 
-		QHBoxLayout * cbrBox = new QHBoxLayout;
-		brBox->addLayout( cbrBox );
-		QRadioButton * cbr = new QRadioButton( tr( "CBR" ), this );
-		cbrBox->addWidget( cbr );
-		this->bitRate_->addItem( "64", QVariant( 64000 ) );
-		this->bitRate_->addItem( "128", QVariant( 128000 ) );
-		this->bitRate_->addItem( "256", QVariant( 256000 ) );
-		this->bitRate_->addItem( "320", QVariant( 320000 ) );
-		this->bitRate_->setCurrentIndex( 3 );
-		cbrBox->addWidget( this->bitRate_ );
+			QGroupBox * brGroup = new QGroupBox( tr( "Bit Rate" ), this );
+			vbox->addWidget( brGroup );
+			QVBoxLayout * brBox = new QVBoxLayout( brGroup );
+			brGroup->setLayout( brBox );
 
-		QHBoxLayout * vbrBox = new QHBoxLayout;
-		brBox->addLayout( vbrBox );
-		QRadioButton * vbr = new QRadioButton( tr( "VBR" ), this );
-		vbrBox->addWidget( vbr );
-		this->level_->addItem( "0 (Highest)", QVariant( 0 ) );
-		for( int i = 1; i < 9; ++i ) {
-			this->level_->addItem( QString::number( i ), QVariant( i ) );
+			QHBoxLayout * cbrBox = new QHBoxLayout;
+			brBox->addLayout( cbrBox );
+			QRadioButton * cbr = new QRadioButton( tr( "CBR" ), this );
+			cbrBox->addWidget( cbr );
+			this->bitRate_->addItem( "64", QVariant( 64000 ) );
+			this->bitRate_->addItem( "128", QVariant( 128000 ) );
+			this->bitRate_->addItem( "256", QVariant( 256000 ) );
+			this->bitRate_->addItem( "320", QVariant( 320000 ) );
+			this->bitRate_->setCurrentIndex( 3 );
+			cbrBox->addWidget( this->bitRate_ );
+
+			QHBoxLayout * vbrBox = new QHBoxLayout;
+			brBox->addLayout( vbrBox );
+			QRadioButton * vbr = new QRadioButton( tr( "VBR" ), this );
+			vbrBox->addWidget( vbr );
+			this->level_->addItem( "0 (Highest)", QVariant( 0 ) );
+			for( int i = 1; i < 9; ++i ) {
+				this->level_->addItem( QString::number( i ), QVariant( i ) );
+			}
+			this->level_->addItem( "9 (Lowest)", QVariant( 9 ) );
+			vbrBox->addWidget( this->level_ );
+
+			this->brChoise_->addButton( cbr );
+			this->brChoise_->setId( cbr, 0 );
+			this->brChoise_->addButton( vbr );
+			this->brChoise_->setId( vbr, 1 );
+			connect( cbr, SIGNAL( toggled( bool ) ), this->bitRate_, SLOT( setEnabled( bool ) ) );
+			connect( vbr, SIGNAL( toggled( bool ) ), this->level_, SLOT( setEnabled( bool ) ) );
+			cbr->setChecked( true );
+			this->level_->setEnabled( false );
+
+			QHBoxLayout * srBox = new QHBoxLayout;
+			vbox->addLayout( srBox );
+			QLabel * srLabel = new QLabel( tr( "Sample Rate:" ) );
+			srBox->addWidget( srLabel );
+			this->sampleRate_->addItem( "44100 Hz", QVariant( 44100 ) );
+			this->sampleRate_->addItem( "48000 Hz", QVariant( 48000 ) );
+			srBox->addWidget( this->sampleRate_ );
+
+			QHBoxLayout * cBox = new QHBoxLayout;
+			vbox->addLayout( cBox );
+			QLabel * cLabel = new QLabel( tr( "Channel:" ) );
+			cBox->addWidget( cLabel );
+			this->channels_->addItem( "Mono", QVariant( 1 ) );
+			this->channels_->addItem( "Streao", QVariant( 2 ) );
+			this->channels_->setCurrentIndex( 1 );
+			cBox->addWidget( this->channels_ );
+
+			// FIXME: please correct VBR
+			vbr->setDisabled( true );
 		}
-		this->level_->addItem( "9 (Lowest)", QVariant( 9 ) );
-		vbrBox->addWidget( this->level_ );
 
-		this->brChoise_->addButton( cbr );
-		this->brChoise_->setId( cbr, 0 );
-		this->brChoise_->addButton( vbr );
-		this->brChoise_->setId( vbr, 1 );
-		connect( cbr, SIGNAL( toggled( bool ) ), this->bitRate_, SLOT( setEnabled( bool ) ) );
-		connect( vbr, SIGNAL( toggled( bool ) ), this->level_, SLOT( setEnabled( bool ) ) );
-		cbr->setChecked( true );
-		this->level_->setEnabled( false );
+		codec::AudioWriterSP MP3Panel::getAudioWriter() const {
+			codec::AudioWriterSP encoder( codec::AudioWriterFactory::Instance().CreateObject( "mp3" ) );
 
-		QHBoxLayout * srBox = new QHBoxLayout;
-		vbox->addLayout( srBox );
-		QLabel * srLabel = new QLabel( tr( "Sample Rate:" ) );
-		srBox->addWidget( srLabel );
-		this->sampleRate_->addItem( "44100 Hz", QVariant( 44100 ) );
-		this->sampleRate_->addItem( "48000 Hz", QVariant( 48000 ) );
-		srBox->addWidget( this->sampleRate_ );
+			switch( this->brChoise_->checkedId() ) {
+			case 0:
+				encoder->setBitRate( this->bitRate_->itemData( this->bitRate_->currentIndex() ).toInt() );
+				break;
+			case 1:
+				encoder->setQuality( this->level_->itemData( this->level_->currentIndex() ).toInt() );
+				break;
+			default:
+				;
+			}
+			encoder->setSampleRate( this->sampleRate_->itemData( this->sampleRate_->currentIndex() ).toInt() );
+			encoder->setChannels( this->channels_->itemData( this->channels_->currentIndex() ).toInt() );
 
-		QHBoxLayout * cBox = new QHBoxLayout;
-		vbox->addLayout( cBox );
-		QLabel * cLabel = new QLabel( tr( "Channel:" ) );
-		cBox->addWidget( cLabel );
-		this->channels_->addItem( "Mono", QVariant( 1 ) );
-		this->channels_->addItem( "Streao", QVariant( 2 ) );
-		this->channels_->setCurrentIndex( 1 );
-		cBox->addWidget( this->channels_ );
-
-		// FIXME: please correct VBR
-		vbr->setDisabled( true );
-	}
-
-	codec::AudioWriterSP MP3Panel::getAudioWriter() const {
-		codec::AudioWriterSP encoder( codec::AudioWriterFactory::Instance().CreateObject( "mp3" ) );
-
-		switch( this->brChoise_->checkedId() ) {
-		case 0:
-			encoder->setBitRate( this->bitRate_->itemData( this->bitRate_->currentIndex() ).toInt() );
-			break;
-		case 1:
-			encoder->setQuality( this->level_->itemData( this->level_->currentIndex() ).toInt() );
-			break;
-		default:
-			;
+			return encoder;
 		}
-		encoder->setSampleRate( this->sampleRate_->itemData( this->sampleRate_->currentIndex() ).toInt() );
-		encoder->setChannels( this->channels_->itemData( this->channels_->currentIndex() ).toInt() );
 
-		return encoder;
-	}
+		QString MP3Panel::getSuffix() const {
+			return "mp3";
+		}
 
-	QString MP3Panel::getSuffix() const {
-		return "mp3";
-	}
+		QString MP3Panel::getTitle() const {
+			return "MPeg layer 3";
+		}
 
-	QString MP3Panel::getTitle() const {
-		return "MPeg layer 3";
 	}
 
 }

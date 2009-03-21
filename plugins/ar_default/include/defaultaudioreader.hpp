@@ -28,7 +28,7 @@ struct AVFormatContext;
 struct AVCodecContext;
 struct AVPacket;
 
-namespace Khopper {
+namespace khopper {
 
 	namespace codec {
 
@@ -40,7 +40,7 @@ namespace Khopper {
 		 */
 		class DefaultAudioReader : public AbstractAudioReader {
 			Q_OBJECT
-			Q_INTERFACES( Khopper::codec::AbstractAudioReader )
+			Q_INTERFACES( khopper::codec::AbstractAudioReader )
 
 		public:
 			/**

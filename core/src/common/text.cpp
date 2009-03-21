@@ -24,7 +24,7 @@
 #include <QString>
 #include <QFileInfo>
 
-namespace Khopper {
+namespace khopper {
 
 	namespace text {
 

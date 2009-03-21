@@ -22,7 +22,7 @@
 #include "error.hpp"
 #include "text.hpp"
 
-namespace Khopper {
+namespace khopper {
 
 	ErrorBase::ErrorBase( const std::string & msg ) throw() : msg_( msg ) {
 	}

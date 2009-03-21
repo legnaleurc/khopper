@@ -19,8 +19,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_PLAYER_HPP
-#define KHOPPER_PLAYER_HPP
+#ifndef KHOPPER_WIDGET_PLAYER_HPP
+#define KHOPPER_WIDGET_PLAYER_HPP
 
 #include "track.hpp"
 
@@ -28,44 +28,48 @@
 #include <QPushButton>
 #include <Phonon>
 
-namespace Khopper {
+namespace khopper {
 
-	class SongList;
+	namespace widget {
 
-	class Player : public QWidget {
-		Q_OBJECT
+		class SongList;
 
-	public:
-		Player( QWidget * parent = 0, Qt::WindowFlags f = 0 );
+		class Player : public QWidget {
+			Q_OBJECT
 
-		std::vector< TrackSP > getSelectedTracks() const;
-		const std::vector< TrackSP > & getTracks() const;
-		void appendTracks( const std::vector< TrackSP > & tracks );
+		public:
+			Player( QWidget * parent = 0, Qt::WindowFlags f = 0 );
 
-	signals:
-		/**
-		 * @brief Emitted when drop an openable file
-		 * @param paths File path
-		 */
-		void dropFile( const QStringList & paths );
-		/**
-		 * @brief Emmited when convert action is required.
-		 */
-		void requireConvert();
+			std::vector< album::TrackSP > getSelectedTracks() const;
+			const std::vector< album::TrackSP > & getTracks() const;
+			void appendTracks( const std::vector< album::TrackSP > & tracks );
 
-	private slots:
-		void playOrPause_();
-		void stop_();
+		signals:
+			/**
+			 * @brief Emitted when drop an openable file
+			 * @param paths File path
+			 */
+			void dropFile( const QStringList & paths );
+			/**
+			 * @brief Emmited when convert action is required.
+			 */
+			void requireConvert();
 
-	private:
-		bool play_();
+		private slots:
+			void playOrPause_();
+			void stop_();
 
-		Phonon::MediaObject * player_;
-		Phonon::SeekSlider * seeker_;
-		Phonon::VolumeSlider * volume_;
-		QPushButton * ppb_;
-		SongList * songList_;
-	};
+		private:
+			bool play_();
+
+			Phonon::MediaObject * player_;
+			Phonon::SeekSlider * seeker_;
+			Phonon::VolumeSlider * volume_;
+			QPushButton * ppb_;
+			SongList * songList_;
+		};
+
+	}
 
 }
 

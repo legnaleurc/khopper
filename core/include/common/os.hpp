@@ -26,7 +26,7 @@
 
 #include <string>
 
-namespace Khopper {
+namespace khopper {
 
 	/**
 	 * @brief Operating System dependant system code

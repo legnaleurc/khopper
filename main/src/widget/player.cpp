@@ -25,92 +25,96 @@
 
 #include <QHBoxLayout>
 
-namespace Khopper {
+namespace khopper {
 
-	Player::Player( QWidget * parent, Qt::WindowFlags f ):
-	QWidget( parent, f ),
-	player_( new Phonon::MediaObject( this ) ),
-	seeker_( new Phonon::SeekSlider( this->player_, this ) ),
-	volume_( new Phonon::VolumeSlider( this ) ),
-	ppb_( new QPushButton( tr( "Play" ), this ) ),
-	songList_( new SongList( this ) ) {
-		// Set main layout
-		QVBoxLayout * mainBox = new QVBoxLayout( this );
-		this->setLayout( mainBox );
+	namespace widget {
 
-		// Set player
-		Phonon::AudioOutput * ao = new Phonon::AudioOutput( Phonon::MusicCategory, this );
-		Phonon::createPath( this->player_, ao );
-		this->volume_->setAudioOutput( ao );
+		Player::Player( QWidget * parent, Qt::WindowFlags f ):
+		QWidget( parent, f ),
+		player_( new Phonon::MediaObject( this ) ),
+		seeker_( new Phonon::SeekSlider( this->player_, this ) ),
+		volume_( new Phonon::VolumeSlider( this ) ),
+		ppb_( new QPushButton( tr( "Play" ), this ) ),
+		songList_( new SongList( this ) ) {
+			// Set main layout
+			QVBoxLayout * mainBox = new QVBoxLayout( this );
+			this->setLayout( mainBox );
 
-		// Setting player panel
-		QHBoxLayout * playerBox = new QHBoxLayout;
-		mainBox->addLayout( playerBox );
+			// Set player
+			Phonon::AudioOutput * ao = new Phonon::AudioOutput( Phonon::MusicCategory, this );
+			Phonon::createPath( this->player_, ao );
+			this->volume_->setAudioOutput( ao );
 
-		connect( this->ppb_, SIGNAL( clicked() ), this, SLOT( playOrPause_() ) );
-		playerBox->addWidget( ppb_ );
-		QPushButton * stop = new QPushButton( tr( "Stop" ), this );
-		connect( stop, SIGNAL( clicked() ), this, SLOT( stop_() ) );
-		playerBox->addWidget( stop );
+			// Setting player panel
+			QHBoxLayout * playerBox = new QHBoxLayout;
+			mainBox->addLayout( playerBox );
 
-		playerBox->addWidget( this->seeker_ );
-		playerBox->addWidget( this->volume_ );
+			connect( this->ppb_, SIGNAL( clicked() ), this, SLOT( playOrPause_() ) );
+			playerBox->addWidget( ppb_ );
+			QPushButton * stop = new QPushButton( tr( "Stop" ), this );
+			connect( stop, SIGNAL( clicked() ), this, SLOT( stop_() ) );
+			playerBox->addWidget( stop );
 
-		connect( this->songList_, SIGNAL( dropFile( const QStringList & ) ), this, SIGNAL( dropFile( const QStringList & ) ) );
-		connect( this->songList_, SIGNAL( requireConvert() ), this, SIGNAL( requireConvert() ) );
-		mainBox->addWidget( this->songList_ );
-	}
+			playerBox->addWidget( this->seeker_ );
+			playerBox->addWidget( this->volume_ );
 
-	std::vector< TrackSP > Player::getSelectedTracks() const {
-		return this->songList_->getSelectedTracks();
-	}
+			connect( this->songList_, SIGNAL( dropFile( const QStringList & ) ), this, SIGNAL( dropFile( const QStringList & ) ) );
+			connect( this->songList_, SIGNAL( requireConvert() ), this, SIGNAL( requireConvert() ) );
+			mainBox->addWidget( this->songList_ );
+		}
 
-	const std::vector< TrackSP > & Player::getTracks() const {
-		return this->songList_->getTracks();
-	}
+		std::vector< album::TrackSP > Player::getSelectedTracks() const {
+			return this->songList_->getSelectedTracks();
+		}
 
-	void Player::appendTracks( const std::vector< TrackSP > & tracks ) {
-		this->songList_->appendTracks( tracks );
-	}
+		const std::vector< album::TrackSP > & Player::getTracks() const {
+			return this->songList_->getTracks();
+		}
 
-	bool Player::play_() {
-		const std::vector< TrackSP > & tracks( this->songList_->getTracks() );
+		void Player::appendTracks( const std::vector< album::TrackSP > & tracks ) {
+			this->songList_->appendTracks( tracks );
+		}
 
-		if( tracks.empty() ) {
-			return false;
-		} else {
-			std::vector< TrackSP > selected( this->songList_->getSelectedTracks() );
-			if( selected.empty() ) {
-				this->player_->setCurrentSource( QString::fromStdWString( tracks[0]->filePath ) );
-			} else {
-				this->player_->setCurrentSource( QString::fromStdWString( selected[0]->filePath ) );
-			}
+		bool Player::play_() {
+			const std::vector< album::TrackSP > & tracks( this->songList_->getTracks() );
 
-			this->player_->play();
-			if( this->player_->state() == Phonon::ErrorState ) {
+			if( tracks.empty() ) {
 				return false;
+			} else {
+				std::vector< album::TrackSP > selected( this->songList_->getSelectedTracks() );
+				if( selected.empty() ) {
+					this->player_->setCurrentSource( QString::fromStdWString( tracks[0]->filePath ) );
+				} else {
+					this->player_->setCurrentSource( QString::fromStdWString( selected[0]->filePath ) );
+				}
+
+				this->player_->play();
+				if( this->player_->state() == Phonon::ErrorState ) {
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+		void Player::stop_() {
+			if( this->player_->state() != Phonon::StoppedState ) {
+				this->ppb_->setText( tr( "Play" ) );
+				this->player_->stop();
 			}
 		}
 
-		return true;
-	}
-
-	void Player::stop_() {
-		if( this->player_->state() != Phonon::StoppedState ) {
-			this->ppb_->setText( tr( "Play" ) );
-			this->player_->stop();
-		}
-	}
-
-	void Player::playOrPause_() {
-		if( this->player_->state() != Phonon::PlayingState ) {
-			if( this->play_() ) {
-				this->ppb_->setText( tr( "Pause" ) );
+		void Player::playOrPause_() {
+			if( this->player_->state() != Phonon::PlayingState ) {
+				if( this->play_() ) {
+					this->ppb_->setText( tr( "Pause" ) );
+				}
+			} else {
+				this->ppb_->setText( tr( "Play" ) );
+				this->player_->pause();
 			}
-		} else {
-			this->ppb_->setText( tr( "Play" ) );
-			this->player_->pause();
 		}
+
 	}
 
 }

@@ -19,28 +19,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_OUTPUTOPTION_HPP
-#define KHOPPER_OUTPUTOPTION_HPP
+#ifndef KHOPPER_WIDGET_OUTPUTOPTION_HPP
+#define KHOPPER_WIDGET_OUTPUTOPTION_HPP
 
 #include <QDialog>
 #include <QTabWidget>
 
 #include <map>
 
-namespace Khopper {
+namespace khopper {
 
-	class AbstractPanel;
+	namespace widget {
 
-	class OutputOption : public QDialog {
-	public:
-		OutputOption( QWidget * parent = 0 );
+		class AbstractPanel;
 
-		AbstractPanel * getCurrent() const;
+		class OutputOption : public QDialog {
+		public:
+			OutputOption( QWidget * parent = 0 );
 
-	private:
-		QTabWidget * optionTabs_;
-		std::map< int ,AbstractPanel * > table_;
-	};
+			AbstractPanel * getCurrent() const;
+
+		private:
+			QTabWidget * optionTabs_;
+			std::map< int ,AbstractPanel * > table_;
+		};
+
+	}
 
 }
 

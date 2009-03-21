@@ -19,54 +19,58 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_MP3PANEL_HPP
-#define KHOPPER_MP3PANEL_HPP
+#ifndef KHOPPER_WIDGET_MP3PANEL_HPP
+#define KHOPPER_WIDGET_MP3PANEL_HPP
 
 #include "abstractpanel.hpp"
 
 #include <QButtonGroup>
 #include <QComboBox>
 
-namespace Khopper {
+namespace khopper {
 
-	/**
-	 * @brief Mp3 option widget
-	 */
-	class MP3Panel : public AbstractPanel {
-		Q_OBJECT
-		Q_INTERFACES( Khopper::AbstractPanel )
-
-	public:
-		/**
-		 * @brief Default constructor
-		 * @param parent Parent widget
-		 * @param f Window flags
-		 */
-		MP3Panel( QWidget * parent = 0, Qt::WindowFlags f = 0 );
+	namespace widget {
 
 		/**
-		 * @brief Get encoder setting object
-		 * @return Smart pointer contains AbstractAudioWriter
+		 * @brief Mp3 option widget
 		 */
-		virtual codec::AudioWriterSP getAudioWriter() const;
-		/**
-		 * @brief Get file suffix
-		 * @return File extension, without leading '.'
-		 */
-		virtual QString getSuffix() const;
-		/**
-		 * @brief Get tab title
-		 * @return Title use in tab widget
-		 */
-		virtual QString getTitle() const;
+		class MP3Panel : public AbstractPanel {
+			Q_OBJECT
+			Q_INTERFACES( khopper::widget::AbstractPanel )
 
-	private:
-		QButtonGroup * brChoise_;
-		QComboBox * bitRate_;
-		QComboBox * level_;
-		QComboBox * sampleRate_;
-		QComboBox * channels_;
-	};
+		public:
+			/**
+			 * @brief Default constructor
+			 * @param parent Parent widget
+			 * @param f Window flags
+			 */
+			MP3Panel( QWidget * parent = 0, Qt::WindowFlags f = 0 );
+
+			/**
+			 * @brief Get encoder setting object
+			 * @return Smart pointer contains AbstractAudioWriter
+			 */
+			virtual codec::AudioWriterSP getAudioWriter() const;
+			/**
+			 * @brief Get file suffix
+			 * @return File extension, without leading '.'
+			 */
+			virtual QString getSuffix() const;
+			/**
+			 * @brief Get tab title
+			 * @return Title use in tab widget
+			 */
+			virtual QString getTitle() const;
+
+		private:
+			QButtonGroup * brChoise_;
+			QComboBox * bitRate_;
+			QComboBox * level_;
+			QComboBox * sampleRate_;
+			QComboBox * channels_;
+		};
+
+	}
 
 }
 

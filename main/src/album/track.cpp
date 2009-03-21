@@ -44,74 +44,78 @@ namespace {
 
 }
 
-namespace Khopper {
+namespace khopper {
 
-	Track::Track():
-	album(),
-	artist(),
-	bitRate( 0 ),
-	channels( 0 ),
-	comments(),
-	dataType( AUDIO ),
-	duration(),
-	filePath(),
-	fileType( BINARY ),
-	flags( NONE ),
-	garbage(),
-	index( 0 ),
-	isrc(),
-	postGap(),
-	preGap(),
-	sampleRate(),
-	songWriter(),
-	startTime(),
-	title() {
-	}
+	namespace album {
 
-	void Track::load( const std::wstring & filePath ) {
-		this->filePath = filePath;
-
-		codec::AudioReaderSP decoder( codec::AudioReaderFactory::Instance().CreateObject( text::getSuffix( filePath ) ) );
-		decoder->open( text::toLocale( this->filePath ) );
-		if( decoder->isOpen() ) {
-			this->album = text::fromUTF8( decoder->getAlbum() );
-			this->artist = text::fromUTF8( decoder->getArtist() );
-			this->bitRate = decoder->getBitRate();
-			this->channels = decoder->getChannels();
-			this->duration = decoder->getDuration();
-			this->sampleRate = decoder->getSampleRate();
-			this->title = text::fromUTF8( decoder->getTitle() );
-
-			decoder->close();
-		} else {
-			throw Error< codec::Codec >( "Can not open file!" );
+		Track::Track():
+		album(),
+		artist(),
+		bitRate( 0 ),
+		channels( 0 ),
+		comments(),
+		dataType( AUDIO ),
+		duration(),
+		filePath(),
+		fileType( BINARY ),
+		flags( NONE ),
+		garbage(),
+		index( 0 ),
+		isrc(),
+		postGap(),
+		preGap(),
+		sampleRate(),
+		songWriter(),
+		startTime(),
+		title() {
 		}
-	}
 
-	std::wstring Track::toStdWString() const {
-		std::wostringstream sout;
-		sout << L"Title:\t" << this->title << L"\n";
-		sout << L"Artist:\t" << this->artist << L"\n";
-		sout << L"Song Writer:\t" << this->songWriter << L"\n";
-		sout << L"Track index:\t" << this->index << L"\n";
-		sout << L"ISRC:\t" << this->isrc << L"\n";
-		sout << L"Start:\t" << this->startTime.toStdWString() << L"\n";
-		sout << L"End:\t" << this->duration.toStdWString() << L"\n";
-		sout << L"Pregap:\t" << this->preGap.toStdWString() << L"\n";
-		sout << L"Postgap:\t" << this->postGap.toStdWString() << L"\n";
-		sout << L"Type:\t" << this->dataType << L"\n";
-		sout << L"Comments:\n";
-		for( std::map< std::wstring, std::wstring >::const_iterator it = this->comments.begin(); it != this->comments.end(); ++it ) {
-			sout << L"\t" << it->first << L":\t" << it->second << L"\n";
-		}
-		sout << L"Garbage:\n";
-		for( std::vector< std::wstring >::const_iterator it = this->garbage.begin(); it != this->garbage.end(); ++it ) {
-			sout << L"\t" << *it << L"\n";
-		}
-		sout << L"Flags:\t" << this->flags << L"\n";
-		return sout.str();
-	}
+		void Track::load( const std::wstring & filePath ) {
+			this->filePath = filePath;
 
-	const std::vector< std::wstring > Track::Headers = createHeader();
+			codec::AudioReaderSP decoder( codec::AudioReaderFactory::Instance().CreateObject( text::getSuffix( filePath ) ) );
+			decoder->open( text::toLocale( this->filePath ) );
+			if( decoder->isOpen() ) {
+				this->album = text::fromUTF8( decoder->getAlbum() );
+				this->artist = text::fromUTF8( decoder->getArtist() );
+				this->bitRate = decoder->getBitRate();
+				this->channels = decoder->getChannels();
+				this->duration = decoder->getDuration();
+				this->sampleRate = decoder->getSampleRate();
+				this->title = text::fromUTF8( decoder->getTitle() );
+
+				decoder->close();
+			} else {
+				throw Error< codec::Codec >( "Can not open file!" );
+			}
+		}
+
+		std::wstring Track::toStdWString() const {
+			std::wostringstream sout;
+			sout << L"Title:\t" << this->title << L"\n";
+			sout << L"Artist:\t" << this->artist << L"\n";
+			sout << L"Song Writer:\t" << this->songWriter << L"\n";
+			sout << L"Track index:\t" << this->index << L"\n";
+			sout << L"ISRC:\t" << this->isrc << L"\n";
+			sout << L"Start:\t" << this->startTime.toStdWString() << L"\n";
+			sout << L"End:\t" << this->duration.toStdWString() << L"\n";
+			sout << L"Pregap:\t" << this->preGap.toStdWString() << L"\n";
+			sout << L"Postgap:\t" << this->postGap.toStdWString() << L"\n";
+			sout << L"Type:\t" << this->dataType << L"\n";
+			sout << L"Comments:\n";
+			for( std::map< std::wstring, std::wstring >::const_iterator it = this->comments.begin(); it != this->comments.end(); ++it ) {
+				sout << L"\t" << it->first << L":\t" << it->second << L"\n";
+			}
+			sout << L"Garbage:\n";
+			for( std::vector< std::wstring >::const_iterator it = this->garbage.begin(); it != this->garbage.end(); ++it ) {
+				sout << L"\t" << *it << L"\n";
+			}
+			sout << L"Flags:\t" << this->flags << L"\n";
+			return sout.str();
+		}
+
+		const std::vector< std::wstring > Track::Headers = createHeader();
+
+	}
 
 }

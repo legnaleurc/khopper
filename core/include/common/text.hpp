@@ -24,7 +24,7 @@
 
 #include <string>
 
-namespace Khopper {
+namespace khopper {
 
 	/**
 	 * @brief Text processing

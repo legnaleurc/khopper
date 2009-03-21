@@ -34,7 +34,7 @@
 
 #include <string>
 
-namespace Khopper {
+namespace khopper {
 
 	namespace codec {
 
@@ -361,6 +361,6 @@ namespace Khopper {
 
 }
 
-Q_DECLARE_INTERFACE( Khopper::codec::AbstractAudioReader, "org.FoolproofProject.Khopper.Plugin.AudioReader/0.2" )
+Q_DECLARE_INTERFACE( khopper::codec::AbstractAudioReader, "org.FoolproofProject.Khopper.Plugin.AudioReader/0.2" )
 
 #endif

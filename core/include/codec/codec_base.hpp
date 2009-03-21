@@ -24,7 +24,7 @@
 
 #include <deque>
 
-namespace Khopper {
+namespace khopper {
 
 	/// @defgroup Codecs De/Muxers and De/Encoders
 	// @{

@@ -27,41 +27,45 @@
 #include <QDialogButtonBox>
 #include <QPluginLoader>
 
-namespace Khopper {
+namespace khopper {
 
-	OutputOption::OutputOption( QWidget * parent ):
-	QDialog( parent ),
-	optionTabs_( new QTabWidget( this ) ),
-	table_() {
-		this->setWindowTitle( tr( "Output format setting" ) );
-		this->resize( 320, 240 );
+	namespace widget {
 
-		QVBoxLayout * mainBox = new QVBoxLayout( this );
-		this->setLayout( mainBox );
+		OutputOption::OutputOption( QWidget * parent ):
+		QDialog( parent ),
+		optionTabs_( new QTabWidget( this ) ),
+		table_() {
+			this->setWindowTitle( tr( "Output format setting" ) );
+			this->resize( 320, 240 );
 
-		mainBox->addWidget( this->optionTabs_ );
+			QVBoxLayout * mainBox = new QVBoxLayout( this );
+			this->setLayout( mainBox );
 
-		// Take out the output types
-		os::PluginContext pc;
-		foreach( QString fileName, pc.getDir().entryList( QStringList( "libkpp_*" ), QDir::Files ) ) {
-			QPluginLoader piLoader( pc.getDir().absoluteFilePath( fileName ) );
-			QObject * plugin = piLoader.instance();
-			if( plugin ) {
-				AbstractPanel * option = qobject_cast< AbstractPanel * >( plugin );
-				if( option ) {
-					this->table_.insert( std::make_pair( this->optionTabs_->addTab( option, option->getTitle() ), option ) );
+			mainBox->addWidget( this->optionTabs_ );
+
+			// Take out the output types
+			os::PluginContext pc;
+			foreach( QString fileName, pc.getDir().entryList( QStringList( "libkpp_*" ), QDir::Files ) ) {
+				QPluginLoader piLoader( pc.getDir().absoluteFilePath( fileName ) );
+				QObject * plugin = piLoader.instance();
+				if( plugin ) {
+					AbstractPanel * option = qobject_cast< AbstractPanel * >( plugin );
+					if( option ) {
+						this->table_.insert( std::make_pair( this->optionTabs_->addTab( option, option->getTitle() ), option ) );
+					}
 				}
 			}
+
+			QDialogButtonBox * buttons = new QDialogButtonBox( QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, this );
+			mainBox->addWidget( buttons );
+			connect( buttons, SIGNAL( accepted() ), this, SLOT( accept() ) );
+			connect( buttons, SIGNAL( rejected() ), this, SLOT( reject() ) );
 		}
 
-		QDialogButtonBox * buttons = new QDialogButtonBox( QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, this );
-		mainBox->addWidget( buttons );
-		connect( buttons, SIGNAL( accepted() ), this, SLOT( accept() ) );
-		connect( buttons, SIGNAL( rejected() ), this, SLOT( reject() ) );
-	}
+		AbstractPanel * OutputOption::getCurrent() const {
+			return this->table_.find( this->optionTabs_->currentIndex() )->second;
+		}
 
-	AbstractPanel * OutputOption::getCurrent() const {
-		return this->table_.find( this->optionTabs_->currentIndex() )->second;
 	}
 
 }

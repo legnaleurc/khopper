@@ -19,41 +19,45 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_PREFERENCE_HPP
-#define KHOPPER_PREFERENCE_HPP
+#ifndef KHOPPER_WIDGET_PREFERENCE_HPP
+#define KHOPPER_WIDGET_PREFERENCE_HPP
 
 #include <QDialog>
 #include <QLineEdit>
 #include <QDialogButtonBox>
 
-namespace Khopper {
+namespace khopper {
 
-	/**
-	 * @brief Preference dialog
-	 */
-	class Preference : public QDialog {
-		Q_OBJECT
-
-	public:
-		/// Default constructor
-		Preference( QWidget * parent = 0 );
+	namespace widget {
 
 		/**
-		 * @brief Get file name template
-		 * @return Format string in boost::format
+		 * @brief Preference dialog
 		 */
-		QString getTemplate() const;
+		class Preference : public QDialog {
+			Q_OBJECT
 
-	private slots:
-		void perform_( QAbstractButton * );
+		public:
+			/// Default constructor
+			Preference( QWidget * parent = 0 );
 
-	private:
-		QLineEdit * fnTpl_;
-		QDialogButtonBox * buttons_;
+			/**
+			 * @brief Get file name template
+			 * @return Format string in boost::format
+			 */
+			QString getTemplate() const;
 
-		void apply_();
-		void revert_();
-	};
+		private slots:
+			void perform_( QAbstractButton * );
+
+		private:
+			QLineEdit * fnTpl_;
+			QDialogButtonBox * buttons_;
+
+			void apply_();
+			void revert_();
+		};
+
+	}
 
 }
 

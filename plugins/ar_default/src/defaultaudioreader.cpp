@@ -52,9 +52,9 @@ namespace {
 
 }
 
-Q_EXPORT_PLUGIN2( karp_default, Khopper::codec::DefaultAudioReader )
+Q_EXPORT_PLUGIN2( karp_default, khopper::codec::DefaultAudioReader )
 
-namespace Khopper {
+namespace khopper {
 
 	namespace codec {
 

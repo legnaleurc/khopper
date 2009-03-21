@@ -28,7 +28,7 @@ struct AVFormatContext;
 struct AVOutputFormat;
 struct AVStream;
 
-namespace Khopper {
+namespace khopper {
 
 	namespace codec {
 
@@ -40,7 +40,7 @@ namespace Khopper {
 		 */
 		class DefaultAudioWriter : public AbstractAudioWriter {
 			Q_OBJECT
-			Q_INTERFACES( Khopper::codec::AbstractAudioWriter )
+			Q_INTERFACES( khopper::codec::AbstractAudioWriter )
 
 		public:
 			/**

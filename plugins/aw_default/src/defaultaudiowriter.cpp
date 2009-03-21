@@ -57,9 +57,9 @@ namespace {
 
 }
 
-Q_EXPORT_PLUGIN2( kawp_default, Khopper::codec::DefaultAudioWriter )
+Q_EXPORT_PLUGIN2( kawp_default, khopper::codec::DefaultAudioWriter )
 
-namespace Khopper {
+namespace khopper {
 
 	namespace codec {
 

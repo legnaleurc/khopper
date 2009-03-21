@@ -19,49 +19,53 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_TEXTCODEC_HPP
-#define KHOPPER_TEXTCODEC_HPP
+#ifndef KHOPPER_WIDGET_TEXTCODEC_HPP
+#define KHOPPER_WIDGET_TEXTCODEC_HPP
 
 #include <QDialog>
 #include <QComboBox>
 #include <QLabel>
 
-namespace Khopper {
+namespace khopper {
 
-	/**
-	 * @brief Decode string dialog
-	 */
-	class TextCodec : public QDialog {
-		Q_OBJECT
+	namespace widget {
 
-	public:
 		/**
-		 * @brief Default constructor
-		 * @param parent Parent widget
-		 * @param f Window flags
+		 * @brief Decode string dialog
 		 */
-		TextCodec( QWidget * parent = 0, Qt::WindowFlags f = 0 );
-		/**
-		 * @brief Set encoded string
-		 * @param [in] encoded Encoded string
-		 */
-		void setEncoded( const QByteArray & encoded );
-		/**
-		 * @brief Get decoded string
-		 * @return Decoded string, in Unicode
-		 */
-		QString getDecoded() const;
+		class TextCodec : public QDialog {
+			Q_OBJECT
 
-	private slots:
-		void update( int );
+		public:
+			/**
+			 * @brief Default constructor
+			 * @param parent Parent widget
+			 * @param f Window flags
+			 */
+			TextCodec( QWidget * parent = 0, Qt::WindowFlags f = 0 );
+			/**
+			 * @brief Set encoded string
+			 * @param [in] encoded Encoded string
+			 */
+			void setEncoded( const QByteArray & encoded );
+			/**
+			 * @brief Get decoded string
+			 * @return Decoded string, in Unicode
+			 */
+			QString getDecoded() const;
 
-	private:
-		QByteArray encoded_;
-		QString decoded_;
+		private slots:
+			void update( int );
 
-		QComboBox * codecs_;
-		QLabel * contents_;
-	};
+		private:
+			QByteArray encoded_;
+			QString decoded_;
+
+			QComboBox * codecs_;
+			QLabel * contents_;
+		};
+
+	}
 
 }
 

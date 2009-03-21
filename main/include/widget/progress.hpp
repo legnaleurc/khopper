@@ -19,62 +19,66 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_PROGRESS_HPP
-#define KHOPPER_PROGRESS_HPP
+#ifndef KHOPPER_WIDGET_PROGRESS_HPP
+#define KHOPPER_WIDGET_PROGRESS_HPP
 
 #include <QDialog>
 #include <QLabel>
 #include <QProgressBar>
 
-namespace Khopper {
+namespace khopper {
 
-	/**
-	 * @brief Show the progress
-	 */
-	class Progress : public QDialog {
-		Q_OBJECT
-
-	public:
-		/**
-		 * @brief Pass arguments to QDialog
-		 */
-		Progress( QWidget * parent = 0, Qt::WindowFlags f = 0 );
+	namespace widget {
 
 		/**
-		 * @brief Get current progress
-		 * @sa setValue
+		 * @brief Show the progress
 		 */
-		int getValue() const;
+		class Progress : public QDialog {
+			Q_OBJECT
 
-	public slots:
-		/**
-		 * @brief Set maximum progress
-		 */
-		void setMaximum( int maximum );
-		/**
-		 * @brief Set current progress
-		 * @sa getValue
-		 */
-		void setValue( int value );
-		/**
-		 * @brief Set current item name
-		 */
-		void setItemName( const QString & name );
-		/**
-		 * @brief Set current task count
-		 */
-		void setCurrent( int current );
-		/**
-		 * @brief Set total tasks
-		 */
-		void setTotal( int total );
+		public:
+			/**
+			 * @brief Pass arguments to QDialog
+			 */
+			Progress( QWidget * parent = 0, Qt::WindowFlags f = 0 );
 
-	private:
-		QLabel * itemName_;
-		QLabel * current_;
-		QLabel * total_;
-		QProgressBar * prog_;
-	};
+			/**
+			 * @brief Get current progress
+			 * @sa setValue
+			 */
+			int getValue() const;
+
+		public slots:
+			/**
+			 * @brief Set maximum progress
+			 */
+			void setMaximum( int maximum );
+			/**
+			 * @brief Set current progress
+			 * @sa getValue
+			 */
+			void setValue( int value );
+			/**
+			 * @brief Set current item name
+			 */
+			void setItemName( const QString & name );
+			/**
+			 * @brief Set current task count
+			 */
+			void setCurrent( int current );
+			/**
+			 * @brief Set total tasks
+			 */
+			void setTotal( int total );
+
+		private:
+			QLabel * itemName_;
+			QLabel * current_;
+			QLabel * total_;
+			QProgressBar * prog_;
+		};
+
+	}
 
 }
 

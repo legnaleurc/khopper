@@ -21,7 +21,7 @@
  */
  #include "abstractaudiowriter.hpp"
 
-namespace Khopper {
+namespace khopper {
 
 	namespace codec {
 

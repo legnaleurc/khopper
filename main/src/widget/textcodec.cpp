@@ -28,51 +28,55 @@
 #include <QVBoxLayout>
 #include <QLabel>
 
-namespace Khopper {
+namespace khopper {
 
-	TextCodec::TextCodec( QWidget * parent, Qt::WindowFlags f ):
-	QDialog( parent, f ),
-	encoded_(),
-	decoded_(),
-	codecs_( new QComboBox( this ) ),
-	contents_( new QLabel( this ) ) {
-		setWindowTitle( tr( "Choose Encoding" ) );
+	namespace widget {
 
-		this->codecs_->addItem( "UTF-8", QTextCodec::codecForName( "UTF-8" )->mibEnum() );
-		this->codecs_->addItem( "Shift-JIS", QTextCodec::codecForName( "Shift-JIS" )->mibEnum() );
-		this->codecs_->addItem( "Big5", QTextCodec::codecForName( "Big5" )->mibEnum() );
-		//codecs_->addItem( "GB18030-0", QTextCodec::codecForName( "GB18030-0" )->mibEnum() );
-		connect( this->codecs_, SIGNAL( currentIndexChanged( int ) ), this, SLOT( update( int ) ) );
+		TextCodec::TextCodec( QWidget * parent, Qt::WindowFlags f ):
+		QDialog( parent, f ),
+		encoded_(),
+		decoded_(),
+		codecs_( new QComboBox( this ) ),
+		contents_( new QLabel( this ) ) {
+			setWindowTitle( tr( "Choose Encoding" ) );
 
-		this->contents_->setFixedSize( 200, 200 );
+			this->codecs_->addItem( "UTF-8", QTextCodec::codecForName( "UTF-8" )->mibEnum() );
+			this->codecs_->addItem( "Shift-JIS", QTextCodec::codecForName( "Shift-JIS" )->mibEnum() );
+			this->codecs_->addItem( "Big5", QTextCodec::codecForName( "Big5" )->mibEnum() );
+			//codecs_->addItem( "GB18030-0", QTextCodec::codecForName( "GB18030-0" )->mibEnum() );
+			connect( this->codecs_, SIGNAL( currentIndexChanged( int ) ), this, SLOT( update( int ) ) );
 
-		QDialogButtonBox * buttons = new QDialogButtonBox( QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, this );
-		connect( buttons, SIGNAL( accepted() ), this, SLOT( accept() ) );
-		connect( buttons, SIGNAL( rejected() ), this, SLOT( reject() ) );
+			this->contents_->setFixedSize( 200, 200 );
 
-		QVBoxLayout * box = new QVBoxLayout( this );
-		this->setLayout( box );
-		box->addWidget( this->codecs_ );
-		box->addWidget( buttons );
-		box->addWidget( this->contents_ );
-	}
+			QDialogButtonBox * buttons = new QDialogButtonBox( QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, this );
+			connect( buttons, SIGNAL( accepted() ), this, SLOT( accept() ) );
+			connect( buttons, SIGNAL( rejected() ), this, SLOT( reject() ) );
 
-	void TextCodec::setEncoded( const QByteArray & encoded ) {
-		this->encoded_ = encoded;
-		update( this->codecs_->currentIndex() );
-	}
+			QVBoxLayout * box = new QVBoxLayout( this );
+			this->setLayout( box );
+			box->addWidget( this->codecs_ );
+			box->addWidget( buttons );
+			box->addWidget( this->contents_ );
+		}
 
-	QString TextCodec::getDecoded() const {
-		return this->decoded_;
-	}
+		void TextCodec::setEncoded( const QByteArray & encoded ) {
+			this->encoded_ = encoded;
+			update( this->codecs_->currentIndex() );
+		}
 
-	void TextCodec::update( int index ) {
-		int mib = this->codecs_->itemData( index ).toInt();
-		QTextStream ts( &this->encoded_ );
-		ts.setCodec( QTextCodec::codecForMib( mib ) );
-		this->decoded_ = ts.readAll();
+		QString TextCodec::getDecoded() const {
+			return this->decoded_;
+		}
 
-		this->contents_->setText( this->decoded_ );
+		void TextCodec::update( int index ) {
+			int mib = this->codecs_->itemData( index ).toInt();
+			QTextStream ts( &this->encoded_ );
+			ts.setCodec( QTextCodec::codecForMib( mib ) );
+			this->decoded_ = ts.readAll();
+
+			this->contents_->setText( this->decoded_ );
+		}
+
 	}
 
 }
