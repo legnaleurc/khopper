@@ -22,6 +22,8 @@
 #ifndef KHOPPER_OS_HPP
 #define KHOPPER_OS_HPP
 
+#include <QDir>
+
 #include <string>
 
 namespace Khopper {
@@ -38,6 +40,15 @@ namespace Khopper {
 		 * @return Complete path
 		 */
 		std::wstring join( const std::wstring & front, const std::wstring & back );
+
+		class PluginContext {
+		public:
+			PluginContext();
+
+			const QDir & getDir() const;
+		private:
+			QDir d_;
+		};
 
 	}
 

@@ -22,8 +22,7 @@
 #include "tr1.hpp"
 #include "os.hpp"
 
-#include <QString>
-#include <QtDebug>
+#include <QApplication>
 
 namespace Khopper {
 
@@ -44,6 +43,15 @@ namespace Khopper {
 			} else {
 				return L"";
 			}
+		}
+
+		PluginContext::PluginContext():
+		d_( qApp->applicationDirPath() ) {
+			this->d_.cd( "plugins" );
+		}
+
+		const QDir & PluginContext::getDir() const {
+			return this->d_;
 		}
 
 	}

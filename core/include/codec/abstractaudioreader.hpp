@@ -25,6 +25,7 @@
 #include "tr1.hpp"
 #include "codec_base.hpp"
 #include "error.hpp"
+#include "os.hpp"
 
 #include <loki/Factory.h>
 #include <loki/Singleton.h>
@@ -330,9 +331,9 @@ namespace Khopper {
 		template< typename IdentifierType, class AbstractProduct >
 		struct ReaderFactoryError {
 			static AbstractProduct * OnUnknownType( IdentifierType ) {
-				// FIXME: change directory first
 				// FIXME: diffirent file names on diffirent system
-				QPluginLoader pl( "libkarp_default.so" );
+				os::PluginContext pc;
+				QPluginLoader pl( pc.getDir().absoluteFilePath( "libkarp_default.so" ) );
 				AbstractProduct * d = qobject_cast< AbstractProduct * >( pl.instance() );
 				if( !d ) {
 					throw Error< RunTime >( pl.errorString().toStdString() );

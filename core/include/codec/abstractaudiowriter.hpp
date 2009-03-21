@@ -241,9 +241,9 @@ namespace Khopper {
 		template< typename IdentifierType, class AbstractProduct >
 		struct WriterFactoryError {
 			static AbstractProduct * OnUnknownType( IdentifierType ) {
-				// FIXME: change directory first
 				// FIXME: diffirent file names on diffirent system
-				QPluginLoader pl( "libkawp_default.so" );
+				os::PluginContext pc;
+				QPluginLoader pl( pc.getDir().absoluteFilePath( "libkawp_default.so" ) );
 				AbstractProduct * d = qobject_cast< AbstractProduct * >( pl.instance() );
 				if( !d ) {
 					throw Error< RunTime >( pl.errorString().toStdString() );

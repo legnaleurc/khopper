@@ -21,12 +21,11 @@
  */
 #include "outputoption.hpp"
 #include "abstractpanel.hpp"
+#include "os.hpp"
 
 #include <QVBoxLayout>
 #include <QDialogButtonBox>
 #include <QPluginLoader>
-#include <QDir>
-#include <QApplication>
 
 namespace Khopper {
 
@@ -43,21 +42,9 @@ namespace Khopper {
 		mainBox->addWidget( this->optionTabs_ );
 
 		// Take out the output types
-		QDir piDir( qApp->applicationDirPath() );
-#if defined(Q_OS_WIN)
-		if( piDir.dirName().toLower() == "debug" || piDir.dirName().toLower() == "release" ) {
-			piDir.cdUp();
-		}
-#elif defined(Q_OS_MAC)
-		if( piDir.dirName() == "MacOS" ) {
-			piDir.cdUp();
-			piDir.cdUp();
-			piDir.cdUp();
-		}
-#endif
-		piDir.cd( "plugins" );
-		foreach( QString fileName, piDir.entryList( QDir::Files ) ) {
-			QPluginLoader piLoader( piDir.absoluteFilePath( fileName ) );
+		os::PluginContext pc;
+		foreach( QString fileName, pc.getDir().entryList( QStringList( "libkpp_*" ), QDir::Files ) ) {
+			QPluginLoader piLoader( pc.getDir().absoluteFilePath( fileName ) );
 			QObject * plugin = piLoader.instance();
 			if( plugin ) {
 				AbstractPanel * option = qobject_cast< AbstractPanel * >( plugin );
