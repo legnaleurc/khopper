@@ -25,6 +25,7 @@
 #include "tr1.hpp"
 #include "codec_base.hpp"
 #include "error.hpp"
+#include "os.hpp"
 
 #include <loki/Factory.h>
 #include <loki/Singleton.h>
