@@ -52,7 +52,7 @@ namespace {
 
 }
 
-Q_EXPORT_PLUGIN2( karp_default, khopper::codec::DefaultAudioReader )
+Q_EXPORT_PLUGIN2( karp_default, khopper::plugin::DefaultAudioReaderCreator )
 
 namespace khopper {
 
@@ -201,6 +201,14 @@ namespace khopper {
 				avcodec_flush_buffers( this->pCodecContext_.get() );
 			}
 			return succeed;
+		}
+
+	}
+
+	namespace plugin {
+
+		codec::AudioReaderSP DefaultAudioReaderCreator::create() const {
+			return codec::AudioReaderSP( new codec::DefaultAudioReader );
 		}
 
 	}

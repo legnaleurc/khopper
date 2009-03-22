@@ -43,7 +43,7 @@ namespace khopper {
 		 * @ingroup Codecs
 		 * @sa AbstractAudioWriter
 		 */
-		class AbstractAudioReader : public QObject {
+		class AbstractAudioReader {
 		public:
 			/**
 			 * @brief Default constructor
@@ -328,6 +328,15 @@ namespace khopper {
 		 */
 		typedef std::tr1::shared_ptr< const AbstractAudioReader > AudioReaderCSP;
 
+	}
+
+	namespace plugin {
+
+		class AudioReaderCreator {
+		public:
+			virtual codec::AudioReaderSP create() const = 0;
+		};
+
 		template< typename IdentifierType, class AbstractProduct >
 		struct ReaderFactoryError {
 			static AbstractProduct * OnUnknownType( IdentifierType ) {
@@ -348,7 +357,7 @@ namespace khopper {
 		 */
 		typedef Loki::SingletonHolder<
 			Loki::Factory<
-				AbstractAudioReader,
+				AudioReaderCreator,
 				std::string,
 				Loki::NullType,
 				ReaderFactoryError
@@ -357,10 +366,12 @@ namespace khopper {
 			Loki::LongevityLifetime::DieAsSmallObjectChild
 		> AudioReaderFactory;
 
+		codec::AudioReaderSP createReader( const std::string & key );
+
 	}
 
 }
 
-Q_DECLARE_INTERFACE( khopper::codec::AbstractAudioReader, "org.FoolproofProject.Khopper.Plugin.AudioReader/0.2" )
+Q_DECLARE_INTERFACE( khopper::plugin::AudioReaderCreator, "org.FoolproofProject.Khopper.Plugin.AudioReader/0.2" )
 
 #endif

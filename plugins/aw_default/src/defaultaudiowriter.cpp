@@ -57,7 +57,7 @@ namespace {
 
 }
 
-Q_EXPORT_PLUGIN2( kawp_default, khopper::codec::DefaultAudioWriter )
+Q_EXPORT_PLUGIN2( kawp_default, khopper::plugin::DefaultAudioWriterCreator )
 
 namespace khopper {
 
@@ -174,6 +174,14 @@ namespace khopper {
 			if( av_write_frame( this->pFormatContext_.get(), &pkt ) != 0 ) {
 				throw Error< Codec >( "Can not write frame" );
 			}
+		}
+
+	}
+
+	namespace plugin {
+
+		codec::AudioWriterSP DefaultAudioWriterCreator::create() const {
+			return codec::AudioWriterSP( new codec::DefaultAudioWriter );
 		}
 
 	}

@@ -125,4 +125,12 @@ namespace khopper {
 
 	}
 
+	namespace plugin {
+
+		codec::AudioReaderSP createReader( const std::string & key ) {
+			return AudioReaderFactory::Instance().CreateObject( key )->create();
+		}
+
+	}
+
 }

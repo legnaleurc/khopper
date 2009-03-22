@@ -84,4 +84,12 @@ namespace khopper {
 
 	}
 
+	namespace plugin {
+
+		codec::AudioWriterSP createWriter( const std::string & key ) {
+			return AudioWriterFactory::Instance().CreateObject( key )->create();
+		}
+
+	}
+
 }

@@ -125,7 +125,7 @@ namespace khopper {
 			std::for_each( this->tracks.begin(), this->tracks.end(), ::setAlbum( this->title ) );
 
 			// get the total length, because cue sheet don't provide it
-			codec::AudioReaderSP decoder( codec::AudioReaderFactory::Instance().CreateObject( text::getSuffix( currentFile.first ) ) );
+			codec::AudioReaderSP decoder( plugin::createReader( text::getSuffix( currentFile.first ) ) );
 			decoder->open( text::toLocale( currentFile.first ) );
 			if( decoder->isOpen() ) {
 				std::for_each( this->tracks.begin(), this->tracks.end(), ::setBCS( decoder ) );

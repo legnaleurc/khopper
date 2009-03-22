@@ -39,9 +39,6 @@ namespace khopper {
 		 * This class provides a default audio writer implementation.
 		 */
 		class DefaultAudioWriter : public AbstractAudioWriter {
-			Q_OBJECT
-			Q_INTERFACES( khopper::codec::AbstractAudioWriter )
-
 		public:
 			/**
 			 * @brief Default constructor
@@ -62,6 +59,18 @@ namespace khopper {
 
 			std::tr1::shared_ptr< AVFormatContext > pFormatContext_;
 			AVStream * pStream_;
+		};
+
+	}
+
+	namespace plugin {
+
+		class DefaultAudioWriterCreator : public QObject, public AudioWriterCreator {
+			Q_OBJECT
+			Q_INTERFACES( khopper::plugin::AudioWriterCreator )
+
+		public:
+			virtual codec::AudioWriterSP create() const;
 		};
 
 	}

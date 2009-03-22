@@ -73,7 +73,7 @@ namespace khopper {
 		void Track::load( const std::wstring & filePath ) {
 			this->filePath = filePath;
 
-			codec::AudioReaderSP decoder( codec::AudioReaderFactory::Instance().CreateObject( text::getSuffix( filePath ) ) );
+			codec::AudioReaderSP decoder( plugin::createReader( text::getSuffix( filePath ) ) );
 			decoder->open( text::toLocale( this->filePath ) );
 			if( decoder->isOpen() ) {
 				this->album = text::fromUTF8( decoder->getAlbum() );

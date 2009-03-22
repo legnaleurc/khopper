@@ -39,9 +39,6 @@ namespace khopper {
 		 * This class provides a default audio reader implementation.
 		 */
 		class DefaultAudioReader : public AbstractAudioReader {
-			Q_OBJECT
-			Q_INTERFACES( khopper::codec::AbstractAudioReader )
-
 		public:
 			/**
 			 * @brief Default constructor
@@ -65,6 +62,18 @@ namespace khopper {
 			std::tr1::shared_ptr< AVCodecContext > pCodecContext_;
 			std::tr1::shared_ptr< AVPacket > pPacket_;
 			double timeBase_;
+		};
+
+	}
+
+	namespace plugin {
+
+		class DefaultAudioReaderCreator : public QObject, public AudioReaderCreator {
+			Q_OBJECT
+			Q_INTERFACES( khopper::plugin::AudioReaderCreator )
+
+		public:
+			virtual codec::AudioReaderSP create() const;
 		};
 
 	}

@@ -105,7 +105,7 @@ namespace khopper {
 		}
 
 		codec::AudioWriterSP MP3Panel::getAudioWriter() const {
-			codec::AudioWriterSP encoder( codec::AudioWriterFactory::Instance().CreateObject( "mp3" ) );
+			codec::AudioWriterSP encoder( plugin::createWriter( "mp3" ) );
 
 			switch( this->brChoise_->checkedId() ) {
 			case 0:

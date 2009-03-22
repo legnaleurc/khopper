@@ -34,7 +34,7 @@ namespace khopper {
 		}
 
 		void Converter::convert( album::TrackCSP track, const std::wstring & targetPath, codec::AudioWriterSP encoder ) {
-			codec::AudioReaderSP decoder( codec::AudioReaderFactory::Instance().CreateObject( text::getSuffix( track->filePath ) ) );
+			codec::AudioReaderSP decoder( plugin::createReader( text::getSuffix( track->filePath ) ) );
 			decoder->open( text::toLocale( track->filePath ) );
 			encoder->open( text::toLocale( targetPath ) );
 			this->canceled_ = false;

@@ -239,6 +239,15 @@ namespace khopper {
 		 */
 		typedef std::tr1::shared_ptr< const AbstractAudioWriter > AudioWriterCSP;
 
+	}
+
+	namespace plugin {
+
+		class AudioWriterCreator {
+		public:
+			virtual codec::AudioWriterSP create() const = 0;
+		};
+
 		template< typename IdentifierType, class AbstractProduct >
 		struct WriterFactoryError {
 			static AbstractProduct * OnUnknownType( IdentifierType ) {
@@ -259,7 +268,7 @@ namespace khopper {
 		 */
 		typedef Loki::SingletonHolder<
 			Loki::Factory<
-				AbstractAudioWriter,
+				AudioWriterCreator,
 				std::string,
 				Loki::NullType,
 				WriterFactoryError
@@ -268,10 +277,12 @@ namespace khopper {
 			Loki::LongevityLifetime::DieAsSmallObjectChild
 		> AudioWriterFactory;
 
+		codec::AudioWriterSP createWriter( const std::string & key );
+
 	}
 
 }
 
-Q_DECLARE_INTERFACE( khopper::codec::AbstractAudioWriter, "org.FoolproofProject.Khopper.Plugin.AudioWriter/0.2" )
+Q_DECLARE_INTERFACE( khopper::plugin::AudioWriterCreator, "org.FoolproofProject.Khopper.Plugin.AudioWriter/0.2" )
 
 #endif
