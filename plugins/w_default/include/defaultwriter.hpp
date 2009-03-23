@@ -22,7 +22,7 @@
 #ifndef KHOPPER_CODEC_DEFAULTAUDIOWRITER_HPP
 #define KHOPPER_CODEC_DEFAULTAUDIOWRITER_HPP
 
-#include "abstractaudiowriter.hpp"
+#include "writerplugin.hpp"
 
 struct AVFormatContext;
 struct AVOutputFormat;
@@ -34,20 +34,20 @@ namespace khopper {
 
 		/**
 		 * @brief Default audio writer
-		 * @sa DefaultAudioReader
+		 * @sa DefaultReader
 		 *
 		 * This class provides a default audio writer implementation.
 		 */
-		class DefaultAudioWriter : public AbstractAudioWriter {
+		class DefaultWriter : public AbstractWriter {
 		public:
 			/**
 			 * @brief Default constructor
 			 */
-			DefaultAudioWriter();
+			DefaultWriter();
 			/**
 			 * @brief Virtual destructor
 			 */
-			virtual ~DefaultAudioWriter();
+			virtual ~DefaultWriter();
 
 		private:
 			virtual void setupMuxer_();
@@ -65,12 +65,12 @@ namespace khopper {
 
 	namespace plugin {
 
-		class DefaultAudioWriterCreator : public QObject, public AudioWriterCreator {
+		class DefaultWriterCreator : public QObject, public WriterCreator {
 			Q_OBJECT
-			Q_INTERFACES( khopper::plugin::AudioWriterCreator )
+			Q_INTERFACES( khopper::plugin::WriterCreator )
 
 		public:
-			virtual codec::AudioWriterSP create() const;
+			virtual codec::WriterSP create() const;
 		};
 
 	}

@@ -11,15 +11,15 @@ SRC_DIRS = ./src
 INCLUDEPATH += $${INC_DIRS} $${SRC_DIRS}
 DEPANDPATH  += $${INC_DIRS}
 
-HEADERS = include/defaultaudioreader.hpp
-SOURCES = src/defaultaudioreader.cpp
+HEADERS = include/defaultreader.hpp
+SOURCES = src/defaultreader.cpp
 
 MOC_DIR = $${ROOT_PATH}/tmp/moc
 
 # Config
 TEMPLATE = lib
 CONFIG  += plugin debug_and_release
-TARGET   = $$qtLibraryTarget(karp_default)
+TARGET   = $$qtLibraryTarget(krp_default)
 
 CONFIG( debug, debug|release ) {
 	DESTDIR     = $${ROOT_PATH}/build/debug/plugins

@@ -20,7 +20,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "mp3panel.hpp"
-#include "abstractaudiowriter.hpp"
+#include "writerplugin.hpp"
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -104,8 +104,8 @@ namespace khopper {
 			vbr->setDisabled( true );
 		}
 
-		codec::AudioWriterSP MP3Panel::getAudioWriter() const {
-			codec::AudioWriterSP encoder( plugin::createWriter( "mp3" ) );
+		codec::WriterSP MP3Panel::getWriter() const {
+			codec::WriterSP encoder( plugin::createWriter( "mp3" ) );
 
 			switch( this->brChoise_->checkedId() ) {
 			case 0:

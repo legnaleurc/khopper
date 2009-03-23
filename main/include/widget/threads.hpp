@@ -23,7 +23,7 @@
 #define KHOPPER_WIDGET_THREADS_HPP
 
 #include "track.hpp"
-#include "abstractaudiowriter.hpp"
+#include "abstractwriter.hpp"
 #include "converter.hpp"
 
 #include <QThread>
@@ -51,7 +51,7 @@ namespace khopper {
 			 * @param [in] output Encoder object
 			 * @param [in] paths Output file paths
 			 */
-			void setOutput( codec::AudioWriterSP output, const QStringList & paths );
+			void setOutput( codec::WriterSP output, const QStringList & paths );
 
 			/**
 			 * @brief Set tracks to convert
@@ -102,7 +102,7 @@ namespace khopper {
 			virtual void run();
 
 		private:
-			codec::AudioWriterSP encoder_;
+			codec::WriterSP encoder_;
 			std::vector< album::TrackSP > tracks_;
 			QStringList paths_;
 			bool canceled_;

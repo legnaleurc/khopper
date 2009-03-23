@@ -1,5 +1,5 @@
 /**
- * @file codec_base.hpp
+ * @file plugin_base.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,33 +19,34 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_CODEC_BASE_HPP
-#define KHOPPER_CODEC_BASE_HPP
+#ifndef KHOPPER_PLUGIN_BASE_HPP
+#define KHOPPER_PLUGIN_BASE_HPP
 
-#include <deque>
+#include "os.hpp"
+#include "error.hpp"
+
+#include <QPluginLoader>
+
+#include <string>
 
 namespace khopper {
 
-	/// @defgroup Codecs De/Muxers and De/Encoders
-	// @{
-	// @}
-	/**
-	 * @brief Contains Codecs module
-	 * @ingroup Codecs
-	 */
-	namespace codec {
+	namespace plugin {
 
-		/**
-		 * @brief Used for storing raw binary data
-		 * @ingroup Codecs
-		 */
-		typedef std::deque< char > ByteArray;
-
-		/**
-		 * @brief Codec error
-		 * @ingroup Codecs
-		 */
-		class Codec {
+		template< typename Creator >
+		class CreatorLoader {
+		public:
+			CreatorLoader( const std::string & plugin ) : plugin_( plugin ) {}
+			Creator * operator()() {
+				plugin::PluginContext pc;
+				Creator * c = qobject_cast< Creator * >( pc.load( this->plugin_.c_str() ) );
+				if( !c ) {
+					throw Error< RunTime >( "Invalid plugin!" );
+				}
+				return c;
+			}
+		private:
+			std::string plugin_;
 		};
 
 	}

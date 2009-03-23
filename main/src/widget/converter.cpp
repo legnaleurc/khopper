@@ -20,7 +20,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "converter.hpp"
-#include "abstractaudioreader.hpp"
+#include "readerplugin.hpp"
 #include "error.hpp"
 #include "text.hpp"
 
@@ -33,8 +33,8 @@ namespace khopper {
 		canceled_( false ) {
 		}
 
-		void Converter::convert( album::TrackCSP track, const std::wstring & targetPath, codec::AudioWriterSP encoder ) {
-			codec::AudioReaderSP decoder( plugin::createReader( text::getSuffix( track->filePath ) ) );
+		void Converter::convert( album::TrackCSP track, const std::wstring & targetPath, codec::WriterSP encoder ) {
+			codec::ReaderSP decoder( plugin::createReader( text::getSuffix( track->filePath ) ) );
 			decoder->open( text::toLocale( track->filePath ) );
 			encoder->open( text::toLocale( targetPath ) );
 			this->canceled_ = false;

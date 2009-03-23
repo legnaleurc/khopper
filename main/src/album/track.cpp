@@ -20,7 +20,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "track.hpp"
-#include "abstractaudioreader.hpp"
+#include "readerplugin.hpp"
 #include "text.hpp"
 #include "error.hpp"
 
@@ -73,7 +73,7 @@ namespace khopper {
 		void Track::load( const std::wstring & filePath ) {
 			this->filePath = filePath;
 
-			codec::AudioReaderSP decoder( plugin::createReader( text::getSuffix( filePath ) ) );
+			codec::ReaderSP decoder( plugin::createReader( text::getSuffix( filePath ) ) );
 			decoder->open( text::toLocale( this->filePath ) );
 			if( decoder->isOpen() ) {
 				this->album = text::fromUTF8( decoder->getAlbum() );

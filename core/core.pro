@@ -15,17 +15,22 @@ MOC_DIR      = $${ROOT_PATH}/tmp/moc
 
 # Input files
 HEADERS +=	\
-	./include/codec/abstractaudioreader.hpp	\
-	./include/codec/abstractaudiowriter.hpp	\
+	./include/codec/abstractreader.hpp	\
+	./include/codec/abstractwriter.hpp	\
 	./include/codec/codec_base.hpp	\
+	./include/codec/plugin_base.hpp	\
+	./include/codec/readerplugin.hpp	\
+	./include/codec/writerplugin.hpp	\
 	./include/common/error.hpp	\
 	./include/common/os.hpp	\
 	./include/common/text.hpp	\
 	./include/common/tr1.hpp	\
 	./include/widget/abstractpanel.hpp
 SOURCES +=	\
-	./src/codec/abstractaudioreader.cpp	\
-	./src/codec/abstractaudiowriter.cpp	\
+	./src/codec/abstractreader.cpp	\
+	./src/codec/abstractwriter.cpp	\
+	./src/codec/readerplugin.cpp	\
+	./src/codec/writerplugin.cpp	\
 	./src/common/error.cpp	\
 	./src/common/text.cpp	\
 	./src/widget/abstractpanel.cpp

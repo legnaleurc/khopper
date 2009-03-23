@@ -203,7 +203,7 @@ namespace khopper {
 					// set progress bar
 					this->progress_->setTotal( tracks.size() );
 					// set output information
-					this->cvt_->setOutput( option->getAudioWriter(), outputPaths );
+					this->cvt_->setOutput( option->getWriter(), outputPaths );
 					this->cvt_->setTracks( tracks );
 					this->cvt_->start();
 					this->progress_->exec();

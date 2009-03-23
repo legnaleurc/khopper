@@ -22,7 +22,7 @@
 #ifndef KHOPPER_WIDGET_ABSTRACTPANEL_HPP
 #define KHOPPER_WIDGET_ABSTRACTPANEL_HPP
 
-#include "abstractaudiowriter.hpp"
+#include "abstractwriter.hpp"
 
 #include <QWidget>
 
@@ -49,9 +49,9 @@ namespace khopper {
 
 			/**
 			 * @brief Get encoder setting object
-			 * @return Smart pointer contains AbstractAudioWriter
+			 * @return Smart pointer contains AbstractWriter
 			 */
-			virtual codec::AudioWriterSP getAudioWriter() const = 0;
+			virtual codec::WriterSP getWriter() const = 0;
 			/**
 			 * @brief Get file suffix
 			 * @return File extension, without leading '.'

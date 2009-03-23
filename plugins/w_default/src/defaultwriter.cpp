@@ -19,8 +19,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "defaultaudiowriter.hpp"
-#include "error.hpp"
+#include "tr1.hpp"
+#include "defaultwriter.hpp"
 
 extern "C" {
 #include <avcodec.h>
@@ -53,28 +53,28 @@ namespace {
 		return true;
 	}
 
-	const bool INITIALIZED = khopper::plugin::registerWriter( "*", "kawp_default" ) && initFFmpeg();
+	const bool INITIALIZED = khopper::plugin::registerWriter( "*", "kwp_default" ) && initFFmpeg();
 
 }
 
-Q_EXPORT_PLUGIN2( kawp_default, khopper::plugin::DefaultAudioWriterCreator )
+Q_EXPORT_PLUGIN2( kwp_default, khopper::plugin::DefaultWriterCreator )
 
 namespace khopper {
 
 	namespace codec {
 
-		DefaultAudioWriter::DefaultAudioWriter():
+		DefaultWriter::DefaultWriter():
 		pFormatContext_(),
 		pStream_( NULL ) {
 		}
 
-		DefaultAudioWriter::~DefaultAudioWriter() {
+		DefaultWriter::~DefaultWriter() {
 			if( this->isOpen() ) {
 				this->close();
 			}
 		}
 
-		void DefaultAudioWriter::setupMuxer_() {
+		void DefaultWriter::setupMuxer_() {
 			AVOutputFormat * pOF = guess_format( NULL, this->getFilePath().c_str(), NULL );
 			if( pOF == NULL ) {
 				throw Error< Codec >( "Can not recognize output format" );
@@ -89,7 +89,7 @@ namespace khopper {
 			std::strncpy( this->pFormatContext_->filename, this->getFilePath().c_str(), sizeof( this->pFormatContext_->filename ) );
 		}
 
-		void DefaultAudioWriter::setupEncoder_() {
+		void DefaultWriter::setupEncoder_() {
 			AVOutputFormat * pOF = this->pFormatContext_->oformat;
 			if( pOF->audio_codec == CODEC_ID_NONE ) {
 				throw Error< Codec >( "Can not setup encoder" );
@@ -130,7 +130,7 @@ namespace khopper {
 			this->getSampleBuffer().resize( pCC->frame_size * sizeof( short ) * pCC->channels );
 		}
 
-		void DefaultAudioWriter::openResouse_() {
+		void DefaultWriter::openResouse_() {
 			AVOutputFormat * pOF = this->pFormatContext_->oformat;
 			if( !( pOF->flags & AVFMT_NOFILE ) ) {
 				if( url_fopen( &this->pFormatContext_->pb, this->getFilePath().c_str(), URL_WRONLY ) < 0 ) {
@@ -139,12 +139,12 @@ namespace khopper {
 			}
 		}
 
-		void DefaultAudioWriter::closeResouse_() {
+		void DefaultWriter::closeResouse_() {
 			av_write_trailer( this->pFormatContext_.get() );
 			this->pFormatContext_.reset();
 		}
 
-		void DefaultAudioWriter::writeHeader_() {
+		void DefaultWriter::writeHeader_() {
 			std::strncpy( this->pFormatContext_->title, this->getTitle().c_str(), sizeof( this->pFormatContext_->title ) );
 			std::strncpy( this->pFormatContext_->author, this->getArtist().c_str(), sizeof( this->pFormatContext_->author ) );
 			std::strncpy( this->pFormatContext_->album, this->getAlbum().c_str(), sizeof( this->pFormatContext_->album ) );
@@ -152,7 +152,7 @@ namespace khopper {
 			av_write_header( this->pFormatContext_.get() );
 		}
 
-		void DefaultAudioWriter::writeFrame_( const char * sample, std::size_t /*nSamples*/ ) {
+		void DefaultWriter::writeFrame_( const char * sample, std::size_t /*nSamples*/ ) {
 			AVCodecContext * pCC = this->pStream_->codec;
 
 			uint8_t audio_outbuf[FF_MIN_BUFFER_SIZE];
@@ -180,8 +180,8 @@ namespace khopper {
 
 	namespace plugin {
 
-		codec::AudioWriterSP DefaultAudioWriterCreator::create() const {
-			return codec::AudioWriterSP( new codec::DefaultAudioWriter );
+		codec::WriterSP DefaultWriterCreator::create() const {
+			return codec::WriterSP( new codec::DefaultWriter );
 		}
 
 	}

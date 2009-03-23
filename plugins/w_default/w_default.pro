@@ -11,15 +11,15 @@ SRC_DIRS = ./src
 INCLUDEPATH += $${INC_DIRS} $${SRC_DIRS}
 DEPANDPATH  += $${INC_DIRS}
 
-HEADERS = include/defaultaudiowriter.hpp
-SOURCES = src/defaultaudiowriter.cpp
+HEADERS = include/defaultwriter.hpp
+SOURCES = src/defaultwriter.cpp
 
 MOC_DIR = $${ROOT_PATH}/tmp/moc
 
 # Config
 TEMPLATE = lib
 CONFIG  += plugin debug_and_release
-TARGET   = $$qtLibraryTarget(kawp_default)
+TARGET   = $$qtLibraryTarget(kwp_default)
 
 CONFIG( debug, debug|release ) {
 	DESTDIR     = $${ROOT_PATH}/build/debug/plugins

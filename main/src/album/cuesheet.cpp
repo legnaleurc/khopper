@@ -21,7 +21,7 @@
  */
 #include "cuesheet.hpp"
 #include "track.hpp"
-#include "abstractaudioreader.hpp"
+#include "readerplugin.hpp"
 #include "error.hpp"
 #include "os.hpp"
 #include "text.hpp"
@@ -69,14 +69,14 @@ namespace {
 	};
 
 	struct setBCS {
-		setBCS( khopper::codec::AudioReaderCSP decoder ) : decoder_( decoder ) {}
+		setBCS( khopper::codec::ReaderCSP decoder ) : decoder_( decoder ) {}
 		void operator ()( khopper::album::TrackSP track ) {
 			track->bitRate = this->decoder_->getBitRate();
 			track->sampleRate = this->decoder_->getSampleRate();
 			track->channels = this->decoder_->getChannels();
 		}
 	private:
-		khopper::codec::AudioReaderCSP decoder_;
+		khopper::codec::ReaderCSP decoder_;
 	};
 
 }
@@ -125,7 +125,7 @@ namespace khopper {
 			std::for_each( this->tracks.begin(), this->tracks.end(), ::setAlbum( this->title ) );
 
 			// get the total length, because cue sheet don't provide it
-			codec::AudioReaderSP decoder( plugin::createReader( text::getSuffix( currentFile.first ) ) );
+			codec::ReaderSP decoder( plugin::createReader( text::getSuffix( currentFile.first ) ) );
 			decoder->open( text::toLocale( currentFile.first ) );
 			if( decoder->isOpen() ) {
 				std::for_each( this->tracks.begin(), this->tracks.end(), ::setBCS( decoder ) );

@@ -22,7 +22,7 @@
 #ifndef KHOPPER_CODEC_DEFAULTAUDIOREADER_HPP
 #define KHOPPER_CODEC_DEFAULTAUDIOREADER_HPP
 
-#include "abstractaudioreader.hpp"
+#include "readerplugin.hpp"
 
 struct AVFormatContext;
 struct AVCodecContext;
@@ -34,20 +34,20 @@ namespace khopper {
 
 		/**
 		 * @brief Default audio reader
-		 * @sa DefaultAudioWriter
+		 * @sa DefaultWriter
 		 *
 		 * This class provides a default audio reader implementation.
 		 */
-		class DefaultAudioReader : public AbstractAudioReader {
+		class DefaultReader : public AbstractReader {
 		public:
 			/**
 			 * @brief Default constructor
 			 */
-			DefaultAudioReader();
+			DefaultReader();
 			/**
 			 * @brief Virtual destructor
 			 */
-			virtual ~DefaultAudioReader();
+			virtual ~DefaultReader();
 
 		private:
 			virtual void openResource_();
@@ -68,12 +68,12 @@ namespace khopper {
 
 	namespace plugin {
 
-		class DefaultAudioReaderCreator : public QObject, public AudioReaderCreator {
+		class DefaultReaderCreator : public QObject, public ReaderCreator {
 			Q_OBJECT
-			Q_INTERFACES( khopper::plugin::AudioReaderCreator )
+			Q_INTERFACES( khopper::plugin::ReaderCreator )
 
 		public:
-			virtual codec::AudioReaderSP create() const;
+			virtual codec::ReaderSP create() const;
 		};
 
 	}

@@ -1,5 +1,5 @@
 /**
- * @file codec_base.hpp
+ * @file writerplugin.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,37 +19,45 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_CODEC_BASE_HPP
-#define KHOPPER_CODEC_BASE_HPP
+#ifndef KHOPPER_WRITERPLUGIN_HPP
+#define KHOPPER_WRITERPLUGIN_HPP
 
-#include <deque>
+#include "plugin_base.hpp"
+#include "abstractwriter.hpp"
+
+#include <loki/Factory.h>
+#include <loki/Singleton.h>
 
 namespace khopper {
 
-	/// @defgroup Codecs De/Muxers and De/Encoders
-	// @{
-	// @}
-	/**
-	 * @brief Contains Codecs module
-	 * @ingroup Codecs
-	 */
-	namespace codec {
+	namespace plugin {
 
-		/**
-		 * @brief Used for storing raw binary data
-		 * @ingroup Codecs
-		 */
-		typedef std::deque< char > ByteArray;
-
-		/**
-		 * @brief Codec error
-		 * @ingroup Codecs
-		 */
-		class Codec {
+		class WriterCreator {
+		public:
+			virtual codec::WriterSP create() const = 0;
 		};
+
+		/**
+		 * @brief The audio writer factory
+		 * @ingroup Codecs
+		 */
+		typedef Loki::SingletonHolder<
+			Loki::Factory<
+				WriterCreator,
+				std::string
+			>,
+			Loki::CreateUsingNew,
+			Loki::LongevityLifetime::DieAsSmallObjectChild
+		> WriterFactory;
+
+
+		bool registerWriter( const std::string & key, const std::string & plugin );
+		codec::WriterSP createWriter( const std::string & key );
 
 	}
 
 }
+
+Q_DECLARE_INTERFACE( khopper::plugin::WriterCreator, "org.FoolproofProject.Khopper.Plugin.Writer/0.2" )
 
 #endif

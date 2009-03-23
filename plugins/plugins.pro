@@ -1,3 +1,3 @@
 TEMPLATE  = subdirs
-SUBDIRS  += ar_default aw_default p_mp3
+SUBDIRS  += p_mp3 r_default w_default
 CONFIG   += debug_and_release

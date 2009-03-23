@@ -19,14 +19,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_CODEC_ABSTRACTAUDIOWRITER_HPP
-#define KHOPPER_CODEC_ABSTRACTAUDIOWRITER_HPP
+#ifndef KHOPPER_CODEC_ABSTRACTWRITER_HPP
+#define KHOPPER_CODEC_ABSTRACTWRITER_HPP
 
 #include "tr1.hpp"
 #include "codec_base.hpp"
-
-#include <loki/Factory.h>
-#include <loki/Singleton.h>
 
 #include <string>
 #include <vector>
@@ -38,24 +35,24 @@ namespace khopper {
 		/**
 		 * @brief Audio writer interface
 		 * @ingroup Codecs
-		 * @sa AbstractAudioReader
+		 * @sa AbstractReader
 		 */
-		class AbstractAudioWriter {
+		class AbstractWriter {
 		public:
 			/**
 			 * @brief Default constructor
 			 */
-			AbstractAudioWriter();
+			AbstractWriter();
 			/**
 			 * @brief Virtual destructor
 			 */
-			virtual ~AbstractAudioWriter();
+			virtual ~AbstractWriter();
 
 			/**
 			 * @brief Open file
 			 * @param filePath
 			 *
-			 * AbstractAudioWriter do not handle path encoding,
+			 * AbstractWriter do not handle path encoding,
 			 * so you should help yourself.
 			 */
 			void open( const std::string & filePath );
@@ -195,8 +192,8 @@ namespace khopper {
 
 		private:
 			// prevent copying
-			AbstractAudioWriter( const AbstractAudioWriter & );
-			AbstractAudioWriter & operator =( const AbstractAudioWriter & );
+			AbstractWriter( const AbstractWriter & );
+			AbstractWriter & operator =( const AbstractWriter & );
 
 			virtual void setupMuxer_() = 0;
 			virtual void setupEncoder_() = 0;
@@ -219,52 +216,24 @@ namespace khopper {
 		};
 
 		/**
-		 * @brief AbstractAudioWriter smart pointer
+		 * @brief AbstractWriter smart pointer
 		 * @ingroup Codecs
-		 * @sa AbstractAudioWriter AudioWriterCSP
+		 * @sa AbstractWriter WriterCSP
 		 *
 		 * Use TR1 shared pointer.
 		 */
-		typedef std::tr1::shared_ptr< AbstractAudioWriter > AudioWriterSP;
+		typedef std::tr1::shared_ptr< AbstractWriter > WriterSP;
 		/**
-		 * @brief AbstractAudioWriter const smart pointer
+		 * @brief AbstractWriter const smart pointer
 		 * @ingroup Codecs
-		 * @sa AbstractAudioWriter AudioWriterSP
+		 * @sa AbstractWriter WriterSP
 		 *
 		 * Use TR1 shared pointer.
 		 */
-		typedef std::tr1::shared_ptr< const AbstractAudioWriter > AudioWriterCSP;
-
-	}
-
-	namespace plugin {
-
-		class AudioWriterCreator {
-		public:
-			virtual codec::AudioWriterSP create() const = 0;
-		};
-
-		/**
-		 * @brief The audio writer factory
-		 * @ingroup Codecs
-		 */
-		typedef Loki::SingletonHolder<
-			Loki::Factory<
-				AudioWriterCreator,
-				std::string
-			>,
-			Loki::CreateUsingNew,
-			Loki::LongevityLifetime::DieAsSmallObjectChild
-		> AudioWriterFactory;
-
-
-		bool registerWriter( const std::string & key, const std::string & plugin );
-		codec::AudioWriterSP createWriter( const std::string & key );
+		typedef std::tr1::shared_ptr< const AbstractWriter > WriterCSP;
 
 	}
 
 }
-
-Q_DECLARE_INTERFACE( khopper::plugin::AudioWriterCreator, "org.FoolproofProject.Khopper.Plugin.AudioWriter/0.2" )
 
 #endif

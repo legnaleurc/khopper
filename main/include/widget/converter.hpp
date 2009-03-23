@@ -23,7 +23,7 @@
 #define KHOPPER_WIDGET_CONVERTER_HPP
 
 #include "track.hpp"
-#include "abstractaudiowriter.hpp"
+#include "abstractwriter.hpp"
 
 #include <QObject>
 
@@ -49,7 +49,7 @@ namespace khopper {
 			 * @param [in] targetPath output file path
 			 * @param [in] encoder encoder setting
 			 */
-			void convert( album::TrackCSP track, const std::wstring & targetPath, codec::AudioWriterSP encoder );
+			void convert( album::TrackCSP track, const std::wstring & targetPath, codec::WriterSP encoder );
 
 		public slots:
 			/**

@@ -1,5 +1,5 @@
 /**
- * @file codec_base.hpp
+ * @file writerplugin.cpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,37 +19,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_CODEC_BASE_HPP
-#define KHOPPER_CODEC_BASE_HPP
-
-#include <deque>
+#include "writerplugin.hpp"
 
 namespace khopper {
 
-	/// @defgroup Codecs De/Muxers and De/Encoders
-	// @{
-	// @}
-	/**
-	 * @brief Contains Codecs module
-	 * @ingroup Codecs
-	 */
-	namespace codec {
+	namespace plugin {
 
-		/**
-		 * @brief Used for storing raw binary data
-		 * @ingroup Codecs
-		 */
-		typedef std::deque< char > ByteArray;
+		bool registerWriter( const std::string & key, const std::string & plugin ) {
+			return WriterFactory::Instance().Register( key, CreatorLoader< WriterCreator >( plugin ) );
+		}
 
-		/**
-		 * @brief Codec error
-		 * @ingroup Codecs
-		 */
-		class Codec {
-		};
+		codec::WriterSP createWriter( const std::string & key ) {
+			WriterCreator * tmp = NULL;
+			try {
+				tmp = WriterFactory::Instance().CreateObject( key );
+			} catch( std::exception & e ) {
+				tmp = WriterFactory::Instance().CreateObject( "*" );
+			}
+			return tmp->create();
+		}
 
 	}
 
 }
-
-#endif

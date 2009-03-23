@@ -19,8 +19,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "defaultaudioreader.hpp"
-#include "error.hpp"
+#include "tr1.hpp"
+#include "defaultreader.hpp"
 
 extern "C" {
 #include <avcodec.h>
@@ -48,17 +48,17 @@ namespace {
 		return true;
 	}
 
-	const bool INITIALIZED = khopper::plugin::registerReader( "*", "karp_default" ) && initFFmpeg();
+	const bool INITIALIZED = khopper::plugin::registerReader( "*", "krp_default" ) && initFFmpeg();
 
 }
 
-Q_EXPORT_PLUGIN2( karp_default, khopper::plugin::DefaultAudioReaderCreator )
+Q_EXPORT_PLUGIN2( krp_default, khopper::plugin::DefaultReaderCreator )
 
 namespace khopper {
 
 	namespace codec {
 
-		DefaultAudioReader::DefaultAudioReader():
+		DefaultReader::DefaultReader():
 		pFormatContext_(),
 		pCodecContext_(),
 		pPacket_( static_cast< AVPacket * >( av_malloc( sizeof( AVPacket ) ) ), ::p_helper ),
@@ -66,13 +66,13 @@ namespace khopper {
 			av_init_packet( this->pPacket_.get() );
 		}
 
-		DefaultAudioReader::~DefaultAudioReader() {
+		DefaultReader::~DefaultReader() {
 			if( this->isOpen() ) {
 				this->close();
 			}
 		}
 
-		void DefaultAudioReader::openResource_() {
+		void DefaultReader::openResource_() {
 			AVFormatContext * pFC = NULL;
 			if( av_open_input_file( &pFC, this->getFilePath().c_str(), NULL, 0, NULL ) != 0 ) {
 				throw Error< IO >( std::string( "Can not open `" ) + this->getFilePath() + "\'" );
@@ -80,7 +80,7 @@ namespace khopper {
 			this->pFormatContext_.reset( pFC, av_close_input_file );
 		}
 
-		void DefaultAudioReader::setupDemuxer_() {
+		void DefaultReader::setupDemuxer_() {
 			if( av_find_stream_info( this->pFormatContext_.get() ) < 0 ) {
 				throw Error< Codec >( "Can not find codec info!" );
 			}
@@ -92,7 +92,7 @@ namespace khopper {
 			}
 		}
 
-		void DefaultAudioReader::setupDecoder_() {
+		void DefaultReader::setupDecoder_() {
 			int a_stream = -1;
 			for( std::size_t i = 0 ; i < this->pFormatContext_->nb_streams; ++i ) {
 				if( this->pFormatContext_->streams[i]->codec->codec_type == CODEC_TYPE_AUDIO ) {
@@ -121,7 +121,7 @@ namespace khopper {
 			this->pCodecContext_.reset( pCC, avcodec_close );
 		}
 
-		void DefaultAudioReader::readHeader_() {
+		void DefaultReader::readHeader_() {
 			this->setTitle( this->pFormatContext_->title );
 			this->setArtist( this->pFormatContext_->author );
 			this->setCopyright( this->pFormatContext_->copyright );
@@ -132,7 +132,7 @@ namespace khopper {
 			this->setGenre( this->pFormatContext_->genre );
 		}
 
-		void DefaultAudioReader::closeResource_() {
+		void DefaultReader::closeResource_() {
 			// clear native information
 			this->timeBase_ = 0.0;
 			// free the members in packet, not itself
@@ -142,7 +142,7 @@ namespace khopper {
 			this->pFormatContext_.reset();
 		}
 
-		ByteArray DefaultAudioReader::readFrame_( double & duration, bool & stop ) {
+		ByteArray DefaultReader::readFrame_( double & duration, bool & stop ) {
 			stop = false;
 			// static just for speed
 			static uint8_t audio_buf[AVCODEC_MAX_AUDIO_FRAME_SIZE*3/2];
@@ -195,7 +195,7 @@ namespace khopper {
 			return data;
 		}
 
-		bool DefaultAudioReader::seek_( double timestamp ) {
+		bool DefaultReader::seek_( double timestamp ) {
 			bool succeed = av_seek_frame( this->pFormatContext_.get(), -1, ::toNative( timestamp ), AVSEEK_FLAG_BACKWARD ) >= 0;
 			if( succeed ) {
 				avcodec_flush_buffers( this->pCodecContext_.get() );
@@ -207,8 +207,8 @@ namespace khopper {
 
 	namespace plugin {
 
-		codec::AudioReaderSP DefaultAudioReaderCreator::create() const {
-			return codec::AudioReaderSP( new codec::DefaultAudioReader );
+		codec::ReaderSP DefaultReaderCreator::create() const {
+			return codec::ReaderSP( new codec::DefaultReader );
 		}
 
 	}

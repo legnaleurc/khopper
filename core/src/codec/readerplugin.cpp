@@ -1,5 +1,5 @@
 /**
- * @file codec_base.hpp
+ * @file readerplugin.cpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,37 +19,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_CODEC_BASE_HPP
-#define KHOPPER_CODEC_BASE_HPP
-
-#include <deque>
+#include "readerplugin.hpp"
 
 namespace khopper {
 
-	/// @defgroup Codecs De/Muxers and De/Encoders
-	// @{
-	// @}
-	/**
-	 * @brief Contains Codecs module
-	 * @ingroup Codecs
-	 */
-	namespace codec {
+	namespace plugin {
 
-		/**
-		 * @brief Used for storing raw binary data
-		 * @ingroup Codecs
-		 */
-		typedef std::deque< char > ByteArray;
+		bool registerReader( const std::string & key, const std::string & plugin ) {
+			return ReaderFactory::Instance().Register( key, CreatorLoader< ReaderCreator >( plugin ) );
+		}
 
-		/**
-		 * @brief Codec error
-		 * @ingroup Codecs
-		 */
-		class Codec {
-		};
+		codec::ReaderSP createReader( const std::string & key ) {
+			ReaderCreator * tmp = NULL;
+			try {
+				tmp = ReaderFactory::Instance().CreateObject( key );
+			} catch( std::exception & e ) {
+				tmp = ReaderFactory::Instance().CreateObject( "*" );
+			}
+			return tmp->create();
+		}
 
 	}
 
 }
-
-#endif

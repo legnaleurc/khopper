@@ -1,5 +1,5 @@
 /**
- * @file abstractaudioreader.hpp
+ * @file abstractreader.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,14 +19,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_CODEC_ABSTRACTAUDIOREADER_HPP
-#define KHOPPER_CODEC_ABSTRACTAUDIOREADER_HPP
+#ifndef KHOPPER_CODEC_ABSTRACTREADER_HPP
+#define KHOPPER_CODEC_ABSTRACTREADER_HPP
 
 #include "tr1.hpp"
 #include "codec_base.hpp"
-
-#include <loki/Factory.h>
-#include <loki/Singleton.h>
 
 #include <string>
 
@@ -37,24 +34,24 @@ namespace khopper {
 		/**
 		 * @brief Audio reader interface
 		 * @ingroup Codecs
-		 * @sa AbstractAudioWriter
+		 * @sa AbstractWriter
 		 */
-		class AbstractAudioReader {
+		class AbstractReader {
 		public:
 			/**
 			 * @brief Default constructor
 			 */
-			AbstractAudioReader();
+			AbstractReader();
 			/**
 			 * @brief Virtual destructor
 			 */
-			virtual ~AbstractAudioReader();
+			virtual ~AbstractReader();
 
 			/**
 			 * @brief Open file
 			 * @param [in] filePath
 			 *
-			 * AbstractAudioReader do not handle path encoding,
+			 * AbstractReader do not handle path encoding,
 			 * so you should help yourself.
 			 */
 			void open( const std::string & filePath );
@@ -277,8 +274,8 @@ namespace khopper {
 
 		private:
 			// prevent copying
-			AbstractAudioReader( const AbstractAudioReader & );
-			AbstractAudioReader & operator =( const AbstractAudioReader & );
+			AbstractReader( const AbstractReader & );
+			AbstractReader & operator =( const AbstractReader & );
 
 			virtual void openResource_() = 0;
 			virtual void closeResource_() = 0;
@@ -308,51 +305,24 @@ namespace khopper {
 		};
 
 		/**
-		 * @brief AbstractAudioReader smart pointer
+		 * @brief AbstractReader smart pointer
 		 * @ingroup Codecs
-		 * @sa AbstractAudioReader AudioReaderCSP
+		 * @sa AbstractReader ReaderCSP
 		 *
 		 * Use TR1 shared pointer.
 		 */
-		typedef std::tr1::shared_ptr< AbstractAudioReader > AudioReaderSP;
+		typedef std::tr1::shared_ptr< AbstractReader > ReaderSP;
 		/**
-		 * @brief AbstractAudioReader const smart pointer
+		 * @brief AbstractReader const smart pointer
 		 * @ingroup Codecs
-		 * @sa AbstractAudioReader AudioReaderSP
+		 * @sa AbstractReader ReaderSP
 		 *
 		 * Use TR1 shared pointer.
 		 */
-		typedef std::tr1::shared_ptr< const AbstractAudioReader > AudioReaderCSP;
-
-	}
-
-	namespace plugin {
-
-		class AudioReaderCreator {
-		public:
-			virtual codec::AudioReaderSP create() const = 0;
-		};
-
-		/**
-		 * @brief The audio reader factory
-		 * @ingroup Codecs
-		 */
-		typedef Loki::SingletonHolder<
-			Loki::Factory<
-				AudioReaderCreator,
-				std::string
-			>,
-			Loki::CreateUsingNew,
-			Loki::LongevityLifetime::DieAsSmallObjectChild
-		> AudioReaderFactory;
-
-		bool registerReader( const std::string & key, const std::string & plugin );
-		codec::AudioReaderSP createReader( const std::string & key );
+		typedef std::tr1::shared_ptr< const AbstractReader > ReaderCSP;
 
 	}
 
 }
-
-Q_DECLARE_INTERFACE( khopper::plugin::AudioReaderCreator, "org.FoolproofProject.Khopper.Plugin.AudioReader/0.2" )
 
 #endif
