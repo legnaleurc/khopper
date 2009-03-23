@@ -1,5 +1,5 @@
 /**
- * @file defaultaudiowriter.hpp
+ * @file defaultwriter.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -65,11 +65,13 @@ namespace khopper {
 
 	namespace plugin {
 
+		/// Default writer creator
 		class DefaultWriterCreator : public QObject, public WriterCreator {
 			Q_OBJECT
 			Q_INTERFACES( khopper::plugin::WriterCreator )
 
 		public:
+			/// Creates writer object
 			virtual codec::WriterSP create() const;
 		};
 

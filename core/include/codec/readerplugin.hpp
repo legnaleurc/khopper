@@ -32,14 +32,19 @@ namespace khopper {
 
 	namespace plugin {
 
+		/**
+		 * @brief Reader creator interface
+		 * @ingroup Plugins
+		 */
 		class ReaderCreator {
 		public:
+			/// Creates Reader object
 			virtual codec::ReaderSP create() const = 0;
 		};
 
 		/**
 		 * @brief The audio reader factory
-		 * @ingroup Codecs
+		 * @ingroup Plugins
 		 */
 		typedef Loki::SingletonHolder<
 			Loki::Factory<
@@ -50,7 +55,17 @@ namespace khopper {
 			Loki::LongevityLifetime::DieAsSmallObjectChild
 		> ReaderFactory;
 
+		/**
+		 * @brief Register plugin to factory
+		 * @param key the key used in program
+		 * @param plugin plugin identifier
+		 * @return if registered in factory
+		 */
 		bool registerReader( const std::string & key, const std::string & plugin );
+		/**
+		 * @brief Create reader
+		 * @param key format key
+		 */
 		codec::ReaderSP createReader( const std::string & key );
 
 	}

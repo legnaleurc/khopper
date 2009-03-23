@@ -1,5 +1,5 @@
 /**
- * @file defaultaudioreader.hpp
+ * @file defaultreader.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -68,11 +68,13 @@ namespace khopper {
 
 	namespace plugin {
 
+		/// Default reader creator
 		class DefaultReaderCreator : public QObject, public ReaderCreator {
 			Q_OBJECT
 			Q_INTERFACES( khopper::plugin::ReaderCreator )
 
 		public:
+			/// Creates reader object
 			virtual codec::ReaderSP create() const;
 		};
 

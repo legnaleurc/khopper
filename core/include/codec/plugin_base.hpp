@@ -31,12 +31,26 @@
 
 namespace khopper {
 
+	/// @defgroup Plugins Plugin System
+	// @{
+	// @}
+	/**
+	 * @brief Contains plugin utility
+	 * @ingroup Plugins
+	 */
 	namespace plugin {
 
+		/**
+		 * @brief From creator functor
+		 * @tparam Creator creator type
+		 * @ingroup Plugins
+		 */
 		template< typename Creator >
 		class CreatorLoader {
 		public:
+			/// Default constructor
 			CreatorLoader( const std::string & plugin ) : plugin_( plugin ) {}
+			/// Plugin loader
 			Creator * operator()() {
 				plugin::PluginContext pc;
 				Creator * c = qobject_cast< Creator * >( pc.load( this->plugin_.c_str() ) );

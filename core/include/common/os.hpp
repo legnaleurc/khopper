@@ -45,11 +45,20 @@ namespace khopper {
 
 	namespace plugin {
 
+		/**
+		 * @brief Plug-in context
+		 */
 		class PluginContext {
 		public:
+			/// Default constructor
 			PluginContext();
 
+			/// get plugin's directory
 			const QDir & getDir() const;
+			/**
+			 * @brief Load plugin by plugin name
+			 * @param name plugin name
+			 */
 			QObject * load( QString name ) const;
 		private:
 			QDir d_;

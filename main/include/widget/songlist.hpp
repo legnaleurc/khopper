@@ -49,10 +49,12 @@ namespace khopper {
 			 * @param [in] tracks Tracks
 			 */
 			void appendTracks( const std::vector< album::TrackSP > & tracks );
+			/**
+			 * @brief Get all tracks
+			 */
 			const std::vector< album::TrackSP > & getTracks() const;
 			/**
 			 * @brief Get selected tracks
-			 * @return Selected tracks
 			 *
 			 * The cost may be expansive.
 			 */

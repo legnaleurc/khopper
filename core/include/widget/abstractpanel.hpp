@@ -68,6 +68,6 @@ namespace khopper {
 
 }
 
-Q_DECLARE_INTERFACE( khopper::widget::AbstractPanel, "org.FoolproofProject.Khopper.Plugin.Panel/0.2" );
+Q_DECLARE_INTERFACE( khopper::widget::AbstractPanel, "org.FoolproofProject.Khopper.Plugin.Panel/0.2" )
 
 #endif

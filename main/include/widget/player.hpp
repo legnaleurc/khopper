@@ -34,10 +34,12 @@ namespace khopper {
 
 		class SongList;
 
+		/// Audio player
 		class Player : public QWidget {
 			Q_OBJECT
 
 		public:
+			/// Default constructor
 			Player( QWidget * parent = 0, Qt::WindowFlags f = 0 );
 
 			std::vector< album::TrackSP > getSelectedTracks() const;

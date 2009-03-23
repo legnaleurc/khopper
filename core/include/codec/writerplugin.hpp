@@ -32,14 +32,18 @@ namespace khopper {
 
 	namespace plugin {
 
+		/**
+		 * @brief Wirter creator interface
+		 */
 		class WriterCreator {
 		public:
+			/// Creates Wirter object
 			virtual codec::WriterSP create() const = 0;
 		};
 
 		/**
 		 * @brief The audio writer factory
-		 * @ingroup Codecs
+		 * @ingroup Plugins
 		 */
 		typedef Loki::SingletonHolder<
 			Loki::Factory<
@@ -50,8 +54,17 @@ namespace khopper {
 			Loki::LongevityLifetime::DieAsSmallObjectChild
 		> WriterFactory;
 
-
+		/**
+		 * @brief Register plugin to factory
+		 * @param key the key used in program
+		 * @param plugin plugin identifier
+		 * @return if registered in factory
+		 */
 		bool registerWriter( const std::string & key, const std::string & plugin );
+		/**
+		 * @brief Create writer
+		 * @param key format key
+		 */
 		codec::WriterSP createWriter( const std::string & key );
 
 	}

@@ -33,6 +33,7 @@ namespace khopper {
 
 		class AbstractPanel;
 
+		/// Output format option widget
 		class OutputOption : public QDialog {
 		public:
 			OutputOption( QWidget * parent = 0 );
