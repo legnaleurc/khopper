@@ -24,7 +24,6 @@
 
 #include "tr1.hpp"
 #include "codec_base.hpp"
-#include "os.hpp"
 
 #include <loki/Factory.h>
 #include <loki/Singleton.h>
@@ -259,12 +258,8 @@ namespace khopper {
 		> AudioWriterFactory;
 
 
-		template< typename Callback >
-		bool registerWriter( const std::string & key, Callback functor ) {
-			return AudioWriterFactory::Instance().Register( key, functor );
-		}
+		bool registerWriter( const std::string & key, const std::string & plugin );
 		codec::AudioWriterSP createWriter( const std::string & key );
-		AudioWriterCreator * loadWriterCreator( const QString & name );
 
 	}
 

@@ -24,7 +24,6 @@
 
 #include "tr1.hpp"
 #include "codec_base.hpp"
-#include "os.hpp"
 
 #include <loki/Factory.h>
 #include <loki/Singleton.h>
@@ -347,12 +346,8 @@ namespace khopper {
 			Loki::LongevityLifetime::DieAsSmallObjectChild
 		> AudioReaderFactory;
 
-		template< typename Callback >
-		bool registerReader( const std::string & key, Callback functor ) {
-			return AudioReaderFactory::Instance().Register( key, functor );
-		}
+		bool registerReader( const std::string & key, const std::string & plugin );
 		codec::AudioReaderSP createReader( const std::string & key );
-		AudioReaderCreator * loadReaderCreator( const QString & name );
 
 	}
 

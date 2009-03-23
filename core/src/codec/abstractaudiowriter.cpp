@@ -87,6 +87,10 @@ namespace khopper {
 
 	namespace plugin {
 
+		bool registerWriter( const std::string & key, const std::string & plugin ) {
+			return AudioWriterFactory::Instance().Register( key, CreatorLoader< AudioWriterCreator >( plugin ) );
+		}
+
 		codec::AudioWriterSP createWriter( const std::string & key ) {
 			AudioWriterCreator * tmp = NULL;
 			try {
@@ -95,15 +99,6 @@ namespace khopper {
 				tmp = AudioWriterFactory::Instance().CreateObject( "*" );
 			}
 			return tmp->create();
-		}
-
-		AudioWriterCreator * loadWriterCreator( const QString & name ) {
-			plugin::PluginContext pc;
-			AudioWriterCreator * awc = qobject_cast< AudioWriterCreator * >( pc.load( name ) );
-			if( !awc ) {
-				throw Error< RunTime >( "Invalid plugin!" );
-			}
-			return awc;
 		}
 
 	}

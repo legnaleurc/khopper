@@ -128,6 +128,10 @@ namespace khopper {
 
 	namespace plugin {
 
+		bool registerReader( const std::string & key, const std::string & plugin ) {
+			return AudioReaderFactory::Instance().Register( key, CreatorLoader< AudioReaderCreator >( plugin ) );
+		}
+
 		codec::AudioReaderSP createReader( const std::string & key ) {
 			AudioReaderCreator * tmp = NULL;
 			try {
@@ -136,15 +140,6 @@ namespace khopper {
 				tmp = AudioReaderFactory::Instance().CreateObject( "*" );
 			}
 			return tmp->create();
-		}
-
-		AudioReaderCreator * loadReaderCreator( const QString & name ) {
-			plugin::PluginContext pc;
-			AudioReaderCreator * arc = qobject_cast< AudioReaderCreator * >( pc.load( name ) );
-			if( !arc ) {
-				throw Error< RunTime >( "Invalid plugin!" );
-			}
-			return arc;
 		}
 
 	}

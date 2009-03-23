@@ -22,7 +22,13 @@
 #ifndef KHOPPER_CODEC_BASE_HPP
 #define KHOPPER_CODEC_BASE_HPP
 
+#include "os.hpp"
+#include "error.hpp"
+
+#include <QPluginLoader>
+
 #include <deque>
+#include <string>
 
 namespace khopper {
 
@@ -46,6 +52,26 @@ namespace khopper {
 		 * @ingroup Codecs
 		 */
 		class Codec {
+		};
+
+	}
+
+	namespace plugin {
+
+		template< typename Creator >
+		class CreatorLoader {
+		public:
+			CreatorLoader( const std::string & plugin ) : plugin_( plugin ) {}
+			Creator * operator()() {
+				plugin::PluginContext pc;
+				Creator * c = qobject_cast< Creator * >( pc.load( this->plugin_.c_str() ) );
+				if( !c ) {
+					throw Error< RunTime >( "Invalid plugin!" );
+				}
+				return c;
+			}
+		private:
+			std::string plugin_;
 		};
 
 	}
