@@ -44,7 +44,7 @@ namespace khopper {
 		 * @ingroup Codecs
 		 * @sa AbstractAudioReader
 		 */
-		class AbstractAudioWriter : public QObject {
+		class AbstractAudioWriter {
 		public:
 			/**
 			 * @brief Default constructor
