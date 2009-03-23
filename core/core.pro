@@ -39,7 +39,7 @@ SOURCES +=	\
 TEMPLATE = lib
 TARGET   = khopper
 CONFIG  += debug_and_release
-VERSION  = 0.1.60
+VERSION  = 0.1.70
 
 CONFIG( debug, debug|release ) {
 	DESTDIR     = $${ROOT_PATH}/build/debug
