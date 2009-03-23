@@ -20,6 +20,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "abstractaudioreader.hpp"
+#include "error.hpp"
 
 namespace khopper {
 
@@ -128,7 +129,22 @@ namespace khopper {
 	namespace plugin {
 
 		codec::AudioReaderSP createReader( const std::string & key ) {
-			return AudioReaderFactory::Instance().CreateObject( key )->create();
+			AudioReaderCreator * tmp = NULL;
+			try {
+				tmp = AudioReaderFactory::Instance().CreateObject( key );
+			} catch( std::exception & e ) {
+				tmp = AudioReaderFactory::Instance().CreateObject( "*" );
+			}
+			return tmp->create();
+		}
+
+		AudioReaderCreator * loadReaderCreator( const QString & name ) {
+			plugin::PluginContext pc;
+			AudioReaderCreator * arc = qobject_cast< AudioReaderCreator * >( pc.load( name ) );
+			if( !arc ) {
+				throw Error< RunTime >( "Invalid plugin!" );
+			}
+			return arc;
 		}
 
 	}

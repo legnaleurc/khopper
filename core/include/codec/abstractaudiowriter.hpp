@@ -24,13 +24,10 @@
 
 #include "tr1.hpp"
 #include "codec_base.hpp"
-#include "error.hpp"
 #include "os.hpp"
 
 #include <loki/Factory.h>
 #include <loki/Singleton.h>
-
-#include <QPluginLoader>
 
 #include <string>
 #include <vector>
@@ -248,20 +245,6 @@ namespace khopper {
 			virtual codec::AudioWriterSP create() const = 0;
 		};
 
-		template< typename IdentifierType, class AbstractProduct >
-		struct WriterFactoryError {
-			static AbstractProduct * OnUnknownType( IdentifierType ) {
-				// FIXME: diffirent file names on diffirent system
-				os::PluginContext pc;
-				QPluginLoader pl( pc.getDir().absoluteFilePath( "libkawp_default.so" ) );
-				AbstractProduct * d = qobject_cast< AbstractProduct * >( pl.instance() );
-				if( !d ) {
-					throw Error< RunTime >( pl.errorString().toStdString() );
-				}
-				return d;
-			}
-		};
-
 		/**
 		 * @brief The audio writer factory
 		 * @ingroup Codecs
@@ -269,15 +252,19 @@ namespace khopper {
 		typedef Loki::SingletonHolder<
 			Loki::Factory<
 				AudioWriterCreator,
-				std::string,
-				Loki::NullType,
-				WriterFactoryError
+				std::string
 			>,
 			Loki::CreateUsingNew,
 			Loki::LongevityLifetime::DieAsSmallObjectChild
 		> AudioWriterFactory;
 
+
+		template< typename Callback >
+		bool registerWriter( const std::string & key, Callback functor ) {
+			return AudioWriterFactory::Instance().Register( key, functor );
+		}
 		codec::AudioWriterSP createWriter( const std::string & key );
+		AudioWriterCreator * loadWriterCreator( const QString & name );
 
 	}
 

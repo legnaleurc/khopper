@@ -53,7 +53,11 @@ namespace {
 		return true;
 	}
 
-	const bool INITIALIZED = initFFmpeg();
+	khopper::plugin::AudioWriterCreator * create() {
+		return khopper::plugin::loadWriterCreator( "kawp_default" );
+	}
+
+	const bool INITIALIZED = initFFmpeg() && khopper::plugin::registerWriter( "*", create );
 
 }
 

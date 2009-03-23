@@ -41,11 +41,16 @@ namespace khopper {
 		 */
 		std::wstring join( const std::wstring & front, const std::wstring & back );
 
+	}
+
+	namespace plugin {
+
 		class PluginContext {
 		public:
 			PluginContext();
 
 			const QDir & getDir() const;
+			QObject * load( QString name ) const;
 		private:
 			QDir d_;
 		};

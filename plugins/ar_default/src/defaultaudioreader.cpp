@@ -48,7 +48,11 @@ namespace {
 		return true;
 	}
 
-	const bool INITIALIZED = initFFmpeg();
+	khopper::plugin::AudioReaderCreator * create() {
+		return khopper::plugin::loadReaderCreator( "karp_default" );
+	}
+
+	const bool INITIALIZED = initFFmpeg() && khopper::plugin::registerReader( "*", create );
 
 }
 

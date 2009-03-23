@@ -44,7 +44,7 @@ namespace khopper {
 			mainBox->addWidget( this->optionTabs_ );
 
 			// Take out the output types
-			os::PluginContext pc;
+			plugin::PluginContext pc;
 			foreach( QString fileName, pc.getDir().entryList( QStringList( "libkpp_*" ), QDir::Files ) ) {
 				QPluginLoader piLoader( pc.getDir().absoluteFilePath( fileName ) );
 				QObject * plugin = piLoader.instance();

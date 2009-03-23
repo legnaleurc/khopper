@@ -19,7 +19,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
- #include "abstractaudiowriter.hpp"
+#include "abstractaudiowriter.hpp"
+#include "error.hpp"
 
 namespace khopper {
 
@@ -87,7 +88,22 @@ namespace khopper {
 	namespace plugin {
 
 		codec::AudioWriterSP createWriter( const std::string & key ) {
-			return AudioWriterFactory::Instance().CreateObject( key )->create();
+			AudioWriterCreator * tmp = NULL;
+			try {
+				tmp = AudioWriterFactory::Instance().CreateObject( key );
+			} catch( std::exception & e ) {
+				tmp = AudioWriterFactory::Instance().CreateObject( "*" );
+			}
+			return tmp->create();
+		}
+
+		AudioWriterCreator * loadWriterCreator( const QString & name ) {
+			plugin::PluginContext pc;
+			AudioWriterCreator * awc = qobject_cast< AudioWriterCreator * >( pc.load( name ) );
+			if( !awc ) {
+				throw Error< RunTime >( "Invalid plugin!" );
+			}
+			return awc;
 		}
 
 	}

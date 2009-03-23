@@ -21,8 +21,10 @@
  */
 #include "tr1.hpp"
 #include "os.hpp"
+#include "error.hpp"
 
 #include <QApplication>
+#include <QPluginLoader>
 
 namespace khopper {
 
@@ -45,6 +47,10 @@ namespace khopper {
 			}
 		}
 
+	}
+
+	namespace plugin {
+
 		PluginContext::PluginContext():
 		d_( qApp->applicationDirPath() ) {
 			this->d_.cd( "plugins" );
@@ -52,6 +58,15 @@ namespace khopper {
 
 		const QDir & PluginContext::getDir() const {
 			return this->d_;
+		}
+
+		QObject * PluginContext::load( QString name ) const {
+			QPluginLoader pl( this->d_.absoluteFilePath( name.prepend( "lib" ).append( ".so" ) ) );
+			QObject * tmp = pl.instance();
+			if( !tmp ) {
+				throw Error< RunTime >( pl.errorString().toStdString() );
+			}
+			return tmp;
 		}
 
 	}

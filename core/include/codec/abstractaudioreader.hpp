@@ -24,13 +24,10 @@
 
 #include "tr1.hpp"
 #include "codec_base.hpp"
-#include "error.hpp"
 #include "os.hpp"
 
 #include <loki/Factory.h>
 #include <loki/Singleton.h>
-
-#include <QPluginLoader>
 
 #include <string>
 
@@ -337,20 +334,6 @@ namespace khopper {
 			virtual codec::AudioReaderSP create() const = 0;
 		};
 
-		template< typename IdentifierType, class AbstractProduct >
-		struct ReaderFactoryError {
-			static AbstractProduct * OnUnknownType( IdentifierType ) {
-				// FIXME: diffirent file names on diffirent system
-				os::PluginContext pc;
-				QPluginLoader pl( pc.getDir().absoluteFilePath( "libkarp_default.so" ) );
-				AbstractProduct * d = qobject_cast< AbstractProduct * >( pl.instance() );
-				if( !d ) {
-					throw Error< RunTime >( pl.errorString().toStdString() );
-				}
-				return d;
-			}
-		};
-
 		/**
 		 * @brief The audio reader factory
 		 * @ingroup Codecs
@@ -358,15 +341,18 @@ namespace khopper {
 		typedef Loki::SingletonHolder<
 			Loki::Factory<
 				AudioReaderCreator,
-				std::string,
-				Loki::NullType,
-				ReaderFactoryError
+				std::string
 			>,
 			Loki::CreateUsingNew,
 			Loki::LongevityLifetime::DieAsSmallObjectChild
 		> AudioReaderFactory;
 
+		template< typename Callback >
+		bool registerReader( const std::string & key, Callback functor ) {
+			return AudioReaderFactory::Instance().Register( key, functor );
+		}
 		codec::AudioReaderSP createReader( const std::string & key );
+		AudioReaderCreator * loadReaderCreator( const QString & name );
 
 	}
 
