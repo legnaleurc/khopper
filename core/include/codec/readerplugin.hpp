@@ -48,7 +48,8 @@ namespace khopper {
 				std::string
 			>,
 			Loki::CreateUsingNew,
-			Loki::LongevityLifetime::DieAsSmallObjectChild
+			Loki::LongevityLifetime::DieAsSmallObjectChild,
+			Loki::ClassLevelLockable
 		> ReaderFactory;
 
 		/**
