@@ -28,8 +28,6 @@
 #include <QPluginLoader>
 
 #include <string>
-#include <typeinfo>
-#include <cassert>
 
 namespace khopper {
 
@@ -46,9 +44,7 @@ namespace khopper {
 		class Creator {
 		public:
 			Product * create() const {
-				Product * tmp = this->create_();
-				assert( typeid( *tmp ) == typeid( *this ) );
-				return tmp;
+				return this->create_();
 			}
 		private:
 			virtual Product * create_() const = 0;
@@ -56,18 +52,18 @@ namespace khopper {
 
 		/**
 		 * @brief From creator functor
-		 * @tparam Creator creator type
+		 * @tparam ProductCreator creator type
 		 * @ingroup Plugins
 		 */
-		template< typename Creator >
+		template< typename ProductCreator >
 		class CreatorLoader {
 		public:
 			/// Default constructor
 			CreatorLoader( const std::string & plugin ) : plugin_( plugin ) {}
 			/// Plugin loader
-			Creator * operator()() {
+			ProductCreator * operator()() {
 				plugin::PluginContext pc;
-				Creator * c = qobject_cast< Creator * >( pc.load( this->plugin_.c_str() ) );
+				ProductCreator * c = qobject_cast< ProductCreator * >( pc.load( this->plugin_.c_str() ) );
 				if( !c ) {
 					throw Error< RunTime >( "Invalid plugin!" );
 				}
