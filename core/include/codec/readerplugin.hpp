@@ -36,11 +36,7 @@ namespace khopper {
 		 * @brief Reader creator interface
 		 * @ingroup Plugins
 		 */
-		class ReaderCreator {
-		public:
-			/// Creates Reader object
-			virtual codec::ReaderSP create() const = 0;
-		};
+		typedef Creator< codec::AbstractReader > ReaderCreator;
 
 		/**
 		 * @brief The audio reader factory

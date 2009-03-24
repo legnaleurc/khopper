@@ -207,8 +207,8 @@ namespace khopper {
 
 	namespace plugin {
 
-		codec::ReaderSP DefaultReaderCreator::create() const {
-			return codec::ReaderSP( new codec::DefaultReader );
+		codec::AbstractReader * DefaultReaderCreator::create_() const {
+			return new codec::DefaultReader;
 		}
 
 	}

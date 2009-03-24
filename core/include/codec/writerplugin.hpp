@@ -35,11 +35,7 @@ namespace khopper {
 		/**
 		 * @brief Wirter creator interface
 		 */
-		class WriterCreator {
-		public:
-			/// Creates Wirter object
-			virtual codec::WriterSP create() const = 0;
-		};
+		typedef Creator< codec::AbstractWriter > WriterCreator;
 
 		/**
 		 * @brief The audio writer factory

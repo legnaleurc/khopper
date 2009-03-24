@@ -28,6 +28,8 @@
 #include <QPluginLoader>
 
 #include <string>
+#include <typeinfo>
+#include <cassert>
 
 namespace khopper {
 
@@ -39,6 +41,18 @@ namespace khopper {
 	 * @ingroup Plugins
 	 */
 	namespace plugin {
+
+		template< typename Product >
+		class Creator {
+		public:
+			Product * create() const {
+				Product * tmp = this->create_();
+				assert( typeid( *tmp ) == typeid( *this ) );
+				return tmp;
+			}
+		private:
+			virtual Product * create_() const = 0;
+		};
 
 		/**
 		 * @brief From creator functor

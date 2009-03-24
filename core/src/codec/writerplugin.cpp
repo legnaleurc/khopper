@@ -36,7 +36,7 @@ namespace khopper {
 			} catch( std::exception & e ) {
 				tmp = WriterFactory::Instance().CreateObject( "*" );
 			}
-			return tmp->create();
+			return codec::WriterSP( tmp->create() );
 		}
 
 	}

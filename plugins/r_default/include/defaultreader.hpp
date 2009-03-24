@@ -73,9 +73,9 @@ namespace khopper {
 			Q_OBJECT
 			Q_INTERFACES( khopper::plugin::ReaderCreator )
 
-		public:
+		private:
 			/// Creates reader object
-			virtual codec::ReaderSP create() const;
+			virtual codec::AbstractReader * create_() const;
 		};
 
 	}

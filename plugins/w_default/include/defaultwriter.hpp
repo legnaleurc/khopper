@@ -70,9 +70,9 @@ namespace khopper {
 			Q_OBJECT
 			Q_INTERFACES( khopper::plugin::WriterCreator )
 
-		public:
+		private:
 			/// Creates writer object
-			virtual codec::WriterSP create() const;
+			virtual codec::AbstractWriter * create_() const;
 		};
 
 	}
