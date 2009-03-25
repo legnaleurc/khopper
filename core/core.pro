@@ -54,7 +54,7 @@ CONFIG( debug, debug|release ) {
 
 unix {
 	QMAKE_CXXFLAGS += -std=c++0x
-	LIBS        += -lboost_regex
+	LIBS        += -lboost_regex -lloki
 	SOURCES += ./src/common/linux.cpp
 }
 
