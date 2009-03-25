@@ -20,49 +20,53 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "converter.hpp"
-#include "defaultaudioreader.hpp"
+#include "readerplugin.hpp"
 #include "error.hpp"
 #include "text.hpp"
 
-namespace Khopper {
+namespace khopper {
 
-	Converter::Converter( QObject * parent ):
-	QObject( parent ),
-	canceled_( false ) {
-	}
+	namespace widget {
 
-	void Converter::convert( TrackCSP track, const std::wstring & targetPath, codec::AudioWriterSP encoder ) {
-		codec::AudioReaderSP decoder( new codec::DefaultAudioReader );
-		decoder->open( text::toLocale( track->filePath ) );
-		encoder->open( text::toLocale( targetPath ) );
-		this->canceled_ = false;
-
-		if( !decoder->isOpen() || !encoder->isOpen() ) {
-			throw Error< RunTime >( "Can not open decoder or encoder!" );
+		Converter::Converter( QObject * parent ):
+		QObject( parent ),
+		canceled_( false ) {
 		}
 
-		double begin = track->startTime.toDouble();
-		double end = begin + track->duration.toDouble();
-		decoder->setRange( begin, end );
-		if( !decoder->seek( begin ) ) {
-			throw Error< codec::Codec >( "Invalid start point" );
-		}
+		void Converter::convert( album::TrackCSP track, const std::wstring & targetPath, codec::WriterSP encoder ) {
+			codec::ReaderSP decoder( plugin::createReader( text::getSuffix( track->filePath ) ) );
+			decoder->open( text::toLocale( track->filePath ) );
+			encoder->open( text::toLocale( targetPath ) );
+			this->canceled_ = false;
 
-		double decoded;
-		while( decoder->hasNext() ) {
-			if( this->canceled_ ) {
-				break;
+			if( !decoder->isOpen() || !encoder->isOpen() ) {
+				throw Error< RunTime >( "Can not open decoder or encoder!" );
 			}
-			encoder->write( decoder->read( decoded ) );
-			emit this->decodedTime( static_cast< int >( decoded * 10000 ) );
+
+			double begin = track->startTime.toDouble();
+			double end = begin + track->duration.toDouble();
+			decoder->setRange( begin, end );
+			if( !decoder->seek( begin ) ) {
+				throw Error< codec::Codec >( "Invalid start point" );
+			}
+
+			double decoded;
+			while( decoder->hasNext() ) {
+				if( this->canceled_ ) {
+					break;
+				}
+				encoder->write( decoder->read( decoded ) );
+				emit this->decodedTime( static_cast< int >( decoded * 10000 ) );
+			}
+
+			encoder->close();
+			decoder->close();
 		}
 
-		encoder->close();
-		decoder->close();
-	}
+		void Converter::cancel() {
+			this->canceled_ = true;
+		}
 
-	void Converter::cancel() {
-		this->canceled_ = true;
 	}
 
 }

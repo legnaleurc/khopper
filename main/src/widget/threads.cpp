@@ -24,52 +24,56 @@
 
 #include <QFileInfo>
 
-namespace Khopper {
+namespace khopper {
 
-	ConverterThread::ConverterThread( QObject * parent ):
-	QThread( parent ),
-	encoder_(),
-	tracks_(),
-	paths_(),
-	canceled_( false ),
-	converter_( this ) {
-		connect( &this->converter_, SIGNAL( decodedTime( int ) ), this, SIGNAL( step( int ) ) );
-		connect( this, SIGNAL( canceled() ), &this->converter_, SLOT( cancel() ) );
-	}
+	namespace widget {
 
-	void ConverterThread::setOutput( codec::AudioWriterSP output, const QStringList & paths ) {
-		this->encoder_ = output;
-		this->paths_ = paths;
-	}
-
-	void ConverterThread::setTracks( const std::vector< TrackSP > & tracks ) {
-		this->tracks_ = tracks;
-	}
-
-	void ConverterThread::cancel() {
-		this->canceled_ = true;
-		emit canceled();
-	}
-
-	void ConverterThread::run() {
-		try {
-			for( std::size_t i = 0; i < this->tracks_.size(); ++i ) {
-				this->encoder_->setTitle( text::toUTF8( this->tracks_[i]->title ) );
-				this->encoder_->setArtist( text::toUTF8( this->tracks_[i]->artist ) );
-				this->encoder_->setAlbum( text::toUTF8( this->tracks_[i]->album ) );
-				emit taskName( QString::fromStdWString( this->tracks_[i]->title ) );
-				emit taskGoal( this->tracks_[i]->duration.toDouble() * 10000 );
-				emit currentTask( i + 1 );
-
-				this->converter_.convert( this->tracks_[i], this->paths_[i].toStdWString(), this->encoder_ );
-				if( this->canceled_ ) {
-					this->canceled_ = false;
-					break;
-				}
-			}
-		} catch( std::exception & e ) {
-			emit error( tr( "Error on converting!" ), trUtf8( e.what() ) );
+		ConverterThread::ConverterThread( QObject * parent ):
+		QThread( parent ),
+		encoder_(),
+		tracks_(),
+		paths_(),
+		canceled_( false ),
+		converter_( this ) {
+			connect( &this->converter_, SIGNAL( decodedTime( int ) ), this, SIGNAL( step( int ) ) );
+			connect( this, SIGNAL( canceled() ), &this->converter_, SLOT( cancel() ) );
 		}
+
+		void ConverterThread::setOutput( codec::WriterSP output, const QStringList & paths ) {
+			this->encoder_ = output;
+			this->paths_ = paths;
+		}
+
+		void ConverterThread::setTracks( const std::vector< album::TrackSP > & tracks ) {
+			this->tracks_ = tracks;
+		}
+
+		void ConverterThread::cancel() {
+			this->canceled_ = true;
+			emit canceled();
+		}
+
+		void ConverterThread::run() {
+			try {
+				for( std::size_t i = 0; i < this->tracks_.size(); ++i ) {
+					this->encoder_->setTitle( text::toUTF8( this->tracks_[i]->title ) );
+					this->encoder_->setArtist( text::toUTF8( this->tracks_[i]->artist ) );
+					this->encoder_->setAlbum( text::toUTF8( this->tracks_[i]->album ) );
+					emit taskName( QString::fromStdWString( this->tracks_[i]->title ) );
+					emit taskGoal( this->tracks_[i]->duration.toDouble() * 10000 );
+					emit currentTask( i + 1 );
+
+					this->converter_.convert( this->tracks_[i], this->paths_[i].toStdWString(), this->encoder_ );
+					if( this->canceled_ ) {
+						this->canceled_ = false;
+						break;
+					}
+				}
+			} catch( std::exception & e ) {
+				emit error( tr( "Error on converting!" ), trUtf8( e.what() ) );
+			}
+		}
+
 	}
 
 }

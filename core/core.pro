@@ -15,21 +15,22 @@ MOC_DIR      = $${ROOT_PATH}/tmp/moc
 
 # Input files
 HEADERS +=	\
-	./include/codec/abstractaudioreader.hpp	\
-	./include/codec/abstractaudiowriter.hpp	\
+	./include/codec/abstractreader.hpp	\
+	./include/codec/abstractwriter.hpp	\
 	./include/codec/codec_base.hpp	\
-	./include/codec/defaultaudioreader.hpp	\
-	./include/codec/defaultaudiowriter.hpp	\
+	./include/codec/plugin_base.hpp	\
+	./include/codec/readerplugin.hpp	\
+	./include/codec/writerplugin.hpp	\
 	./include/common/error.hpp	\
 	./include/common/os.hpp	\
 	./include/common/text.hpp	\
 	./include/common/tr1.hpp	\
 	./include/widget/abstractpanel.hpp
 SOURCES +=	\
-	./src/codec/abstractaudioreader.cpp	\
-	./src/codec/abstractaudiowriter.cpp	\
-	./src/codec/defaultaudioreader.cpp	\
-	./src/codec/defaultaudiowriter.cpp	\
+	./src/codec/abstractreader.cpp	\
+	./src/codec/abstractwriter.cpp	\
+	./src/codec/readerplugin.cpp	\
+	./src/codec/writerplugin.cpp	\
 	./src/common/error.cpp	\
 	./src/common/text.cpp	\
 	./src/widget/abstractpanel.cpp
@@ -38,7 +39,7 @@ SOURCES +=	\
 TEMPLATE = lib
 TARGET   = khopper
 CONFIG  += debug_and_release
-VERSION  = 0.1.60
+VERSION  = 0.1.70
 
 CONFIG( debug, debug|release ) {
 	DESTDIR     = $${ROOT_PATH}/build/debug
@@ -53,16 +54,10 @@ CONFIG( debug, debug|release ) {
 
 unix {
 	QMAKE_CXXFLAGS += -std=c++0x
-
-	CONFIG      += link_pkgconfig
-	PKGCONFIG   += libavcodec libavformat libavutil
-	INCLUDEPATH += /usr/include/ffmpeg/libavcodec /usr/include/ffmpeg/libavformat
-	LIBS        += -lboost_regex
-
+	LIBS        += -lboost_regex -lloki
 	SOURCES += ./src/common/linux.cpp
 }
 
 win32 {
-	LIBS    += -lavcodec-52 -lavformat-52 -lavutil-49
 	SOURCES += ./src/common/windows.cpp
 }

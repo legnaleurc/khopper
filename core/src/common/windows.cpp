@@ -24,7 +24,7 @@
 
 #include <QString>
 
-namespace Khopper {
+namespace khopper {
 
 	namespace os {
 

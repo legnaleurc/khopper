@@ -21,11 +21,12 @@
  */
 #include "tr1.hpp"
 #include "os.hpp"
+#include "error.hpp"
 
-#include <QString>
-#include <QtDebug>
+#include <QApplication>
+#include <QPluginLoader>
 
-namespace Khopper {
+namespace khopper {
 
 	namespace os {
 
@@ -44,6 +45,28 @@ namespace Khopper {
 			} else {
 				return L"";
 			}
+		}
+
+	}
+
+	namespace plugin {
+
+		PluginContext::PluginContext():
+		d_( qApp->applicationDirPath() ) {
+			this->d_.cd( "plugins" );
+		}
+
+		const QDir & PluginContext::getDir() const {
+			return this->d_;
+		}
+
+		QObject * PluginContext::load( QString name ) const {
+			QPluginLoader pl( this->d_.absoluteFilePath( name.prepend( "lib" ).append( ".so" ) ) );
+			QObject * tmp = pl.instance();
+			if( !tmp ) {
+				throw Error< RunTime >( pl.errorString().toStdString() );
+			}
+			return tmp;
 		}
 
 	}

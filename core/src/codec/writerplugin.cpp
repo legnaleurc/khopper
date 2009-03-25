@@ -1,5 +1,5 @@
 /**
- * @file text.hpp
+ * @file writerplugin.cpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,33 +19,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_TEXT_HPP
-#define KHOPPER_TEXT_HPP
-
-#include <string>
+#include "writerplugin.hpp"
 
 namespace khopper {
 
-	/**
-	 * @brief Text processing
-	 */
-	namespace text {
+	namespace plugin {
 
-		/// @brief Convert @p utf8 to Unicode
-		std::wstring fromUTF8( const std::string & utf8 );
-		/// @brief Convert @p unicode to UTF-8
-		std::string toUTF8( const std::wstring & unicode );
+		bool registerWriter( const std::string & key, const std::string & plugin ) {
+			return WriterFactory::Instance().Register( key, CreatorLoader< WriterCreator >( plugin ) );
+		}
 
-		/// @brief Convert @p locale to Unicode
-		std::wstring fromLocale( const std::string & locale );
-		/// @brief Convert @p unicode to system locale
-		std::string toLocale( const std::wstring & unicode );
-
-		/// @brief Get suffix of a file name
-		std::string getSuffix( const std::wstring & filePath );
+		codec::WriterSP createWriter( const std::string & key ) {
+			WriterCreator * tmp = NULL;
+			try {
+				tmp = WriterFactory::Instance().CreateObject( key );
+			} catch( std::exception & e ) {
+				tmp = WriterFactory::Instance().CreateObject( "*" );
+			}
+			return codec::WriterSP( tmp->create() );
+		}
 
 	}
 
 }
-
-#endif

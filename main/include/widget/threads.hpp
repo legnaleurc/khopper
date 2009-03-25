@@ -19,93 +19,97 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_THREADS_HPP
-#define KHOPPER_THREADS_HPP
+#ifndef KHOPPER_WIDGET_THREADS_HPP
+#define KHOPPER_WIDGET_THREADS_HPP
 
 #include "track.hpp"
-#include "abstractaudiowriter.hpp"
+#include "abstractwriter.hpp"
 #include "converter.hpp"
 
 #include <QThread>
 #include <QStringList>
 
-namespace Khopper {
+namespace khopper {
 
-	/**
-	 * @brief Thread of converter
-	 */
-	class ConverterThread : public QThread {
-		Q_OBJECT
-
-	public:
-		/**
-		 * @brief Default constructor
-		 * @param [in] parent parent object
-		 */
-		ConverterThread( QObject * parent = 0 );
+	namespace widget {
 
 		/**
-		 * @brief Set output option
-		 * @param [in] output Encoder object
-		 * @param [in] paths Output file paths
+		 * @brief Thread of converter
 		 */
-		void setOutput( codec::AudioWriterSP output, const QStringList & paths );
+		class ConverterThread : public QThread {
+			Q_OBJECT
 
-		/**
-		 * @brief Set tracks to convert
-		 * @param [in] tracks Tracks information
-		 */
-		void setTracks( const std::vector< TrackSP > & tracks );
+		public:
+			/**
+			 * @brief Default constructor
+			 * @param [in] parent parent object
+			 */
+			ConverterThread( QObject * parent = 0 );
 
-	public slots:
-		/**
-		 * @brief Cancel converting
-		 */
-		void cancel();
+			/**
+			 * @brief Set output option
+			 * @param [in] output Encoder object
+			 * @param [in] paths Output file paths
+			 */
+			void setOutput( codec::WriterSP output, const QStringList & paths );
 
-	signals:
-		/**
-		 * @brief Emited when convertion is canceled.
-		 */
-		void canceled();
-		/**
-		 * @brief Send error message
-		 * @param title Message box title
-		 * @param errMsg Error message
-		 */
-		void error( const QString & title, const QString & errMsg );
+			/**
+			 * @brief Set tracks to convert
+			 * @param [in] tracks Tracks information
+			 */
+			void setTracks( const std::vector< album::TrackSP > & tracks );
 
-		/**
-		 * @brief Send task name
-		 */
-		void taskName( const QString & Title );
-		/**
-		 * @brief Send task goal
-		 */
-		void taskGoal( int duration );
-		/**
-		 * @brief Send current task count
-		 */
-		void currentTask( int number );
-		/**
-		 * @brief Progress notifyer
-		 * @param duration Convert duration
-		 */
-		void step( int duration );
+		public slots:
+			/**
+			 * @brief Cancel converting
+			 */
+			void cancel();
 
-	protected:
-		/**
-		 * @brief Action function
-		 */
-		virtual void run();
+		signals:
+			/**
+			 * @brief Emited when convertion is canceled.
+			 */
+			void canceled();
+			/**
+			 * @brief Send error message
+			 * @param title Message box title
+			 * @param errMsg Error message
+			 */
+			void error( const QString & title, const QString & errMsg );
 
-	private:
-		codec::AudioWriterSP encoder_;
-		std::vector< TrackSP > tracks_;
-		QStringList paths_;
-		bool canceled_;
-		Converter converter_;
-	};
+			/**
+			 * @brief Send task name
+			 */
+			void taskName( const QString & Title );
+			/**
+			 * @brief Send task goal
+			 */
+			void taskGoal( int duration );
+			/**
+			 * @brief Send current task count
+			 */
+			void currentTask( int number );
+			/**
+			 * @brief Progress notifyer
+			 * @param duration Convert duration
+			 */
+			void step( int duration );
+
+		protected:
+			/**
+			 * @brief Action function
+			 */
+			virtual void run();
+
+		private:
+			codec::WriterSP encoder_;
+			std::vector< album::TrackSP > tracks_;
+			QStringList paths_;
+			bool canceled_;
+			Converter converter_;
+		};
+
+	}
 
 }
 

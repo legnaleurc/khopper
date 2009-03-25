@@ -26,54 +26,58 @@
 #include <sstream>
 #include <cmath>
 
-namespace Khopper {
+namespace khopper {
 
-	Index::Index() : minute( 0 ), second( 0 ), frame( 0 ) {
-	}
+	namespace album {
 
-	Index::Index( short int m, short int s, short int f ):
-	minute( m ),
-	second( s ),
-	frame( f ) {
-	}
-
-	Index::Index( double d ) {
-		this->minute = static_cast< short >( std::floor( d / 60 ) );
-		d -= this->minute * 60;
-		this->second = static_cast< short >( std::floor( d ) );
-		d -= this->second;
-		this->frame = static_cast< short >( std::floor( d * 100 ) );
-	}
-
-	Index & Index::operator -=( const Index & that ) {
-		if( this->frame < that.frame ) {
-			--this->second;
-			this->frame += 100 - that.frame;
-		} else {
-			this->frame -= that.frame;
+		Index::Index() : minute( 0 ), second( 0 ), frame( 0 ) {
 		}
-		if( this->second < that.second ) {
-			--this->minute;
-			this->second += 60 - that.second;
-		} else {
-			this->second -= that.second;
+
+		Index::Index( short int m, short int s, short int f ):
+		minute( m ),
+		second( s ),
+		frame( f ) {
 		}
-		this->minute -= that.minute;
 
-		return *this;
-	}
+		Index::Index( double d ) {
+			this->minute = static_cast< short >( std::floor( d / 60 ) );
+			d -= this->minute * 60;
+			this->second = static_cast< short >( std::floor( d ) );
+			d -= this->second;
+			this->frame = static_cast< short >( std::floor( d * 100 ) );
+		}
 
-	Index Index::operator -( const Index & that ) const {
-		return Index( *this ) -= that;
-	}
+		Index & Index::operator -=( const Index & that ) {
+			if( this->frame < that.frame ) {
+				--this->second;
+				this->frame += 100 - that.frame;
+			} else {
+				this->frame -= that.frame;
+			}
+			if( this->second < that.second ) {
+				--this->minute;
+				this->second += 60 - that.second;
+			} else {
+				this->second -= that.second;
+			}
+			this->minute -= that.minute;
 
-	double Index::toDouble() const {
-		return 60 * minute + second + frame / 100.0;
-	}
+			return *this;
+		}
 
-	std::wstring Index::toStdWString() const {
-		boost::wformat tpl( L"%1%:%|2$02|.%|3$02|" );
-		return ( tpl % this->minute % this->second % this->frame ).str();
+		Index Index::operator -( const Index & that ) const {
+			return Index( *this ) -= that;
+		}
+
+		double Index::toDouble() const {
+			return 60 * minute + second + frame / 100.0;
+		}
+
+		std::wstring Index::toStdWString() const {
+			boost::wformat tpl( L"%1%:%|2$02|.%|3$02|" );
+			return ( tpl % this->minute % this->second % this->frame ).str();
+		}
+
 	}
 
 }

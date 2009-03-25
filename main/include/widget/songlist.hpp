@@ -19,73 +19,79 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_SONGLIST_HPP
-#define KHOPPER_SONGLIST_HPP
+#ifndef KHOPPER_WIDGET_SONGLIST_HPP
+#define KHOPPER_WIDGET_SONGLIST_HPP
 
 #include "track.hpp"
 
 #include <QTableView>
 #include <QStandardItemModel>
 
-namespace Khopper {
+namespace khopper {
 
-	/**
-	 * @brief The song list view in the center widget
-	 */
-	class SongList : public QTableView {
-		Q_OBJECT
-
-	public:
-		/**
-		 * @brief Default constructor
-		 * @param [in] parent Parent widget
-		 */
-		SongList( QWidget * parent = 0 );
+	namespace widget {
 
 		/**
-		 * @brief Append tracks to the song list
-		 * @param [in] tracks Tracks
+		 * @brief The song list view in the center widget
 		 */
-		void appendTracks( const std::vector< TrackSP > & tracks );
-		const std::vector< TrackSP > & getTracks() const;
-		/**
-		 * @brief Get selected tracks
-		 * @return Selected tracks
-		 *
-		 * The cost may be expansive.
-		 */
-		std::vector< TrackSP > getSelectedTracks() const;
+		class SongList : public QTableView {
+			Q_OBJECT
 
-	signals:
-		/**
-		 * @brief Emitted when drop an openable file
-		 * @param paths File path
-		 */
-		void dropFile( const QStringList & paths );
-		/**
-		 * @brief Emmited when convert action is required.
-		 */
-		void requireConvert();
+		public:
+			/**
+			 * @brief Default constructor
+			 * @param [in] parent Parent widget
+			 */
+			SongList( QWidget * parent = 0 );
 
-	protected:
-		/// See the documention of Qt toolkit
-		virtual void contextMenuEvent( QContextMenuEvent * event );
-		/// See the documention of Qt toolkit
-		virtual void dragEnterEvent( QDragEnterEvent * event );
-		/// See the documention of Qt toolkit
-		virtual void dragMoveEvent( QDragMoveEvent * event );
-		/// See the documention of Qt toolkit
-		virtual void dropEvent( QDropEvent * event );
+			/**
+			 * @brief Append tracks to the song list
+			 * @param [in] tracks Tracks
+			 */
+			void appendTracks( const std::vector< album::TrackSP > & tracks );
+			/**
+			 * @brief Get all tracks
+			 */
+			const std::vector< album::TrackSP > & getTracks() const;
+			/**
+			 * @brief Get selected tracks
+			 *
+			 * The cost may be expansive.
+			 */
+			std::vector< album::TrackSP > getSelectedTracks() const;
 
-	private slots:
-		void removeSelected_();
-		void editTrackField_( QStandardItem * );
+		signals:
+			/**
+			 * @brief Emitted when drop an openable file
+			 * @param paths File path
+			 */
+			void dropFile( const QStringList & paths );
+			/**
+			 * @brief Emmited when convert action is required.
+			 */
+			void requireConvert();
 
-	private:
-		QStandardItemModel * model_;
-		QMenu * contextMenu_;
-		std::vector< TrackSP > tracks_;
-	};
+		protected:
+			/// See the documention of Qt toolkit
+			virtual void contextMenuEvent( QContextMenuEvent * event );
+			/// See the documention of Qt toolkit
+			virtual void dragEnterEvent( QDragEnterEvent * event );
+			/// See the documention of Qt toolkit
+			virtual void dragMoveEvent( QDragMoveEvent * event );
+			/// See the documention of Qt toolkit
+			virtual void dropEvent( QDropEvent * event );
+
+		private slots:
+			void removeSelected_();
+			void editTrackField_( QStandardItem * );
+
+		private:
+			QStandardItemModel * model_;
+			QMenu * contextMenu_;
+			std::vector< album::TrackSP > tracks_;
+		};
+
+	}
 
 }
 

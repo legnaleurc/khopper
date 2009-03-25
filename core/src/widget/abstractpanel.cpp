@@ -21,9 +21,13 @@
  */
 #include "abstractpanel.hpp"
 
-namespace Khopper {
+namespace khopper {
 
-	AbstractPanel::AbstractPanel( QWidget * parent, Qt::WindowFlags f ) : QWidget( parent, f ) {
+	namespace widget {
+
+		AbstractPanel::AbstractPanel( QWidget * parent, Qt::WindowFlags f ) : QWidget( parent, f ) {
+		}
+
 	}
 
 }

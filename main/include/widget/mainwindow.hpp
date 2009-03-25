@@ -19,8 +19,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_MAINWINDOW_HPP
-#define KHOPPER_MAINWINDOW_HPP
+#ifndef KHOPPER_WIDGET_MAINWINDOW_HPP
+#define KHOPPER_WIDGET_MAINWINDOW_HPP
 
 #include "track.hpp"
 
@@ -29,63 +29,67 @@
 #include <QLineEdit>
 #include <QCheckBox>
 
-namespace Khopper {
+namespace khopper {
 
-	class ConverterThread;
-	class Progress;
-	class Player;
-	class TextCodec;
-	class Preference;
+	namespace widget {
 
-	/**
-	 * @class MainWindow
-	 * @brief The main window
-	 */
-	class MainWindow : public QMainWindow {
-		Q_OBJECT
+		class ConverterThread;
+		class Progress;
+		class Player;
+		class TextCodec;
+		class Preference;
+		class OutputOption;
 
-	public:
 		/**
-		 * @brief Default constructor
-		 * @param [in] parent Parent widget
-		 * @param [in] flags Widget flag
+		 * @class MainWindow
+		 * @brief The main window
 		 */
-		MainWindow( QWidget * parent = 0, Qt::WindowFlags flags = 0 );
+		class MainWindow : public QMainWindow {
+			Q_OBJECT
 
-	public slots:
-		/**
-		 * @brief Open the file widget
-		 */
-		void showOpenFilesDialog();
-		/**
-		 * @brief Open files
-		 * @param [in] filePaths file path
-		 */
-		void open( const QStringList & filePaths );
+		public:
+			/**
+			 * @brief Default constructor
+			 * @param [in] parent Parent widget
+			 * @param [in] flags Widget flag
+			 */
+			MainWindow( QWidget * parent = 0, Qt::WindowFlags flags = 0 );
 
-	private:
-		TextCodec * codec_;
-		Player * player_;
-		QDialog * optionWindow_;
-		QTabWidget * optionTabs_;
-		QLineEdit * outputPath_;
-		QCheckBox * useSourcePath_;
-		Progress * progress_;
-		ConverterThread * cvt_;
-		Preference * preference_;
-		QWidget * about_;
+		public slots:
+			/**
+			 * @brief Open the file widget
+			 */
+			void showOpenFilesDialog();
+			/**
+			 * @brief Open files
+			 * @param [in] filePaths file path
+			 */
+			void open( const QStringList & filePaths );
 
-		void initMenuBar_();
-		void initOptionWindow_();
-		void initAbout_();
+		private:
+			TextCodec * codec_;
+			Player * player_;
+			OutputOption * optionWindow_;
+			QLineEdit * outputPath_;
+			QCheckBox * useSourcePath_;
+			Progress * progress_;
+			ConverterThread * cvt_;
+			Preference * preference_;
+			QWidget * about_;
 
-	private slots:
-		void fire_();
-		void showErrorMessage_( const QString &, const QString & );
-		void incProgress_( int );
-		void changeOutputPath_();
-		QString getOutDir_( TrackSP ) const;
-	};
+			void initMenuBar_();
+			void initOptionWindow_();
+			void initAbout_();
+
+		private slots:
+			void fire_();
+			void showErrorMessage_( const QString &, const QString & );
+			void incProgress_( int );
+			void changeOutputPath_();
+			QString getOutDir_( album::TrackSP ) const;
+		};
+
+	}
 
 }
 

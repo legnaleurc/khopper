@@ -1,5 +1,5 @@
 /**
- * @file defaultaudioreader.hpp
+ * @file defaultwriter.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,49 +19,60 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_CODEC_DEFAULTAUDIOREADER_HPP
-#define KHOPPER_CODEC_DEFAULTAUDIOREADER_HPP
+#ifndef KHOPPER_CODEC_DEFAULTAUDIOWRITER_HPP
+#define KHOPPER_CODEC_DEFAULTAUDIOWRITER_HPP
 
-#include "abstractaudioreader.hpp"
+#include "writerplugin.hpp"
 
 struct AVFormatContext;
-struct AVCodecContext;
-struct AVPacket;
+struct AVOutputFormat;
+struct AVStream;
 
-namespace Khopper {
+namespace khopper {
 
 	namespace codec {
 
 		/**
-		 * @brief Default audio reader
-		 * @sa DefaultAudioWriter
+		 * @brief Default audio writer
+		 * @sa DefaultReader
 		 *
-		 * This class provides a default audio reader implementation.
+		 * This class provides a default audio writer implementation.
 		 */
-		class DefaultAudioReader : public AbstractAudioReader {
+		class DefaultWriter : public AbstractWriter {
 		public:
 			/**
 			 * @brief Default constructor
 			 */
-			DefaultAudioReader();
+			DefaultWriter();
 			/**
 			 * @brief Virtual destructor
 			 */
-			virtual ~DefaultAudioReader();
+			virtual ~DefaultWriter();
 
 		private:
-			virtual void openResource_();
-			virtual void closeResource_();
-			virtual void setupDemuxer_();
-			virtual void setupDecoder_();
-			virtual void readHeader_();
-			virtual ByteArray readFrame_( double &, bool & );
-			virtual bool seek_( double );
+			virtual void setupMuxer_();
+			virtual void setupEncoder_();
+			virtual void openResouse_();
+			virtual void closeResouse_();
+			virtual void writeHeader_();
+			virtual void writeFrame_( const char *, std::size_t );
 
 			std::tr1::shared_ptr< AVFormatContext > pFormatContext_;
-			std::tr1::shared_ptr< AVCodecContext > pCodecContext_;
-			std::tr1::shared_ptr< AVPacket > pPacket_;
-			double timeBase_;
+			AVStream * pStream_;
+		};
+
+	}
+
+	namespace plugin {
+
+		/// Default writer creator
+		class DefaultWriterCreator : public QObject, public WriterCreator {
+			Q_OBJECT
+			Q_INTERFACES( khopper::plugin::WriterCreator )
+
+		private:
+			/// Creates writer object
+			virtual codec::AbstractWriter * create_() const;
 		};
 
 	}

@@ -20,7 +20,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- * @namespace Khopper
+ * @namespace khopper
  * @brief All componets in this program
  */
 #include "mainwindow.hpp"
@@ -37,7 +37,7 @@ int main( int argc, char * argv[] ) {
 	QApplication::setApplicationName( "Khopper" );
 	QSettings::setDefaultFormat( QSettings::IniFormat );
 
-	Khopper::MainWindow window;
+	khopper::widget::MainWindow window;
 	window.setWindowTitle( "Khopper" );
 	window.resize( 640, 480 );
 	window.show();

@@ -25,62 +25,66 @@
 #include <QHBoxLayout>
 #include <QPushButton>
 
-namespace Khopper {
+namespace khopper {
 
-	Progress::Progress( QWidget * parent, Qt::WindowFlags f ):
-	QDialog( parent, f ),
-	itemName_( new QLabel( this ) ),
-	current_( new QLabel( this ) ),
-	total_( new QLabel( this ) ),
-	prog_( new QProgressBar( this ) ) {
-		this->setWindowTitle( tr( "Converting ..." ) );
+	namespace widget {
 
-		QVBoxLayout * mainBox = new QVBoxLayout( this );
-		this->setLayout( mainBox );
-		mainBox->setAlignment( Qt::AlignCenter );
+		Progress::Progress( QWidget * parent, Qt::WindowFlags f ):
+		QDialog( parent, f ),
+		itemName_( new QLabel( this ) ),
+		current_( new QLabel( this ) ),
+		total_( new QLabel( this ) ),
+		prog_( new QProgressBar( this ) ) {
+			this->setWindowTitle( tr( "Converting ..." ) );
 
-		mainBox->addWidget( this->itemName_ );
-		this->itemName_->setAlignment( Qt::AlignCenter );
+			QVBoxLayout * mainBox = new QVBoxLayout( this );
+			this->setLayout( mainBox );
+			mainBox->setAlignment( Qt::AlignCenter );
 
-		QHBoxLayout * midBox = new QHBoxLayout;
-		mainBox->addLayout( midBox );
-		midBox->setAlignment( Qt::AlignCenter );
+			mainBox->addWidget( this->itemName_ );
+			this->itemName_->setAlignment( Qt::AlignCenter );
 
-		midBox->addWidget( this->current_ );
-		midBox->addWidget( new QLabel( "/", this ) );
-		midBox->addWidget( this->total_ );
+			QHBoxLayout * midBox = new QHBoxLayout;
+			mainBox->addLayout( midBox );
+			midBox->setAlignment( Qt::AlignCenter );
 
-		mainBox->addWidget( this->prog_ );
-		this->prog_->setRange( 0, 0 );
+			midBox->addWidget( this->current_ );
+			midBox->addWidget( new QLabel( "/", this ) );
+			midBox->addWidget( this->total_ );
 
-		QPushButton * cancel = new QPushButton( tr( "&Cancel" ), this );
-		mainBox->addWidget( cancel );
-		connect( cancel, SIGNAL( clicked() ), this, SLOT( reject() ) );
-	}
+			mainBox->addWidget( this->prog_ );
+			this->prog_->setRange( 0, 0 );
 
-	int Progress::getValue() const {
-		return this->prog_->value();
-	}
+			QPushButton * cancel = new QPushButton( tr( "&Cancel" ), this );
+			mainBox->addWidget( cancel );
+			connect( cancel, SIGNAL( clicked() ), this, SLOT( reject() ) );
+		}
 
-	void Progress::setMaximum( int maximum ) {
-		this->prog_->setMaximum( maximum );
-		this->prog_->setValue( 0 );
-	}
+		int Progress::getValue() const {
+			return this->prog_->value();
+		}
 
-	void Progress::setValue( int value ) {
-		this->prog_->setValue( value );
-	}
+		void Progress::setMaximum( int maximum ) {
+			this->prog_->setMaximum( maximum );
+			this->prog_->setValue( 0 );
+		}
 
-	void Progress::setItemName( const QString & name ) {
-		this->itemName_->setText( name );
-	}
+		void Progress::setValue( int value ) {
+			this->prog_->setValue( value );
+		}
 
-	void Progress::setCurrent( int current ) {
-		this->current_->setNum( current );
-	}
+		void Progress::setItemName( const QString & name ) {
+			this->itemName_->setText( name );
+		}
 
-	void Progress::setTotal( int total ) {
-		this->total_->setNum( total );
+		void Progress::setCurrent( int current ) {
+			this->current_->setNum( current );
+		}
+
+		void Progress::setTotal( int total ) {
+			this->total_->setNum( total );
+		}
+
 	}
 
 }

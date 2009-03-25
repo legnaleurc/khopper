@@ -1,5 +1,5 @@
 /**
- * @file abstractaudiowriter.hpp
+ * @file abstractwriter.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,8 +19,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_CODEC_ABSTRACTAUDIOWRITER_HPP
-#define KHOPPER_CODEC_ABSTRACTAUDIOWRITER_HPP
+#ifndef KHOPPER_CODEC_ABSTRACTWRITER_HPP
+#define KHOPPER_CODEC_ABSTRACTWRITER_HPP
 
 #include "tr1.hpp"
 #include "codec_base.hpp"
@@ -28,31 +28,31 @@
 #include <string>
 #include <vector>
 
-namespace Khopper {
+namespace khopper {
 
 	namespace codec {
 
 		/**
 		 * @brief Audio writer interface
 		 * @ingroup Codecs
-		 * @sa AbstractAudioReader
+		 * @sa AbstractReader
 		 */
-		class AbstractAudioWriter {
+		class AbstractWriter {
 		public:
 			/**
 			 * @brief Default constructor
 			 */
-			AbstractAudioWriter();
+			AbstractWriter();
 			/**
 			 * @brief Virtual destructor
 			 */
-			virtual ~AbstractAudioWriter();
+			virtual ~AbstractWriter();
 
 			/**
 			 * @brief Open file
 			 * @param filePath
 			 *
-			 * AbstractAudioWriter do not handle path encoding,
+			 * AbstractWriter do not handle path encoding,
 			 * so you should help yourself.
 			 */
 			void open( const std::string & filePath );
@@ -192,8 +192,8 @@ namespace Khopper {
 
 		private:
 			// prevent copying
-			AbstractAudioWriter( const AbstractAudioWriter & );
-			AbstractAudioWriter & operator =( const AbstractAudioWriter & );
+			AbstractWriter( const AbstractWriter & );
+			AbstractWriter & operator =( const AbstractWriter & );
 
 			virtual void setupMuxer_() = 0;
 			virtual void setupEncoder_() = 0;
@@ -216,21 +216,21 @@ namespace Khopper {
 		};
 
 		/**
-		 * @brief AbstractAudioWriter smart pointer
+		 * @brief AbstractWriter smart pointer
 		 * @ingroup Codecs
-		 * @sa AbstractAudioWriter AudioWriterCSP
+		 * @sa AbstractWriter WriterCSP
 		 *
 		 * Use TR1 shared pointer.
 		 */
-		typedef std::tr1::shared_ptr< AbstractAudioWriter > AudioWriterSP;
+		typedef std::tr1::shared_ptr< AbstractWriter > WriterSP;
 		/**
-		 * @brief AbstractAudioWriter const smart pointer
+		 * @brief AbstractWriter const smart pointer
 		 * @ingroup Codecs
-		 * @sa AbstractAudioWriter AudioWriterSP
+		 * @sa AbstractWriter WriterSP
 		 *
 		 * Use TR1 shared pointer.
 		 */
-		typedef std::tr1::shared_ptr< const AbstractAudioWriter > AudioWriterCSP;
+		typedef std::tr1::shared_ptr< const AbstractWriter > WriterCSP;
 
 	}
 

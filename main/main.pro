@@ -23,6 +23,7 @@ HEADERS +=	\
 	./include/album/track.hpp	\
 	./include/widget/converter.hpp	\
 	./include/widget/mainwindow.hpp	\
+	./include/widget/outputoption.hpp	\
 	./include/widget/player.hpp	\
 	./include/widget/preference.hpp	\
 	./include/widget/progress.hpp	\
@@ -36,6 +37,7 @@ SOURCES +=	\
 	./src/main.cpp	\
 	./src/widget/converter.cpp	\
 	./src/widget/mainwindow.cpp	\
+	./src/widget/outputoption.cpp	\
 	./src/widget/player.cpp	\
 	./src/widget/preference.cpp	\
 	./src/widget/progress.cpp	\

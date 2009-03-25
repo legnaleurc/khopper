@@ -1,5 +1,5 @@
 /**
- * @file abstractaudiowriter.cpp
+ * @file abstractwriter.cpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,13 +19,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
- #include "abstractaudiowriter.hpp"
+#include "abstractwriter.hpp"
 
-namespace Khopper {
+namespace khopper {
 
 	namespace codec {
 
-		AbstractAudioWriter::AbstractAudioWriter():
+		AbstractWriter::AbstractWriter():
 		album_(),
 		artist_(),
 		bitRate_( -1 ),
@@ -39,10 +39,10 @@ namespace Khopper {
 		title_() {
 		}
 
-		AbstractAudioWriter::~AbstractAudioWriter() {
+		AbstractWriter::~AbstractWriter() {
 		}
 
-		void AbstractAudioWriter::open( const std::string & filePath ) {
+		void AbstractWriter::open( const std::string & filePath ) {
 			this->filePath_ = filePath;
 			if( this->isOpen() ) {
 				this->close();
@@ -56,13 +56,13 @@ namespace Khopper {
 			this->opening_ = true;
 		}
 
-		void AbstractAudioWriter::close() {
+		void AbstractWriter::close() {
 			this->flush();
 			this->closeResouse_();
 			this->opening_ = false;
 		}
 
-		void AbstractAudioWriter::write( const ByteArray & data ) {
+		void AbstractWriter::write( const ByteArray & data ) {
 			this->sampleQueue_.insert( this->sampleQueue_.end(), data.begin(), data.end() );
 
 			while( this->sampleQueue_.size() >= this->sampleBuffer_.size() ) {
@@ -74,7 +74,7 @@ namespace Khopper {
 			}
 		}
 
-		void AbstractAudioWriter::flush() {
+		void AbstractWriter::flush() {
 			if( this->opening_ && !this->sampleQueue_.empty() ) {
 				std::copy( this->sampleQueue_.begin(), this->sampleQueue_.end(), this->sampleBuffer_.begin() );
 				this->writeFrame_( &this->sampleBuffer_[0], this->sampleBuffer_.size() );

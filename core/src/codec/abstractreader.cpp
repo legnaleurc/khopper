@@ -1,5 +1,5 @@
 /**
- * @file abstractaudioreader.cpp
+ * @file abstractreader.cpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,13 +19,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "abstractaudioreader.hpp"
+#include "abstractreader.hpp"
 
-namespace Khopper {
+namespace khopper {
 
 	namespace codec {
 
-		AbstractAudioReader::AbstractAudioReader():
+		AbstractReader::AbstractReader():
 		album_(),
 		artist_(),
 		begin_( -1.0 ),
@@ -45,10 +45,10 @@ namespace Khopper {
 		year_( -1 ) {
 		}
 
-		AbstractAudioReader::~AbstractAudioReader() {
+		AbstractReader::~AbstractReader() {
 		}
 
-		void AbstractAudioReader::open( const std::string & filePath ) {
+		void AbstractReader::open( const std::string & filePath ) {
 			if( this->opening_ ) {
 				this->close();
 			}
@@ -63,7 +63,7 @@ namespace Khopper {
 			this->hasNext_ = true;
 		}
 
-		void AbstractAudioReader::close() {
+		void AbstractReader::close() {
 			this->album_.clear();
 			this->artist_.clear();
 			this->begin_ = -1.0;
@@ -86,7 +86,7 @@ namespace Khopper {
 			this->opening_ = false;
 		}
 
-		ByteArray AbstractAudioReader::read( double & decoded ) {
+		ByteArray AbstractReader::read( double & decoded ) {
 			decoded = 0.0;
 			if( !this->opening_ || !this->hasNext_ ) {
 				return ByteArray();
@@ -101,7 +101,7 @@ namespace Khopper {
 			return data;
 		}
 
-		bool AbstractAudioReader::seek( double timestamp ) {
+		bool AbstractReader::seek( double timestamp ) {
 			bool succeed = this->seek_( timestamp );
 			if( succeed ) {
 				this->hasNext_ = true;
@@ -109,14 +109,14 @@ namespace Khopper {
 			return succeed;
 		}
 
-		bool AbstractAudioReader::afterBegin( double timestamp ) const {
+		bool AbstractReader::afterBegin( double timestamp ) const {
 			if( this->begin_ < 0 ) {
 				return true;
 			}
 			return timestamp >= this->begin_;
 		}
 
-		bool AbstractAudioReader::afterEnd( double timestamp ) const {
+		bool AbstractReader::afterEnd( double timestamp ) const {
 			if( this->end_ < 0 ) {
 				return false;
 			}

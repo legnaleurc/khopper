@@ -19,52 +19,56 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_CONVERTER_HPP
-#define KHOPPER_CONVERTER_HPP
+#ifndef KHOPPER_WIDGET_CONVERTER_HPP
+#define KHOPPER_WIDGET_CONVERTER_HPP
 
 #include "track.hpp"
-#include "abstractaudiowriter.hpp"
+#include "abstractwriter.hpp"
 
 #include <QObject>
 
-namespace Khopper {
+namespace khopper {
 
-	/**
-	 * @brief Controller of converting
-	 */
-	class Converter : public QObject {
-		Q_OBJECT
-
-	public:
-		/**
-		 * @brief Default constructor
-		 */
-		Converter( QObject * parent = 0 );
+	namespace widget {
 
 		/**
-		 * @brief Convert @p track
-		 * @param [in] track track to convert
-		 * @param [in] targetPath output file path
-		 * @param [in] encoder encoder setting
+		 * @brief Controller of converting
 		 */
-		void convert( TrackCSP track, const std::wstring & targetPath, codec::AudioWriterSP encoder );
+		class Converter : public QObject {
+			Q_OBJECT
 
-	public slots:
-		/**
-		 * @brief Cancel converting
-		 */
-		void cancel();
+		public:
+			/**
+			 * @brief Default constructor
+			 */
+			Converter( QObject * parent = 0 );
 
-	signals:
-		/**
-		 * @brief Decoded duration
-		 * @param ms Time in second * 10000
-		 */
-		void decodedTime( int ms ) const;
+			/**
+			 * @brief Convert @p track
+			 * @param [in] track track to convert
+			 * @param [in] targetPath output file path
+			 * @param [in] encoder encoder setting
+			 */
+			void convert( album::TrackCSP track, const std::wstring & targetPath, codec::WriterSP encoder );
 
-	private:
-		bool canceled_;
-	};
+		public slots:
+			/**
+			 * @brief Cancel converting
+			 */
+			void cancel();
+
+		signals:
+			/**
+			 * @brief Decoded duration
+			 * @param ms Time in second * 10000
+			 */
+			void decodedTime( int ms ) const;
+
+		private:
+			bool canceled_;
+		};
+
+	}
 
 }
 

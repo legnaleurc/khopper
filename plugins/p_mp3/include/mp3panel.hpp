@@ -1,5 +1,5 @@
 /**
- * @file progress.hpp
+ * @file mp3panel.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,63 +19,55 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_WIDGET_PROGRESS_HPP
-#define KHOPPER_WIDGET_PROGRESS_HPP
+#ifndef KHOPPER_WIDGET_MP3PANEL_HPP
+#define KHOPPER_WIDGET_MP3PANEL_HPP
 
-#include <QDialog>
-#include <QLabel>
-#include <QProgressBar>
+#include "abstractpanel.hpp"
+
+#include <QButtonGroup>
+#include <QComboBox>
 
 namespace khopper {
 
 	namespace widget {
 
 		/**
-		 * @brief Show the progress
+		 * @brief Mp3 option widget
 		 */
-		class Progress : public QDialog {
+		class MP3Panel : public AbstractPanel {
 			Q_OBJECT
+			Q_INTERFACES( khopper::widget::AbstractPanel )
 
 		public:
 			/**
-			 * @brief Pass arguments to QDialog
+			 * @brief Default constructor
+			 * @param parent Parent widget
+			 * @param f Window flags
 			 */
-			Progress( QWidget * parent = 0, Qt::WindowFlags f = 0 );
+			MP3Panel( QWidget * parent = 0, Qt::WindowFlags f = 0 );
 
 			/**
-			 * @brief Get current progress
-			 * @sa setValue
+			 * @brief Get encoder setting object
+			 * @return Smart pointer contains AbstractWriter
 			 */
-			int getValue() const;
-
-		public slots:
+			virtual codec::WriterSP getWriter() const;
 			/**
-			 * @brief Set maximum progress
+			 * @brief Get file suffix
+			 * @return File extension, without leading '.'
 			 */
-			void setMaximum( int maximum );
+			virtual QString getSuffix() const;
 			/**
-			 * @brief Set current progress
-			 * @sa getValue
+			 * @brief Get tab title
+			 * @return Title use in tab widget
 			 */
-			void setValue( int value );
-			/**
-			 * @brief Set current item name
-			 */
-			void setItemName( const QString & name );
-			/**
-			 * @brief Set current task count
-			 */
-			void setCurrent( int current );
-			/**
-			 * @brief Set total tasks
-			 */
-			void setTotal( int total );
+			virtual QString getTitle() const;
 
 		private:
-			QLabel * itemName_;
-			QLabel * current_;
-			QLabel * total_;
-			QProgressBar * prog_;
+			QButtonGroup * brChoise_;
+			QComboBox * bitRate_;
+			QComboBox * level_;
+			QComboBox * sampleRate_;
+			QComboBox * channels_;
 		};
 
 	}

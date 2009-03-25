@@ -22,8 +22,9 @@
 #include "text.hpp"
 
 #include <QString>
+#include <QFileInfo>
 
-namespace Khopper {
+namespace khopper {
 
 	namespace text {
 
@@ -40,6 +41,10 @@ namespace Khopper {
 		}
 		std::string toLocale( const std::wstring & unicode ) {
 			return QString::fromStdWString( unicode ).toLocal8Bit().constData();
+		}
+
+		std::string getSuffix( const std::wstring & filePath ) {
+			return QFileInfo( QString::fromStdWString( filePath ) ).suffix().toStdString();
 		}
 
 	}

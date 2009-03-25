@@ -22,9 +22,11 @@
 #ifndef KHOPPER_OS_HPP
 #define KHOPPER_OS_HPP
 
+#include <QDir>
+
 #include <string>
 
-namespace Khopper {
+namespace khopper {
 
 	/**
 	 * @brief Operating System dependant system code
@@ -38,6 +40,29 @@ namespace Khopper {
 		 * @return Complete path
 		 */
 		std::wstring join( const std::wstring & front, const std::wstring & back );
+
+	}
+
+	namespace plugin {
+
+		/**
+		 * @brief Plug-in context
+		 */
+		class PluginContext {
+		public:
+			/// Default constructor
+			PluginContext();
+
+			/// get plugin's directory
+			const QDir & getDir() const;
+			/**
+			 * @brief Load plugin by plugin name
+			 * @param name plugin name
+			 */
+			QObject * load( QString name ) const;
+		private:
+			QDir d_;
+		};
 
 	}
 

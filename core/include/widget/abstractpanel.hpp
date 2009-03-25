@@ -19,51 +19,55 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_ABSTRACTPANEL_HPP
-#define KHOPPER_ABSTRACTPANEL_HPP
+#ifndef KHOPPER_WIDGET_ABSTRACTPANEL_HPP
+#define KHOPPER_WIDGET_ABSTRACTPANEL_HPP
 
-#include "abstractaudiowriter.hpp"
+#include "abstractwriter.hpp"
 
 #include <QWidget>
 
-namespace Khopper {
+namespace khopper {
 
-	/**
-	 * @brief Abstract panel widget
-	 *
-	 * All output option panel will inherit this class, \n
-	 * and must register to factory. \n
-	 */
-	class AbstractPanel : public QWidget {
-		Q_OBJECT
-
-	public:
-		/**
-		 * @brief Default constructor
-		 * @param parent Parent widget
-		 * @param f Window flags
-		 */
-		AbstractPanel( QWidget * parent = 0, Qt::WindowFlags f = 0 );
+	namespace widget {
 
 		/**
-		 * @brief Get encoder setting object
-		 * @return Smart pointer contains AbstractAudioWriter
+		 * @brief Abstract panel widget
+		 *
+		 * All output option panel will inherit this class, \n
+		 * and must register to factory. \n
 		 */
-		virtual codec::AudioWriterSP getAudioWriter() const = 0;
-		/**
-		 * @brief Get file suffix
-		 * @return File extension, without leading '.'
-		 */
-		virtual QString getSuffix() const = 0;
-		/**
-		 * @brief Get tab title
-		 * @return Title use in tab widget
-		 */
-		virtual QString getTitle() const = 0;
-	};
+		class AbstractPanel : public QWidget {
+			Q_OBJECT
+
+		public:
+			/**
+			 * @brief Default constructor
+			 * @param parent Parent widget
+			 * @param f Window flags
+			 */
+			AbstractPanel( QWidget * parent = 0, Qt::WindowFlags f = 0 );
+
+			/**
+			 * @brief Get encoder setting object
+			 * @return Smart pointer contains AbstractWriter
+			 */
+			virtual codec::WriterSP getWriter() const = 0;
+			/**
+			 * @brief Get file suffix
+			 * @return File extension, without leading '.'
+			 */
+			virtual QString getSuffix() const = 0;
+			/**
+			 * @brief Get tab title
+			 * @return Title use in tab widget
+			 */
+			virtual QString getTitle() const = 0;
+		};
+
+	}
 
 }
 
-Q_DECLARE_INTERFACE( Khopper::AbstractPanel, "org.foolproof.Plugin.AbstractPanel/1.0" );
+Q_DECLARE_INTERFACE( khopper::widget::AbstractPanel, "org.FoolproofProject.Khopper.Plugin.Panel/0.2" )
 
 #endif
