@@ -22,13 +22,6 @@
 #ifndef KHOPPER_PLUGIN_BASE_HPP
 #define KHOPPER_PLUGIN_BASE_HPP
 
-#include "os.hpp"
-#include "error.hpp"
-
-#include <QPluginLoader>
-
-#include <string>
-
 namespace khopper {
 
 	/// @defgroup Plugins Plugin System
@@ -48,29 +41,6 @@ namespace khopper {
 			}
 		private:
 			virtual Product * create_() const = 0;
-		};
-
-		/**
-		 * @brief From creator functor
-		 * @tparam ProductCreator creator type
-		 * @ingroup Plugins
-		 */
-		template< typename ProductCreator >
-		class CreatorLoader {
-		public:
-			/// Default constructor
-			CreatorLoader( const std::string & plugin ) : plugin_( plugin ) {}
-			/// Plugin loader
-			ProductCreator * operator()() {
-				plugin::PluginContext pc;
-				ProductCreator * c = qobject_cast< ProductCreator * >( pc.load( this->plugin_.c_str() ) );
-				if( !c ) {
-					throw Error< RunTime >( "Invalid plugin!" );
-				}
-				return c;
-			}
-		private:
-			std::string plugin_;
 		};
 
 	}

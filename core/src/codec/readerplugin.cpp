@@ -20,23 +20,35 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "readerplugin.hpp"
+#include "plugin_impl.hpp"
+
+#include <loki/Factory.h>
+#include <loki/Singleton.h>
 
 namespace khopper {
 
 	namespace plugin {
 
+		/**
+		 * @brief The audio reader factory
+		 * @ingroup Plugins
+		 */
+		typedef Loki::SingletonHolder<
+			Loki::Factory<
+				ReaderCreator,
+				std::string
+			>,
+			Loki::CreateUsingNew,
+			Loki::LongevityLifetime::DieAsSmallObjectChild,
+			Loki::ClassLevelLockable
+		> ReaderFactory;
+
 		bool registerReader( const std::string & key, const std::string & plugin ) {
-			return ReaderFactory::Instance().Register( key, CreatorLoader< ReaderCreator >( plugin ) );
+			return registerProduct< codec::AbstractReader, ReaderFactory >( key, plugin );
 		}
 
 		codec::ReaderSP createReader( const std::string & key ) {
-			ReaderCreator * tmp = NULL;
-			try {
-				tmp = ReaderFactory::Instance().CreateObject( key );
-			} catch( std::exception & e ) {
-				tmp = ReaderFactory::Instance().CreateObject( "*" );
-			}
-			return codec::ReaderSP( tmp->create() );
+			return codec::ReaderSP( createProduct< codec::AbstractReader, ReaderFactory >( key ) );
 		}
 
 	}

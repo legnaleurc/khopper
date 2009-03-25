@@ -25,8 +25,7 @@
 #include "plugin_base.hpp"
 #include "abstractreader.hpp"
 
-#include <loki/Factory.h>
-#include <loki/Singleton.h>
+#include <QtPlugin>
 
 namespace khopper {
 
@@ -37,20 +36,6 @@ namespace khopper {
 		 * @ingroup Plugins
 		 */
 		typedef Creator< codec::AbstractReader > ReaderCreator;
-
-		/**
-		 * @brief The audio reader factory
-		 * @ingroup Plugins
-		 */
-		typedef Loki::SingletonHolder<
-			Loki::Factory<
-				ReaderCreator,
-				std::string
-			>,
-			Loki::CreateUsingNew,
-			Loki::LongevityLifetime::DieAsSmallObjectChild,
-			Loki::ClassLevelLockable
-		> ReaderFactory;
 
 		/**
 		 * @brief Register plugin to factory
