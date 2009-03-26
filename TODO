@@ -1,7 +1,6 @@
 功能：
 	播放器的使用者介面要再微調
-	DefaultAudio應該歸類為plugin
-	考慮是否要把qmake改為cmake
+	播放器要處理CUE的時間
 	MP3 VBR功能是不完整的
 	至網路拿取音樂資料
 	CUE sheet寫入功能

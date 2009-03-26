@@ -25,8 +25,7 @@
 #include "plugin_base.hpp"
 #include "abstractwriter.hpp"
 
-#include <loki/Factory.h>
-#include <loki/Singleton.h>
+#include <QtPlugin>
 
 namespace khopper {
 
@@ -36,20 +35,6 @@ namespace khopper {
 		 * @brief Wirter creator interface
 		 */
 		typedef Creator< codec::AbstractWriter > WriterCreator;
-
-		/**
-		 * @brief The audio writer factory
-		 * @ingroup Plugins
-		 */
-		typedef Loki::SingletonHolder<
-			Loki::Factory<
-				WriterCreator,
-				std::string
-			>,
-			Loki::CreateUsingNew,
-			Loki::LongevityLifetime::DieAsSmallObjectChild,
-			Loki::ClassLevelLockable
-		> WriterFactory;
 
 		/**
 		 * @brief Register plugin to factory

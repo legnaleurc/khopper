@@ -20,23 +20,35 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "writerplugin.hpp"
+#include "plugin_impl.hpp"
+
+#include <loki/Factory.h>
+#include <loki/Singleton.h>
 
 namespace khopper {
 
 	namespace plugin {
 
+		/**
+		 * @brief The audio writer factory
+		 * @ingroup Plugins
+		 */
+		typedef Loki::SingletonHolder<
+			Loki::Factory<
+				WriterCreator,
+				std::string
+			>,
+			Loki::CreateUsingNew,
+			Loki::LongevityLifetime::DieAsSmallObjectChild,
+			Loki::ClassLevelLockable
+		> WriterFactory;
+
 		bool registerWriter( const std::string & key, const std::string & plugin ) {
-			return WriterFactory::Instance().Register( key, CreatorLoader< WriterCreator >( plugin ) );
+			return registerProduct< codec::AbstractWriter, WriterFactory >( key, plugin );
 		}
 
 		codec::WriterSP createWriter( const std::string & key ) {
-			WriterCreator * tmp = NULL;
-			try {
-				tmp = WriterFactory::Instance().CreateObject( key );
-			} catch( std::exception & e ) {
-				tmp = WriterFactory::Instance().CreateObject( "*" );
-			}
-			return codec::WriterSP( tmp->create() );
+			return codec::WriterSP( createProduct< codec::AbstractWriter, WriterFactory >( key ) );
 		}
 
 	}

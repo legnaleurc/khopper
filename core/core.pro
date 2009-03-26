@@ -19,6 +19,7 @@ HEADERS +=	\
 	./include/codec/abstractwriter.hpp	\
 	./include/codec/codec_base.hpp	\
 	./include/codec/plugin_base.hpp	\
+	./include/codec/plugin_impl.hpp	\
 	./include/codec/readerplugin.hpp	\
 	./include/codec/writerplugin.hpp	\
 	./include/common/error.hpp	\

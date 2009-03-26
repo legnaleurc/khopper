@@ -21,6 +21,7 @@
  */
 #include "tr1.hpp"
 #include "defaultwriter.hpp"
+#include "error.hpp"
 
 extern "C" {
 #include <avcodec.h>
