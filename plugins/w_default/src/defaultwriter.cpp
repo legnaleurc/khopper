@@ -20,8 +20,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "tr1.hpp"
-#include "defaultwriter.hpp"
 #include "error.hpp"
+#include "defaultwriter.hpp"
+#include "defaultwc.hpp"
 
 extern "C" {
 #include <avcodec.h>

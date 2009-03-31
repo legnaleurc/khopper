@@ -1,5 +1,5 @@
 /**
- * @file plugin_base.hpp
+ * @file defaultrc.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,31 +19,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_PLUGIN_BASE_HPP
-#define KHOPPER_PLUGIN_BASE_HPP
+#ifndef KHOPPER_CODEC_DEFAULTRC_HPP
+#define KHOPPER_CODEC_DEFAULTRC_HPP
+
+#include "readerplugin.hpp"
 
 namespace khopper {
 
-	/// @defgroup Plugins Plugin System
-	// @{
-	// @}
-	/**
-	 * @brief Contains plugin utility
-	 * @ingroup Plugins
-	 */
 	namespace plugin {
 
-		template< typename Product >
-		class Creator {
-		public:
-			Creator() {}
-			Product * create() const {
-				return this->create_();
-			}
-		private:
-			Creator( const Creator & );
-			Creator & operator =( const Creator & );
-			virtual Product * create_() const = 0;
+		/// Default reader creator
+		class DefaultReaderCreator : public QObject, public ReaderCreator {
+			Q_OBJECT
+			Q_INTERFACES( khopper::plugin::ReaderCreator )
+
+			/// Creates reader object
+			virtual codec::AbstractReader * create_() const;
 		};
 
 	}

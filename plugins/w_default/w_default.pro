@@ -11,7 +11,7 @@ SRC_DIRS = ./src
 INCLUDEPATH += $${INC_DIRS} $${SRC_DIRS}
 DEPANDPATH  += $${INC_DIRS}
 
-HEADERS = include/defaultwriter.hpp
+HEADERS = include/defaultwriter.hpp include/defaultwc.hpp
 SOURCES = src/defaultwriter.cpp
 
 MOC_DIR = $${ROOT_PATH}/tmp/moc

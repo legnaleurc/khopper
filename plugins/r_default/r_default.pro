@@ -11,7 +11,7 @@ SRC_DIRS = ./src
 INCLUDEPATH += $${INC_DIRS} $${SRC_DIRS}
 DEPANDPATH  += $${INC_DIRS}
 
-HEADERS = include/defaultreader.hpp
+HEADERS = include/defaultreader.hpp include/defaultrc.hpp
 SOURCES = src/defaultreader.cpp
 
 MOC_DIR = $${ROOT_PATH}/tmp/moc

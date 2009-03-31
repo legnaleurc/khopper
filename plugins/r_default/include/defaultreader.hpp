@@ -19,10 +19,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_CODEC_DEFAULTAUDIOREADER_HPP
-#define KHOPPER_CODEC_DEFAULTAUDIOREADER_HPP
+#ifndef KHOPPER_CODEC_DEFAULTREADER_HPP
+#define KHOPPER_CODEC_DEFAULTREADER_HPP
 
-#include "readerplugin.hpp"
+#include "abstractreader.hpp"
 
 struct AVFormatContext;
 struct AVCodecContext;
@@ -62,20 +62,6 @@ namespace khopper {
 			std::tr1::shared_ptr< AVCodecContext > pCodecContext_;
 			std::tr1::shared_ptr< AVPacket > pPacket_;
 			double timeBase_;
-		};
-
-	}
-
-	namespace plugin {
-
-		/// Default reader creator
-		class DefaultReaderCreator : public QObject, public ReaderCreator {
-			Q_OBJECT
-			Q_INTERFACES( khopper::plugin::ReaderCreator )
-
-		private:
-			/// Creates reader object
-			virtual codec::AbstractReader * create_() const;
 		};
 
 	}
