@@ -137,13 +137,13 @@ namespace khopper {
 				this->album_ = album;
 			}
 			void setAlbum( const QString & album ) {
-				this->setAlbum( album.toUtf8() );
+				this->setAlbum( this->textCodec_->fromUnicode( album ) );
 			}
 			void setArtist( const QByteArray & artist ) {
 				this->artist_ = artist;
 			}
 			void setArtist( const QString & artist ) {
-				this->setArtist( artist.toUtf8() );
+				this->setArtist( this->textCodec_->fromUnicode( artist ) );
 			}
 			void setBitRate( int bitRate ) {
 				this->bitRate_ = bitRate;
@@ -155,7 +155,7 @@ namespace khopper {
 				return this->comments_.insert( std::make_pair( key, value ) ).second;
 			}
 			bool addComment( const QString & key, const QString & value ) {
-				return this->addComment( key.toUtf8(), value.toUtf8() );
+				return this->addComment( this->textCodec_->fromUnicode( key ), this->textCodec_->fromUnicode( value ) );
 			}
 			void setDataType( DataType dataType ) {
 				this->dataType_ = dataType;
@@ -176,7 +176,7 @@ namespace khopper {
 				this->garbage_.push_back( garbage );
 			}
 			void addGarbage( const QString & garbage ) {
-				this->addGarbage( garbage.toUtf8() );
+				this->addGarbage( this->textCodec_->fromUnicode( garbage ) );
 			}
 			void setIndex( short int index ) {
 				this->index_ = index;
@@ -185,7 +185,7 @@ namespace khopper {
 				this->isrc_ = isrc;
 			}
 			void setISRC( const QString & isrc ) {
-				this->setISRC( isrc.toUtf8() );
+				this->setISRC( this->textCodec_->fromUnicode( isrc ) );
 			}
 			void setPostGap( const Index & postGap ) {
 				this->postGap_ = postGap;
@@ -200,7 +200,7 @@ namespace khopper {
 				this->songWriter_ = songWriter;
 			}
 			void setSongWriter( const QString & songWriter ) {
-				this->setSongWriter( songWriter.toUtf8() );
+				this->setSongWriter( this->textCodec_->fromUnicode( songWriter ) );
 			}
 			void setStartTime( const Index & startTime ) {
 				this->startTime_ = startTime;
@@ -212,7 +212,7 @@ namespace khopper {
 				this->title_ = title;
 			}
 			void setTitle( const QString & title ) {
-				this->setTitle( title.toUtf8() );
+				this->setTitle( this->textCodec_->fromUnicode( title ) );
 			}
 
 		private:

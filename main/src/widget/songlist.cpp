@@ -28,6 +28,8 @@
 #include <QFileInfo>
 #include <QMenu>
 #include <QAction>
+#include <QSignalMapper>
+#include <QTextCodec>
 #include <QtDebug>
 
 namespace {
@@ -73,6 +75,29 @@ namespace khopper {
 			this->addAction( delSong );
 			connect( delSong, SIGNAL( triggered() ), this, SLOT( removeSelected_() ) );
 
+			// Set context menu
+			QMenu * codec = new QMenu( tr( "Change Text Codec" ), this );
+
+			QSignalMapper * sm = new QSignalMapper( this );
+
+			QAction * big5 = new QAction( tr( "Big5" ), this );
+			codec->addAction( big5 );
+			connect( big5, SIGNAL( triggered() ), sm, SLOT( map() ) );
+			sm->setMapping( big5, "Big5" );
+			QAction * sjis = new QAction( tr( "Shift-JIS" ), this );
+			codec->addAction( sjis );
+			connect( sjis, SIGNAL( triggered() ), sm, SLOT( map() ) );
+			sm->setMapping( sjis, "Shift-JIS" );
+			QAction * utf8 = new QAction( tr( "UTF-8" ), this );
+			codec->addAction( utf8 );
+			connect( utf8, SIGNAL( triggered() ), sm, SLOT( map() ) );
+			sm->setMapping( utf8, "UTF-8" );
+
+			connect( sm, SIGNAL( mapped( const QString & ) ), this, SLOT( changeTextCodec_( const QString & ) ) );
+
+			this->contextMenu_->addMenu( codec );
+			this->contextMenu_->addSeparator();
+
 			QAction * convert = new QAction( tr( "Convert" ), this );
 			convert->setShortcut( Qt::CTRL + Qt::Key_Return );
 			connect( convert, SIGNAL( triggered() ), this, SIGNAL( requireConvert() ) );
@@ -117,6 +142,19 @@ namespace khopper {
 			}
 
 			return result;
+		}
+
+		void SongList::changeTextCodec_( const QString & name ) {
+			QTextCodec * codec = QTextCodec::codecForName( name.toAscii() );
+			QModelIndexList selected = this->selectionModel()->selectedRows();
+			foreach( QModelIndex index, selected ) {
+				album::TrackSP track( this->tracks_[index.row()] );
+				track->setTextCodec( codec );
+
+				this->model_->item( index.row(), 0 )->setText( track->getTitle() );
+				this->model_->item( index.row(), 1 )->setText( track->getArtist() );
+				this->model_->item( index.row(), 2 )->setText( track->getAlbum() );
+			}
 		}
 
 		void SongList::removeSelected_() {
