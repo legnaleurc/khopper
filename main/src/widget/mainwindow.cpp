@@ -50,9 +50,8 @@
 
 namespace {
 
-	QString applyFormat( QString tpl, khopper::album::TrackCSP track ) {
-		std::wstring result = ( boost::wformat( tpl.toStdWString() ) % track->title % track->artist % track->index ).str();
-		return QString::fromStdWString( result );
+	inline QString applyFormat( boost::format tpl, khopper::album::TrackCSP track ) {
+		return QString::fromStdString( ( tpl % track->getTitle().toUtf8().constData() % track->getArtist().toUtf8().constData() % track->getIndex() ).str() );
 	}
 
 }
@@ -174,7 +173,7 @@ namespace khopper {
 
 		QString MainWindow::getOutDir_( album::TrackSP track ) const {
 			if( this->useSourcePath_->isChecked() ) {
-				return QFileInfo( QString::fromStdWString( track->filePath ) ).absolutePath();
+				return QFileInfo( QString::fromLocal8Bit( track->getFilePath().constData() ) ).absolutePath();
 			} else {
 				return this->outputPath_->text();
 			}
@@ -195,9 +194,8 @@ namespace khopper {
 				try {
 					// generate output paths
 					QStringList outputPaths;
-					QString tpl = this->preference_->getTemplate();
 					for( std::size_t i = 0; i < tracks.size(); ++i ) {
-						outputPaths.push_back( this->getOutDir_( tracks[i] ) + "/" + ::applyFormat( tpl, tracks[i] ) + "." + option->getSuffix() );
+						outputPaths.push_back( this->getOutDir_( tracks[i] ) + "/" + ::applyFormat( this->preference_->getTemplate(), tracks[i] ) + "." + option->getSuffix() );
 					}
 
 					// set progress bar
@@ -240,8 +238,8 @@ namespace khopper {
 
 						if( this->codec_->exec() ) {
 							try {
-								album::CUESheet sheet( codec_->getDecoded().toStdWString(), fI.absolutePath().toStdWString() );
-								tracks.insert( tracks.end(), sheet.tracks.begin(), sheet.tracks.end() );
+								album::CUESheet sheet( codec_->getDecoded(), fI.absolutePath() );
+								tracks.insert( tracks.end(), sheet.getTracks().begin(), sheet.getTracks().end() );
 							} catch( std::exception & e ) {
 								this->showErrorMessage_( tr( "Error on parsing CUE Sheet!" ), trUtf8( e.what() ) );
 							}
@@ -250,7 +248,7 @@ namespace khopper {
 						album::TrackSP track( new album::Track );
 
 						try {
-							track->load( filePath.toStdWString() );
+							track->load( filePath.toLocal8Bit() );
 							tracks.push_back( track );
 						} catch( std::exception & e ) {
 							this->showErrorMessage_( tr( "Can not decode this file!" ), trUtf8( e.what() ) );

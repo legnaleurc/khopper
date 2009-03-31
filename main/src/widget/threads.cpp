@@ -56,14 +56,14 @@ namespace khopper {
 		void ConverterThread::run() {
 			try {
 				for( std::size_t i = 0; i < this->tracks_.size(); ++i ) {
-					this->encoder_->setTitle( text::toUTF8( this->tracks_[i]->title ) );
-					this->encoder_->setArtist( text::toUTF8( this->tracks_[i]->artist ) );
-					this->encoder_->setAlbum( text::toUTF8( this->tracks_[i]->album ) );
-					emit taskName( QString::fromStdWString( this->tracks_[i]->title ) );
-					emit taskGoal( this->tracks_[i]->duration.toDouble() * 10000 );
+					this->encoder_->setTitle( this->tracks_[i]->getTitle().toUtf8().constData() );
+					this->encoder_->setArtist( this->tracks_[i]->getArtist().toUtf8().constData() );
+					this->encoder_->setAlbum( this->tracks_[i]->getAlbum().toUtf8().constData() );
+					emit taskName( this->tracks_[i]->getTitle() );
+					emit taskGoal( this->tracks_[i]->getDuration().toDouble() * 10000 );
 					emit currentTask( i + 1 );
 
-					this->converter_.convert( this->tracks_[i], this->paths_[i].toStdWString(), this->encoder_ );
+					this->converter_.convert( this->tracks_[i], this->paths_[i], this->encoder_ );
 					if( this->canceled_ ) {
 						this->canceled_ = false;
 						break;
