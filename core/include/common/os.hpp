@@ -39,7 +39,7 @@ namespace khopper {
 		 * @param [in] back back part
 		 * @return Complete path
 		 */
-		std::wstring join( const std::wstring & front, const std::wstring & back );
+		QString join( const QString & front, const QString & back );
 
 	}
 

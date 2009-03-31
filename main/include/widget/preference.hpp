@@ -22,6 +22,8 @@
 #ifndef KHOPPER_WIDGET_PREFERENCE_HPP
 #define KHOPPER_WIDGET_PREFERENCE_HPP
 
+#include <boost/format.hpp>
+
 #include <QDialog>
 #include <QLineEdit>
 #include <QDialogButtonBox>
@@ -44,7 +46,7 @@ namespace khopper {
 			 * @brief Get file name template
 			 * @return Format string in boost::format
 			 */
-			QString getTemplate() const;
+			boost::format getTemplate() const;
 
 		private slots:
 			void perform_( QAbstractButton * );

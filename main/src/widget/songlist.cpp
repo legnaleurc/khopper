@@ -56,9 +56,13 @@ namespace khopper {
 
 			// Set header
 			QStringList headers;
-			for( std::vector< std::wstring >::const_iterator it = album::Track::Headers.begin(); it != album::Track::Headers.end(); ++it ) {
-				headers.push_back( QString::fromStdWString( *it ) );
-			}
+			headers << "Title";
+			headers << "Artist";
+			headers << "Album";
+			headers << "Duration";
+			headers << "Bit Rate";
+			headers << "Channels";
+			headers << "Sample Rate";
 			this->model_->setHorizontalHeaderLabels( headers );
 
 			// Set model
@@ -83,18 +87,18 @@ namespace khopper {
 			int offset = this->model_->rowCount();
 			// add all tracks
 			for( std::size_t row = 0; row < tracks.size(); ++row ) {
-				this->model_->setItem( row + offset, 0, new QStandardItem( QString::fromStdWString( tracks[row]->title ) ) );
-				this->model_->setItem( row + offset, 1, new QStandardItem( QString::fromStdWString( tracks[row]->artist ) ) );
-				this->model_->setItem( row + offset, 2, new QStandardItem( QString::fromStdWString( tracks[row]->album ) ) );
+				this->model_->setItem( row + offset, 0, new QStandardItem( tracks[row]->getTitle() ) );
+				this->model_->setItem( row + offset, 1, new QStandardItem( tracks[row]->getArtist() ) );
+				this->model_->setItem( row + offset, 2, new QStandardItem( tracks[row]->getAlbum() ) );
 
 				// fields should not be editable
-				this->model_->setItem( row + offset, 3, new QStandardItem( QString::fromStdWString( tracks[row]->duration.toStdWString() ) ) );
+				this->model_->setItem( row + offset, 3, new QStandardItem( QString::fromStdWString( tracks[row]->getDuration().toStdWString() ) ) );
 				this->model_->item( row + offset, 3 )->setEditable( false );
-				this->model_->setItem( row + offset, 4, new QStandardItem( QString::number( tracks[row]->bitRate ) ) );
+				this->model_->setItem( row + offset, 4, new QStandardItem( QString::number( tracks[row]->getBitRate() ) ) );
 				this->model_->item( row + offset, 4 )->setEditable( false );
-				this->model_->setItem( row + offset, 5, new QStandardItem( QString::number( tracks[row]->sampleRate ) ) );
+				this->model_->setItem( row + offset, 5, new QStandardItem( QString::number( tracks[row]->getSampleRate() ) ) );
 				this->model_->item( row + offset, 5 )->setEditable( false );
-				this->model_->setItem( row + offset, 6, new QStandardItem( QString::number( tracks[row]->channels ) ) );
+				this->model_->setItem( row + offset, 6, new QStandardItem( QString::number( tracks[row]->getChannels() ) ) );
 				this->model_->item( row + offset, 6 )->setEditable( false );
 			}
 		}
@@ -129,13 +133,13 @@ namespace khopper {
 			album::TrackSP track = this->tracks_.at( item->row() );
 			switch( item->column() ) {
 			case 0:
-				track->title = item->text().toStdWString();
+				track->setTitle( item->text() );
 				break;
 			case 1:
-				track->artist = item->text().toStdWString();
+				track->setArtist( item->text() );
 				break;
 			case 2:
-				track->album = item->text().toStdWString();
+				track->setAlbum( item->text() );
 				break;
 			default:
 				// other fields should not be editable

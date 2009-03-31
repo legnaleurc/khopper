@@ -33,9 +33,9 @@ namespace khopper {
 		canceled_( false ) {
 		}
 
-		void Converter::convert( album::TrackCSP track, const std::wstring & targetPath, codec::WriterSP encoder ) {
-			codec::ReaderSP decoder( plugin::createReader( text::getSuffix( track->filePath ) ) );
-			decoder->open( text::toLocale( track->filePath ) );
+		void Converter::convert( album::TrackCSP track, const QString & targetPath, codec::WriterSP encoder ) {
+			codec::ReaderSP decoder( plugin::createReader( text::getSuffix( track->getFilePath() ) ) );
+			decoder->open( track->getFilePath().constData() );
 			encoder->open( text::toLocale( targetPath ) );
 			this->canceled_ = false;
 
@@ -43,8 +43,8 @@ namespace khopper {
 				throw Error< RunTime >( "Can not open decoder or encoder!" );
 			}
 
-			double begin = track->startTime.toDouble();
-			double end = begin + track->duration.toDouble();
+			double begin = track->getStartTime().toDouble();
+			double end = begin + track->getDuration().toDouble();
 			decoder->setRange( begin, end );
 			if( !decoder->seek( begin ) ) {
 				throw Error< codec::Codec >( "Invalid start point" );

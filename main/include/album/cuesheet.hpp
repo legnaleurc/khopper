@@ -33,9 +33,6 @@ namespace khopper {
 
 		/**
 		 * @brief The CUE parser
-		 *
-		 * This module uses std::wstring to store unicode string.\n
-		 * UTF-16 on Windows(R), UCS4 on POSIX.
 		 */
 		class CUESheet {
 		public:
@@ -49,47 +46,58 @@ namespace khopper {
 			 * @param [in] content CHESheet content
 			 * @param [in] dirPath where the CUE sheet comes from
 			 */
-			CUESheet( const std::wstring & content, const std::wstring & dirPath = std::wstring() );
+			CUESheet( const QString & content, const QString & dirPath = QString() );
 
 			/**
 			 * @brief Set CUE sheet by given whole content
 			 * @param [in] content CHESheet content
 			 * @param [in] dirPath where the CUE sheet comes from
 			 */
-			void open( const std::wstring & content, const std::wstring & dirPath = std::wstring() );
+			void open( const QString & content, const QString & dirPath = QString() );
 
-			/**
-			 * @brief Dump CUE Sheet to string
-			 * @return Human readable information
-			 */
-			std::wstring toStdWString() const;
-
-			/// Album performer
-			std::wstring artist;
-			/// Album catalog
-			std::wstring catalog;
-			/// CD Text File
-			std::wstring cdTextFile;
-			/// Album Comments
-			std::map< std::wstring, std::wstring > comments;
-			/// Garbage information
-			std::vector< std::wstring > garbage;
-			/// Album writer
-			std::wstring songWriter;
-			/// Album title
-			std::wstring title;
-			/// Album tracks
-			std::vector< TrackSP > tracks;
+			const QString & getArtist() const {
+				return this->artist_;
+			}
+			const QString & getCatalog() const {
+				return this->catalog_;
+			}
+			const QString & getCDTextFile() const {
+				return this->cdTextFile_;
+			}
+			const QString & getComment( const QString & key ) const {
+				return this->comments_.find( key )->second;
+			}
+			const std::vector< QString > & getGarbage() const {
+				return this->garbage_;
+			}
+			const QString & getSongWriter() const {
+				return this->songWriter_;
+			}
+			const QString & getTitle() const {
+				return this->title_;
+			}
+			const std::vector< TrackSP > & getTracks() const {
+				return this->tracks_;
+			}
 
 		private:
-			void parseCUE_( const std::wstring &, const std::wstring & );
-			void parseSingle_( const std::wstring &, const std::wstring &, int );
-			std::pair< std::wstring, Track::FileType > parseFile_( const std::wstring &, const std::wstring &, const std::wstring & );
-			void parseFlags_( const std::wstring &, int );
-			void parseIndex_( const std::wstring &, const std::wstring &, const std::wstring &, const std::wstring &, const std::wstring &, int );
-			void parseComment_( const std::wstring &, const std::wstring &, int );
-			void parseTrack_( const std::wstring &, const std::pair< std::wstring, Track::FileType > &, const std::wstring & );
-			void parseGarbage_( const std::wstring &, int );
+			QString artist_;
+			QString catalog_;
+			QString cdTextFile_;
+			std::map< QString, QString > comments_;
+			std::vector< QString > garbage_;
+			QString songWriter_;
+			QString title_;
+			std::vector< TrackSP > tracks_;
+
+			void parseCUE_( QString, const QString & );
+			void parseSingle_( const QString &, const QString &, int );
+			std::pair< QString, Track::FileType > parseFile_( const QString &, const QString &, const QString & );
+			void parseFlags_( const QString &, int );
+			void parseIndex_( const QString &, const QString &, const QString &, const QString &, const QString &, int );
+			void parseComment_( const QString &, const QString &, int );
+			void parseTrack_( const QString &, const std::pair< QString, Track::FileType > &, const QString & );
+			void parseGarbage_( const QString &, int );
 		};
 
 		/**

@@ -22,6 +22,7 @@
 #ifndef KHOPPER_TEXT_HPP
 #define KHOPPER_TEXT_HPP
 
+#include <QString>
 #include <string>
 
 namespace khopper {
@@ -39,10 +40,11 @@ namespace khopper {
 		/// @brief Convert @p locale to Unicode
 		std::wstring fromLocale( const std::string & locale );
 		/// @brief Convert @p unicode to system locale
-		std::string toLocale( const std::wstring & unicode );
+		std::string toLocale( const QString & unicode );
 
 		/// @brief Get suffix of a file name
-		std::string getSuffix( const std::wstring & filePath );
+		std::string getSuffix( const QString & filePath );
+		std::string getSuffix( const QByteArray & filePath );
 
 	}
 

@@ -21,7 +21,6 @@
  */
 #include "text.hpp"
 
-#include <QString>
 #include <QFileInfo>
 
 namespace khopper {
@@ -39,12 +38,15 @@ namespace khopper {
 		std::wstring fromLocale( const std::string & locale ) {
 			return QString::fromLocal8Bit( locale.c_str() ).toStdWString();
 		}
-		std::string toLocale( const std::wstring & unicode ) {
-			return QString::fromStdWString( unicode ).toLocal8Bit().constData();
+		std::string toLocale( const QString & unicode ) {
+			return unicode.toLocal8Bit().constData();
 		}
 
-		std::string getSuffix( const std::wstring & filePath ) {
-			return QFileInfo( QString::fromStdWString( filePath ) ).suffix().toStdString();
+		std::string getSuffix( const QString & filePath ) {
+			return QFileInfo( filePath ).suffix().toUtf8().constData();
+		}
+		std::string getSuffix( const QByteArray & filePath ) {
+			return getSuffix( QString::fromLocal8Bit( filePath.constData() ) );
 		}
 
 	}

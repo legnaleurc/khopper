@@ -83,9 +83,9 @@ namespace khopper {
 			} else {
 				std::vector< album::TrackSP > selected( this->songList_->getSelectedTracks() );
 				if( selected.empty() ) {
-					this->player_->setCurrentSource( QString::fromStdWString( tracks[0]->filePath ) );
+					this->player_->setCurrentSource( QString::fromLocal8Bit( tracks[0]->getFilePath() ) );
 				} else {
-					this->player_->setCurrentSource( QString::fromStdWString( selected[0]->filePath ) );
+					this->player_->setCurrentSource( QString::fromLocal8Bit( selected[0]->getFilePath() ) );
 				}
 
 				this->player_->play();

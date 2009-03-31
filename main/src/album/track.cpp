@@ -29,46 +29,48 @@ namespace khopper {
 	namespace album {
 
 		Track::Track():
-		album(),
-		artist(),
-		bitRate( 0 ),
-		channels( 0 ),
-		comments(),
-		dataType( AUDIO ),
-		duration(),
-		filePath(),
-		fileType( BINARY ),
-		flags( NONE ),
-		garbage(),
-		index( 0 ),
-		isrc(),
-		postGap(),
-		preGap(),
-		sampleRate(),
-		songWriter(),
-		startTime(),
-		textCodec( QTextCodec::codecForName( "UTF-8" ) ),
-		title() {
+		album_(),
+		artist_(),
+		bitRate_( 0 ),
+		channels_( 0 ),
+		comments_(),
+		dataType_( AUDIO ),
+		duration_(),
+		filePath_(),
+		fileType_( BINARY ),
+		flags_( NONE ),
+		garbage_(),
+		index_( 0 ),
+		isrc_(),
+		postGap_(),
+		preGap_(),
+		sampleRate_(),
+		songWriter_(),
+		startTime_(),
+		textCodec_( QTextCodec::codecForName( "UTF-8" ) ),
+		title_() {
 		}
 
 		void Track::load( const QByteArray & filePath ) {
-			this->filePath = filePath;
+			this->filePath_ = filePath;
 
 			codec::ReaderSP decoder( plugin::createReader( text::getSuffix( filePath ) ) );
-			decoder->open( text::toLocale( this->filePath ) );
+			decoder->open( this->filePath_.constData() );
 			if( decoder->isOpen() ) {
-				this->album = decoder->getAlbum();
-				this->artist = decoder->getArtist() );
-				this->bitRate = decoder->getBitRate();
-				this->channels = decoder->getChannels();
-				this->duration = decoder->getDuration();
-				this->sampleRate = decoder->getSampleRate();
-				this->title = decoder->getTitle();
+				this->album_ = decoder->getAlbum().c_str();
+				this->artist_ = decoder->getArtist().c_str();
+				this->bitRate_ = decoder->getBitRate();
+				this->channels_ = decoder->getChannels();
+				this->duration_ = decoder->getDuration();
+				this->sampleRate_ = decoder->getSampleRate();
+				this->title_ = decoder->getTitle().c_str();
 
 				decoder->close();
 			} else {
 				throw Error< codec::Codec >( "Can not open file!" );
 			}
 		}
+
+	}
 
 }
