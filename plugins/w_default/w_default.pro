@@ -40,7 +40,6 @@ unix {
 	QMAKE_CXXFLAGS += -std=c++0x
 	CONFIG         += link_pkgconfig
 	PKGCONFIG      += libavcodec libavformat libavutil
-	INCLUDEPATH    += /usr/include/ffmpeg/libavcodec /usr/include/ffmpeg/libavformat
 }
 
 win32 {

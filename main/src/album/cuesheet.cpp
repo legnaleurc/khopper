@@ -30,6 +30,8 @@
 #include <QRegExp>
 #include <QtDebug>
 
+#include <algorithm>
+
 namespace {
 
 	inline QString stripQuote( const QString & s ) {

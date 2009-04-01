@@ -32,6 +32,8 @@
 #include <QTextCodec>
 #include <QtDebug>
 
+#include <algorithm>
+
 namespace {
 
 	inline bool indexRowCompD( const QModelIndex & l, const QModelIndex & r ) {
