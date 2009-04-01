@@ -24,97 +24,52 @@
 #include "text.hpp"
 #include "error.hpp"
 
-#include <QtDebug>
-
-#include <sstream>
-
-namespace {
-
-	std::vector< std::wstring > createHeader() {
-		std::vector< std::wstring > vs;
-		vs.push_back( L"Title" );
-		vs.push_back( L"Performer" );
-		vs.push_back( L"Album" );
-		vs.push_back( L"Duration" );
-		vs.push_back( L"Bit Rate" );
-		vs.push_back( L"Sample Rate" );
-		vs.push_back( L"Channels" );
-		return vs;
-	}
-
-}
-
 namespace khopper {
 
 	namespace album {
 
 		Track::Track():
-		album(),
-		artist(),
-		bitRate( 0 ),
-		channels( 0 ),
-		comments(),
-		dataType( AUDIO ),
-		duration(),
-		filePath(),
-		fileType( BINARY ),
-		flags( NONE ),
-		garbage(),
-		index( 0 ),
-		isrc(),
-		postGap(),
-		preGap(),
-		sampleRate(),
-		songWriter(),
-		startTime(),
-		title() {
+		album_(),
+		artist_(),
+		bitRate_( 0 ),
+		channels_( 0 ),
+		comments_(),
+		dataType_( AUDIO ),
+		duration_(),
+		filePath_(),
+		fileType_( BINARY ),
+		flags_( NONE ),
+		garbage_(),
+		index_( 0 ),
+		isrc_(),
+		postGap_(),
+		preGap_(),
+		sampleRate_(),
+		songWriter_(),
+		startTime_(),
+		textCodec_( QTextCodec::codecForName( "UTF-8" ) ),
+		title_() {
 		}
 
-		void Track::load( const std::wstring & filePath ) {
-			this->filePath = filePath;
+		void Track::load( const QByteArray & filePath ) {
+			this->filePath_ = filePath;
 
 			codec::ReaderSP decoder( plugin::createReader( text::getSuffix( filePath ) ) );
-			decoder->open( text::toLocale( this->filePath ) );
+			decoder->open( this->filePath_.constData() );
 			if( decoder->isOpen() ) {
-				this->album = text::fromUTF8( decoder->getAlbum() );
-				this->artist = text::fromUTF8( decoder->getArtist() );
-				this->bitRate = decoder->getBitRate();
-				this->channels = decoder->getChannels();
-				this->duration = decoder->getDuration();
-				this->sampleRate = decoder->getSampleRate();
-				this->title = text::fromUTF8( decoder->getTitle() );
+				this->album_ = decoder->getAlbum().c_str();
+				this->artist_ = decoder->getArtist().c_str();
+				this->bitRate_ = decoder->getBitRate();
+				this->channels_ = decoder->getChannels();
+				this->duration_ = decoder->getDuration();
+				this->sampleRate_ = decoder->getSampleRate();
+				this->title_ = decoder->getTitle().c_str();
 
 				decoder->close();
 			} else {
 				throw Error< codec::Codec >( "Can not open file!" );
 			}
 		}
-
-		std::wstring Track::toStdWString() const {
-			std::wostringstream sout;
-			sout << L"Title:\t" << this->title << L"\n";
-			sout << L"Artist:\t" << this->artist << L"\n";
-			sout << L"Song Writer:\t" << this->songWriter << L"\n";
-			sout << L"Track index:\t" << this->index << L"\n";
-			sout << L"ISRC:\t" << this->isrc << L"\n";
-			sout << L"Start:\t" << this->startTime.toStdWString() << L"\n";
-			sout << L"End:\t" << this->duration.toStdWString() << L"\n";
-			sout << L"Pregap:\t" << this->preGap.toStdWString() << L"\n";
-			sout << L"Postgap:\t" << this->postGap.toStdWString() << L"\n";
-			sout << L"Type:\t" << this->dataType << L"\n";
-			sout << L"Comments:\n";
-			for( std::map< std::wstring, std::wstring >::const_iterator it = this->comments.begin(); it != this->comments.end(); ++it ) {
-				sout << L"\t" << it->first << L":\t" << it->second << L"\n";
-			}
-			sout << L"Garbage:\n";
-			for( std::vector< std::wstring >::const_iterator it = this->garbage.begin(); it != this->garbage.end(); ++it ) {
-				sout << L"\t" << *it << L"\n";
-			}
-			sout << L"Flags:\t" << this->flags << L"\n";
-			return sout.str();
-		}
-
-		const std::vector< std::wstring > Track::Headers = createHeader();
 
 	}
 

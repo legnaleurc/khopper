@@ -36,10 +36,13 @@ namespace khopper {
 		template< typename Product >
 		class Creator {
 		public:
+			Creator() {}
 			Product * create() const {
 				return this->create_();
 			}
 		private:
+			Creator( const Creator & );
+			Creator & operator =( const Creator & );
 			virtual Product * create_() const = 0;
 		};
 

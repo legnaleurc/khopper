@@ -66,13 +66,13 @@ namespace khopper {
 			setting.endGroup();
 		}
 
-		QString Preference::getTemplate() const {
+		boost::format Preference::getTemplate() const {
 			QString tmp = this->fnTpl_->text();
 			tmp.replace( "%t", "%1%" );
 			tmp.replace( "%a", "%2%" );
 			tmp.replace( QRegExp( "%(\\d*)i" ), "%|3$0\\1|" );
 			tmp.replace( "%%", "%" );
-			return tmp;
+			return boost::format( tmp.toUtf8().constData() );
 		}
 
 		void Preference::perform_( QAbstractButton * button ) {

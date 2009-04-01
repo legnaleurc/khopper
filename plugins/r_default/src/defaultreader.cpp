@@ -20,8 +20,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "tr1.hpp"
-#include "defaultreader.hpp"
 #include "error.hpp"
+#include "defaultreader.hpp"
+#include "defaultrc.hpp"
 
 extern "C" {
 #include <libavcodec/avcodec.h>

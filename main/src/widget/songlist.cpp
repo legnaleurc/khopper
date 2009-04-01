@@ -28,6 +28,8 @@
 #include <QFileInfo>
 #include <QMenu>
 #include <QAction>
+#include <QSignalMapper>
+#include <QTextCodec>
 #include <QtDebug>
 
 namespace {
@@ -56,9 +58,13 @@ namespace khopper {
 
 			// Set header
 			QStringList headers;
-			for( std::vector< std::wstring >::const_iterator it = album::Track::Headers.begin(); it != album::Track::Headers.end(); ++it ) {
-				headers.push_back( QString::fromStdWString( *it ) );
-			}
+			headers << "Title";
+			headers << "Artist";
+			headers << "Album";
+			headers << "Duration";
+			headers << "Bit Rate";
+			headers << "Channels";
+			headers << "Sample Rate";
 			this->model_->setHorizontalHeaderLabels( headers );
 
 			// Set model
@@ -68,6 +74,29 @@ namespace khopper {
 			delSong->setShortcut( QKeySequence::Delete );
 			this->addAction( delSong );
 			connect( delSong, SIGNAL( triggered() ), this, SLOT( removeSelected_() ) );
+
+			// Set context menu
+			QMenu * codec = new QMenu( tr( "Change Text Codec" ), this );
+
+			QSignalMapper * sm = new QSignalMapper( this );
+
+			QAction * big5 = new QAction( tr( "Big5" ), this );
+			codec->addAction( big5 );
+			connect( big5, SIGNAL( triggered() ), sm, SLOT( map() ) );
+			sm->setMapping( big5, "Big5" );
+			QAction * sjis = new QAction( tr( "Shift-JIS" ), this );
+			codec->addAction( sjis );
+			connect( sjis, SIGNAL( triggered() ), sm, SLOT( map() ) );
+			sm->setMapping( sjis, "Shift-JIS" );
+			QAction * utf8 = new QAction( tr( "UTF-8" ), this );
+			codec->addAction( utf8 );
+			connect( utf8, SIGNAL( triggered() ), sm, SLOT( map() ) );
+			sm->setMapping( utf8, "UTF-8" );
+
+			connect( sm, SIGNAL( mapped( const QString & ) ), this, SLOT( changeTextCodec_( const QString & ) ) );
+
+			this->contextMenu_->addMenu( codec );
+			this->contextMenu_->addSeparator();
 
 			QAction * convert = new QAction( tr( "Convert" ), this );
 			convert->setShortcut( Qt::CTRL + Qt::Key_Return );
@@ -83,18 +112,18 @@ namespace khopper {
 			int offset = this->model_->rowCount();
 			// add all tracks
 			for( std::size_t row = 0; row < tracks.size(); ++row ) {
-				this->model_->setItem( row + offset, 0, new QStandardItem( QString::fromStdWString( tracks[row]->title ) ) );
-				this->model_->setItem( row + offset, 1, new QStandardItem( QString::fromStdWString( tracks[row]->artist ) ) );
-				this->model_->setItem( row + offset, 2, new QStandardItem( QString::fromStdWString( tracks[row]->album ) ) );
+				this->model_->setItem( row + offset, 0, new QStandardItem( tracks[row]->getTitle() ) );
+				this->model_->setItem( row + offset, 1, new QStandardItem( tracks[row]->getArtist() ) );
+				this->model_->setItem( row + offset, 2, new QStandardItem( tracks[row]->getAlbum() ) );
 
 				// fields should not be editable
-				this->model_->setItem( row + offset, 3, new QStandardItem( QString::fromStdWString( tracks[row]->duration.toStdWString() ) ) );
+				this->model_->setItem( row + offset, 3, new QStandardItem( QString::fromStdWString( tracks[row]->getDuration().toStdWString() ) ) );
 				this->model_->item( row + offset, 3 )->setEditable( false );
-				this->model_->setItem( row + offset, 4, new QStandardItem( QString::number( tracks[row]->bitRate ) ) );
+				this->model_->setItem( row + offset, 4, new QStandardItem( QString::number( tracks[row]->getBitRate() ) ) );
 				this->model_->item( row + offset, 4 )->setEditable( false );
-				this->model_->setItem( row + offset, 5, new QStandardItem( QString::number( tracks[row]->sampleRate ) ) );
+				this->model_->setItem( row + offset, 5, new QStandardItem( QString::number( tracks[row]->getSampleRate() ) ) );
 				this->model_->item( row + offset, 5 )->setEditable( false );
-				this->model_->setItem( row + offset, 6, new QStandardItem( QString::number( tracks[row]->channels ) ) );
+				this->model_->setItem( row + offset, 6, new QStandardItem( QString::number( tracks[row]->getChannels() ) ) );
 				this->model_->item( row + offset, 6 )->setEditable( false );
 			}
 		}
@@ -115,6 +144,19 @@ namespace khopper {
 			return result;
 		}
 
+		void SongList::changeTextCodec_( const QString & name ) {
+			QTextCodec * codec = QTextCodec::codecForName( name.toAscii() );
+			QModelIndexList selected = this->selectionModel()->selectedRows();
+			foreach( QModelIndex index, selected ) {
+				album::TrackSP track( this->tracks_[index.row()] );
+				track->setTextCodec( codec );
+
+				this->model_->item( index.row(), 0 )->setText( track->getTitle() );
+				this->model_->item( index.row(), 1 )->setText( track->getArtist() );
+				this->model_->item( index.row(), 2 )->setText( track->getAlbum() );
+			}
+		}
+
 		void SongList::removeSelected_() {
 			QModelIndexList selected = this->selectionModel()->selectedRows();
 			std::sort( selected.begin(), selected.end(), ::indexRowCompD );
@@ -129,13 +171,13 @@ namespace khopper {
 			album::TrackSP track = this->tracks_.at( item->row() );
 			switch( item->column() ) {
 			case 0:
-				track->title = item->text().toStdWString();
+				track->setTitle( item->text() );
 				break;
 			case 1:
-				track->artist = item->text().toStdWString();
+				track->setArtist( item->text() );
 				break;
 			case 2:
-				track->album = item->text().toStdWString();
+				track->setAlbum( item->text() );
 				break;
 			default:
 				// other fields should not be editable

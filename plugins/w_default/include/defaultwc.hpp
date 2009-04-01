@@ -1,5 +1,5 @@
 /**
- * @file preference.hpp
+ * @file defaultwc.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,44 +19,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_WIDGET_PREFERENCE_HPP
-#define KHOPPER_WIDGET_PREFERENCE_HPP
+#ifndef KHOPPER_CODEC_DEFAULTWC_HPP
+#define KHOPPER_CODEC_DEFAULTWC_HPP
 
-#include <boost/format.hpp>
-
-#include <QDialog>
-#include <QLineEdit>
-#include <QDialogButtonBox>
+#include "writerplugin.hpp"
 
 namespace khopper {
 
-	namespace widget {
+	namespace plugin {
 
-		/**
-		 * @brief Preference dialog
-		 */
-		class Preference : public QDialog {
+		/// Default writer creator
+		class DefaultWriterCreator : public QObject, public WriterCreator {
 			Q_OBJECT
+			Q_INTERFACES( khopper::plugin::WriterCreator )
 
-		public:
-			/// Default constructor
-			Preference( QWidget * parent = 0 );
-
-			/**
-			 * @brief Get file name template
-			 * @return Format string in boost::format
-			 */
-			boost::format getTemplate() const;
-
-		private slots:
-			void perform_( QAbstractButton * );
-
-		private:
-			QLineEdit * fnTpl_;
-			QDialogButtonBox * buttons_;
-
-			void apply_();
-			void revert_();
+			/// Creates writer object
+			virtual codec::AbstractWriter * create_() const;
 		};
 
 	}

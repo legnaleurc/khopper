@@ -19,10 +19,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_CODEC_DEFAULTAUDIOWRITER_HPP
-#define KHOPPER_CODEC_DEFAULTAUDIOWRITER_HPP
+#ifndef KHOPPER_CODEC_DEFAULTWRITER_HPP
+#define KHOPPER_CODEC_DEFAULTWRITER_HPP
 
-#include "writerplugin.hpp"
+#include "abstractwriter.hpp"
 
 struct AVFormatContext;
 struct AVOutputFormat;
@@ -59,20 +59,6 @@ namespace khopper {
 
 			std::tr1::shared_ptr< AVFormatContext > pFormatContext_;
 			AVStream * pStream_;
-		};
-
-	}
-
-	namespace plugin {
-
-		/// Default writer creator
-		class DefaultWriterCreator : public QObject, public WriterCreator {
-			Q_OBJECT
-			Q_INTERFACES( khopper::plugin::WriterCreator )
-
-		private:
-			/// Creates writer object
-			virtual codec::AbstractWriter * create_() const;
 		};
 
 	}
