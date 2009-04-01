@@ -48,6 +48,7 @@ SOURCES +=	\
 RESOURCES += main.qrc
 
 # config
+TEMPLATE = app
 TARGET  = khopper
 CONFIG += debug_and_release
 QT     += phonon
@@ -57,22 +58,19 @@ CONFIG( debug, debug|release ) {
 	OBJECTS_DIR = $${ROOT_PATH}/tmp/obj/debug
 
 	unix:LIBS  += -L$${ROOT_PATH}/build/debug -lkhopper
+	win32:LIBS += -L$${ROOT_PATH}/build/debug -lkhopper -lloki_D
 } else {
 	DESTDIR     = $${ROOT_PATH}/build/release
 	OBJECTS_DIR = $${ROOT_PATH}/tmp/obj/release
 	DEFINES    += QT_NO_DEBUG_OUTPUT
 
 	unix:LIBS  += -L$${ROOT_PATH}/build/release -lkhopper
+	win32:LIBS += -L$${ROOT_PATH}/build/release -lkhopper -lloki
 
 	unix:QMAKE_POST_LINK = strip $${DESTDIR}/$${TARGET}
 }
 
 unix {
-	TEMPLATE = app
 	QMAKE_CXXFLAGS += -std=c++0x
 	LIBS += -lboost_regex
-}
-
-win32 {
-	TEMPLATE = vcapp
 }

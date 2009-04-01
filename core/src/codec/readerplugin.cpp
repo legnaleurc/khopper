@@ -22,6 +22,10 @@
 #include "readerplugin.hpp"
 #include "plugin_impl.hpp"
 
+#ifndef LOKI_CLASS_LEVEL_THREADING
+# define LOKI_CLASS_LEVEL_THREADING
+#endif
+
 #include <loki/Factory.h>
 #include <loki/Singleton.h>
 

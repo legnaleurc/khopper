@@ -26,6 +26,7 @@
 #include <QVBoxLayout>
 #include <QDialogButtonBox>
 #include <QPluginLoader>
+#include <QtDebug>
 
 namespace khopper {
 
@@ -47,6 +48,7 @@ namespace khopper {
 			plugin::PluginContext pc;
 			foreach( QString fileName, pc.getDir().entryList( QDir::Files ) ) {
 				QPluginLoader piLoader( pc.getDir().absoluteFilePath( fileName ) );
+				qDebug() << fileName;
 				QObject * plugin = piLoader.instance();
 				if( plugin ) {
 					AbstractPanel * option = qobject_cast< AbstractPanel * >( plugin );

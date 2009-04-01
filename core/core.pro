@@ -45,10 +45,14 @@ VERSION  = 0.1.70
 CONFIG( debug, debug|release ) {
 	DESTDIR     = $${ROOT_PATH}/build/debug
 	OBJECTS_DIR = $${ROOT_PATH}/tmp/obj/debug
+
+	win32:LIBS += -lloki_D
 } else {
 	DESTDIR     = $${ROOT_PATH}/build/release
 	OBJECTS_DIR = $${ROOT_PATH}/tmp/obj/release
 	DEFINES    += QT_NO_DEBUG_OUTPUT
+
+	win32:LIBS += -lloki
 
 	unix:QMAKE_POST_LINK = strip $${DESTDIR}/lib$${TARGET}.so
 }

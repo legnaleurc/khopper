@@ -21,25 +21,48 @@
  */
 #include "tr1.hpp"
 #include "os.hpp"
+#include "error.hpp"
 
 #include <QString>
+#include <QRegExp>
+#include <QApplication>
+#include <QPluginLoader>
 
 namespace khopper {
 
 	namespace os {
 
 		std::wstring join( const std::wstring & front, const std::wstring & back ) {
-			using namespace std::tr1;
-			const wregex fp( L"(.*)/*" );
-			wsmatch fr;
-			const wregex bp( L"/*(.*)" );
-			wsmatch br;
+			QRegExp fp( "(.*)/*" );
+			QRegExp bp( "/*(.*)" );
 
-			if( regex_match( front, fr, fp ) && regex_match( back, br, bp ) ) {
-				return fr[1].str() + L"/" + br[1].str();
+			if( fp.exactMatch( QString::fromStdWString( front ) ) && bp.exactMatch( QString::fromStdWString( back ) ) ) {
+				return ( fp.cap( 1 ) + "/" + bp.cap( 1 ) ).toStdWString();
 			} else {
 				return L"";
 			}
+		}
+
+	}
+
+	namespace plugin {
+
+		PluginContext::PluginContext():
+		d_( qApp->applicationDirPath() ) {
+			this->d_.cd( "plugins" );
+		}
+
+		const QDir & PluginContext::getDir() const {
+			return this->d_;
+		}
+
+		QObject * PluginContext::load( QString name ) const {
+			QPluginLoader pl( this->d_.absoluteFilePath( name.append( ".dll" ) ) );
+			QObject * tmp = pl.instance();
+			if( !tmp ) {
+				throw Error< RunTime >( pl.errorString().toStdString() );
+			}
+			return tmp;
 		}
 
 	}
