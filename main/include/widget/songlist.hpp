@@ -83,7 +83,6 @@ namespace khopper {
 
 		private slots:
 			void removeSelected_();
-			void editTrackField_( QStandardItem * );
 			void changeTextCodec_( int );
 
 		private:

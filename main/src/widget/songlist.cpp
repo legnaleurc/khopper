@@ -71,7 +71,6 @@ namespace khopper {
 
 			// Set model
 			this->setModel( this->model_ );
-			connect( this->model_, SIGNAL( itemChanged( QStandardItem * ) ), this, SLOT( editTrackField_( QStandardItem * ) ) );
 			QAction * delSong = new QAction( this );
 			delSong->setShortcut( QKeySequence::Delete );
 			this->addAction( delSong );
@@ -171,24 +170,6 @@ namespace khopper {
 				this->model_->removeRow( index.row() );
 			}
 			this->selectionModel()->clear();
-		}
-
-		void SongList::editTrackField_( QStandardItem * item ) {
-			album::TrackSP track = this->tracks_.at( item->row() );
-			switch( item->column() ) {
-			case 0:
-				track->setTitle( item->text() );
-				break;
-			case 1:
-				track->setArtist( item->text() );
-				break;
-			case 2:
-				track->setAlbum( item->text() );
-				break;
-			default:
-				// other fields should not be editable
-				;
-			}
 		}
 
 		void SongList::contextMenuEvent( QContextMenuEvent * event ) {
