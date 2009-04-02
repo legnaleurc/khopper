@@ -42,9 +42,19 @@ namespace khopper {
 		template< typename ProductCreator >
 		class CreatorLoader {
 		public:
-			/// Default constructor
+			/**
+			 * @brief Constructor
+			 * @param plugin The name of plugin
+			 */
 			CreatorLoader( const std::string & plugin ) : plugin_( plugin ) {}
-			/// Plugin loader
+			/**
+			 * @brief Plugin loader
+			 * @return The product creator
+			 * @throws Error<RunTime> Can't open plugin or load error
+			 *
+			 * The returned resource is managed by Qt Plugin System,
+			 * so don't worry about it's life time.
+			 */
 			ProductCreator * operator()() {
 				plugin::PluginContext pc;
 				ProductCreator * c = qobject_cast< ProductCreator * >( pc.load( this->plugin_.c_str() ) );
@@ -57,13 +67,25 @@ namespace khopper {
 			std::string plugin_;
 		};
 
+		/**
+		 * @brief Register key and name of plugin
+		 * @tparam Product The product of Creator
+		 * @tparam CreatorFactory The factory of Creator
+		 * @return If it registered sucessfully
+		 */
 		template< typename Product, typename CreatorFactory >
 		bool registerProduct( const std::string & key, const std::string & plugin ) {
 			return CreatorFactory::Instance().Register( key, CreatorLoader< Creator< Product > >( plugin ) );
 		}
 
+		/**
+		 * @brief Create plugin product
+		 * @tparam Product The product of Creator
+		 * @tparam CreatorFactory The factory of Creator
+		 * @return Smart pointer of Product
+		 */
 		template< typename Product, typename CreatorFactory >
-		Product * createProduct( const std::string & key ) {
+		std::tr1::shared_ptr< Product > createProduct( const std::string & key ) {
 			Creator< Product > * tmp = NULL;
 			try {
 				tmp = CreatorFactory::Instance().CreateObject( key );

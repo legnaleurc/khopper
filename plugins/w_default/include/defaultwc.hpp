@@ -34,7 +34,7 @@ namespace khopper {
 			Q_INTERFACES( khopper::plugin::WriterCreator )
 
 			/// Creates writer object
-			virtual codec::AbstractWriter * create_() const;
+			virtual codec::WriterSP create_() const;
 		};
 
 	}

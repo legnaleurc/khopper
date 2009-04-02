@@ -22,6 +22,8 @@
 #ifndef KHOPPER_PLUGIN_BASE_HPP
 #define KHOPPER_PLUGIN_BASE_HPP
 
+#include "tr1.hpp"
+
 namespace khopper {
 
 	/// @defgroup Plugins Plugin System
@@ -37,13 +39,13 @@ namespace khopper {
 		class Creator {
 		public:
 			Creator() {}
-			Product * create() const {
+			std::tr1::shared_ptr< Product > create() const {
 				return this->create_();
 			}
 		private:
 			Creator( const Creator & );
 			Creator & operator =( const Creator & );
-			virtual Product * create_() const = 0;
+			virtual std::tr1::shared_ptr< Product > create_() const = 0;
 		};
 
 	}

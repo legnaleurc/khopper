@@ -184,8 +184,8 @@ namespace khopper {
 
 	namespace plugin {
 
-		codec::AbstractWriter * DefaultWriterCreator::create_() const {
-			return new codec::DefaultWriter;
+		codec::WriterSP DefaultWriterCreator::create_() const {
+			return codec::WriterSP( new codec::DefaultWriter );
 		}
 
 	}

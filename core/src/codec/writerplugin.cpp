@@ -48,7 +48,7 @@ namespace khopper {
 		}
 
 		codec::WriterSP createWriter( const std::string & key ) {
-			return codec::WriterSP( createProduct< codec::AbstractWriter, WriterFactory >( key ) );
+			return createProduct< codec::AbstractWriter, WriterFactory >( key );
 		}
 
 	}
