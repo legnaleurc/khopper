@@ -85,17 +85,21 @@ namespace khopper {
 			QAction * big5 = new QAction( tr( "Big5" ), this );
 			codec->addAction( big5 );
 			connect( big5, SIGNAL( triggered() ), sm, SLOT( map() ) );
-			sm->setMapping( big5, "Big5" );
+			sm->setMapping( big5, 2026 );
+			QAction * gb2312 = new QAction( tr( "GB2312" ), this );
+			codec->addAction( gb2312 );
+			connect( gb2312, SIGNAL( triggered() ), sm, SLOT( map() ) );
+			sm->setMapping( gb2312, 57 );
 			QAction * sjis = new QAction( tr( "Shift-JIS" ), this );
 			codec->addAction( sjis );
 			connect( sjis, SIGNAL( triggered() ), sm, SLOT( map() ) );
-			sm->setMapping( sjis, "Shift-JIS" );
+			sm->setMapping( sjis, 17 );
 			QAction * utf8 = new QAction( tr( "UTF-8" ), this );
 			codec->addAction( utf8 );
 			connect( utf8, SIGNAL( triggered() ), sm, SLOT( map() ) );
-			sm->setMapping( utf8, "UTF-8" );
+			sm->setMapping( utf8, 106 );
 
-			connect( sm, SIGNAL( mapped( const QString & ) ), this, SLOT( changeTextCodec_( const QString & ) ) );
+			connect( sm, SIGNAL( mapped( int ) ), this, SLOT( changeTextCodec_( int ) ) );
 
 			this->contextMenu_->addMenu( codec );
 			this->contextMenu_->addSeparator();
@@ -146,8 +150,8 @@ namespace khopper {
 			return result;
 		}
 
-		void SongList::changeTextCodec_( const QString & name ) {
-			QTextCodec * codec = QTextCodec::codecForName( name.toAscii() );
+		void SongList::changeTextCodec_( int mib ) {
+			QTextCodec * codec = QTextCodec::codecForMib( mib );
 			QModelIndexList selected = this->selectionModel()->selectedRows();
 			foreach( QModelIndex index, selected ) {
 				album::TrackSP track( this->tracks_[index.row()] );
