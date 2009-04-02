@@ -26,6 +26,7 @@
 #include <QVBoxLayout>
 #include <QDialogButtonBox>
 #include <QPluginLoader>
+#include <QtDebug>
 
 namespace khopper {
 
@@ -46,6 +47,7 @@ namespace khopper {
 			// Load all plugins, including readers and writers
 			plugin::PluginContext pc;
 			foreach( QString fileName, pc.getDir().entryList( QDir::Files ) ) {
+				qDebug() << fileName;
 				QPluginLoader piLoader( pc.getDir().absoluteFilePath( fileName ) );
 				QObject * plugin = piLoader.instance();
 				if( plugin ) {
@@ -53,6 +55,8 @@ namespace khopper {
 					if( option ) {
 						this->table_.insert( std::make_pair( this->optionTabs_->addTab( option, option->getTitle() ), option ) );
 					}
+				} else {
+					qWarning() << piLoader.errorString();
 				}
 			}
 
