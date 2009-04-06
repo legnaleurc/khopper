@@ -134,7 +134,7 @@ namespace khopper {
 			this->getSampleBuffer().resize( pCC->frame_size * sizeof( short ) * pCC->channels );
 		}
 
-		void DefaultWriter::openResouse_() {
+		void DefaultWriter::openResource_() {
 			AVOutputFormat * pOF = this->pFormatContext_->oformat;
 			if( !( pOF->flags & AVFMT_NOFILE ) ) {
 				if( url_fopen( &this->pFormatContext_->pb, this->getFilePath().c_str(), URL_WRONLY ) < 0 ) {
@@ -143,7 +143,7 @@ namespace khopper {
 			}
 		}
 
-		void DefaultWriter::closeResouse_() {
+		void DefaultWriter::closeResource_() {
 			av_write_trailer( this->pFormatContext_.get() );
 			this->pFormatContext_.reset();
 		}

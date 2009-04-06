@@ -50,7 +50,7 @@ namespace khopper {
 
 			this->setupMuxer_();
 			this->setupEncoder_();
-			this->openResouse_();
+			this->openResource_();
 			this->writeHeader_();
 
 			this->opening_ = true;
@@ -58,7 +58,7 @@ namespace khopper {
 
 		void AbstractWriter::close() {
 			this->flush();
-			this->closeResouse_();
+			this->closeResource_();
 			this->opening_ = false;
 		}
 

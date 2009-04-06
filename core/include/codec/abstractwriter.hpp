@@ -197,8 +197,8 @@ namespace khopper {
 
 			virtual void setupMuxer_() = 0;
 			virtual void setupEncoder_() = 0;
-			virtual void openResouse_() = 0;
-			virtual void closeResouse_() = 0;
+			virtual void openResource_() = 0;
+			virtual void closeResource_() = 0;
 			virtual void writeHeader_() = 0;
 			virtual void writeFrame_( const char *, std::size_t ) = 0;
 
