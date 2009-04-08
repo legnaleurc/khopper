@@ -77,20 +77,20 @@ namespace khopper {
 		void DefaultReader::openResource_() {
 			AVFormatContext * pFC = NULL;
 			if( av_open_input_file( &pFC, this->getFilePath().c_str(), NULL, 0, NULL ) != 0 ) {
-				throw Error< IO >( std::string( "Can not open `" ) + this->getFilePath() + "\'" );
+				throw error::IOError( std::string( "Can not open `" ) + this->getFilePath() + "\'" );
 			}
 			this->pFormatContext_.reset( pFC, av_close_input_file );
 		}
 
 		void DefaultReader::setupDemuxer_() {
 			if( av_find_stream_info( this->pFormatContext_.get() ) < 0 ) {
-				throw Error< Codec >( "Can not find codec info!" );
+				throw error::CodecError( "Can not find codec info!" );
 			}
 
 			if( this->pFormatContext_->duration != static_cast< int64_t >( AV_NOPTS_VALUE ) ) {
 				this->setDuration( this->pFormatContext_->duration / static_cast< double >( AV_TIME_BASE ) );
 			} else {
-				throw Error< Codec >( "Can not get duration!" );
+				throw error::CodecError( "Can not get duration!" );
 			}
 		}
 
@@ -103,7 +103,7 @@ namespace khopper {
 				}
 			}
 			if( a_stream == -1 ) {
-				throw Error< Codec >( "Find no audio stream!" );
+				throw error::CodecError( "Find no audio stream!" );
 			}
 			AVCodecContext * pCC = this->pFormatContext_->streams[a_stream]->codec;
 			// getting codec information
@@ -114,11 +114,11 @@ namespace khopper {
 
 			AVCodec * pC = avcodec_find_decoder( pCC->codec_id );
 			if( pC == NULL ) {
-				throw Error< Codec >( "Find no decoder!" );
+				throw error::CodecError( "Find no decoder!" );
 			}
 
 			if( avcodec_open( pCC, pC ) < 0 ) {
-				throw Error< Codec >( "Can not open decoder." );
+				throw error::CodecError( "Can not open decoder." );
 			}
 			this->pCodecContext_.reset( pCC, avcodec_close );
 		}

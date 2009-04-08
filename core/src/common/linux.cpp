@@ -61,7 +61,7 @@ namespace khopper {
 			QPluginLoader pl( this->d_.absoluteFilePath( name.prepend( "lib" ).append( ".so" ) ) );
 			QObject * tmp = pl.instance();
 			if( !tmp ) {
-				throw Error< RunTime >( pl.errorString().toStdString() );
+				throw error::RunTimeError( pl.errorString().toStdString() );
 			}
 			return tmp;
 		}

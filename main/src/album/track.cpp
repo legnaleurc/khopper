@@ -67,7 +67,7 @@ namespace khopper {
 
 				decoder->close();
 			} else {
-				throw Error< codec::Codec >( "Can not open file!" );
+				throw error::CodecError( "Can not open file!" );
 			}
 		}
 

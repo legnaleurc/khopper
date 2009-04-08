@@ -206,7 +206,7 @@ namespace khopper {
 					this->cvt_->setTracks( tracks );
 					this->cvt_->start();
 					this->progress_->exec();
-				} catch( Error< RunTime > & e ) {
+				} catch( error::RunTimeError & e ) {
 					this->showErrorMessage_( tr( "Run-time error!" ), trUtf8( e.what() ) );
 				} catch( std::exception & e ) {
 					this->showErrorMessage_( tr( "Unknown error!" ), trUtf8( e.what() ) );

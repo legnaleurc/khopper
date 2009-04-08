@@ -22,6 +22,8 @@
 #ifndef KHOPPER_CODEC_BASE_HPP
 #define KHOPPER_CODEC_BASE_HPP
 
+#include "common/error.hpp"
+
 #include <deque>
 
 namespace khopper {
@@ -41,12 +43,16 @@ namespace khopper {
 		 */
 		typedef std::deque< char > ByteArray;
 
+	}
+
+	namespace error {
+
 		/**
 		 * @brief Codec error
 		 * @ingroup Codecs
 		 */
-		class Codec {
-		};
+		class Codec {};
+		typedef Error< Codec > CodecError;
 
 	}
 

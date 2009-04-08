@@ -218,7 +218,7 @@ namespace khopper {
 					break;
 				default:
 					// other values implies error
-					throw Error< Parsing >( "Index value error!" );
+					throw error::ParsingError( "Index value error!" );
 				}
 			} else if( type == "PREGAP" ) {
 				this->tracks_[trackNO]->setPreGap( Index( minute, second, frame ) );

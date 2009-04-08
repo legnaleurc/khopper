@@ -59,7 +59,7 @@ namespace khopper {
 				plugin::PluginContext pc;
 				ProductCreator * c = qobject_cast< ProductCreator * >( pc.load( this->plugin_.c_str() ) );
 				if( !c ) {
-					throw Error< RunTime >( "Invalid plugin!" );
+					throw error::RunTimeError( "Invalid plugin!" );
 				}
 				return c;
 			}
@@ -83,6 +83,7 @@ namespace khopper {
 		 * @tparam Product The product of Creator
 		 * @tparam CreatorFactory The factory of Creator
 		 * @return Smart pointer of Product
+		 * @throws RunTimeError Can not load any plugin
 		 */
 		template< typename Product, typename CreatorFactory >
 		std::tr1::shared_ptr< Product > createProduct( const std::string & key ) {
@@ -90,7 +91,11 @@ namespace khopper {
 			try {
 				tmp = CreatorFactory::Instance().CreateObject( key );
 			} catch( std::exception & e ) {
-				tmp = CreatorFactory::Instance().CreateObject( "*" );
+				try {
+					tmp = CreatorFactory::Instance().CreateObject( "*" );
+				} catch( std::exception & e ) {
+					throw error::RunTimeError( "Found no plugin!" );
+				}
 			}
 			return tmp->create();
 		}

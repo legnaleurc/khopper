@@ -24,6 +24,8 @@
 
 #include "track.hpp"
 
+#include "common/error.hpp"
+
 #include <vector>
 #include <string>
 
@@ -100,11 +102,15 @@ namespace khopper {
 			void parseGarbage_( const QString &, int );
 		};
 
+	}
+
+	namespace error {
+
 		/**
 		 * @brief Parsing error class
 		 */
-		class Parsing {
-		};
+		class Parsing {};
+		typedef Error< Parsing > ParsingError;
 
 	}
 

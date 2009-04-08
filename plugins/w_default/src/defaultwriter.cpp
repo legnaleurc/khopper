@@ -81,12 +81,12 @@ namespace khopper {
 		void DefaultWriter::setupMuxer_() {
 			AVOutputFormat * pOF = guess_format( NULL, this->getFilePath().c_str(), NULL );
 			if( pOF == NULL ) {
-				throw Error< Codec >( "Can not recognize output format" );
+				throw error::CodecError( "Can not recognize output format" );
 			}
 
 			this->pFormatContext_.reset( avformat_alloc_context(), ::fc_helper );
 			if( !this->pFormatContext_ ) {
-				throw Error< System >( "Memory allocation error" );
+				throw error::SystemError( "Memory allocation error" );
 			}
 			this->pFormatContext_->oformat = pOF;
 
@@ -96,12 +96,12 @@ namespace khopper {
 		void DefaultWriter::setupEncoder_() {
 			AVOutputFormat * pOF = this->pFormatContext_->oformat;
 			if( pOF->audio_codec == CODEC_ID_NONE ) {
-				throw Error< Codec >( "Can not setup encoder" );
+				throw error::CodecError( "Can not setup encoder" );
 			}
 
 			this->pStream_ = av_new_stream( this->pFormatContext_.get(), 1 );
 			if( !this->pStream_ ) {
-				throw Error< Codec >( "Can not create stream" );
+				throw error::CodecError( "Can not create stream" );
 			}
 
 			AVCodecContext * pCC = this->pStream_->codec;
@@ -118,17 +118,17 @@ namespace khopper {
 				pCC->global_quality = static_cast< int >( this->pStream_->quality );
 			}
 			if( av_set_parameters( this->pFormatContext_.get(), NULL ) < 0 ) {
-				throw Error< Codec >( "Set parameters failed" );
+				throw error::CodecError( "Set parameters failed" );
 			}
 			// NOTE: set complete
 
 			AVCodec * pC = avcodec_find_encoder( pCC->codec_id );
 			if( !pC ) {
-				throw Error< Codec >( "Find no encoder" );
+				throw error::CodecError( "Find no encoder" );
 			}
 
 			if( avcodec_open( pCC, pC ) < 0 ) {
-				throw Error< Codec >( "Can not open encoder" );
+				throw error::CodecError( "Can not open encoder" );
 			}
 
 			this->getSampleBuffer().resize( pCC->frame_size * sizeof( short ) * pCC->channels );
@@ -138,7 +138,7 @@ namespace khopper {
 			AVOutputFormat * pOF = this->pFormatContext_->oformat;
 			if( !( pOF->flags & AVFMT_NOFILE ) ) {
 				if( url_fopen( &this->pFormatContext_->pb, this->getFilePath().c_str(), URL_WRONLY ) < 0 ) {
-					throw Error< IO >( std::string( "Can not open file: `" ) + this->getFilePath() + "\'" );
+					throw error::IOError( std::string( "Can not open file: `" ) + this->getFilePath() + "\'" );
 				}
 			}
 		}
@@ -176,7 +176,7 @@ namespace khopper {
 			}
 
 			if( av_write_frame( this->pFormatContext_.get(), &pkt ) != 0 ) {
-				throw Error< Codec >( "Can not write frame" );
+				throw error::CodecError( "Can not write frame" );
 			}
 		}
 

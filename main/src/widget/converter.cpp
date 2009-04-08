@@ -40,14 +40,14 @@ namespace khopper {
 			this->canceled_ = false;
 
 			if( !decoder->isOpen() || !encoder->isOpen() ) {
-				throw Error< RunTime >( "Can not open decoder or encoder!" );
+				throw error::RunTimeError( "Can not open decoder or encoder!" );
 			}
 
 			double begin = track->getStartTime().toDouble();
 			double end = begin + track->getDuration().toDouble();
 			decoder->setRange( begin, end );
 			if( !decoder->seek( begin ) ) {
-				throw Error< codec::Codec >( "Invalid start point" );
+				throw error::CodecError( "Invalid start point" );
 			}
 
 			double decoded;
