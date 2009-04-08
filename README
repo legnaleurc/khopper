@@ -6,23 +6,27 @@
 		http://loki-lib.sourceforge.net/
 	Qt >= 4.4:
 		http://www.qtsoftware.com/products
-	Boost C++ Libraries with Regex:
+	Boost C++ Libraries:
 		http://www.boost.org/
 	FFMpeg Libraries after 2008:
 		http://www.ffmpeg.org/
 On Debian-based system:
-	# apt-get install libloki-dev libqt4-dev libboost-regex-dev libavcodec-dev libavformat-dev
+	# apt-get install libloki-dev libqt4-dev libphonon-dev libboost-dev libavcodec-dev libavformat-dev
 注意：
 	由於mp3編碼器所使用的libmp3lame，可能不會被維護者包入套件，請注意套件的說明。
 	若沒有libmp3lame，依然可以使用，只是會使用mp2的編碼器，可能導致不確定行為。
 
 編譯步驟：
-	$ qmake
+	$ qmake -r
 	$ make
 
 支援輸入格式：
-	目前只開放CUE Sheet，但可搭配的音訊格式取決於FFMpeg所編入的codec。
-	預設即支援wav, ape, flac, tta等。
+	轉檔：
+		可搭配的音訊格式取決於FFMpeg所編入的codec。
+		預設即支援wav, ape, flac, tta等。
+	播放：
+		可播放的格式取決於Phonon所搭配的backend。
+		ape支援可能很少。
 支授輸出格式：
 	目前只實作MP3介面，可擴充，但需重新編譯。
 
