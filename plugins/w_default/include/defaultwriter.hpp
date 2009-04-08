@@ -22,7 +22,7 @@
 #ifndef KHOPPER_CODEC_DEFAULTWRITER_HPP
 #define KHOPPER_CODEC_DEFAULTWRITER_HPP
 
-#include "abstractwriter.hpp"
+#include "plugin/abstractwriter.hpp"
 
 struct AVFormatContext;
 struct AVOutputFormat;

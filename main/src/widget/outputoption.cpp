@@ -20,8 +20,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "outputoption.hpp"
-#include "abstractpanel.hpp"
-#include "os.hpp"
+
+#include "plugin/abstractpanel.hpp"
+#include "common/os.hpp"
 
 #include <QVBoxLayout>
 #include <QDialogButtonBox>

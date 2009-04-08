@@ -20,9 +20,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "converter.hpp"
-#include "readerplugin.hpp"
-#include "error.hpp"
-#include "text.hpp"
+#include "plugin/readerplugin.hpp"
+#include "common/error.hpp"
+#include "common/text.hpp"
 
 namespace khopper {
 

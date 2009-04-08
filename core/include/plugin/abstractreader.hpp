@@ -22,7 +22,7 @@
 #ifndef KHOPPER_CODEC_ABSTRACTREADER_HPP
 #define KHOPPER_CODEC_ABSTRACTREADER_HPP
 
-#include "tr1.hpp"
+#include "common/tr1.hpp"
 #include "codec_base.hpp"
 
 #include <string>

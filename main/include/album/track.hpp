@@ -22,7 +22,7 @@
 #ifndef KHOPPER_ALBUM_TRACK_HPP
 #define KHOPPER_ALBUM_TRACK_HPP
 
-#include "tr1.hpp"
+#include "common/tr1.hpp"
 #include "index.hpp"
 
 #include <QByteArray>

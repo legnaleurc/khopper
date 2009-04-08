@@ -3,8 +3,7 @@ ROOT_PATH = ../..
 CORE_PATH = $${ROOT_PATH}/core
 
 INC_DIRS =	\
-	$${CORE_PATH}/include/codec	\
-	$${CORE_PATH}/include/common	\
+	$${CORE_PATH}/include	\
 	./include
 SRC_DIRS = ./src
 

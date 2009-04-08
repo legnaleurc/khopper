@@ -22,9 +22,9 @@
 #ifndef KHOPPER_PLUGIN_IMPL_HPP
 #define KHOPPER_PLUGIN_IMPL_HPP
 
-#include "plugin_base.hpp"
-#include "os.hpp"
-#include "error.hpp"
+#include "plugin/plugin_base.hpp"
+#include "common/os.hpp"
+#include "common/error.hpp"
 
 #include <QPluginLoader>
 

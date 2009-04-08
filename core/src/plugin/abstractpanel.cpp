@@ -1,5 +1,5 @@
 /**
- * @file plugin_base.hpp
+ * @file abstractpanel.cpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,37 +19,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_PLUGIN_BASE_HPP
-#define KHOPPER_PLUGIN_BASE_HPP
-
-#include "tr1.hpp"
+#include "plugin/abstractpanel.hpp"
 
 namespace khopper {
 
-	/// @defgroup Plugins Plugin System
-	// @{
-	// @}
-	/**
-	 * @brief Contains plugin utility
-	 * @ingroup Plugins
-	 */
-	namespace plugin {
+	namespace widget {
 
-		template< typename Product >
-		class Creator {
-		public:
-			Creator() {}
-			std::tr1::shared_ptr< Product > create() const {
-				return this->create_();
-			}
-		private:
-			Creator( const Creator & );
-			Creator & operator =( const Creator & );
-			virtual std::tr1::shared_ptr< Product > create_() const = 0;
-		};
+		AbstractPanel::AbstractPanel( QWidget * parent, Qt::WindowFlags f ) : QWidget( parent, f ) {
+		}
 
 	}
 
 }
-
-#endif

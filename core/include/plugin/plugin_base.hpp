@@ -1,5 +1,5 @@
 /**
- * @file readerplugin.cpp
+ * @file plugin_base.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,38 +19,37 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "readerplugin.hpp"
-#include "plugin_impl.hpp"
+#ifndef KHOPPER_PLUGIN_BASE_HPP
+#define KHOPPER_PLUGIN_BASE_HPP
 
-#include <loki/Factory.h>
-#include <loki/Singleton.h>
+#include "common/tr1.hpp"
 
 namespace khopper {
 
+	/// @defgroup Plugins Plugin System
+	// @{
+	// @}
+	/**
+	 * @brief Contains plugin utility
+	 * @ingroup Plugins
+	 */
 	namespace plugin {
 
-		/**
-		 * @brief The audio reader factory
-		 * @ingroup Plugins
-		 */
-		typedef Loki::SingletonHolder<
-			Loki::Factory<
-				ReaderCreator,
-				std::string
-			>,
-			Loki::CreateUsingNew,
-			Loki::LongevityLifetime::DieAsSmallObjectChild,
-			Loki::ClassLevelLockable
-		> ReaderFactory;
-
-		bool registerReader( const std::string & key, const std::string & plugin ) {
-			return registerProduct< codec::AbstractReader, ReaderFactory >( key, plugin );
-		}
-
-		codec::ReaderSP createReader( const std::string & key ) {
-			return createProduct< codec::AbstractReader, ReaderFactory >( key );
-		}
+		template< typename Product >
+		class Creator {
+		public:
+			Creator() {}
+			std::tr1::shared_ptr< Product > create() const {
+				return this->create_();
+			}
+		private:
+			Creator( const Creator & );
+			Creator & operator =( const Creator & );
+			virtual std::tr1::shared_ptr< Product > create_() const = 0;
+		};
 
 	}
 
 }
+
+#endif

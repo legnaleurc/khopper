@@ -1,5 +1,5 @@
 /**
- * @file abstractpanel.cpp
+ * @file writerplugin.cpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,13 +19,36 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "abstractpanel.hpp"
+#include "plugin/writerplugin.hpp"
+#include "plugin_impl.hpp"
+
+#include <loki/Factory.h>
+#include <loki/Singleton.h>
 
 namespace khopper {
 
-	namespace widget {
+	namespace plugin {
 
-		AbstractPanel::AbstractPanel( QWidget * parent, Qt::WindowFlags f ) : QWidget( parent, f ) {
+		/**
+		 * @brief The audio writer factory
+		 * @ingroup Plugins
+		 */
+		typedef Loki::SingletonHolder<
+			Loki::Factory<
+				WriterCreator,
+				std::string
+			>,
+			Loki::CreateUsingNew,
+			Loki::LongevityLifetime::DieAsSmallObjectChild,
+			Loki::ClassLevelLockable
+		> WriterFactory;
+
+		bool registerWriter( const std::string & key, const std::string & plugin ) {
+			return registerProduct< codec::AbstractWriter, WriterFactory >( key, plugin );
+		}
+
+		codec::WriterSP createWriter( const std::string & key ) {
+			return createProduct< codec::AbstractWriter, WriterFactory >( key );
 		}
 
 	}

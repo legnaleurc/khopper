@@ -22,7 +22,7 @@
 #ifndef KHOPPER_CODEC_DEFAULTRC_HPP
 #define KHOPPER_CODEC_DEFAULTRC_HPP
 
-#include "readerplugin.hpp"
+#include "plugin/readerplugin.hpp"
 
 namespace khopper {
 

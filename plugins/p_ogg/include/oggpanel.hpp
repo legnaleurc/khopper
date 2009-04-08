@@ -22,7 +22,7 @@
 #ifndef KHOPPER_WIDGET_OGGPANEL_HPP
 #define KHOPPER_WIDGET_OGGPANEL_HPP
 
-#include "abstractpanel.hpp"
+#include "plugin/abstractpanel.hpp"
 
 #include <QComboBox>
 

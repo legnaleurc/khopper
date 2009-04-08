@@ -20,7 +20,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "oggpanel.hpp"
-#include "writerplugin.hpp"
+
+#include "plugin/writerplugin.hpp"
 
 #include <QtPlugin>
 #include <QVBoxLayout>

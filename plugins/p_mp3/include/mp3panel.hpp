@@ -22,7 +22,7 @@
 #ifndef KHOPPER_WIDGET_MP3PANEL_HPP
 #define KHOPPER_WIDGET_MP3PANEL_HPP
 
-#include "abstractpanel.hpp"
+#include "plugin/abstractpanel.hpp"
 
 #include <QButtonGroup>
 #include <QComboBox>

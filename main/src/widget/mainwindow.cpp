@@ -25,10 +25,11 @@
 #include "textcodec.hpp"
 #include "progress.hpp"
 #include "cuesheet.hpp"
-#include "abstractpanel.hpp"
-#include "error.hpp"
 #include "preference.hpp"
 #include "outputoption.hpp"
+
+#include "common/error.hpp"
+#include "plugin/abstractpanel.hpp"
 
 #include <boost/format.hpp>
 

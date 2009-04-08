@@ -1,5 +1,5 @@
 /**
- * @file writerplugin.cpp
+ * @file writerplugin.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,38 +19,40 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "writerplugin.hpp"
-#include "plugin_impl.hpp"
+#ifndef KHOPPER_WRITERPLUGIN_HPP
+#define KHOPPER_WRITERPLUGIN_HPP
 
-#include <loki/Factory.h>
-#include <loki/Singleton.h>
+#include "plugin_base.hpp"
+#include "plugin/abstractwriter.hpp"
+
+#include <QtPlugin>
 
 namespace khopper {
 
 	namespace plugin {
 
 		/**
-		 * @brief The audio writer factory
-		 * @ingroup Plugins
+		 * @brief Wirter creator interface
 		 */
-		typedef Loki::SingletonHolder<
-			Loki::Factory<
-				WriterCreator,
-				std::string
-			>,
-			Loki::CreateUsingNew,
-			Loki::LongevityLifetime::DieAsSmallObjectChild,
-			Loki::ClassLevelLockable
-		> WriterFactory;
+		typedef Creator< codec::AbstractWriter > WriterCreator;
 
-		bool registerWriter( const std::string & key, const std::string & plugin ) {
-			return registerProduct< codec::AbstractWriter, WriterFactory >( key, plugin );
-		}
-
-		codec::WriterSP createWriter( const std::string & key ) {
-			return createProduct< codec::AbstractWriter, WriterFactory >( key );
-		}
+		/**
+		 * @brief Register plugin to factory
+		 * @param key the key used in program
+		 * @param plugin plugin identifier
+		 * @return if registered in factory
+		 */
+		bool registerWriter( const std::string & key, const std::string & plugin );
+		/**
+		 * @brief Create writer
+		 * @param key format key
+		 */
+		codec::WriterSP createWriter( const std::string & key );
 
 	}
 
 }
+
+Q_DECLARE_INTERFACE( khopper::plugin::WriterCreator, "org.FoolproofProject.Khopper.Plugin.Writer/0.2" )
+
+#endif

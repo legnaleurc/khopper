@@ -22,7 +22,7 @@
 #ifndef KHOPPER_CODEC_DEFAULTWC_HPP
 #define KHOPPER_CODEC_DEFAULTWC_HPP
 
-#include "writerplugin.hpp"
+#include "plugin/writerplugin.hpp"
 
 namespace khopper {
 
