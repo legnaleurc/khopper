@@ -116,7 +116,7 @@ namespace khopper {
 
 			// get the total length, because cue sheet don't provide it
 			codec::ReaderSP decoder( plugin::createReader( text::getSuffix( currentFile.first ) ) );
-			decoder->open( text::toLocale( currentFile.first ) );
+			decoder->open( currentFile.first.toLocal8Bit().constData() );
 			if( decoder->isOpen() ) {
 				std::for_each( this->tracks_.begin(), this->tracks_.end(), ::setBCS( decoder ) );
 

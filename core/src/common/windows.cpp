@@ -19,26 +19,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "common/tr1.hpp"
 #include "common/os.hpp"
 
-#include <QString>
+#include <QRegExp>
 
 namespace khopper {
 
 	namespace os {
 
-		std::wstring join( const std::wstring & front, const std::wstring & back ) {
-			using namespace std::tr1;
-			const wregex fp( L"(.*)/*" );
-			wsmatch fr;
-			const wregex bp( L"/*(.*)" );
-			wsmatch br;
+		QString join( const QString & front, const QString & back ) {
+			// kill all tail '/' in front
+			// kill all lead '/' in back
+			// return front + '/' + back
+			QRegExp fp( "(.*)/*" );
+			QRegExp bp( "/*(.*)" );
 
-			if( regex_match( front, fr, fp ) && regex_match( back, br, bp ) ) {
-				return fr[1].str() + L"/" + br[1].str();
+			if( fp.exactMatch( front ) && bp.exactMatch( back ) ) {
+				return fp.cap( 1 ) + "/" + bp.cap( 1 );
 			} else {
-				return L"";
+				return "";
 			}
 		}
 
