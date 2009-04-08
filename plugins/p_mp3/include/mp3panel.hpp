@@ -29,14 +29,14 @@
 
 namespace khopper {
 
-	namespace widget {
+	namespace plugin {
 
 		/**
 		 * @brief Mp3 option widget
 		 */
 		class MP3Panel : public AbstractPanel {
 			Q_OBJECT
-			Q_INTERFACES( khopper::widget::AbstractPanel )
+			Q_INTERFACES( khopper::plugin::AbstractPanel )
 
 		public:
 			/**

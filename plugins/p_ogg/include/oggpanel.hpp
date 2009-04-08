@@ -28,11 +28,11 @@
 
 namespace khopper {
 
-	namespace widget {
+	namespace plugin {
 
 		class OGGPanel : public AbstractPanel {
 			Q_OBJECT
-			Q_INTERFACES( khopper::widget::AbstractPanel )
+			Q_INTERFACES( khopper::plugin::AbstractPanel )
 
 		public:
 			OGGPanel( QWidget * parent = 0, Qt::WindowFlags f = 0 );

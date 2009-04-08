@@ -23,7 +23,7 @@
 
 namespace khopper {
 
-	namespace widget {
+	namespace plugin {
 
 		AbstractPanel::AbstractPanel( QWidget * parent, Qt::WindowFlags f ) : QWidget( parent, f ) {
 		}

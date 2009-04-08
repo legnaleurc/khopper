@@ -21,7 +21,6 @@
  */
 #include "outputoption.hpp"
 
-#include "plugin/abstractpanel.hpp"
 #include "common/os.hpp"
 
 #include <QVBoxLayout>
@@ -52,7 +51,7 @@ namespace khopper {
 				QPluginLoader piLoader( pc.getDir().absoluteFilePath( fileName ) );
 				QObject * plugin = piLoader.instance();
 				if( plugin ) {
-					AbstractPanel * option = qobject_cast< AbstractPanel * >( plugin );
+					plugin::AbstractPanel * option = qobject_cast< plugin::AbstractPanel * >( plugin );
 					if( option ) {
 						this->table_.insert( std::make_pair( this->optionTabs_->addTab( option, option->getTitle() ), option ) );
 					}
@@ -67,7 +66,7 @@ namespace khopper {
 			connect( buttons, SIGNAL( rejected() ), this, SLOT( reject() ) );
 		}
 
-		AbstractPanel * OutputOption::getCurrent() const {
+		plugin::AbstractPanel * OutputOption::getCurrent() const {
 			return this->table_.find( this->optionTabs_->currentIndex() )->second;
 		}
 

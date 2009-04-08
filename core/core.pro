@@ -1,7 +1,6 @@
 # Path settings
 ROOT_PATH = ..
-INC_DIRS =	\
-	./include
+INC_DIRS = ./include
 SRC_DIRS =	\
 	./src/common	\
 	./src/plugin
@@ -16,7 +15,7 @@ HEADERS +=	\
 	./include/plugin/abstractreader.hpp	\
 	./include/plugin/abstractwriter.hpp	\
 	./include/plugin/codec_base.hpp	\
-	./include/plugin/plugin_base.hpp	\
+	./include/plugin/creator.hpp	\
 	./src/plugin/plugin_impl.hpp	\
 	./include/plugin/readerplugin.hpp	\
 	./include/plugin/writerplugin.hpp	\

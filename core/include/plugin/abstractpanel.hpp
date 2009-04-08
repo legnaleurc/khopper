@@ -28,7 +28,7 @@
 
 namespace khopper {
 
-	namespace widget {
+	namespace plugin {
 
 		/**
 		 * @brief Abstract panel widget
@@ -37,8 +37,6 @@ namespace khopper {
 		 * and must register to factory. \n
 		 */
 		class AbstractPanel : public QWidget {
-			Q_OBJECT
-
 		public:
 			/**
 			 * @brief Default constructor
@@ -68,6 +66,6 @@ namespace khopper {
 
 }
 
-Q_DECLARE_INTERFACE( khopper::widget::AbstractPanel, "org.FoolproofProject.Khopper.Plugin.Panel/0.2" )
+Q_DECLARE_INTERFACE( khopper::plugin::AbstractPanel, "org.FoolproofProject.Khopper.Plugin.Panel/0.2" )
 
 #endif

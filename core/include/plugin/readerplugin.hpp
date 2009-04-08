@@ -22,7 +22,7 @@
 #ifndef KHOPPER_READERPLUGIN_HPP
 #define KHOPPER_READERPLUGIN_HPP
 
-#include "plugin_base.hpp"
+#include "creator.hpp"
 #include "abstractreader.hpp"
 
 #include <QtPlugin>
@@ -39,6 +39,7 @@ namespace khopper {
 
 		/**
 		 * @brief Register plugin to factory
+		 * @ingroup Plugins
 		 * @param key the key used in program
 		 * @param plugin plugin identifier
 		 * @return if registered in factory
@@ -46,6 +47,7 @@ namespace khopper {
 		bool registerReader( const std::string & key, const std::string & plugin );
 		/**
 		 * @brief Create reader
+		 * @ingroup Plugins
 		 * @param key format key
 		 */
 		codec::ReaderSP createReader( const std::string & key );

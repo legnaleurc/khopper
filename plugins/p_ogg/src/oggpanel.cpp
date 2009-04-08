@@ -27,11 +27,11 @@
 #include <QVBoxLayout>
 #include <QVariant>
 
-Q_EXPORT_PLUGIN2( kpp_ogg, khopper::widget::OGGPanel )
+Q_EXPORT_PLUGIN2( kpp_ogg, khopper::plugin::OGGPanel )
 
 namespace khopper {
 
-	namespace widget {
+	namespace plugin {
 
 		OGGPanel::OGGPanel( QWidget * parent, Qt::WindowFlags f ):
 		AbstractPanel( parent, f ),

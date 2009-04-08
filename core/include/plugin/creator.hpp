@@ -1,5 +1,5 @@
 /**
- * @file plugin_base.hpp
+ * @file creator.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,8 +19,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_PLUGIN_BASE_HPP
-#define KHOPPER_PLUGIN_BASE_HPP
+#ifndef KHOPPER_CREATOR_HPP
+#define KHOPPER_CREATOR_HPP
 
 #include "common/tr1.hpp"
 
@@ -35,10 +35,19 @@ namespace khopper {
 	 */
 	namespace plugin {
 
+		/**
+		 * @brief Common creator factory
+		 * @tparam Product The product type of return
+		 * @sa ReaderCreator WriterCreator
+		 *
+		 * You will not use this class directly.
+		 */
 		template< typename Product >
 		class Creator {
 		public:
+			/// Default constructor
 			Creator() {}
+			/// Create the product
 			std::tr1::shared_ptr< Product > create() const {
 				return this->create_();
 			}

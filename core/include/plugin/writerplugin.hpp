@@ -22,7 +22,7 @@
 #ifndef KHOPPER_WRITERPLUGIN_HPP
 #define KHOPPER_WRITERPLUGIN_HPP
 
-#include "plugin_base.hpp"
+#include "creator.hpp"
 #include "plugin/abstractwriter.hpp"
 
 #include <QtPlugin>

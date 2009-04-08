@@ -190,7 +190,7 @@ namespace khopper {
 
 			// get option widget
 			if( this->optionWindow_->exec() ) {
-				AbstractPanel * option = this->optionWindow_->getCurrent();
+				plugin::AbstractPanel * option = this->optionWindow_->getCurrent();
 
 				try {
 					// generate output paths

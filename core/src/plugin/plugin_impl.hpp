@@ -22,7 +22,7 @@
 #ifndef KHOPPER_PLUGIN_IMPL_HPP
 #define KHOPPER_PLUGIN_IMPL_HPP
 
-#include "plugin/plugin_base.hpp"
+#include "plugin/creator.hpp"
 #include "common/os.hpp"
 #include "common/error.hpp"
 
