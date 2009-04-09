@@ -36,7 +36,7 @@ namespace {
 
 	inline QString stripQuote( const QString & s ) {
 		if( s[0] == '\"' && s[s.length()-1] == '\"' ) {
-			return s.mid( 1, s.length() - 1 );
+			return s.mid( 1, s.length() - 2 );
 		} else {
 			return s;
 		}
