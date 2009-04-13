@@ -27,6 +27,7 @@
 
 namespace khopper {
 
+	/// Error classes
 	namespace error {
 
 		/**
