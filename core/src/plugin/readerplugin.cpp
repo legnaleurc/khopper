@@ -43,8 +43,8 @@ namespace khopper {
 			Loki::ClassLevelLockable
 		> ReaderFactory;
 
-		bool registerReader( const std::string & key, const std::string & plugin ) {
-			return registerProduct< codec::AbstractReader, ReaderFactory >( key, plugin );
+		bool registerReader( const std::string & key, const std::string & name ) {
+			return registerProduct< codec::AbstractReader, ReaderFactory >( key, name );
 		}
 
 		codec::ReaderSP createReader( const std::string & key ) {

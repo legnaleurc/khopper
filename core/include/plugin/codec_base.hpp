@@ -22,24 +22,25 @@
 #ifndef KHOPPER_CODEC_BASE_HPP
 #define KHOPPER_CODEC_BASE_HPP
 
+/// @defgroup Codecs De/Muxers and De/Encoders
+// @{
+// @}
+
 #include "common/error.hpp"
 
 #include <deque>
 
 namespace khopper {
 
-	/// @defgroup Codecs De/Muxers and De/Encoders
-	// @{
-	// @}
 	/**
-	 * @brief Contains Codecs module
 	 * @ingroup Codecs
+	 * @brief Contains Codecs module
 	 */
 	namespace codec {
 
 		/**
-		 * @brief Used for storing raw binary data
 		 * @ingroup Codecs
+		 * @brief Used for storing raw binary data
 		 */
 		typedef std::deque< char > ByteArray;
 
@@ -48,8 +49,8 @@ namespace khopper {
 	namespace error {
 
 		/**
-		 * @brief Codec error
 		 * @ingroup Codecs
+		 * @brief Codec error
 		 */
 		class Codec {};
 		/// Error on encoding or decoding

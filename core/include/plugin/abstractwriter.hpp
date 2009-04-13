@@ -33,8 +33,8 @@ namespace khopper {
 	namespace codec {
 
 		/**
-		 * @brief Audio writer interface
 		 * @ingroup Codecs
+		 * @brief Audio writer interface
 		 * @sa AbstractReader
 		 */
 		class AbstractWriter {
@@ -216,16 +216,16 @@ namespace khopper {
 		};
 
 		/**
-		 * @brief AbstractWriter smart pointer
 		 * @ingroup Codecs
+		 * @brief AbstractWriter smart pointer
 		 * @sa AbstractWriter WriterCSP
 		 *
 		 * Use TR1 shared pointer.
 		 */
 		typedef std::tr1::shared_ptr< AbstractWriter > WriterSP;
 		/**
-		 * @brief AbstractWriter const smart pointer
 		 * @ingroup Codecs
+		 * @brief AbstractWriter const smart pointer
 		 * @sa AbstractWriter WriterSP
 		 *
 		 * Use TR1 shared pointer.

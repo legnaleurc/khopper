@@ -43,8 +43,8 @@ namespace khopper {
 			Loki::ClassLevelLockable
 		> WriterFactory;
 
-		bool registerWriter( const std::string & key, const std::string & plugin ) {
-			return registerProduct< codec::AbstractWriter, WriterFactory >( key, plugin );
+		bool registerWriter( const std::string & key, const std::string & name ) {
+			return registerProduct< codec::AbstractWriter, WriterFactory >( key, name );
 		}
 
 		codec::WriterSP createWriter( const std::string & key ) {

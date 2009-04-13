@@ -31,6 +31,7 @@ namespace khopper {
 	namespace plugin {
 
 		/**
+		 * @ingroup Plugins
 		 * @brief Abstract panel widget
 		 *
 		 * All output option panel will inherit this class, \n

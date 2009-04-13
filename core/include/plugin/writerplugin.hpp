@@ -32,19 +32,23 @@ namespace khopper {
 	namespace plugin {
 
 		/**
+		 * @ingroup Plugins
 		 * @brief Wirter creator interface
+		 * @sa Creator
 		 */
 		typedef Creator< codec::AbstractWriter > WriterCreator;
 
 		/**
-		 * @brief Register plugin to factory
+		 * @ingroup Plugins
+		 * @brief Register plugin to WriterFactory
 		 * @param key the key used in program
-		 * @param plugin plugin identifier
+		 * @param name plugin name
 		 * @return if registered in factory
 		 */
-		bool registerWriter( const std::string & key, const std::string & plugin );
+		bool registerWriter( const std::string & key, const std::string & name );
 		/**
-		 * @brief Create writer
+		 * @ingroup Plugins
+		 * @brief Create writer plugin
 		 * @param key format key
 		 */
 		codec::WriterSP createWriter( const std::string & key );

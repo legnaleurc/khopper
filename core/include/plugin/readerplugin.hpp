@@ -32,22 +32,22 @@ namespace khopper {
 	namespace plugin {
 
 		/**
-		 * @brief Reader creator interface
 		 * @ingroup Plugins
+		 * @brief Reader creator interface
 		 */
 		typedef Creator< codec::AbstractReader > ReaderCreator;
 
 		/**
-		 * @brief Register plugin to factory
 		 * @ingroup Plugins
+		 * @brief Register plugin to factory
 		 * @param key the key used in program
-		 * @param plugin plugin identifier
+		 * @param name plugin name
 		 * @return if registered in factory
 		 */
-		bool registerReader( const std::string & key, const std::string & plugin );
+		bool registerReader( const std::string & key, const std::string & name );
 		/**
-		 * @brief Create reader
 		 * @ingroup Plugins
+		 * @brief Create reader
 		 * @param key format key
 		 */
 		codec::ReaderSP createReader( const std::string & key );

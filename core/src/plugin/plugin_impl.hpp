@@ -35,9 +35,9 @@ namespace khopper {
 	namespace plugin {
 
 		/**
+		 * @ingroup Plugins
 		 * @brief From creator functor
 		 * @tparam ProductCreator creator type
-		 * @ingroup Plugins
 		 */
 		template< typename ProductCreator >
 		class CreatorLoader {
@@ -68,20 +68,25 @@ namespace khopper {
 		};
 
 		/**
+		 * @ingroup Plugins
 		 * @brief Register key and name of plugin
 		 * @tparam Product The product of Creator
 		 * @tparam CreatorFactory The factory of Creator
+		 * @param key the key used in program
+		 * @param name plugin name
 		 * @return If it registered sucessfully
 		 */
 		template< typename Product, typename CreatorFactory >
-		bool registerProduct( const std::string & key, const std::string & plugin ) {
-			return CreatorFactory::Instance().Register( key, CreatorLoader< Creator< Product > >( plugin ) );
+		bool registerProduct( const std::string & key, const std::string & name ) {
+			return CreatorFactory::Instance().Register( key, CreatorLoader< Creator< Product > >( name ) );
 		}
 
 		/**
+		 * @ingroup Plugins
 		 * @brief Create plugin product
 		 * @tparam Product The product of Creator
 		 * @tparam CreatorFactory The factory of Creator
+		 * @param key format key
 		 * @return Smart pointer of Product
 		 * @throws RunTimeError Can not load any plugin
 		 */
