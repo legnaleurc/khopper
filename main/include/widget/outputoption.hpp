@@ -36,8 +36,10 @@ namespace khopper {
 		/// Output format option widget
 		class OutputOption : public QDialog {
 		public:
+			/// Default constructor
 			OutputOption( QWidget * parent = 0 );
 
+			/// Get current panel
 			plugin::AbstractPanel * getCurrent() const;
 
 		private:

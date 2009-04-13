@@ -76,18 +76,21 @@ namespace khopper {
 		 * @brief Run-time error class
 		 */
 		class RunTime {};
+		/// Error on run-time
 		typedef Error< RunTime > RunTimeError;
 
 		/**
 		 * @brief System error class
 		 */
 		class System {};
+		/// Error on system
 		typedef Error< System > SystemError;
 
 		/**
 		 * @brief Input/Ouput error class
 		 */
 		class IO {};
+		/// Error on I/O
 		typedef Error< IO > IOError;
 
 	}

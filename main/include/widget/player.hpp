@@ -42,8 +42,11 @@ namespace khopper {
 			/// Default constructor
 			Player( QWidget * parent = 0, Qt::WindowFlags f = 0 );
 
+			/// Get selected tracks
 			std::vector< album::TrackSP > getSelectedTracks() const;
+			/// Get all tracks
 			const std::vector< album::TrackSP > & getTracks() const;
+			/// Append tracks
 			void appendTracks( const std::vector< album::TrackSP > & tracks );
 
 		signals:

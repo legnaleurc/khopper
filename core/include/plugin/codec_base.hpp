@@ -52,6 +52,7 @@ namespace khopper {
 		 * @ingroup Codecs
 		 */
 		class Codec {};
+		/// Error on encoding or decoding
 		typedef Error< Codec > CodecError;
 
 	}

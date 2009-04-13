@@ -30,15 +30,20 @@ namespace khopper {
 
 	namespace plugin {
 
+		/// Ogg output option
 		class OGGPanel : public AbstractPanel {
 			Q_OBJECT
 			Q_INTERFACES( khopper::plugin::AbstractPanel )
 
 		public:
+			/// Default constructor
 			OGGPanel( QWidget * parent = 0, Qt::WindowFlags f = 0 );
 
+			/// Get configured Writer instance
 			virtual codec::WriterSP getWriter() const;
+			/// Get file suffix
 			virtual QString getSuffix() const;
+			/// Get widget title
 			virtual QString getTitle() const;
 
 		private:
