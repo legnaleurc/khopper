@@ -37,8 +37,8 @@ SOURCES +=	\
 	./src/widget/abstractpanel.cpp
 
 # Config
-TEMPLATE = lib
-TARGET   = khopper
+TEMPLATE = vclib
+TARGET   = k_core
 CONFIG  += debug_and_release
 VERSION  = 0.1.70
 
