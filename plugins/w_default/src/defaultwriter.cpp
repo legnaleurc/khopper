@@ -84,8 +84,11 @@ namespace khopper {
 				throw error::CodecError( "Can not recognize output format" );
 			}
 
+#if LIBAVFORMAT_VERSION_MAJOR < 53
 			this->pFormatContext_.reset( av_alloc_format_context(), ::fc_helper );
-//			this->pFormatContext_.reset( avformat_alloc_context(), ::fc_helper );
+#else
+			this->pFormatContext_.reset( avformat_alloc_context(), ::fc_helper );
+#endif
 			if( !this->pFormatContext_ ) {
 				throw error::SystemError( "Memory allocation error" );
 			}
