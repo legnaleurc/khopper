@@ -22,8 +22,8 @@
 #ifndef KHOPPER_CODEC_ABSTRACTWRITER_HPP
 #define KHOPPER_CODEC_ABSTRACTWRITER_HPP
 
-#include "tr1.hpp"
-#include "codec_base.hpp"
+#include "common/tr1.hpp"
+#include "plugin/codec_base.hpp"
 
 #include <string>
 #include <vector>
@@ -33,8 +33,8 @@ namespace khopper {
 	namespace codec {
 
 		/**
-		 * @brief Audio writer interface
 		 * @ingroup Codecs
+		 * @brief Audio writer interface
 		 * @sa AbstractReader
 		 */
 		class AbstractWriter {
@@ -197,8 +197,8 @@ namespace khopper {
 
 			virtual void setupMuxer_() = 0;
 			virtual void setupEncoder_() = 0;
-			virtual void openResouse_() = 0;
-			virtual void closeResouse_() = 0;
+			virtual void openResource_() = 0;
+			virtual void closeResource_() = 0;
 			virtual void writeHeader_() = 0;
 			virtual void writeFrame_( const char *, std::size_t ) = 0;
 
@@ -216,16 +216,16 @@ namespace khopper {
 		};
 
 		/**
-		 * @brief AbstractWriter smart pointer
 		 * @ingroup Codecs
+		 * @brief AbstractWriter smart pointer
 		 * @sa AbstractWriter WriterCSP
 		 *
 		 * Use TR1 shared pointer.
 		 */
 		typedef std::tr1::shared_ptr< AbstractWriter > WriterSP;
 		/**
-		 * @brief AbstractWriter const smart pointer
 		 * @ingroup Codecs
+		 * @brief AbstractWriter const smart pointer
 		 * @sa AbstractWriter WriterSP
 		 *
 		 * Use TR1 shared pointer.

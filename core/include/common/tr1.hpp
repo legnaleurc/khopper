@@ -30,15 +30,9 @@
 #define __STDC_CONSTANT_MACROS
 
 #ifdef __GNUC__
-# include <boost/regex.hpp>
-
-namespace std {
-
-	namespace tr1 = boost;
-
-}
+#include <tr1/memory>
 #else
-# include <regex>
+#include <memory>
 #endif
 
 #endif

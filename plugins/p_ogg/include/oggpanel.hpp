@@ -1,5 +1,5 @@
 /**
- * @file abstractpanel.cpp
+ * @file oggpanel.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,15 +19,41 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "abstractpanel.hpp"
+#ifndef KHOPPER_WIDGET_OGGPANEL_HPP
+#define KHOPPER_WIDGET_OGGPANEL_HPP
+
+#include "plugin/abstractpanel.hpp"
+
+#include <QComboBox>
 
 namespace khopper {
 
-	namespace widget {
+	namespace plugin {
 
-		AbstractPanel::AbstractPanel( QWidget * parent, Qt::WindowFlags f ) : QWidget( parent, f ) {
-		}
+		/// Ogg output option
+		class OGGPanel : public AbstractPanel {
+			Q_OBJECT
+			Q_INTERFACES( khopper::plugin::AbstractPanel )
+
+		public:
+			/// Default constructor
+			OGGPanel( QWidget * parent = 0, Qt::WindowFlags f = 0 );
+
+			/// Get configured Writer instance
+			virtual codec::WriterSP getWriter() const;
+			/// Get file suffix
+			virtual QString getSuffix() const;
+			/// Get widget title
+			virtual QString getTitle() const;
+
+		private:
+			QComboBox * channels_;
+// 			QComboBox * bitRate_;
+			QComboBox * sampleRate_;
+		};
 
 	}
 
 }
+
+#endif

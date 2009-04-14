@@ -1,5 +1,5 @@
 /**
- * @file mp3panel.hpp
+ * @file flacpanel.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,8 +19,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_WIDGET_MP3PANEL_HPP
-#define KHOPPER_WIDGET_MP3PANEL_HPP
+#ifndef KHOPPER_PLUGIN_FLACPANEL_HPP
+#define KHOPPER_PLUGIN_FLACPANEL_HPP
 
 #include "plugin/abstractpanel.hpp"
 
@@ -32,9 +32,9 @@ namespace khopper {
 	namespace plugin {
 
 		/**
-		 * @brief Mp3 option widget
+		 * @brief flac option widget
 		 */
-		class MP3Panel : public AbstractPanel {
+		class FlacPanel : public AbstractPanel {
 			Q_OBJECT
 			Q_INTERFACES( khopper::plugin::AbstractPanel )
 
@@ -44,7 +44,7 @@ namespace khopper {
 			 * @param parent Parent widget
 			 * @param f Window flags
 			 */
-			MP3Panel( QWidget * parent = 0, Qt::WindowFlags f = 0 );
+			FlacPanel( QWidget * parent = 0, Qt::WindowFlags f = 0 );
 
 			/**
 			 * @brief Get encoder setting object
@@ -63,9 +63,6 @@ namespace khopper {
 			virtual QString getTitle() const;
 
 		private:
-			QButtonGroup * brChoise_;
-			QComboBox * bitRate_;
-			QComboBox * level_;
 			QComboBox * sampleRate_;
 			QComboBox * channels_;
 		};

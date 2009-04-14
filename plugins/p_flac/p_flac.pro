@@ -10,39 +10,31 @@ SRC_DIRS = ./src
 INCLUDEPATH += $${INC_DIRS} $${SRC_DIRS}
 DEPANDPATH  += $${INC_DIRS}
 
-HEADERS = include/defaultwriter.hpp include/defaultwc.hpp
-SOURCES = src/defaultwriter.cpp
+HEADERS = include/flacpanel.hpp
+SOURCES = src/flacpanel.cpp
 
 MOC_DIR = $${ROOT_PATH}/tmp/moc
 
 # Config
-TEMPLATE = vclib
+TEMPLATE = lib
 CONFIG  += plugin debug_and_release
-TARGET   = $$qtLibraryTarget(kwp_default)
+TARGET   = $$qtLibraryTarget(kpp_flac)
 
 CONFIG( debug, debug|release ) {
 	DESTDIR     = $${ROOT_PATH}/build/debug/plugins
 	OBJECTS_DIR = $${ROOT_PATH}/tmp/obj/debug
 
-	unix:LIBS  += -L$${ROOT_PATH}/build/debug -lk_core
-	win32:LIBS += -L$${ROOT_PATH}/build/debug -lk_core -lloki_D
+	unix:LIBS  += -L$${ROOT_PATH}/build/debug -lkhopper
 } else {
 	DESTDIR     = $${ROOT_PATH}/build/release/plugins
 	OBJECTS_DIR = $${ROOT_PATH}/tmp/obj/release
 	DEFINES    += QT_NO_DEBUG_OUTPUT
 
-	unix:LIBS  += -L$${ROOT_PATH}/build/release -lk_core
-	win32:LIBS += -L$${ROOT_PATH}/build/release -lk_core -lloki
+	unix:LIBS  += -L$${ROOT_PATH}/build/release -lkhopper
 
 	unix:QMAKE_POST_LINK = strip $${DESTDIR}/lib$${TARGET}.so
 }
 
 unix {
 	QMAKE_CXXFLAGS += -std=c++0x
-	CONFIG         += link_pkgconfig
-	PKGCONFIG      += libavcodec libavformat libavutil
-}
-
-win32 {
-	LIBS += -lavcodec-52 -lavformat-52 -lavutil-49
 }

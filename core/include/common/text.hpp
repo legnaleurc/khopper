@@ -32,18 +32,12 @@ namespace khopper {
 	 */
 	namespace text {
 
-		/// @brief Convert @p utf8 to Unicode
-		std::wstring fromUTF8( const std::string & utf8 );
-		/// @brief Convert @p unicode to UTF-8
-		std::string toUTF8( const std::wstring & unicode );
-
-		/// @brief Convert @p locale to Unicode
-		std::wstring fromLocale( const std::string & locale );
-		/// @brief Convert @p unicode to system locale
-		std::string toLocale( const QString & unicode );
-
 		/// @brief Get suffix of a file name
 		std::string getSuffix( const QString & filePath );
+		/**
+		 * @brief Overloaded version for convenience
+		 * @sa getSuffix(const QString &)
+		 */
 		std::string getSuffix( const QByteArray & filePath );
 
 	}

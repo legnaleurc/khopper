@@ -22,7 +22,7 @@
 #ifndef KHOPPER_CODEC_ABSTRACTREADER_HPP
 #define KHOPPER_CODEC_ABSTRACTREADER_HPP
 
-#include "tr1.hpp"
+#include "common/tr1.hpp"
 #include "codec_base.hpp"
 
 #include <string>
@@ -32,8 +32,8 @@ namespace khopper {
 	namespace codec {
 
 		/**
-		 * @brief Audio reader interface
 		 * @ingroup Codecs
+		 * @brief Audio reader interface
 		 * @sa AbstractWriter
 		 */
 		class AbstractReader {
@@ -305,16 +305,16 @@ namespace khopper {
 		};
 
 		/**
-		 * @brief AbstractReader smart pointer
 		 * @ingroup Codecs
+		 * @brief AbstractReader smart pointer
 		 * @sa AbstractReader ReaderCSP
 		 *
 		 * Use TR1 shared pointer.
 		 */
 		typedef std::tr1::shared_ptr< AbstractReader > ReaderSP;
 		/**
-		 * @brief AbstractReader const smart pointer
 		 * @ingroup Codecs
+		 * @brief AbstractReader const smart pointer
 		 * @sa AbstractReader ReaderSP
 		 *
 		 * Use TR1 shared pointer.

@@ -1,40 +1,36 @@
 # Path settings
 ROOT_PATH = ..
-INC_DIRS =	\
-	./include/codec	\
-	./include/common	\
-	./include/widget
+INC_DIRS = ./include
 SRC_DIRS =	\
-	./src/codec	\
 	./src/common	\
-	./src/widget
+	./src/plugin
 
 DEPENDPATH  += $${INC_DIRS} $${SRC_DIRS}
-INCLUDEPATH += $${INC_DIRS}
+INCLUDEPATH += $${INC_DIRS} ./src/plugin
 MOC_DIR      = $${ROOT_PATH}/tmp/moc
 
 # Input files
 HEADERS +=	\
-	./include/codec/abstractreader.hpp	\
-	./include/codec/abstractwriter.hpp	\
-	./include/codec/codec_base.hpp	\
-	./include/codec/plugin_base.hpp	\
-	./include/codec/plugin_impl.hpp	\
-	./include/codec/readerplugin.hpp	\
-	./include/codec/writerplugin.hpp	\
+	./include/plugin/abstractpanel.hpp	\
+	./include/plugin/abstractreader.hpp	\
+	./include/plugin/abstractwriter.hpp	\
+	./include/plugin/codec_base.hpp	\
+	./include/plugin/creator.hpp	\
+	./src/plugin/plugin_impl.hpp	\
+	./include/plugin/readerplugin.hpp	\
+	./include/plugin/writerplugin.hpp	\
 	./include/common/error.hpp	\
 	./include/common/os.hpp	\
 	./include/common/text.hpp	\
-	./include/common/tr1.hpp	\
-	./include/widget/abstractpanel.hpp
+	./include/common/tr1.hpp
 SOURCES +=	\
-	./src/codec/abstractreader.cpp	\
-	./src/codec/abstractwriter.cpp	\
-	./src/codec/readerplugin.cpp	\
-	./src/codec/writerplugin.cpp	\
+	./src/plugin/abstractpanel.cpp	\
+	./src/plugin/abstractreader.cpp	\
+	./src/plugin/abstractwriter.cpp	\
+	./src/plugin/readerplugin.cpp	\
+	./src/plugin/writerplugin.cpp	\
 	./src/common/error.cpp	\
-	./src/common/text.cpp	\
-	./src/widget/abstractpanel.cpp
+	./src/common/text.cpp
 
 # Config
 TEMPLATE = vclib
@@ -59,7 +55,7 @@ CONFIG( debug, debug|release ) {
 
 unix {
 	QMAKE_CXXFLAGS += -std=c++0x
-	LIBS        += -lboost_regex -lloki
+	LIBS        += -lloki
 	SOURCES += ./src/common/linux.cpp
 }
 

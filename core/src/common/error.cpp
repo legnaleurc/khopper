@@ -19,22 +19,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "error.hpp"
-#include "text.hpp"
+#include "common/error.hpp"
 
 namespace khopper {
 
-	ErrorBase::ErrorBase( const std::string & msg ) throw() : msg_( msg ) {
-	}
+	namespace error {
 
-	ErrorBase::ErrorBase( const std::wstring & msg ) throw() : msg_( text::toUTF8( msg ) ) {
-	}
+		ErrorBase::ErrorBase( const std::string & msg ) throw() : msg_( msg ) {
+		}
 
-	ErrorBase::~ErrorBase() throw() {
-	}
+		ErrorBase::~ErrorBase() throw() {
+		}
 
-	const char * ErrorBase::what() const throw() {
-		return this->msg_.c_str();
+		const char * ErrorBase::what() const throw() {
+			return this->msg_.c_str();
+		}
+
 	}
 
 }

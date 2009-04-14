@@ -27,82 +27,74 @@
 
 namespace khopper {
 
-	/**
-	 * @brief Base class of error types
-	 *
-	 * This class is the common code of error types,
-	 * to avoid duplicate code generation.
-	 *
-	 * Message will encode to UTF-8.
-	 */
-	class ErrorBase : public std::exception {
-	public:
-		/**
-		 * @brief Construct with an error message
-		 * @param [in] msg Error message
-		 */
-		ErrorBase( const std::string & msg ) throw();
-		/**
-		 * @brief Construct with an error message
-		 * @param [in] msg Error message
-		 */
-		ErrorBase( const std::wstring & msg ) throw();
-		/**
-		 * @brief Virtual destructor
-		 */
-		virtual ~ErrorBase() throw();
+	/// Error classes
+	namespace error {
 
 		/**
-		 * @brief Get the error message
-		 * @return Error message
+		 * @brief Base class of error types
+		 *
+		 * This class is the common code of error types,
+		 * to avoid duplicate code generation.
+		 *
+		 * Message will encode to UTF-8.
 		 */
-		virtual const char * what() const throw();
-	private:
-		std::string msg_;
-	};
+		class ErrorBase : public std::exception {
+		public:
+			/**
+			 * @brief Construct with an error message
+			 * @param [in] msg Error message
+			 */
+			ErrorBase( const std::string & msg ) throw();
+			/**
+			 * @brief Virtual destructor
+			 */
+			virtual ~ErrorBase() throw();
 
-	/**
-	 * @brief Error class
-	 * @tparam Type Custom error extension
-	 */
-	template< typename Type >
-	class Error : public ErrorBase, public Type {
-	public:
+			/**
+			 * @brief Get the error message
+			 * @return Error message
+			 */
+			virtual const char * what() const throw();
+		private:
+			std::string msg_;
+		};
+
 		/**
-		 * @brief Construct with an error message
-		 * @param [in] msg Error message
+		 * @brief Error class
+		 * @tparam Type Custom error extension
 		 */
-		Error( const std::string & msg ) throw() : ErrorBase( msg ) {}
+		template< typename Type >
+		class Error : public ErrorBase, public Type {
+		public:
+			/**
+			 * @brief Construct with an error message
+			 * @param [in] msg Error message
+			 */
+			Error( const std::string & msg ) throw() : ErrorBase( msg ) {}
+		};
+
 		/**
-		 * @brief Construct with an error message
-		 * @param [in] msg Error message
+		 * @brief Run-time error class
 		 */
-		Error( const std::wstring & msg ) throw() : ErrorBase( msg ) {}
-	};
+		class RunTime {};
+		/// Error on run-time
+		typedef Error< RunTime > RunTimeError;
 
-	/**
-	 * @brief Operating system error class
-	 */
-	class OS {
-	};
+		/**
+		 * @brief System error class
+		 */
+		class System {};
+		/// Error on system
+		typedef Error< System > SystemError;
 
-	/**
-	 * @brief Run-time error class
-	 */
-	class RunTime {
-	};
+		/**
+		 * @brief Input/Ouput error class
+		 */
+		class IO {};
+		/// Error on I/O
+		typedef Error< IO > IOError;
 
-	/**
-	 * @brief System error class
-	 */
-	class System {
-	};
-
-	/**
-	 * @brief Input/Ouput error class
-	 */
-	class IO {
-	};
+	}
 
 }
 

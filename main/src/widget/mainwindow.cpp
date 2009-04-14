@@ -25,10 +25,11 @@
 #include "textcodec.hpp"
 #include "progress.hpp"
 #include "cuesheet.hpp"
-#include "abstractpanel.hpp"
-#include "error.hpp"
 #include "preference.hpp"
 #include "outputoption.hpp"
+
+#include "common/error.hpp"
+#include "plugin/abstractpanel.hpp"
 
 #include <boost/format.hpp>
 
@@ -189,7 +190,7 @@ namespace khopper {
 
 			// get option widget
 			if( this->optionWindow_->exec() ) {
-				AbstractPanel * option = this->optionWindow_->getCurrent();
+				plugin::AbstractPanel * option = this->optionWindow_->getCurrent();
 
 				try {
 					// generate output paths
@@ -205,7 +206,7 @@ namespace khopper {
 					this->cvt_->setTracks( tracks );
 					this->cvt_->start();
 					this->progress_->exec();
-				} catch( Error< RunTime > & e ) {
+				} catch( error::RunTimeError & e ) {
 					this->showErrorMessage_( tr( "Run-time error!" ), trUtf8( e.what() ) );
 				} catch( std::exception & e ) {
 					this->showErrorMessage_( tr( "Unknown error!" ), trUtf8( e.what() ) );

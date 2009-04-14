@@ -1,5 +1,5 @@
 /**
- * @file readerplugin.cpp
+ * @file abstractpanel.cpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,40 +19,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "readerplugin.hpp"
-#include "plugin_impl.hpp"
-
-#ifndef LOKI_CLASS_LEVEL_THREADING
-# define LOKI_CLASS_LEVEL_THREADING
-#endif
-
-#include <loki/Factory.h>
-#include <loki/Singleton.h>
+#include "plugin/abstractpanel.hpp"
 
 namespace khopper {
 
 	namespace plugin {
 
-		/**
-		 * @brief The audio reader factory
-		 * @ingroup Plugins
-		 */
-		typedef Loki::SingletonHolder<
-			Loki::Factory<
-				ReaderCreator,
-				std::string
-			>,
-			Loki::CreateUsingNew,
-			Loki::LongevityLifetime::DieAsSmallObjectChild,
-			Loki::ClassLevelLockable
-		> ReaderFactory;
-
-		bool registerReader( const std::string & key, const std::string & plugin ) {
-			return registerProduct< codec::AbstractReader, ReaderFactory >( key, plugin );
-		}
-
-		codec::ReaderSP createReader( const std::string & key ) {
-			return codec::ReaderSP( createProduct< codec::AbstractReader, ReaderFactory >( key ) );
+		AbstractPanel::AbstractPanel( QWidget * parent, Qt::WindowFlags f ) : QWidget( parent, f ) {
 		}
 
 	}

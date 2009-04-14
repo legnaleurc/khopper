@@ -19,28 +19,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "text.hpp"
+#include "common/text.hpp"
 
 #include <QFileInfo>
 
 namespace khopper {
 
 	namespace text {
-
-		std::wstring fromUTF8( const std::string & utf8 ) {
-			return QString::fromUtf8( utf8.c_str() ).toStdWString();
-		}
-
-		std::string toUTF8( const std::wstring & unicode ) {
-			return QString::fromStdWString( unicode ).toUtf8().constData();
-		}
-
-		std::wstring fromLocale( const std::string & locale ) {
-			return QString::fromLocal8Bit( locale.c_str() ).toStdWString();
-		}
-		std::string toLocale( const QString & unicode ) {
-			return unicode.toLocal8Bit().constData();
-		}
 
 		std::string getSuffix( const QString & filePath ) {
 			return QFileInfo( filePath ).suffix().toUtf8().constData();

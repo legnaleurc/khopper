@@ -22,7 +22,7 @@
 #ifndef KHOPPER_CODEC_DEFAULTRC_HPP
 #define KHOPPER_CODEC_DEFAULTRC_HPP
 
-#include "readerplugin.hpp"
+#include "plugin/readerplugin.hpp"
 
 namespace khopper {
 
@@ -34,7 +34,7 @@ namespace khopper {
 			Q_INTERFACES( khopper::plugin::ReaderCreator )
 
 			/// Creates reader object
-			virtual codec::AbstractReader * create_() const;
+			virtual codec::ReaderSP create_() const;
 		};
 
 	}

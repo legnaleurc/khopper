@@ -24,6 +24,8 @@
 
 #include "track.hpp"
 
+#include "common/error.hpp"
+
 #include <vector>
 #include <string>
 
@@ -55,27 +57,35 @@ namespace khopper {
 			 */
 			void open( const QString & content, const QString & dirPath = QString() );
 
+			/// Get artist
 			const QString & getArtist() const {
 				return this->artist_;
 			}
+			/// Get catalog
 			const QString & getCatalog() const {
 				return this->catalog_;
 			}
+			/// Get CD Text File
 			const QString & getCDTextFile() const {
 				return this->cdTextFile_;
 			}
+			/// Get comment by key
 			const QString & getComment( const QString & key ) const {
 				return this->comments_.find( key )->second;
 			}
+			/// Get garbage
 			const std::vector< QString > & getGarbage() const {
 				return this->garbage_;
 			}
+			/// Get song writer
 			const QString & getSongWriter() const {
 				return this->songWriter_;
 			}
+			/// Get album title
 			const QString & getTitle() const {
 				return this->title_;
 			}
+			/// Get tracks
 			const std::vector< TrackSP > & getTracks() const {
 				return this->tracks_;
 			}
@@ -100,11 +110,14 @@ namespace khopper {
 			void parseGarbage_( const QString &, int );
 		};
 
-		/**
-		 * @brief Parsing error class
-		 */
-		class Parsing {
-		};
+	}
+
+	namespace error {
+
+		/// Parsing error policy
+		class Parsing {};
+		/// Error on parsing
+		typedef Error< Parsing > ParsingError;
 
 	}
 

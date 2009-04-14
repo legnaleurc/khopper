@@ -43,7 +43,6 @@ namespace khopper {
 			this->codecs_->addItem( "UTF-8", QTextCodec::codecForName( "UTF-8" )->mibEnum() );
 			this->codecs_->addItem( "Shift-JIS", QTextCodec::codecForName( "Shift-JIS" )->mibEnum() );
 			this->codecs_->addItem( "Big5", QTextCodec::codecForName( "Big5" )->mibEnum() );
-			//codecs_->addItem( "GB18030-0", QTextCodec::codecForName( "GB18030-0" )->mibEnum() );
 			connect( this->codecs_, SIGNAL( currentIndexChanged( int ) ), this, SLOT( update( int ) ) );
 
 			this->contents_->setFixedSize( 200, 200 );

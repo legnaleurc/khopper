@@ -22,6 +22,8 @@
 #ifndef KHOPPER_WIDGET_OUTPUTOPTION_HPP
 #define KHOPPER_WIDGET_OUTPUTOPTION_HPP
 
+#include "plugin/abstractpanel.hpp"
+
 #include <QDialog>
 #include <QTabWidget>
 
@@ -31,18 +33,18 @@ namespace khopper {
 
 	namespace widget {
 
-		class AbstractPanel;
-
 		/// Output format option widget
 		class OutputOption : public QDialog {
 		public:
+			/// Default constructor
 			OutputOption( QWidget * parent = 0 );
 
-			AbstractPanel * getCurrent() const;
+			/// Get current panel
+			plugin::AbstractPanel * getCurrent() const;
 
 		private:
 			QTabWidget * optionTabs_;
-			std::map< int ,AbstractPanel * > table_;
+			std::map< int ,plugin::AbstractPanel * > table_;
 		};
 
 	}

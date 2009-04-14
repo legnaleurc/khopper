@@ -1,5 +1,5 @@
 /**
- * @file readerplugin.hpp
+ * @file readerplugin.cpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,41 +19,42 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_READERPLUGIN_HPP
-#define KHOPPER_READERPLUGIN_HPP
+#include "plugin/readerplugin.hpp"
+#include "plugin_impl.hpp"
 
-#include "plugin_base.hpp"
-#include "abstractreader.hpp"
+#ifndef LOKI_CLASS_LEVEL_THREADING
+# define LOKI_CLASS_LEVEL_THREADING
+#endif
 
-#include <QtPlugin>
+#include <loki/Factory.h>
+#include <loki/Singleton.h>
 
 namespace khopper {
 
 	namespace plugin {
 
 		/**
-		 * @brief Reader creator interface
+		 * @brief The audio reader factory
 		 * @ingroup Plugins
 		 */
-		typedef Creator< codec::AbstractReader > ReaderCreator;
+		typedef Loki::SingletonHolder<
+			Loki::Factory<
+				ReaderCreator,
+				std::string
+			>,
+			Loki::CreateUsingNew,
+			Loki::LongevityLifetime::DieAsSmallObjectChild,
+			Loki::ClassLevelLockable
+		> ReaderFactory;
 
-		/**
-		 * @brief Register plugin to factory
-		 * @param key the key used in program
-		 * @param plugin plugin identifier
-		 * @return if registered in factory
-		 */
-		bool registerReader( const std::string & key, const std::string & plugin );
-		/**
-		 * @brief Create reader
-		 * @param key format key
-		 */
-		codec::ReaderSP createReader( const std::string & key );
+		bool registerReader( const std::string & key, const std::string & name ) {
+			return registerProduct< codec::AbstractReader, ReaderFactory >( key, name );
+		}
+
+		codec::ReaderSP createReader( const std::string & key ) {
+			return createProduct< codec::AbstractReader, ReaderFactory >( key );
+		}
 
 	}
 
 }
-
-Q_DECLARE_INTERFACE( khopper::plugin::ReaderCreator, "org.FoolproofProject.Khopper.Plugin.Reader/0.2" )
-
-#endif

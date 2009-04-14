@@ -20,9 +20,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "converter.hpp"
-#include "readerplugin.hpp"
-#include "error.hpp"
-#include "text.hpp"
+#include "plugin/readerplugin.hpp"
+#include "common/error.hpp"
+#include "common/text.hpp"
 
 namespace khopper {
 
@@ -36,18 +36,18 @@ namespace khopper {
 		void Converter::convert( album::TrackCSP track, const QString & targetPath, codec::WriterSP encoder ) {
 			codec::ReaderSP decoder( plugin::createReader( text::getSuffix( track->getFilePath() ) ) );
 			decoder->open( track->getFilePath().constData() );
-			encoder->open( text::toLocale( targetPath ) );
+			encoder->open( targetPath.toLocal8Bit().constData() );
 			this->canceled_ = false;
 
 			if( !decoder->isOpen() || !encoder->isOpen() ) {
-				throw Error< RunTime >( "Can not open decoder or encoder!" );
+				throw error::RunTimeError( "Can not open decoder or encoder!" );
 			}
 
 			double begin = track->getStartTime().toDouble();
 			double end = begin + track->getDuration().toDouble();
 			decoder->setRange( begin, end );
 			if( !decoder->seek( begin ) ) {
-				throw Error< codec::Codec >( "Invalid start point" );
+				throw error::CodecError( "Invalid start point" );
 			}
 
 			double decoded;

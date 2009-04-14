@@ -19,9 +19,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "tr1.hpp"
-#include "os.hpp"
-#include "error.hpp"
+#include "common/os.hpp"
+#include "common/error.hpp"
 
 #include <QString>
 #include <QRegExp>
@@ -32,14 +31,17 @@ namespace khopper {
 
 	namespace os {
 
-		std::wstring join( const std::wstring & front, const std::wstring & back ) {
+		QString join( const QString & front, const QString & back ) {
+			// kill all tail '/' in front
+			// kill all lead '/' in back
+			// return front + '/' + back
 			QRegExp fp( "(.*)/*" );
 			QRegExp bp( "/*(.*)" );
 
-			if( fp.exactMatch( QString::fromStdWString( front ) ) && bp.exactMatch( QString::fromStdWString( back ) ) ) {
-				return ( fp.cap( 1 ) + "/" + bp.cap( 1 ) ).toStdWString();
+			if( fp.exactMatch( front ) && bp.exactMatch( back ) ) {
+				return fp.cap( 1 ) + "/" + bp.cap( 1 );
 			} else {
-				return L"";
+				return "";
 			}
 		}
 
@@ -60,7 +62,7 @@ namespace khopper {
 			QPluginLoader pl( this->d_.absoluteFilePath( name.append( ".dll" ) ) );
 			QObject * tmp = pl.instance();
 			if( !tmp ) {
-				throw Error< RunTime >( pl.errorString().toStdString() );
+				throw error::RunTimeError( pl.errorString().toStdString() );
 			}
 			return tmp;
 		}

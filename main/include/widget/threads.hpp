@@ -23,8 +23,8 @@
 #define KHOPPER_WIDGET_THREADS_HPP
 
 #include "track.hpp"
-#include "abstractwriter.hpp"
 #include "converter.hpp"
+#include "plugin/abstractwriter.hpp"
 
 #include <QThread>
 #include <QStringList>

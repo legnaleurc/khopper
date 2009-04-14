@@ -20,9 +20,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "track.hpp"
-#include "readerplugin.hpp"
-#include "text.hpp"
-#include "error.hpp"
+#include "plugin/readerplugin.hpp"
+#include "common/text.hpp"
+#include "common/error.hpp"
 
 namespace khopper {
 
@@ -67,7 +67,7 @@ namespace khopper {
 
 				decoder->close();
 			} else {
-				throw Error< codec::Codec >( "Can not open file!" );
+				throw error::CodecError( "Can not open file!" );
 			}
 		}
 

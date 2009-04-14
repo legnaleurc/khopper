@@ -1,5 +1,5 @@
 /**
- * @file plugin_base.hpp
+ * @file codec_base.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,32 +19,42 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_PLUGIN_BASE_HPP
-#define KHOPPER_PLUGIN_BASE_HPP
+#ifndef KHOPPER_CODEC_BASE_HPP
+#define KHOPPER_CODEC_BASE_HPP
+
+/// @defgroup Codecs De/Muxers and De/Encoders
+// @{
+// @}
+
+#include "common/error.hpp"
+
+#include <deque>
 
 namespace khopper {
 
-	/// @defgroup Plugins Plugin System
-	// @{
-	// @}
 	/**
-	 * @brief Contains plugin utility
-	 * @ingroup Plugins
+	 * @ingroup Codecs
+	 * @brief Contains Codecs module
 	 */
-	namespace plugin {
+	namespace codec {
 
-		template< typename Product >
-		class Creator {
-		public:
-			Creator() {}
-			Product * create() const {
-				return this->create_();
-			}
-		private:
-			Creator( const Creator & );
-			Creator & operator =( const Creator & );
-			virtual Product * create_() const = 0;
-		};
+		/**
+		 * @ingroup Codecs
+		 * @brief Used for storing raw binary data
+		 */
+		typedef std::deque< char > ByteArray;
+
+	}
+
+	namespace error {
+
+		/**
+		 * @ingroup Codecs
+		 * @brief Codec error
+		 */
+		class Codec {};
+		/// Error on encoding or decoding
+		typedef Error< Codec > CodecError;
 
 	}
 

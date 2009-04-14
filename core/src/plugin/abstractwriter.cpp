@@ -19,7 +19,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "abstractwriter.hpp"
+#include "plugin/abstractwriter.hpp"
 
 namespace khopper {
 
@@ -50,7 +50,7 @@ namespace khopper {
 
 			this->setupMuxer_();
 			this->setupEncoder_();
-			this->openResouse_();
+			this->openResource_();
 			this->writeHeader_();
 
 			this->opening_ = true;
@@ -58,7 +58,7 @@ namespace khopper {
 
 		void AbstractWriter::close() {
 			this->flush();
-			this->closeResouse_();
+			this->closeResource_();
 			this->opening_ = false;
 		}
 

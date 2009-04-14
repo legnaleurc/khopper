@@ -21,20 +21,22 @@
  */
 #include "cuesheet.hpp"
 #include "track.hpp"
-#include "readerplugin.hpp"
-#include "error.hpp"
-#include "os.hpp"
-#include "text.hpp"
+#include "plugin/readerplugin.hpp"
+#include "common/error.hpp"
+#include "common/os.hpp"
+#include "common/text.hpp"
 
 #include <QTextStream>
 #include <QRegExp>
 #include <QtDebug>
 
+#include <algorithm>
+
 namespace {
 
 	inline QString stripQuote( const QString & s ) {
 		if( s[0] == '\"' && s[s.length()-1] == '\"' ) {
-			return s.mid( 1, s.length() - 1 );
+			return s.mid( 1, s.length() - 2 );
 		} else {
 			return s;
 		}
@@ -114,7 +116,7 @@ namespace khopper {
 
 			// get the total length, because cue sheet don't provide it
 			codec::ReaderSP decoder( plugin::createReader( text::getSuffix( currentFile.first ) ) );
-			decoder->open( text::toLocale( currentFile.first ) );
+			decoder->open( currentFile.first.toLocal8Bit().constData() );
 			if( decoder->isOpen() ) {
 				std::for_each( this->tracks_.begin(), this->tracks_.end(), ::setBCS( decoder ) );
 
@@ -216,7 +218,7 @@ namespace khopper {
 					break;
 				default:
 					// other values implies error
-					throw Error< Parsing >( "Index value error!" );
+					throw error::ParsingError( "Index value error!" );
 				}
 			} else if( type == "PREGAP" ) {
 				this->tracks_[trackNO]->setPreGap( Index( minute, second, frame ) );

@@ -19,7 +19,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "writerplugin.hpp"
+#include "plugin/writerplugin.hpp"
 #include "plugin_impl.hpp"
 
 #ifndef LOKI_CLASS_LEVEL_THREADING
@@ -47,12 +47,12 @@ namespace khopper {
 			Loki::ClassLevelLockable
 		> WriterFactory;
 
-		bool registerWriter( const std::string & key, const std::string & plugin ) {
-			return registerProduct< codec::AbstractWriter, WriterFactory >( key, plugin );
+		bool registerWriter( const std::string & key, const std::string & name ) {
+			return registerProduct< codec::AbstractWriter, WriterFactory >( key, name );
 		}
 
 		codec::WriterSP createWriter( const std::string & key ) {
-			return codec::WriterSP( createProduct< codec::AbstractWriter, WriterFactory >( key ) );
+			return createProduct< codec::AbstractWriter, WriterFactory >( key );
 		}
 
 	}

@@ -20,7 +20,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "mp3panel.hpp"
-#include "writerplugin.hpp"
+
+#include "plugin/writerplugin.hpp"
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -31,11 +32,11 @@
 #include <QtDebug>
 #include <QtPlugin>
 
-Q_EXPORT_PLUGIN2( kpp_mp3, khopper::widget::MP3Panel )
+Q_EXPORT_PLUGIN2( kpp_mp3, khopper::plugin::MP3Panel )
 
 namespace khopper {
 
-	namespace widget {
+	namespace plugin {
 
 		MP3Panel::MP3Panel( QWidget * parent, Qt::WindowFlags f ):
 		AbstractPanel( parent, f ),

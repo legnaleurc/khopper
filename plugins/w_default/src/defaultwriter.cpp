@@ -19,8 +19,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "tr1.hpp"
-#include "error.hpp"
+#include "common/tr1.hpp"
+#include "common/error.hpp"
 #include "defaultwriter.hpp"
 #include "defaultwc.hpp"
 
@@ -30,6 +30,8 @@ extern "C" {
 }
 
 #include <QtPlugin>
+
+#include <cstring>
 
 namespace {
 
@@ -79,13 +81,13 @@ namespace khopper {
 		void DefaultWriter::setupMuxer_() {
 			AVOutputFormat * pOF = guess_format( NULL, this->getFilePath().c_str(), NULL );
 			if( pOF == NULL ) {
-				throw Error< Codec >( "Can not recognize output format" );
+				throw error::CodecError( "Can not recognize output format" );
 			}
 
 			this->pFormatContext_.reset( av_alloc_format_context(), ::fc_helper );
 //			this->pFormatContext_.reset( avformat_alloc_context(), ::fc_helper );
 			if( !this->pFormatContext_ ) {
-				throw Error< System >( "Memory allocation error" );
+				throw error::SystemError( "Memory allocation error" );
 			}
 			this->pFormatContext_->oformat = pOF;
 
@@ -95,12 +97,12 @@ namespace khopper {
 		void DefaultWriter::setupEncoder_() {
 			AVOutputFormat * pOF = this->pFormatContext_->oformat;
 			if( pOF->audio_codec == CODEC_ID_NONE ) {
-				throw Error< Codec >( "Can not setup encoder" );
+				throw error::CodecError( "Can not setup encoder" );
 			}
 
 			this->pStream_ = av_new_stream( this->pFormatContext_.get(), 1 );
 			if( !this->pStream_ ) {
-				throw Error< Codec >( "Can not create stream" );
+				throw error::CodecError( "Can not create stream" );
 			}
 
 			AVCodecContext * pCC = this->pStream_->codec;
@@ -117,32 +119,32 @@ namespace khopper {
 				pCC->global_quality = static_cast< int >( this->pStream_->quality );
 			}
 			if( av_set_parameters( this->pFormatContext_.get(), NULL ) < 0 ) {
-				throw Error< Codec >( "Set parameters failed" );
+				throw error::CodecError( "Set parameters failed" );
 			}
 			// NOTE: set complete
 
 			AVCodec * pC = avcodec_find_encoder( pCC->codec_id );
 			if( !pC ) {
-				throw Error< Codec >( "Find no encoder" );
+				throw error::CodecError( "Find no encoder" );
 			}
 
 			if( avcodec_open( pCC, pC ) < 0 ) {
-				throw Error< Codec >( "Can not open encoder" );
+				throw error::CodecError( "Can not open encoder" );
 			}
 
 			this->getSampleBuffer().resize( pCC->frame_size * sizeof( short ) * pCC->channels );
 		}
 
-		void DefaultWriter::openResouse_() {
+		void DefaultWriter::openResource_() {
 			AVOutputFormat * pOF = this->pFormatContext_->oformat;
 			if( !( pOF->flags & AVFMT_NOFILE ) ) {
 				if( url_fopen( &this->pFormatContext_->pb, this->getFilePath().c_str(), URL_WRONLY ) < 0 ) {
-					throw Error< IO >( std::string( "Can not open file: `" ) + this->getFilePath() + "\'" );
+					throw error::IOError( std::string( "Can not open file: `" ) + this->getFilePath() + "\'" );
 				}
 			}
 		}
 
-		void DefaultWriter::closeResouse_() {
+		void DefaultWriter::closeResource_() {
 			av_write_trailer( this->pFormatContext_.get() );
 			this->pFormatContext_.reset();
 		}
@@ -158,7 +160,7 @@ namespace khopper {
 		void DefaultWriter::writeFrame_( const char * sample, std::size_t /*nSamples*/ ) {
 			AVCodecContext * pCC = this->pStream_->codec;
 
-			uint8_t audio_outbuf[FF_MIN_BUFFER_SIZE];
+			static uint8_t audio_outbuf[FF_MIN_BUFFER_SIZE * 4];
 
 			AVPacket pkt;
 			av_init_packet( &pkt );
@@ -166,16 +168,14 @@ namespace khopper {
 			pkt.stream_index = this->pStream_->index;
 			pkt.flags |= PKT_FLAG_KEY;
 
-			// casting hack
-			const void * samples = sample;
-			pkt.size = avcodec_encode_audio( pCC, audio_outbuf, sizeof( audio_outbuf ), static_cast< const short * >( samples ) );
+			pkt.size = avcodec_encode_audio( pCC, audio_outbuf, sizeof( audio_outbuf ), static_cast< const short * >( static_cast< const void * >( sample ) ) );
 
 			if( pCC->coded_frame->pts != static_cast< int64_t >( AV_NOPTS_VALUE ) ) {
 				pkt.pts = av_rescale_q( pCC->coded_frame->pts, pCC->time_base, this->pStream_->time_base );
 			}
 
 			if( av_write_frame( this->pFormatContext_.get(), &pkt ) != 0 ) {
-				throw Error< Codec >( "Can not write frame" );
+				throw error::CodecError( "Can not write frame" );
 			}
 		}
 
@@ -183,8 +183,8 @@ namespace khopper {
 
 	namespace plugin {
 
-		codec::AbstractWriter * DefaultWriterCreator::create_() const {
-			return new codec::DefaultWriter;
+		codec::WriterSP DefaultWriterCreator::create_() const {
+			return codec::WriterSP( new codec::DefaultWriter );
 		}
 
 	}

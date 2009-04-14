@@ -2,9 +2,7 @@
 ROOT_PATH = ..
 CORE_PATH = $${ROOT_PATH}/core
 INC_DIRS =	\
-	$${CORE_PATH}/include/codec	\
-	$${CORE_PATH}/include/common	\
-	$${CORE_PATH}/include/widget	\
+	$${CORE_PATH}/include	\
 	./include/album	\
 	./include/widget
 SRC_DIRS =	\
@@ -72,5 +70,4 @@ CONFIG( debug, debug|release ) {
 
 unix {
 	QMAKE_CXXFLAGS += -std=c++0x
-	LIBS += -lboost_regex
 }

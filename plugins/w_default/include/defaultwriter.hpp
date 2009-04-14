@@ -22,7 +22,7 @@
 #ifndef KHOPPER_CODEC_DEFAULTWRITER_HPP
 #define KHOPPER_CODEC_DEFAULTWRITER_HPP
 
-#include "abstractwriter.hpp"
+#include "plugin/abstractwriter.hpp"
 
 struct AVFormatContext;
 struct AVOutputFormat;
@@ -52,8 +52,8 @@ namespace khopper {
 		private:
 			virtual void setupMuxer_();
 			virtual void setupEncoder_();
-			virtual void openResouse_();
-			virtual void closeResouse_();
+			virtual void openResource_();
+			virtual void closeResource_();
 			virtual void writeHeader_();
 			virtual void writeFrame_( const char *, std::size_t );
 
