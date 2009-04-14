@@ -36,7 +36,7 @@ namespace khopper {
 		OGGPanel::OGGPanel( QWidget * parent, Qt::WindowFlags f ):
 		AbstractPanel( parent, f ),
 		channels_( new QComboBox( this ) ),
-		bitRate_( new QComboBox( this ) ),
+// 		bitRate_( new QComboBox( this ) ),
 		sampleRate_( new QComboBox( this ) ) {
 			QVBoxLayout * mainBox = new QVBoxLayout( this );
 			this->setLayout( mainBox );
@@ -46,8 +46,8 @@ namespace khopper {
 			this->channels_->setCurrentIndex( 1 );
 			mainBox->addWidget( this->channels_ );
 
-			this->bitRate_->addItem( tr( "320 bps" ), QVariant( 320000 ) );
-			mainBox->addWidget( this->bitRate_ );
+// 			this->bitRate_->addItem( tr( "320 bps" ), QVariant( 320000 ) );
+// 			mainBox->addWidget( this->bitRate_ );
 
 			this->sampleRate_->addItem( tr( "44100 Hz" ), QVariant( 44100 ) );
 			mainBox->addWidget( this->sampleRate_ );
@@ -57,7 +57,7 @@ namespace khopper {
 			codec::WriterSP tmp( plugin::createWriter( "ogg" ) );
 
 			tmp->setChannels( this->channels_->itemData( this->channels_->currentIndex() ).toInt() );
-			tmp->setBitRate( this->bitRate_->itemData( this->bitRate_->currentIndex() ).toInt() );
+// 			tmp->setBitRate( this->bitRate_->itemData( this->bitRate_->currentIndex() ).toInt() );
 			tmp->setSampleRate( this->sampleRate_->itemData( this->sampleRate_->currentIndex() ).toInt() );
 
 			return tmp;

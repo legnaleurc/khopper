@@ -48,7 +48,7 @@ namespace khopper {
 
 		private:
 			QComboBox * channels_;
-			QComboBox * bitRate_;
+// 			QComboBox * bitRate_;
 			QComboBox * sampleRate_;
 		};
 

@@ -159,7 +159,7 @@ namespace khopper {
 		void DefaultWriter::writeFrame_( const char * sample, std::size_t /*nSamples*/ ) {
 			AVCodecContext * pCC = this->pStream_->codec;
 
-			uint8_t audio_outbuf[FF_MIN_BUFFER_SIZE];
+			static uint8_t audio_outbuf[FF_MIN_BUFFER_SIZE * 4];
 
 			AVPacket pkt;
 			av_init_packet( &pkt );
@@ -167,9 +167,7 @@ namespace khopper {
 			pkt.stream_index = this->pStream_->index;
 			pkt.flags |= PKT_FLAG_KEY;
 
-			// casting hack
-			const void * samples = sample;
-			pkt.size = avcodec_encode_audio( pCC, audio_outbuf, sizeof( audio_outbuf ), static_cast< const short * >( samples ) );
+			pkt.size = avcodec_encode_audio( pCC, audio_outbuf, sizeof( audio_outbuf ), static_cast< const short * >( static_cast< const void * >( sample ) ) );
 
 			if( pCC->coded_frame->pts != static_cast< int64_t >( AV_NOPTS_VALUE ) ) {
 				pkt.pts = av_rescale_q( pCC->coded_frame->pts, pCC->time_base, this->pStream_->time_base );
