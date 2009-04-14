@@ -49,7 +49,6 @@ namespace khopper {
 			foreach( QString fileName, pc.getDir().entryList( QDir::Files ) ) {
 				qDebug() << fileName;
 				QPluginLoader piLoader( pc.getDir().absoluteFilePath( fileName ) );
-				qDebug() << fileName;
 				QObject * plugin = piLoader.instance();
 				if( plugin ) {
 					plugin::AbstractPanel * option = qobject_cast< plugin::AbstractPanel * >( plugin );
