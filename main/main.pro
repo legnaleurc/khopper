@@ -46,7 +46,6 @@ SOURCES +=	\
 RESOURCES += main.qrc
 
 # config
-TEMPLATE = vcapp
 TARGET  = khopper
 CONFIG += debug_and_release
 QT     += phonon
@@ -69,5 +68,10 @@ CONFIG( debug, debug|release ) {
 }
 
 unix {
+	TEMPLATE = app
 	QMAKE_CXXFLAGS += -std=c++0x
+}
+
+win32 {
+	TEMPLATE = vcapp
 }

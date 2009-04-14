@@ -33,7 +33,6 @@ SOURCES +=	\
 	./src/common/text.cpp
 
 # Config
-TEMPLATE = vclib
 TARGET   = k_core
 CONFIG  += debug_and_release
 VERSION  = 0.1.70
@@ -54,11 +53,13 @@ CONFIG( debug, debug|release ) {
 }
 
 unix {
+	TEMPLATE = lib
 	QMAKE_CXXFLAGS += -std=c++0x
 	LIBS        += -lloki
 	SOURCES += ./src/common/linux.cpp
 }
 
 win32 {
+	TEMPLATE = vclib
 	SOURCES += ./src/common/windows.cpp
 }
