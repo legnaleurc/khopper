@@ -16,7 +16,6 @@ SOURCES = src/flacpanel.cpp
 MOC_DIR = $${ROOT_PATH}/tmp/moc
 
 # Config
-TEMPLATE = lib
 CONFIG  += plugin debug_and_release
 TARGET   = $$qtLibraryTarget(kpp_flac)
 
@@ -36,5 +35,10 @@ CONFIG( debug, debug|release ) {
 }
 
 unix {
+	TEMPLATE = lib
 	QMAKE_CXXFLAGS += -std=c++0x
+}
+
+win32 {
+	TEMPLATE = vclib
 }

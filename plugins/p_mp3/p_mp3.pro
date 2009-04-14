@@ -16,7 +16,6 @@ SOURCES = src/mp3panel.cpp
 MOC_DIR = $${ROOT_PATH}/tmp/moc
 
 # Config
-TEMPLATE = vclib
 CONFIG  += plugin debug_and_release
 TARGET   = $$qtLibraryTarget(kpp_mp3)
 
@@ -38,5 +37,10 @@ CONFIG( debug, debug|release ) {
 }
 
 unix {
+	TEMPLATE = lib
 	QMAKE_CXXFLAGS += -std=c++0x
+}
+
+win32 {
+	TEMPLATE = vclib
 }

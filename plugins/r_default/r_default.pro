@@ -16,7 +16,6 @@ SOURCES = src/defaultreader.cpp
 MOC_DIR = $${ROOT_PATH}/tmp/moc
 
 # Config
-TEMPLATE = vclib
 CONFIG  += plugin debug_and_release
 TARGET   = $$qtLibraryTarget(krp_default)
 
@@ -38,11 +37,13 @@ CONFIG( debug, debug|release ) {
 }
 
 unix {
+	TEMPLATE = lib
 	QMAKE_CXXFLAGS += -std=c++0x
 	CONFIG         += link_pkgconfig
 	PKGCONFIG      += libavcodec libavformat libavutil
 }
 
 win32 {
+	TEMPLATE = vclib
 	LIBS += -lavcodec-52 -lavformat-52 -lavutil-49
 }
