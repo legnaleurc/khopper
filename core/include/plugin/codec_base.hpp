@@ -26,6 +26,8 @@
 // @{
 // @}
 
+
+#include "common/tr1.hpp"
 #include "common/error.hpp"
 
 #include <deque>
@@ -52,7 +54,7 @@ namespace khopper {
 		 * @ingroup Codecs
 		 * @brief Codec error
 		 */
-		class Codec {};
+		class KHOPPER_DLL_EXPORT Codec {};
 		/// Error on encoding or decoding
 		typedef Error< Codec > CodecError;
 

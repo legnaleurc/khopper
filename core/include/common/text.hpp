@@ -22,6 +22,8 @@
 #ifndef KHOPPER_TEXT_HPP
 #define KHOPPER_TEXT_HPP
 
+#include "common/tr1.hpp"
+
 #include <QString>
 #include <string>
 
@@ -33,12 +35,12 @@ namespace khopper {
 	namespace text {
 
 		/// @brief Get suffix of a file name
-		std::string getSuffix( const QString & filePath );
+		KHOPPER_DLL_EXPORT std::string getSuffix( const QString & filePath );
 		/**
 		 * @brief Overloaded version for convenience
 		 * @sa getSuffix(const QString &)
 		 */
-		std::string getSuffix( const QByteArray & filePath );
+		KHOPPER_DLL_EXPORT std::string getSuffix( const QByteArray & filePath );
 
 	}
 

@@ -73,7 +73,7 @@ namespace khopper {
 		 * You will not use this class directly.
 		 */
 		template< typename Product >
-		class Creator {
+		class KHOPPER_DLL_EXPORT Creator {
 		public:
 			/// Default constructor
 			Creator() {}

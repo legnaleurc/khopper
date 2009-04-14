@@ -22,6 +22,8 @@
 #ifndef KHOPPER_ERROR_HPP
 #define KHOPPER_ERROR_HPP
 
+#include "common/tr1.hpp"
+
 #include <exception>
 #include <string>
 
@@ -38,7 +40,7 @@ namespace khopper {
 		 *
 		 * Message will encode to UTF-8.
 		 */
-		class ErrorBase : public std::exception {
+		class KHOPPER_DLL_EXPORT ErrorBase : public std::exception {
 		public:
 			/**
 			 * @brief Construct with an error message
@@ -64,7 +66,7 @@ namespace khopper {
 		 * @tparam Type Custom error extension
 		 */
 		template< typename Type >
-		class Error : public ErrorBase, public Type {
+		class KHOPPER_DLL_EXPORT Error : public ErrorBase, public Type {
 		public:
 			/**
 			 * @brief Construct with an error message
@@ -76,21 +78,21 @@ namespace khopper {
 		/**
 		 * @brief Run-time error class
 		 */
-		class RunTime {};
+		class KHOPPER_DLL_EXPORT RunTime {};
 		/// Error on run-time
 		typedef Error< RunTime > RunTimeError;
 
 		/**
 		 * @brief System error class
 		 */
-		class System {};
+		class KHOPPER_DLL_EXPORT System {};
 		/// Error on system
 		typedef Error< System > SystemError;
 
 		/**
 		 * @brief Input/Ouput error class
 		 */
-		class IO {};
+		class KHOPPER_DLL_EXPORT IO {};
 		/// Error on I/O
 		typedef Error< IO > IOError;
 

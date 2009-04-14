@@ -22,9 +22,9 @@
 #ifndef KHOPPER_OS_HPP
 #define KHOPPER_OS_HPP
 
-#include <QDir>
+#include "common/tr1.hpp"
 
-#include <string>
+#include <QDir>
 
 namespace khopper {
 
@@ -39,7 +39,7 @@ namespace khopper {
 		 * @param [in] back back part
 		 * @return Complete path
 		 */
-		QString join( const QString & front, const QString & back );
+		KHOPPER_DLL_EXPORT QString join( const QString & front, const QString & back );
 
 	}
 
@@ -48,7 +48,7 @@ namespace khopper {
 		/**
 		 * @brief Plug-in context
 		 */
-		class PluginContext {
+		class KHOPPER_DLL_EXPORT PluginContext {
 		public:
 			/// Default constructor
 			PluginContext();

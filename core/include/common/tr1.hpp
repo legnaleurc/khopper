@@ -35,4 +35,10 @@
 #include <memory>
 #endif
 
+#ifdef _MSC_VER
+#define KHOPPER_DLL_EXPORT __declspec(dllexport)
+#else
+#define KHOPPER_DLL_EXPORT
+#endif
+
 #endif

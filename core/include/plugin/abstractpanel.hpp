@@ -37,7 +37,7 @@ namespace khopper {
 		 * All output option panel will inherit this class, \n
 		 * and must register to factory. \n
 		 */
-		class AbstractPanel : public QWidget {
+		class KHOPPER_DLL_EXPORT AbstractPanel : public QWidget {
 		public:
 			/**
 			 * @brief Default constructor
