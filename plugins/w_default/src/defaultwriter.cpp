@@ -141,7 +141,11 @@ namespace khopper {
 		void DefaultWriter::openResource_() {
 			AVOutputFormat * pOF = this->pFormatContext_->oformat;
 			if( !( pOF->flags & AVFMT_NOFILE ) ) {
+#ifdef _WIN32
+				if( url_fopen( &this->pFormatContext_->pb, QString::fromLocal8Bit( this->getFilePath().c_str() ).toUtf8().constData(), URL_WRONLY ) < 0 ) {
+#else
 				if( url_fopen( &this->pFormatContext_->pb, this->getFilePath().c_str(), URL_WRONLY ) < 0 ) {
+#endif
 					throw error::IOError( std::string( "Can not open file: `" ) + this->getFilePath() + "\'" );
 				}
 			}
