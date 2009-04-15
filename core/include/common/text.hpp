@@ -34,6 +34,8 @@ namespace khopper {
 	 */
 	namespace text {
 
+		KHOPPER_DLL_EXPORT std::string toUtf8( const std::wstring & unicode );
+
 		/// @brief Get suffix of a file name
 		KHOPPER_DLL_EXPORT std::string getSuffix( const QString & filePath );
 		/**

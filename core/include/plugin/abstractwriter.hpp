@@ -55,7 +55,7 @@ namespace khopper {
 			 * AbstractWriter do not handle path encoding,
 			 * so you should help yourself.
 			 */
-			void open( const std::string & filePath );
+			void open( const std::wstring & filePath );
 			/// Check if audio writer is opening
 			bool isOpen() const {
 				return this->opening_;
@@ -159,7 +159,7 @@ namespace khopper {
 			 * @brief Get file path
 			 * @sa setFilePath
 			 */
-			const std::string & getFilePath() const {
+			const std::wstring & getFilePath() const {
 				return this->filePath_;
 			}
 			/**
@@ -206,7 +206,7 @@ namespace khopper {
 			std::string artist_;
 			int bitRate_;
 			int channels_;
-			std::string filePath_;
+			std::wstring filePath_;
 			bool opening_;
 			double quality_;
 			std::vector< char > sampleBuffer_;

@@ -27,6 +27,10 @@ namespace khopper {
 
 	namespace text {
 
+		std::string toUtf8( const std::wstring & unicode ) {
+			return QString::fromStdWString( unicode ).toUtf8().constData();
+		}
+
 		std::string getSuffix( const QString & filePath ) {
 			return QFileInfo( filePath ).suffix().toUtf8().constData();
 		}

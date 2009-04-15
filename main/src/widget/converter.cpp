@@ -35,8 +35,8 @@ namespace khopper {
 
 		void Converter::convert( album::TrackCSP track, const QString & targetPath, codec::WriterSP encoder ) {
 			codec::ReaderSP decoder( plugin::createReader( text::getSuffix( track->getFilePath() ) ) );
-			decoder->open( track->getFilePath().toLocal8Bit().constData() );
-			encoder->open( targetPath.toLocal8Bit().constData() );
+			decoder->open( track->getFilePath().toStdWString() );
+			encoder->open( targetPath.toStdWString() );
 			this->canceled_ = false;
 
 			if( !decoder->isOpen() || !encoder->isOpen() ) {

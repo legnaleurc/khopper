@@ -7,16 +7,15 @@ extern "C" {
 #include <io.h>
 #include <fcntl.h>
 #include <share.h>
+#include <sys/stat.h>
 
 #include <wchar.h>
 #include <errno.h>
 #include <assert.h>
 
 static int wfile_open( URLContext * h, const char * filename, int flags ) {
-	int access;
-	int fd;
-
-	av_strstart( filename, "ufile:", &filename );
+	int err;
+	err = av_strstart( filename, "wfile://", &filename );
 
 	/// 4096 should be enough for a path name
 	wchar_t wfilename[4096];
@@ -26,6 +25,7 @@ static int wfile_open( URLContext * h, const char * filename, int flags ) {
 		return AVERROR(ENOENT);
 	}
 
+	int access;
 	if( flags & URL_RDWR ) {
 		access = _O_CREAT | _O_TRUNC | _O_RDWR;
 	} else if (flags & URL_WRONLY) {
@@ -36,13 +36,14 @@ static int wfile_open( URLContext * h, const char * filename, int flags ) {
 #ifdef O_BINARY
 	access |= O_BINARY;
 #endif
-	_wsopen_s( &fd, wfilename, _SH_DENYNO, access, 0666 );
-	h->priv_data = ( void * )( size_t )fd;
+	int fd;
+	err = _wsopen_s( &fd, wfilename, access, _SH_DENYNO, _S_IREAD | _S_IWRITE );
 	if( fd < 0 ) {
 		const int err = AVERROR(ENOENT);
 		assert( err < 0 );
 		return err;
 	}
+	h->priv_data = ( void * )( size_t )fd;
 	return 0;
 }
 
@@ -85,51 +86,6 @@ URLProtocol wfile_protocol = {
 	wfile_seek,
 	wfile_close
 };
-
-//int modify_file_url_to_utf8(char* buffer, size_t buffer_size, const char*
-//url)
-//{
-//   strncpy(buffer, "ufile:", buffer_size);
-//   strncat(buffer, url, buffer_size);
-//   return 0;
-//}
-
-//int modify_file_url_to_utf8(char* buffer, size_t buffer_size, const wchar_t*
-//url)
-//{
-//   static const char ufile[] = "ufile:";
-//   strncpy(buffer, ufile, buffer_size);
-//
-//   /// convert Unicode to multi-byte string
-//   ERROR_IF(
-//       int result = WideCharToMultiByte(
-//       CP_UTF8,
-//       0,
-//       url,
-//       -1,
-//       buffer + (sizeof(ufile) - 1),
-//       buffer_size - sizeof(ufile),
-//       NULL,
-//       NULL
-//       ),
-//       result <= 0,
-//       return -1
-//       );
-//
-//   return 0;
-//}
-
-//this is how to use this
-
-//int main()
-//{
-// const wchar_t* my_unicode_filename = ...
-// char utf8url[1024];
-// modify_file_url_to_utf8(utf8url, sizeof(utf8url), my_unicode_filename);
-// AVFormatContext* ctx;
-// av_open_input_file(&ctx, utf8url, NULL, 0, NULL);
-//
-//}
 
 static inline int initialize() {
 	static int initialized = 0;

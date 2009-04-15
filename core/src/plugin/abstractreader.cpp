@@ -48,7 +48,7 @@ namespace khopper {
 		AbstractReader::~AbstractReader() {
 		}
 
-		void AbstractReader::open( const std::string & filePath ) {
+		void AbstractReader::open( const std::wstring & filePath ) {
 			if( this->opening_ ) {
 				this->close();
 			}

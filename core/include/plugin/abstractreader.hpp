@@ -54,7 +54,7 @@ namespace khopper {
 			 * AbstractReader do not handle path encoding,
 			 * so you should help yourself.
 			 */
-			void open( const std::string & filePath );
+			void open( const std::wstring & filePath );
 			/// Check if audio reader is opening
 			bool isOpen() const {
 				return this->opening_;
@@ -233,7 +233,7 @@ namespace khopper {
 			/**
 			 * @brief Get file path
 			 */
-			const std::string & getFilePath() const {
+			const std::wstring & getFilePath() const {
 				return this->filePath_;
 			}
 			/**
@@ -294,7 +294,7 @@ namespace khopper {
 			std::string copyright_;
 			double duration_;
 			double end_;
-			std::string filePath_;
+			std::wstring filePath_;
 			std::string genre_;
 			bool hasNext_;
 			int index_;

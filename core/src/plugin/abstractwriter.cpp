@@ -42,7 +42,7 @@ namespace khopper {
 		AbstractWriter::~AbstractWriter() {
 		}
 
-		void AbstractWriter::open( const std::string & filePath ) {
+		void AbstractWriter::open( const std::wstring & filePath ) {
 			this->filePath_ = filePath;
 			if( this->isOpen() ) {
 				this->close();

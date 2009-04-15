@@ -46,4 +46,5 @@ unix {
 win32 {
 	TEMPLATE = vclib
 	LIBS += -lavcodec-52 -lavformat-52 -lavutil-49
+	SOURCES += src/wfile.cpp
 }
