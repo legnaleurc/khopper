@@ -52,7 +52,7 @@
 namespace {
 
 	inline QString applyFormat( boost::format tpl, khopper::album::TrackCSP track ) {
-		return QString::fromStdString( ( tpl % track->getTitle().toUtf8().constData() % track->getArtist().toUtf8().constData() % track->getIndex() ).str() );
+		return QString::fromUtf8( ( tpl % track->getTitle().toUtf8().constData() % track->getArtist().toUtf8().constData() % track->getIndex() ).str().c_str() );
 	}
 
 }
@@ -174,7 +174,7 @@ namespace khopper {
 
 		QString MainWindow::getOutDir_( album::TrackSP track ) const {
 			if( this->useSourcePath_->isChecked() ) {
-				return QFileInfo( QString::fromLocal8Bit( track->getFilePath().constData() ) ).absolutePath();
+				return QFileInfo( track->getFilePath() ).absolutePath();
 			} else {
 				return this->outputPath_->text();
 			}
@@ -249,7 +249,7 @@ namespace khopper {
 						album::TrackSP track( new album::Track );
 
 						try {
-							track->load( filePath.toLocal8Bit() );
+							track->load( filePath );
 							tracks.push_back( track );
 						} catch( std::exception & e ) {
 							this->showErrorMessage_( tr( "Can not decode this file!" ), trUtf8( e.what() ) );

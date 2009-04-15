@@ -51,11 +51,12 @@ namespace khopper {
 		title_() {
 		}
 
-		void Track::load( const QByteArray & filePath ) {
+		void Track::load( const QString & filePath ) {
 			this->filePath_ = filePath;
+			QByteArray local = filePath.toLocal8Bit();
 
-			codec::ReaderSP decoder( plugin::createReader( text::getSuffix( filePath ) ) );
-			decoder->open( this->filePath_.constData() );
+			codec::ReaderSP decoder( plugin::createReader( text::getSuffix( local ) ) );
+			decoder->open( local.constData() );
 			if( decoder->isOpen() ) {
 				this->album_ = decoder->getAlbum().c_str();
 				this->artist_ = decoder->getArtist().c_str();

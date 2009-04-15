@@ -100,7 +100,7 @@ namespace khopper {
 			/**
 			 * @brief Load track from @p filePath
 			 */
-			void load( const QByteArray & filePath );
+			void load( const QString & filePath );
 
 			/**
 			 * @brief Get album
@@ -143,7 +143,7 @@ namespace khopper {
 			 *
 			 * Encoded string in locale.
 			 */
-			const QByteArray & getFilePath() const {
+			const QString & getFilePath() const {
 				return this->filePath_;
 			}
 			/**
@@ -253,14 +253,14 @@ namespace khopper {
 			 * @sa getFilePath() setFilePath(const QString &)
 			 */
 			void setFilePath( const QByteArray & filePath ) {
-				this->filePath_ = filePath;
+				this->setFilePath( QString::fromLocal8Bit( filePath.constData() ) );
 			}
 			/**
 			 * @brief Set file path
 			 * @sa getFilePath() setFilePath(const QByteArray &)
 			 */
 			void setFilePath( const QString & filePath ) {
-				this->setFilePath( filePath.toLocal8Bit() );
+				this->filePath_ = filePath;
 			}
 			/**
 			 * @brief Add flag
@@ -372,7 +372,7 @@ namespace khopper {
 			std::map< QByteArray, QByteArray > comments_;
 			DataType dataType_;
 			Index duration_;
-			QByteArray filePath_;
+			QString filePath_;
 			FileType fileType_;
 			Flag flags_;
 			std::vector< QByteArray > garbage_;
