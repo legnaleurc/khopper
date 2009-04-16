@@ -38,7 +38,7 @@ namespace khopper {
 		 *
 		 * This class provides a default audio reader implementation.
 		 */
-		class DefaultReader : public AbstractReader {
+		class KHOPPER_DLL_EXPORT DefaultReader : public AbstractReader {
 		public:
 			/**
 			 * @brief Default constructor

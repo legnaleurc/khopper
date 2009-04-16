@@ -38,12 +38,12 @@ CONFIG  += debug_and_release
 VERSION  = 0.1.70
 
 CONFIG( debug, debug|release ) {
-	DESTDIR     = $${ROOT_PATH}/build/debug/lib
+	DESTDIR     = $${ROOT_PATH}/build/debug
 	OBJECTS_DIR = $${ROOT_PATH}/tmp/obj/debug
 
 	win32:LIBS += -lloki_D
 } else {
-	DESTDIR     = $${ROOT_PATH}/build/release/lib
+	DESTDIR     = $${ROOT_PATH}/build/release
 	OBJECTS_DIR = $${ROOT_PATH}/tmp/obj/release
 	DEFINES    += QT_NO_DEBUG_OUTPUT
 

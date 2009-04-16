@@ -25,15 +25,15 @@ CONFIG( debug, debug|release ) {
 	DESTDIR     = $${ROOT_PATH}/build/debug/plugins
 	OBJECTS_DIR = $${ROOT_PATH}/tmp/obj/debug
 
-	unix:LIBS  += -L$${ROOT_PATH}/build/debug/lib -lk_core -L$${ROOT_PATH}/build/debug/lib -lklp_default
-	win32:LIBS += -L$${ROOT_PATH}/build/debug/lib -lk_core0 -L$${ROOT_PATH}/build/debug/lib -lklp_default -lloki_D
+	unix:LIBS  += -L$${ROOT_PATH}/build/debug -lk_core -L$${ROOT_PATH}/build/debug -lk_default
+	win32:LIBS += -L$${ROOT_PATH}/build/debug -lk_core0 -L$${ROOT_PATH}/build/debug -lk_default0 -lloki_D
 } else {
 	DESTDIR     = $${ROOT_PATH}/build/release/plugins
 	OBJECTS_DIR = $${ROOT_PATH}/tmp/obj/release
 	DEFINES    += QT_NO_DEBUG_OUTPUT
 
-	unix:LIBS  += -L$${ROOT_PATH}/build/release/lib -lk_core -L$${ROOT_PATH}/build/release/lib -lklp_default
-	win32:LIBS += -L$${ROOT_PATH}/build/release/lib -lk_core0 -L$${ROOT_PATH}/build/release/lib -lklp_default -lloki
+	unix:LIBS  += -L$${ROOT_PATH}/build/release -lk_core -L$${ROOT_PATH}/build/release -lk_default
+	win32:LIBS += -L$${ROOT_PATH}/build/release -lk_core0 -L$${ROOT_PATH}/build/release -lk_default0 -lloki
 
 	unix:QMAKE_POST_LINK = strip $${DESTDIR}/lib$${TARGET}.so
 }
