@@ -1,5 +1,5 @@
 /**
- * @file defaultrc.hpp
+ * @file defaultwritercreator.cpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,26 +19,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_CODEC_DEFAULTRC_HPP
-#define KHOPPER_CODEC_DEFAULTRC_HPP
+#include "defaultwritercreator.hpp"
+#include "defaultwriter.hpp"
 
-#include "plugin/readerplugin.hpp"
+#include <QtPlugin>
+
+namespace {
+
+	const bool INITIALIZED = khopper::plugin::registerWriter( "*", "kwp_default" );
+
+}
+
+Q_EXPORT_PLUGIN2( kwp_default, khopper::plugin::DefaultWriterCreator )
 
 namespace khopper {
 
 	namespace plugin {
 
-		/// Default reader creator
-		class DefaultReaderCreator : public QObject, public ReaderCreator {
-			Q_OBJECT
-			Q_INTERFACES( khopper::plugin::ReaderCreator )
-
-			/// Creates reader object
-			virtual codec::ReaderSP create_() const;
-		};
+		codec::WriterSP DefaultWriterCreator::create_() const {
+			return codec::WriterSP( new codec::DefaultWriter );
+		}
 
 	}
 
 }
-
-#endif

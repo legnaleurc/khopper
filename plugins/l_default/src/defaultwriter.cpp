@@ -23,14 +23,11 @@
 #include "common/error.hpp"
 #include "common/text.hpp"
 #include "defaultwriter.hpp"
-#include "defaultwc.hpp"
 
 extern "C" {
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
 }
-
-#include <QtPlugin>
 
 #include <cstring>
 
@@ -66,11 +63,9 @@ namespace {
 		return true;
 	}
 
-	const bool INITIALIZED = khopper::plugin::registerWriter( "*", "kwp_default" ) && initFFmpeg();
+	const bool INITIALIZED = initFFmpeg();
 
 }
-
-Q_EXPORT_PLUGIN2( kwp_default, khopper::plugin::DefaultWriterCreator )
 
 namespace khopper {
 
@@ -189,14 +184,6 @@ namespace khopper {
 			if( av_write_frame( this->pFormatContext_.get(), &pkt ) != 0 ) {
 				throw error::CodecError( "Can not write frame" );
 			}
-		}
-
-	}
-
-	namespace plugin {
-
-		codec::WriterSP DefaultWriterCreator::create_() const {
-			return codec::WriterSP( new codec::DefaultWriter );
 		}
 
 	}

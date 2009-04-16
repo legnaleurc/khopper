@@ -23,14 +23,11 @@
 #include "common/error.hpp"
 #include "common/text.hpp"
 #include "defaultreader.hpp"
-#include "defaultrc.hpp"
 
 extern "C" {
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
 }
-
-#include <QtPlugin>
 
 namespace {
 
@@ -59,11 +56,9 @@ namespace {
 		return true;
 	}
 
-	const bool INITIALIZED = khopper::plugin::registerReader( "*", "krp_default" ) && initFFmpeg();
+	const bool INITIALIZED = initFFmpeg();
 
 }
-
-Q_EXPORT_PLUGIN2( krp_default, khopper::plugin::DefaultReaderCreator )
 
 namespace khopper {
 
@@ -212,14 +207,6 @@ namespace khopper {
 				avcodec_flush_buffers( this->pCodecContext_.get() );
 			}
 			return succeed;
-		}
-
-	}
-
-	namespace plugin {
-
-		codec::ReaderSP DefaultReaderCreator::create_() const {
-			return codec::ReaderSP( new codec::DefaultReader );
 		}
 
 	}
