@@ -36,11 +36,11 @@ extern "C" {
 
 namespace {
 
-	inline std::string windowsHelper( const std::wstring & filePath ) {
+	inline std::string wHelper( const std::wstring & filePath ) {
 #ifdef _WIN32
 		return std::string( "wfile://" ) + khopper::text::toUtf8( filePath );
 #else
-		return text::toUtf8( filePath );
+		return khopper::text::toUtf8( filePath );
 #endif
 	}
 
@@ -88,7 +88,7 @@ namespace khopper {
 		}
 
 		void DefaultWriter::setupMuxer_() {
-			AVOutputFormat * pOF = guess_format( NULL, windowsHelper( this->getFilePath() ).c_str(), NULL );
+			AVOutputFormat * pOF = guess_format( NULL, ::wHelper( this->getFilePath() ).c_str(), NULL );
 			if( pOF == NULL ) {
 				throw error::CodecError( "Can not recognize output format" );
 			}
@@ -150,7 +150,7 @@ namespace khopper {
 		void DefaultWriter::openResource_() {
 			AVOutputFormat * pOF = this->pFormatContext_->oformat;
 			if( !( pOF->flags & AVFMT_NOFILE ) ) {
-				if( url_fopen( &this->pFormatContext_->pb, windowsHelper( this->getFilePath() ).c_str(), URL_WRONLY ) < 0 ) {
+				if( url_fopen( &this->pFormatContext_->pb, ::wHelper( this->getFilePath() ).c_str(), URL_WRONLY ) < 0 ) {
 					throw error::IOError( std::string( "Can not open file: `" ) + text::toUtf8( this->getFilePath() ) + "\'" );
 				}
 			}
