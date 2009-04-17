@@ -46,9 +46,9 @@ namespace khopper {
 
 			// Load all plugins, including readers and writers
 			plugin::PluginContext pc;
-			foreach( QString fileName, pc.getDir().entryList( QDir::Files ) ) {
+			foreach( QString fileName, pc.getPluginList() ) {
 				qDebug() << fileName;
-				QPluginLoader piLoader( pc.getDir().absoluteFilePath( fileName ) );
+				QPluginLoader piLoader( fileName );
 				QObject * plugin = piLoader.instance();
 				if( plugin ) {
 					plugin::AbstractPanel * option = qobject_cast< plugin::AbstractPanel * >( plugin );

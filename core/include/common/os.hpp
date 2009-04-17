@@ -53,8 +53,8 @@ namespace khopper {
 			/// Default constructor
 			PluginContext();
 
-			/// get plugin's directory
-			const QDir & getDir() const;
+			/// get plugin list
+			QStringList getPluginList() const;
 			/**
 			 * @brief Load plugin by plugin name
 			 * @param name plugin name

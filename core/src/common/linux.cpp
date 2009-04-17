@@ -53,8 +53,12 @@ namespace khopper {
 			this->d_.cd( "plugins" );
 		}
 
-		const QDir & PluginContext::getDir() const {
-			return this->d_;
+		QStringList PluginContext::getPluginList() const {
+			QStringList list;
+			foreach( QString fileName, this->d_.entryList( QStringList( "*.so" ), QDir::Files ) ) {
+				list << this->d_.absoluteFilePath( fileName );
+			}
+			return list;
 		}
 
 		QObject * PluginContext::load( QString name ) const {
