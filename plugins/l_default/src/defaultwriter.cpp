@@ -146,7 +146,7 @@ namespace khopper {
 			AVOutputFormat * pOF = this->pFormatContext_->oformat;
 			if( !( pOF->flags & AVFMT_NOFILE ) ) {
 				if( url_fopen( &this->pFormatContext_->pb, ::wHelper( this->getFilePath() ).c_str(), URL_WRONLY ) < 0 ) {
-					throw error::IOError( std::string( "Can not open file: `" ) + text::toUtf8( this->getFilePath() ) + "\'" );
+					throw error::IOError( std::wstring( L"Can not open file: `" ) + this->getFilePath() + L"\'" );
 				}
 			}
 		}

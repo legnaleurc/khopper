@@ -25,7 +25,16 @@ namespace khopper {
 
 	namespace error {
 
-		ErrorBase::ErrorBase( const std::string & msg ) throw() : msg_( msg ) {
+		ErrorBase::ErrorBase( const char * msg ) : msg_( msg ) {
+		}
+
+		ErrorBase::ErrorBase( const std::string & msg ) : msg_( msg ) {
+		}
+
+		ErrorBase::ErrorBase( const std::wstring & msg ) : msg_( QString::fromStdWString( msg ).toUtf8().constData() ) {
+		}
+
+		ErrorBase::ErrorBase( const QString & msg ) : msg_( msg.toUtf8().constData() ) {
 		}
 
 		ErrorBase::~ErrorBase() throw() {

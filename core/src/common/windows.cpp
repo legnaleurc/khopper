@@ -66,7 +66,7 @@ namespace khopper {
 			QPluginLoader pl( this->d_.absoluteFilePath( name.append( ".dll" ) ) );
 			QObject * tmp = pl.instance();
 			if( !tmp ) {
-				throw error::RunTimeError( pl.errorString().toStdString() );
+				throw error::RunTimeError( pl.errorString() );
 			}
 			return tmp;
 		}

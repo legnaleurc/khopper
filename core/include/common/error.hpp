@@ -24,6 +24,8 @@
 
 #include "common/tr1.hpp"
 
+#include <QString>
+
 #include <exception>
 #include <string>
 
@@ -46,7 +48,10 @@ namespace khopper {
 			 * @brief Construct with an error message
 			 * @param [in] msg Error message
 			 */
-			ErrorBase( const std::string & msg ) throw();
+			explicit ErrorBase( const char * msg );
+			explicit ErrorBase( const std::string & msg );
+			explicit ErrorBase( const std::wstring & msg );
+			explicit ErrorBase( const QString & msg );
 			/**
 			 * @brief Virtual destructor
 			 */
@@ -72,7 +77,10 @@ namespace khopper {
 			 * @brief Construct with an error message
 			 * @param [in] msg Error message
 			 */
-			Error( const std::string & msg ) throw() : ErrorBase( msg ) {}
+			explicit Error( const char * msg ) : ErrorBase( msg ) {}
+			explicit Error( const std::string & msg ) : ErrorBase( msg ) {}
+			explicit Error( const std::wstring & msg ) : ErrorBase( msg ) {}
+			explicit Error( const QString & msg ) : ErrorBase( msg ) {}
 		};
 
 		/**

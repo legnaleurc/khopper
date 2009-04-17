@@ -53,7 +53,6 @@ namespace khopper {
 
 		void Track::load( const QString & filePath ) {
 			this->filePath_ = filePath;
-//			QByteArray local = filePath.toLocal8Bit();
 
 			codec::ReaderSP decoder( plugin::createReader( text::getSuffix( filePath ) ) );
 			decoder->open( filePath.toStdWString() );
