@@ -29,7 +29,6 @@
 #include <QRadioButton>
 #include <QVariant>
 #include <QLabel>
-#include <QtDebug>
 #include <QtPlugin>
 
 Q_EXPORT_PLUGIN2( kpp_flac, khopper::plugin::FlacPanel )
@@ -77,7 +76,7 @@ namespace khopper {
 		}
 
 		QString FlacPanel::getTitle() const {
-			return "Flac";
+			return "flac";
 		}
 
 	}
