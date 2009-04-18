@@ -64,6 +64,7 @@ namespace {
 
 	const bool INITIALIZED = initFFmpeg();
 	const double QSCALE_NONE = -99999.;
+	const int OUTPUT_BUFFER_SIZE = FF_MIN_BUFFER_SIZE * 4;
 
 }
 
@@ -144,7 +145,40 @@ namespace khopper {
 				throw error::CodecError( "Can not open encoder" );
 			}
 
-			this->getSampleBuffer().resize( pCC->frame_size * sizeof( short ) * pCC->channels );
+			int bufferSize = 0;
+			switch( pCC->codec_id ) {
+			case CODEC_ID_PCM_S16LE:
+			case CODEC_ID_PCM_S16BE:
+			case CODEC_ID_PCM_U16LE:
+			case CODEC_ID_PCM_U16BE:
+			case CODEC_ID_PCM_S8:
+			case CODEC_ID_PCM_U8:
+			case CODEC_ID_PCM_MULAW:
+			case CODEC_ID_PCM_ALAW:
+			case CODEC_ID_PCM_S32LE:
+			case CODEC_ID_PCM_S32BE:
+			case CODEC_ID_PCM_U32LE:
+			case CODEC_ID_PCM_U32BE:
+			case CODEC_ID_PCM_S24LE:
+			case CODEC_ID_PCM_S24BE:
+			case CODEC_ID_PCM_U24LE:
+			case CODEC_ID_PCM_U24BE:
+			case CODEC_ID_PCM_S24DAUD:
+			case CODEC_ID_PCM_ZORK:
+			case CODEC_ID_PCM_S16LE_PLANAR:
+			case CODEC_ID_PCM_DVD:
+			case CODEC_ID_PCM_F32BE:
+			case CODEC_ID_PCM_F32LE:
+			case CODEC_ID_PCM_F64BE:
+			case CODEC_ID_PCM_F64LE:
+				bufferSize = OUTPUT_BUFFER_SIZE;
+				break;
+			default:
+				bufferSize = pCC->frame_size * sizeof( short ) * pCC->channels;
+				break;
+			}
+
+			this->getSampleBuffer().resize( bufferSize );
 		}
 
 		void DefaultWriter::openResource() {
@@ -172,7 +206,7 @@ namespace khopper {
 		void DefaultWriter::writeFrame( const char * sample, std::size_t /*nSamples*/ ) {
 			AVCodecContext * pCC = this->pStream_->codec;
 
-			static uint8_t audio_outbuf[FF_MIN_BUFFER_SIZE * 4];
+			static uint8_t audio_outbuf[OUTPUT_BUFFER_SIZE];
 
 			AVPacket pkt;
 			av_init_packet( &pkt );
