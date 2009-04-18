@@ -40,7 +40,7 @@ SOURCES +=	\
 # Config
 TARGET   = k_core
 CONFIG  += debug_and_release
-VERSION  = 0.1.70
+VERSION  = 0.1.80
 
 CONFIG( debug, debug|release ) {
 	DESTDIR     = $${ROOT_PATH}/build/debug
