@@ -42,7 +42,7 @@ namespace {
 
 	inline void fc_helper( AVFormatContext * oc ) {
 		for( std::size_t i = 0; i < oc->nb_streams; ++i ) {
-			if( oc->streams[i] ) {
+			if( oc->streams[i] && oc->streams[i]->codec->codec ) {
 				avcodec_close( oc->streams[i]->codec );
 			}
 			av_freep( &oc->streams[i]->codec );
@@ -50,7 +50,7 @@ namespace {
 		}
 
 		AVOutputFormat * pOF = oc->oformat;
-		if( !( pOF->flags & AVFMT_NOFILE ) ) {
+		if( !( pOF->flags & AVFMT_NOFILE ) && oc->pb ) {
 			url_fclose( oc->pb );
 		}
 
