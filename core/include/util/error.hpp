@@ -19,10 +19,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_ERROR_HPP
-#define KHOPPER_ERROR_HPP
+#ifndef KHOPPER_UTIL_ERROR_HPP
+#define KHOPPER_UTIL_ERROR_HPP
 
-#include "common/tr1.hpp"
+#include "util/tr1.hpp"
 
 #include <QString>
 

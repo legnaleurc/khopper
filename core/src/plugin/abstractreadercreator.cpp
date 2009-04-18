@@ -1,5 +1,5 @@
 /**
- * @file writerplugin.cpp
+ * @file readerplugin.cpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,8 +19,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "plugin/writerplugin.hpp"
+#include "plugin/abstractreadercreator.hpp"
 #include "plugin_impl.hpp"
+#include "codec/defaultreader.hpp"
 
 #ifndef LOKI_CLASS_LEVEL_THREADING
 # define LOKI_CLASS_LEVEL_THREADING
@@ -34,25 +35,29 @@ namespace khopper {
 	namespace plugin {
 
 		/**
-		 * @brief The audio writer factory
+		 * @brief The audio reader factory
 		 * @ingroup Plugins
 		 */
 		typedef Loki::SingletonHolder<
 			Loki::Factory<
-				WriterCreator,
+				AbstractReaderCreator,
 				std::string
 			>,
 			Loki::CreateUsingNew,
 			Loki::LongevityLifetime::DieAsSmallObjectChild,
 			Loki::ClassLevelLockable
-		> WriterFactory;
+		> ReaderFactory;
 
-		bool registerWriter( const std::string & key, const std::string & name ) {
-			return registerProduct< codec::AbstractWriter, WriterFactory >( key, name );
+		bool registerReader( const std::string & key, const std::string & name ) {
+			return registerProduct< codec::AbstractReader, ReaderFactory >( key, name );
 		}
 
-		codec::WriterSP createWriter( const std::string & key ) {
-			return createProduct< codec::AbstractWriter, WriterFactory >( key );
+		codec::ReaderSP createReader( const std::string & key ) {
+			try {
+				return createProduct< codec::AbstractReader, ReaderFactory >( key );
+			} catch( std::exception & e ) {
+				return codec::ReaderSP( new codec::DefaultReader );
+			}
 		}
 
 	}

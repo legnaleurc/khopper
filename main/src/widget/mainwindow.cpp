@@ -28,7 +28,7 @@
 #include "preference.hpp"
 #include "outputoption.hpp"
 
-#include "common/error.hpp"
+#include "util/error.hpp"
 #include "plugin/abstractpanel.hpp"
 
 #include <boost/format.hpp>

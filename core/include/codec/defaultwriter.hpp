@@ -1,5 +1,5 @@
 /**
- * @file defaultreader.hpp
+ * @file defaultwriter.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,49 +19,52 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_CODEC_DEFAULTREADER_HPP
-#define KHOPPER_CODEC_DEFAULTREADER_HPP
+#ifndef KHOPPER_CODEC_DEFAULTWRITER_HPP
+#define KHOPPER_CODEC_DEFAULTWRITER_HPP
 
-#include "plugin/abstractreader.hpp"
+#include "codec/abstractwriter.hpp"
 
 struct AVFormatContext;
-struct AVCodecContext;
-struct AVPacket;
+struct AVOutputFormat;
+struct AVStream;
 
 namespace khopper {
 
 	namespace codec {
 
 		/**
-		 * @brief Default audio reader
-		 * @sa DefaultWriter
+		 * @brief Default audio writer
+		 * @sa DefaultReader
 		 *
-		 * This class provides a default audio reader implementation.
+		 * This class provides a default audio writer implementation.
 		 */
-		class KHOPPER_DLL_EXPORT DefaultReader : public AbstractReader {
+		class KHOPPER_DLL_EXPORT DefaultWriter : public AbstractWriter {
 		public:
 			/**
 			 * @brief Default constructor
 			 */
-			DefaultReader();
+			DefaultWriter();
 			/**
 			 * @brief Virtual destructor
 			 */
-			virtual ~DefaultReader();
+			virtual ~DefaultWriter();
+
+		protected:
+			std::tr1::shared_ptr< AVFormatContext > formatContext() {
+				return this->pFormatContext_;
+			}
+			bool isVariable() const;
+
+			virtual void setupMuxer();
+			virtual void setupEncoder();
+			virtual void openResource();
+			virtual void closeResource();
+			virtual void writeHeader();
+			virtual void writeFrame( const char *, std::size_t );
 
 		private:
-			virtual void openResource_();
-			virtual void closeResource_();
-			virtual void setupDemuxer_();
-			virtual void setupDecoder_();
-			virtual void readHeader_();
-			virtual ByteArray readFrame_( double &, bool & );
-			virtual bool seek_( double );
-
 			std::tr1::shared_ptr< AVFormatContext > pFormatContext_;
-			std::tr1::shared_ptr< AVCodecContext > pCodecContext_;
-			std::tr1::shared_ptr< AVPacket > pPacket_;
-			double timeBase_;
+			AVStream * pStream_;
 		};
 
 	}

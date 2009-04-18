@@ -21,7 +21,7 @@
  */
 #include "outputoption.hpp"
 
-#include "common/os.hpp"
+#include "util/os.hpp"
 
 #include <QVBoxLayout>
 #include <QDialogButtonBox>

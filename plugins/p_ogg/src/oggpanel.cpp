@@ -21,7 +21,7 @@
  */
 #include "oggpanel.hpp"
 
-#include "plugin/writerplugin.hpp"
+#include "plugin/abstractwritercreator.hpp"
 #include "oggwriter.hpp"
 
 #include <QtPlugin>

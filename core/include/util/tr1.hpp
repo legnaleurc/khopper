@@ -1,6 +1,10 @@
 /**
- * @file text.hpp
+ * @file tr1.hpp
  * @author Wei-Cheng Pan
+ * @attention If you need me, include me FIRST!
+ *
+ * This File is used to provide TR1 and C99 compatibility for
+ * different compilers.
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
  *
@@ -19,33 +23,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_TEXT_HPP
-#define KHOPPER_TEXT_HPP
+#ifndef KHOPPER_UTIL_TR1_HPP
+#define KHOPPER_UTIL_TR1_HPP
 
-#include "common/tr1.hpp"
+// for stdint.h in C99
+#define __STDC_CONSTANT_MACROS
 
-#include <QString>
-#include <string>
+#ifdef __GNUC__
+#include <tr1/memory>
+#else
+#include <memory>
+#endif
 
-namespace khopper {
-
-	/**
-	 * @brief Text processing
-	 */
-	namespace text {
-
-		KHOPPER_DLL_EXPORT std::string toUtf8( const std::wstring & unicode );
-
-		/// @brief Get suffix of a file name
-		KHOPPER_DLL_EXPORT std::string getSuffix( const QString & filePath );
-		/**
-		 * @brief Overloaded version for convenience
-		 * @sa getSuffix(const QString &)
-		 */
-		KHOPPER_DLL_EXPORT std::string getSuffix( const QByteArray & filePath );
-
-	}
-
-}
+#ifdef _MSC_VER
+#define KHOPPER_DLL_EXPORT __declspec(dllexport)
+#else
+#define KHOPPER_DLL_EXPORT
+#endif
 
 #endif

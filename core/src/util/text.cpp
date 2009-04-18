@@ -1,10 +1,6 @@
 /**
- * @file tr1.hpp
+ * @file text.cpp
  * @author Wei-Cheng Pan
- * @attention If you need me, include me FIRST!
- *
- * This File is used to provide TR1 and C99 compatibility for
- * different compilers.
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
  *
@@ -23,22 +19,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_TR1_HPP
-#define KHOPPER_TR1_HPP
+#include "util/text.hpp"
 
-// for stdint.h in C99
-#define __STDC_CONSTANT_MACROS
+#include <QFileInfo>
 
-#ifdef __GNUC__
-#include <tr1/memory>
-#else
-#include <memory>
-#endif
+namespace khopper {
 
-#ifdef _MSC_VER
-#define KHOPPER_DLL_EXPORT __declspec(dllexport)
-#else
-#define KHOPPER_DLL_EXPORT
-#endif
+	namespace text {
 
-#endif
+		std::string toUtf8( const std::wstring & unicode ) {
+			return QString::fromStdWString( unicode ).toUtf8().constData();
+		}
+
+		std::string getSuffix( const QString & filePath ) {
+			return QFileInfo( filePath ).suffix().toUtf8().constData();
+		}
+		std::string getSuffix( const QByteArray & filePath ) {
+			return getSuffix( QString::fromLocal8Bit( filePath.constData() ) );
+		}
+
+	}
+
+}

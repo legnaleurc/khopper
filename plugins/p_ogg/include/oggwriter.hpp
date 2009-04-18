@@ -22,11 +22,7 @@
 #ifndef KHOPPER_CODEC_OGGWRITER_HPP
 #define KHOPPER_CODEC_OGGWRITER_HPP
 
-#include "defaultwriter.hpp"
-
-struct AVFormatContext;
-struct AVOutputFormat;
-struct AVStream;
+#include "codec/defaultwriter.hpp"
 
 namespace khopper {
 

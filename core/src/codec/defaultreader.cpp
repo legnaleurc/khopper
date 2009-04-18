@@ -19,10 +19,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "common/tr1.hpp"
-#include "common/error.hpp"
-#include "common/text.hpp"
-#include "defaultreader.hpp"
+#include "codec/defaultreader.hpp"
+#include "util/error.hpp"
+#include "util/text.hpp"
 
 extern "C" {
 #include <libavcodec/avcodec.h>

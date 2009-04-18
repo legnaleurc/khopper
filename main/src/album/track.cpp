@@ -20,9 +20,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "track.hpp"
-#include "plugin/readerplugin.hpp"
-#include "common/text.hpp"
-#include "common/error.hpp"
+#include "plugin/abstractreadercreator.hpp"
+#include "util/error.hpp"
+#include "util/text.hpp"
 
 namespace khopper {
 

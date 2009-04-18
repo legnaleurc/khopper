@@ -20,8 +20,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "oggwriter.hpp"
-#include "common/error.hpp"
-#include "common/text.hpp"
+#include "util/error.hpp"
+#include "util/text.hpp"
 
 extern "C" {
 #include <libavformat/avformat.h>

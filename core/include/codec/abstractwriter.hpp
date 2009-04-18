@@ -22,8 +22,7 @@
 #ifndef KHOPPER_CODEC_ABSTRACTWRITER_HPP
 #define KHOPPER_CODEC_ABSTRACTWRITER_HPP
 
-#include "common/tr1.hpp"
-#include "plugin/codec_base.hpp"
+#include "codec_base.hpp"
 
 #include <string>
 #include <vector>

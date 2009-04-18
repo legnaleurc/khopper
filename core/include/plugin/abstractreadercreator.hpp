@@ -1,5 +1,5 @@
 /**
- * @file readerplugin.hpp
+ * @file abstractreadercreator.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,11 +19,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_READERPLUGIN_HPP
-#define KHOPPER_READERPLUGIN_HPP
+#ifndef KHOPPER_PLUGIN_ABSTRACTREADERCREATOR_HPP
+#define KHOPPER_PLUGIN_ABSTRACTREADERCREATOR_HPP
 
-#include "creator.hpp"
-#include "abstractreader.hpp"
+#include "abstractcreator.hpp"
+#include "codec/abstractreader.hpp"
 
 #include <QtPlugin>
 
@@ -35,7 +35,7 @@ namespace khopper {
 		 * @ingroup Plugins
 		 * @brief Reader creator interface
 		 */
-		typedef Creator< codec::AbstractReader > ReaderCreator;
+		typedef AbstractCreator< codec::AbstractReader > AbstractReaderCreator;
 
 		/**
 		 * @ingroup Plugins
@@ -56,6 +56,6 @@ namespace khopper {
 
 }
 
-Q_DECLARE_INTERFACE( khopper::plugin::ReaderCreator, "org.FoolproofProject.Khopper.Plugin.Reader/0.2" )
+Q_DECLARE_INTERFACE( khopper::plugin::AbstractReaderCreator, "org.FoolproofProject.Khopper.Plugin.Reader/0.2" )
 
 #endif

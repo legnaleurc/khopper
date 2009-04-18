@@ -21,10 +21,10 @@
  */
 #include "cuesheet.hpp"
 #include "track.hpp"
-#include "plugin/readerplugin.hpp"
-#include "common/error.hpp"
-#include "common/os.hpp"
-#include "common/text.hpp"
+#include "plugin/abstractreadercreator.hpp"
+#include "util/error.hpp"
+#include "util/os.hpp"
+#include "util/text.hpp"
 
 #include <QTextStream>
 #include <QRegExp>

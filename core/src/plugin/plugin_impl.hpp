@@ -22,9 +22,9 @@
 #ifndef KHOPPER_PLUGIN_IMPL_HPP
 #define KHOPPER_PLUGIN_IMPL_HPP
 
-#include "plugin/creator.hpp"
-#include "common/os.hpp"
-#include "common/error.hpp"
+#include "plugin/abstractcreator.hpp"
+#include "util/os.hpp"
+#include "util/error.hpp"
 
 #include <QPluginLoader>
 
@@ -78,7 +78,7 @@ namespace khopper {
 		 */
 		template< typename Product, typename CreatorFactory >
 		bool registerProduct( const std::string & key, const std::string & name ) {
-			return CreatorFactory::Instance().Register( key, CreatorLoader< Creator< Product > >( name ) );
+			return CreatorFactory::Instance().Register( key, CreatorLoader< AbstractCreator< Product > >( name ) );
 		}
 
 		/**
@@ -92,17 +92,7 @@ namespace khopper {
 		 */
 		template< typename Product, typename CreatorFactory >
 		std::tr1::shared_ptr< Product > createProduct( const std::string & key ) {
-			Creator< Product > * tmp = NULL;
-			try {
-				tmp = CreatorFactory::Instance().CreateObject( key );
-			} catch( std::exception & e ) {
-				try {
-					tmp = CreatorFactory::Instance().CreateObject( "*" );
-				} catch( std::exception & e ) {
-					throw error::RunTimeError( "Found no plugin!" );
-				}
-			}
-			return tmp->create();
+			return CreatorFactory::Instance().CreateObject( key )->create();
 		}
 
 	}

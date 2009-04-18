@@ -1,5 +1,5 @@
 /**
- * @file os.hpp
+ * @file codec_base.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,50 +19,44 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_OS_HPP
-#define KHOPPER_OS_HPP
+#ifndef KHOPPER_CODEC_BASE_HPP
+#define KHOPPER_CODEC_BASE_HPP
 
-#include "common/tr1.hpp"
+/// @defgroup Codecs De/Muxers and De/Encoders
+// @{
+// @}
 
-#include <QDir>
+
+#include "util/tr1.hpp"
+#include "util/error.hpp"
+
+#include <deque>
 
 namespace khopper {
 
 	/**
-	 * @brief Operating System dependant system code
+	 * @ingroup Codecs
+	 * @brief Contains Codecs module
 	 */
-	namespace os {
+	namespace codec {
 
 		/**
-		 * @brief Join paths to one path
-		 * @param [in] front front part
-		 * @param [in] back back part
-		 * @return Complete path
+		 * @ingroup Codecs
+		 * @brief Used for storing raw binary data
 		 */
-		KHOPPER_DLL_EXPORT QString join( const QString & front, const QString & back );
+		typedef std::deque< char > ByteArray;
 
 	}
 
-	namespace plugin {
+	namespace error {
 
 		/**
-		 * @brief Plug-in context
+		 * @ingroup Codecs
+		 * @brief Codec error
 		 */
-		class KHOPPER_DLL_EXPORT PluginContext {
-		public:
-			/// Default constructor
-			PluginContext();
-
-			/// get plugin list
-			QStringList getPluginList() const;
-			/**
-			 * @brief Load plugin by plugin name
-			 * @param name plugin name
-			 */
-			QObject * load( QString name ) const;
-		private:
-			QDir d_;
-		};
+		class KHOPPER_DLL_EXPORT Codec {};
+		/// Error on encoding or decoding
+		typedef Error< Codec > CodecError;
 
 	}
 

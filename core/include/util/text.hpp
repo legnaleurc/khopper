@@ -1,5 +1,5 @@
 /**
- * @file codec_base.hpp
+ * @file text.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,44 +19,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_CODEC_BASE_HPP
-#define KHOPPER_CODEC_BASE_HPP
+#ifndef KHOPPER_UTIL_TEXT_HPP
+#define KHOPPER_UTIL_TEXT_HPP
 
-/// @defgroup Codecs De/Muxers and De/Encoders
-// @{
-// @}
+#include "util/tr1.hpp"
 
-
-#include "common/tr1.hpp"
-#include "common/error.hpp"
-
-#include <deque>
+#include <QString>
+#include <string>
 
 namespace khopper {
 
 	/**
-	 * @ingroup Codecs
-	 * @brief Contains Codecs module
+	 * @brief Text processing
 	 */
-	namespace codec {
+	namespace text {
 
+		KHOPPER_DLL_EXPORT std::string toUtf8( const std::wstring & unicode );
+
+		/// @brief Get suffix of a file name
+		KHOPPER_DLL_EXPORT std::string getSuffix( const QString & filePath );
 		/**
-		 * @ingroup Codecs
-		 * @brief Used for storing raw binary data
+		 * @brief Overloaded version for convenience
+		 * @sa getSuffix(const QString &)
 		 */
-		typedef std::deque< char > ByteArray;
-
-	}
-
-	namespace error {
-
-		/**
-		 * @ingroup Codecs
-		 * @brief Codec error
-		 */
-		class KHOPPER_DLL_EXPORT Codec {};
-		/// Error on encoding or decoding
-		typedef Error< Codec > CodecError;
+		KHOPPER_DLL_EXPORT std::string getSuffix( const QByteArray & filePath );
 
 	}
 

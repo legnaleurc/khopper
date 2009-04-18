@@ -1,5 +1,5 @@
 /**
- * @file creator.hpp
+ * @file abstractcreator.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,8 +19,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_CREATOR_HPP
-#define KHOPPER_CREATOR_HPP
+#ifndef KHOPPER_PLUGIN_ABSTRATORCREATOR_HPP
+#define KHOPPER_PLUGIN_ABSTRATORCREATOR_HPP
 
 /**
  * @defgroup Plugins Plugin System
@@ -54,7 +54,7 @@
 // @{
 // @}
 
-#include "common/tr1.hpp"
+#include "util/tr1.hpp"
 
 namespace khopper {
 
@@ -73,17 +73,18 @@ namespace khopper {
 		 * You will not use this class directly.
 		 */
 		template< typename Product >
-		class KHOPPER_DLL_EXPORT Creator {
+		class KHOPPER_DLL_EXPORT AbstractCreator {
 		public:
 			/// Default constructor
-			Creator() {}
+			AbstractCreator() {}
+			virtual ~AbstractCreator() {}
 			/// Create the product
 			std::tr1::shared_ptr< Product > create() const {
 				return this->create_();
 			}
 		private:
-			Creator( const Creator & );
-			Creator & operator =( const Creator & );
+			AbstractCreator( const AbstractCreator & );
+			AbstractCreator & operator =( const AbstractCreator & );
 			virtual std::tr1::shared_ptr< Product > create_() const = 0;
 		};
 

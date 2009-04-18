@@ -1,5 +1,5 @@
 /**
- * @file text.cpp
+ * @file os.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,25 +19,53 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "common/text.hpp"
+#ifndef KHOPPER_UTIL_OS_HPP
+#define KHOPPER_UTIL_OS_HPP
 
-#include <QFileInfo>
+#include "util/tr1.hpp"
+
+#include <QDir>
 
 namespace khopper {
 
-	namespace text {
+	/**
+	 * @brief Operating System dependant system code
+	 */
+	namespace os {
 
-		std::string toUtf8( const std::wstring & unicode ) {
-			return QString::fromStdWString( unicode ).toUtf8().constData();
-		}
+		/**
+		 * @brief Join paths to one path
+		 * @param [in] front front part
+		 * @param [in] back back part
+		 * @return Complete path
+		 */
+		KHOPPER_DLL_EXPORT QString join( const QString & front, const QString & back );
 
-		std::string getSuffix( const QString & filePath ) {
-			return QFileInfo( filePath ).suffix().toUtf8().constData();
-		}
-		std::string getSuffix( const QByteArray & filePath ) {
-			return getSuffix( QString::fromLocal8Bit( filePath.constData() ) );
-		}
+	}
+
+	namespace plugin {
+
+		/**
+		 * @brief Plug-in context
+		 */
+		class KHOPPER_DLL_EXPORT PluginContext {
+		public:
+			/// Default constructor
+			PluginContext();
+
+			/// get plugin list
+			QStringList getPluginList() const;
+			/**
+			 * @brief Load plugin by plugin name
+			 * @param name plugin name
+			 */
+			QObject * load( QString name ) const;
+		private:
+			QDir d_;
+		};
 
 	}
 
 }
+
+#endif

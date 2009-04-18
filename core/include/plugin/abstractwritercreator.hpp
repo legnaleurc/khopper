@@ -1,5 +1,5 @@
 /**
- * @file writerplugin.hpp
+ * @file abstractwritercreator.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,11 +19,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_WRITERPLUGIN_HPP
-#define KHOPPER_WRITERPLUGIN_HPP
+#ifndef KHOPPER_PLUGIN_ABSTRACTWRITERCREATOR_HPP
+#define KHOPPER_PLUGIN_ABSTRACTWRITERCREATOR_HPP
 
-#include "creator.hpp"
-#include "plugin/abstractwriter.hpp"
+#include "abstractcreator.hpp"
+#include "codec/abstractwriter.hpp"
 
 #include <QtPlugin>
 
@@ -36,7 +36,7 @@ namespace khopper {
 		 * @brief Wirter creator interface
 		 * @sa Creator
 		 */
-		typedef Creator< codec::AbstractWriter > WriterCreator;
+		typedef AbstractCreator< codec::AbstractWriter > AbstractWriterCreator;
 
 		/**
 		 * @ingroup Plugins
@@ -57,6 +57,6 @@ namespace khopper {
 
 }
 
-Q_DECLARE_INTERFACE( khopper::plugin::WriterCreator, "org.FoolproofProject.Khopper.Plugin.Writer/0.2" )
+Q_DECLARE_INTERFACE( khopper::plugin::AbstractWriterCreator, "org.FoolproofProject.Khopper.Plugin.Writer/0.2" )
 
 #endif

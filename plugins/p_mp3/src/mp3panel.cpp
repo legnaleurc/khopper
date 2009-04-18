@@ -21,7 +21,7 @@
  */
 #include "mp3panel.hpp"
 
-#include "plugin/writerplugin.hpp"
+#include "plugin/abstractwritercreator.hpp"
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>

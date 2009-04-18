@@ -23,7 +23,7 @@
 #define KHOPPER_WIDGET_CONVERTER_HPP
 
 #include "track.hpp"
-#include "plugin/abstractwriter.hpp"
+#include "codec/abstractwriter.hpp"
 
 #include <QObject>
 
