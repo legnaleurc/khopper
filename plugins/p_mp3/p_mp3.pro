@@ -2,16 +2,15 @@
 ROOT_PATH = ../..
 CORE_PATH = $${ROOT_PATH}/core
 
-INC_DIRS =	\
-	$${CORE_PATH}/include	\
-	./include
-SRC_DIRS = ./src
+INC_DIRS = .	\
+	$${CORE_PATH}/include
+SRC_DIRS = .
 
 INCLUDEPATH += $${INC_DIRS} $${SRC_DIRS}
 DEPANDPATH  += $${INC_DIRS}
 
-HEADERS = include/mp3panel.hpp
-SOURCES = src/mp3panel.cpp
+HEADERS = mp3panel.hpp
+SOURCES = mp3panel.cpp
 
 MOC_DIR = $${ROOT_PATH}/tmp/moc
 
