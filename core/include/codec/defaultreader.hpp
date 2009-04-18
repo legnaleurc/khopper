@@ -49,15 +49,16 @@ namespace khopper {
 			 */
 			virtual ~DefaultReader();
 
-		private:
-			virtual void openResource_();
-			virtual void closeResource_();
-			virtual void setupDemuxer_();
-			virtual void setupDecoder_();
-			virtual void readHeader_();
-			virtual ByteArray readFrame_( double &, bool & );
-			virtual bool seek_( double );
+		protected:
+			virtual void openResource();
+			virtual void closeResource();
+			virtual void setupDemuxer();
+			virtual void setupDecoder();
+			virtual void readHeader();
+			virtual ByteArray readFrame( double &, bool & );
+			virtual bool seekFrame( double );
 
+		private:
 			std::tr1::shared_ptr< AVFormatContext > pFormatContext_;
 			std::tr1::shared_ptr< AVCodecContext > pCodecContext_;
 			std::tr1::shared_ptr< AVPacket > pPacket_;

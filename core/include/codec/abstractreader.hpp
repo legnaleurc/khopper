@@ -271,18 +271,18 @@ namespace khopper {
 				this->year_ = year;
 			}
 
+			virtual void openResource() = 0;
+			virtual void closeResource() = 0;
+			virtual void setupDemuxer() = 0;
+			virtual void setupDecoder() = 0;
+			virtual void readHeader() = 0;
+			virtual ByteArray readFrame( double &, bool & ) = 0;
+			virtual bool seekFrame( double ) = 0;
+
 		private:
 			// prevent copying
 			AbstractReader( const AbstractReader & );
 			AbstractReader & operator =( const AbstractReader & );
-
-			virtual void openResource_() = 0;
-			virtual void closeResource_() = 0;
-			virtual void setupDemuxer_() = 0;
-			virtual void setupDecoder_() = 0;
-			virtual void readHeader_() = 0;
-			virtual ByteArray readFrame_( double &, bool & ) = 0;
-			virtual bool seek_( double ) = 0;
 
 			std::string album_;
 			std::string artist_;

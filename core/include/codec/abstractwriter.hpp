@@ -189,7 +189,6 @@ namespace khopper {
 				return this->title_;
 			}
 
-		protected:
 			virtual void setupMuxer() = 0;
 			virtual void setupEncoder() = 0;
 			virtual void openResource() = 0;

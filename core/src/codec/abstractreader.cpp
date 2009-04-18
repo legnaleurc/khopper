@@ -54,10 +54,10 @@ namespace khopper {
 			}
 			this->filePath_ = filePath;
 
-			this->openResource_();
-			this->setupDemuxer_();
-			this->setupDecoder_();
-			this->readHeader_();
+			this->openResource();
+			this->setupDemuxer();
+			this->setupDecoder();
+			this->readHeader();
 
 			this->opening_ = true;
 			this->hasNext_ = true;
@@ -80,7 +80,7 @@ namespace khopper {
 			this->title_.clear();
 			this->year_ = -1;
 
-			this->closeResource_();
+			this->closeResource();
 
 			this->hasNext_ = false;
 			this->opening_ = false;
@@ -93,7 +93,7 @@ namespace khopper {
 			}
 
 			bool stop = false;
-			ByteArray data( this->readFrame_( decoded, stop ) );
+			ByteArray data( this->readFrame( decoded, stop ) );
 			if( data.empty() || stop ) {
 				this->hasNext_ = false;
 			}
@@ -102,7 +102,7 @@ namespace khopper {
 		}
 
 		bool AbstractReader::seek( double timestamp ) {
-			bool succeed = this->seek_( timestamp );
+			bool succeed = this->seekFrame( timestamp );
 			if( succeed ) {
 				this->hasNext_ = true;
 			}

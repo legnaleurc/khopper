@@ -77,7 +77,7 @@ namespace khopper {
 			}
 		}
 
-		void DefaultReader::openResource_() {
+		void DefaultReader::openResource() {
 			AVFormatContext * pFC = NULL;
 			if( av_open_input_file( &pFC, ::wHelper( this->getFilePath() ).c_str(), NULL, 0, NULL ) != 0 ) {
 				throw error::IOError( std::wstring( L"Can not open `" ) + this->getFilePath() + L"\'" );
@@ -85,7 +85,7 @@ namespace khopper {
 			this->pFormatContext_.reset( pFC, av_close_input_file );
 		}
 
-		void DefaultReader::setupDemuxer_() {
+		void DefaultReader::setupDemuxer() {
 			if( av_find_stream_info( this->pFormatContext_.get() ) < 0 ) {
 				throw error::CodecError( "Can not find codec info!" );
 			}
@@ -97,7 +97,7 @@ namespace khopper {
 			}
 		}
 
-		void DefaultReader::setupDecoder_() {
+		void DefaultReader::setupDecoder() {
 			int a_stream = -1;
 			for( std::size_t i = 0 ; i < this->pFormatContext_->nb_streams; ++i ) {
 				if( this->pFormatContext_->streams[i]->codec->codec_type == CODEC_TYPE_AUDIO ) {
@@ -126,7 +126,7 @@ namespace khopper {
 			this->pCodecContext_.reset( pCC, avcodec_close );
 		}
 
-		void DefaultReader::readHeader_() {
+		void DefaultReader::readHeader() {
 			this->setTitle( this->pFormatContext_->title );
 			this->setArtist( this->pFormatContext_->author );
 			this->setCopyright( this->pFormatContext_->copyright );
@@ -137,7 +137,7 @@ namespace khopper {
 			this->setGenre( this->pFormatContext_->genre );
 		}
 
-		void DefaultReader::closeResource_() {
+		void DefaultReader::closeResource() {
 			// clear native information
 			this->timeBase_ = 0.0;
 			// free the members in packet, not itself
@@ -147,7 +147,7 @@ namespace khopper {
 			this->pFormatContext_.reset();
 		}
 
-		ByteArray DefaultReader::readFrame_( double & duration, bool & stop ) {
+		ByteArray DefaultReader::readFrame( double & duration, bool & stop ) {
 			stop = false;
 			// static just for speed
 			static uint8_t audio_buf[AVCODEC_MAX_AUDIO_FRAME_SIZE*3/2];
@@ -200,7 +200,7 @@ namespace khopper {
 			return data;
 		}
 
-		bool DefaultReader::seek_( double timestamp ) {
+		bool DefaultReader::seekFrame( double timestamp ) {
 			bool succeed = av_seek_frame( this->pFormatContext_.get(), -1, ::toNative( timestamp ), AVSEEK_FLAG_BACKWARD ) >= 0;
 			if( succeed ) {
 				avcodec_flush_buffers( this->pCodecContext_.get() );
