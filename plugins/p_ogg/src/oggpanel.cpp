@@ -51,6 +51,7 @@ namespace khopper {
 			QRadioButton * lossless = new QRadioButton( tr( "Lossless (FLAC)" ), this );
 			this->brGroup_->addButton( lossless );
 			codec->addWidget( lossless );
+			lossless->setChecked( true );
 
 			QHBoxLayout * lossyBox = new QHBoxLayout;
 			codec->addLayout( lossyBox );
@@ -68,6 +69,7 @@ namespace khopper {
 			mainBox->addWidget( this->channels_ );
 
 			this->sampleRate_->addItem( tr( "44100 Hz" ), QVariant( 44100 ) );
+			this->sampleRate_->addItem( tr( "48000 Hz" ), QVariant( 48000 ) );
 			mainBox->addWidget( this->sampleRate_ );
 		}
 
