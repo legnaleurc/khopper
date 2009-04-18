@@ -64,6 +64,7 @@ namespace {
 	}
 
 	const bool INITIALIZED = initFFmpeg();
+	const double QSCALE_NONE = -99999.;
 
 }
 
@@ -74,6 +75,7 @@ namespace khopper {
 		DefaultWriter::DefaultWriter():
 		pFormatContext_(),
 		pStream_( NULL ) {
+			this->setQuality( QSCALE_NONE );
 		}
 
 		DefaultWriter::~DefaultWriter() {
@@ -82,7 +84,11 @@ namespace khopper {
 			}
 		}
 
-		void DefaultWriter::setupMuxer_() {
+		bool DefaultWriter::isVariable() const {
+			return this->getQuality() == QSCALE_NONE;
+		}
+
+		void DefaultWriter::setupMuxer() {
 			AVOutputFormat * pOF = guess_format( NULL, ::wHelper( this->getFilePath() ).c_str(), NULL );
 			if( pOF == NULL ) {
 				throw error::CodecError( "Can not recognize output format" );
@@ -101,7 +107,7 @@ namespace khopper {
 			std::strncpy( this->pFormatContext_->filename, text::toUtf8( this->getFilePath() ).c_str(), sizeof( this->pFormatContext_->filename ) );
 		}
 
-		void DefaultWriter::setupEncoder_() {
+		void DefaultWriter::setupEncoder() {
 			AVOutputFormat * pOF = this->pFormatContext_->oformat;
 			if( pOF->audio_codec == CODEC_ID_NONE ) {
 				throw error::CodecError( "Can not setup encoder" );
@@ -120,7 +126,7 @@ namespace khopper {
 			pCC->bit_rate = this->getBitRate();
 			pCC->sample_rate = this->getSampleRate();
 			pCC->channels = this->getChannels();
-			if( this->getQuality() > -1 ) {
+			if( this->getQuality() != QSCALE_NONE ) {
 				pCC->flags |= CODEC_FLAG_QSCALE;
 				this->pStream_->quality = static_cast< float >( FF_QP2LAMBDA * this->getQuality() );
 				pCC->global_quality = static_cast< int >( this->pStream_->quality );
@@ -142,7 +148,7 @@ namespace khopper {
 			this->getSampleBuffer().resize( pCC->frame_size * sizeof( short ) * pCC->channels );
 		}
 
-		void DefaultWriter::openResource_() {
+		void DefaultWriter::openResource() {
 			AVOutputFormat * pOF = this->pFormatContext_->oformat;
 			if( !( pOF->flags & AVFMT_NOFILE ) ) {
 				if( url_fopen( &this->pFormatContext_->pb, ::wHelper( this->getFilePath() ).c_str(), URL_WRONLY ) < 0 ) {
@@ -151,12 +157,12 @@ namespace khopper {
 			}
 		}
 
-		void DefaultWriter::closeResource_() {
+		void DefaultWriter::closeResource() {
 			av_write_trailer( this->pFormatContext_.get() );
 			this->pFormatContext_.reset();
 		}
 
-		void DefaultWriter::writeHeader_() {
+		void DefaultWriter::writeHeader() {
 			std::strncpy( this->pFormatContext_->title, this->getTitle().c_str(), sizeof( this->pFormatContext_->title ) );
 			std::strncpy( this->pFormatContext_->author, this->getArtist().c_str(), sizeof( this->pFormatContext_->author ) );
 			std::strncpy( this->pFormatContext_->album, this->getAlbum().c_str(), sizeof( this->pFormatContext_->album ) );
@@ -164,7 +170,7 @@ namespace khopper {
 			av_write_header( this->pFormatContext_.get() );
 		}
 
-		void DefaultWriter::writeFrame_( const char * sample, std::size_t /*nSamples*/ ) {
+		void DefaultWriter::writeFrame( const char * sample, std::size_t /*nSamples*/ ) {
 			AVCodecContext * pCC = this->pStream_->codec;
 
 			static uint8_t audio_outbuf[FF_MIN_BUFFER_SIZE * 4];

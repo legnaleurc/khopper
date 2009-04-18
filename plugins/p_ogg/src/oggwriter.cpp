@@ -1,5 +1,5 @@
 /**
- * @file oggpanel.hpp
+ * @file oggwriter.cpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,43 +19,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_WIDGET_OGGPANEL_HPP
-#define KHOPPER_WIDGET_OGGPANEL_HPP
+#include "oggwriter.hpp"
+#include "common/error.hpp"
+#include "common/text.hpp"
 
-#include "plugin/abstractpanel.hpp"
-
-#include <QComboBox>
-#include <QButtonGroup>
+extern "C" {
+#include <libavformat/avformat.h>
+}
 
 namespace khopper {
 
-	namespace plugin {
+	namespace codec {
 
-		/// Ogg output option
-		class OGGPanel : public AbstractPanel {
-			Q_OBJECT
-			Q_INTERFACES( khopper::plugin::AbstractPanel )
+		OGGWriter::OGGWriter() {
+		}
 
-		public:
-			/// Default constructor
-			OGGPanel( QWidget * parent = 0, Qt::WindowFlags f = 0 );
-
-			/// Get configured Writer instance
-			virtual codec::WriterSP getWriter() const;
-			/// Get file suffix
-			virtual QString getSuffix() const;
-			/// Get widget title
-			virtual QString getTitle() const;
-
-		private:
-			QComboBox * channels_;
-			QButtonGroup * brGroup_;
-			QComboBox * quality_;
-			QComboBox * sampleRate_;
-		};
+		void OGGWriter::setupMuxer() {
+			this->DefaultWriter::setupMuxer();
+			if( this->isVariable() ) {
+				this->formatContext()->oformat->audio_codec = CODEC_ID_VORBIS;
+			}
+		}
 
 	}
 
 }
-
-#endif

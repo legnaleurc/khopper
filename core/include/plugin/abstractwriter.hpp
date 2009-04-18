@@ -190,17 +190,18 @@ namespace khopper {
 				return this->title_;
 			}
 
+		protected:
+			virtual void setupMuxer() = 0;
+			virtual void setupEncoder() = 0;
+			virtual void openResource() = 0;
+			virtual void closeResource() = 0;
+			virtual void writeHeader() = 0;
+			virtual void writeFrame( const char *, std::size_t ) = 0;
+
 		private:
 			// prevent copying
 			AbstractWriter( const AbstractWriter & );
 			AbstractWriter & operator =( const AbstractWriter & );
-
-			virtual void setupMuxer_() = 0;
-			virtual void setupEncoder_() = 0;
-			virtual void openResource_() = 0;
-			virtual void closeResource_() = 0;
-			virtual void writeHeader_() = 0;
-			virtual void writeFrame_( const char *, std::size_t ) = 0;
 
 			std::string album_;
 			std::string artist_;

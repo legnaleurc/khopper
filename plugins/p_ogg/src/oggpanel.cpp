@@ -22,10 +22,13 @@
 #include "oggpanel.hpp"
 
 #include "plugin/writerplugin.hpp"
+#include "oggwriter.hpp"
 
 #include <QtPlugin>
 #include <QVBoxLayout>
+#include <QHBoxLayout>
 #include <QVariant>
+#include <QRadioButton>
 
 Q_EXPORT_PLUGIN2( kpp_ogg, khopper::plugin::OGGPanel )
 
@@ -36,29 +39,52 @@ namespace khopper {
 		OGGPanel::OGGPanel( QWidget * parent, Qt::WindowFlags f ):
 		AbstractPanel( parent, f ),
 		channels_( new QComboBox( this ) ),
-// 		bitRate_( new QComboBox( this ) ),
+		brGroup_( new QButtonGroup( this ) ),
+		quality_( new QComboBox( this ) ),
 		sampleRate_( new QComboBox( this ) ) {
 			QVBoxLayout * mainBox = new QVBoxLayout( this );
 			this->setLayout( mainBox );
+
+			QVBoxLayout * codec = new QVBoxLayout;
+			mainBox->addLayout( codec );
+
+			QRadioButton * lossless = new QRadioButton( tr( "Lossless (FLAC)" ), this );
+			this->brGroup_->addButton( lossless );
+			codec->addWidget( lossless );
+
+			QHBoxLayout * lossyBox = new QHBoxLayout;
+			codec->addLayout( lossyBox );
+			QRadioButton * lossy = new QRadioButton( tr( "Lossy (Vorbis)" ), this );
+			this->brGroup_->addButton( lossy );
+			lossyBox->addWidget( lossy );
+			for( int i = 10; i >= -1; --i ) {
+				this->quality_->addItem( QString::number( i ), QVariant( i ) );
+			}
+			lossyBox->addWidget( this->quality_ );
 
 			this->channels_->addItem( tr( "Mono" ), QVariant( 1 ) );
 			this->channels_->addItem( tr( "Streao" ), QVariant( 2 ) );
 			this->channels_->setCurrentIndex( 1 );
 			mainBox->addWidget( this->channels_ );
 
-// 			this->bitRate_->addItem( tr( "320 bps" ), QVariant( 320000 ) );
-// 			mainBox->addWidget( this->bitRate_ );
-
 			this->sampleRate_->addItem( tr( "44100 Hz" ), QVariant( 44100 ) );
 			mainBox->addWidget( this->sampleRate_ );
 		}
 
 		codec::WriterSP OGGPanel::getWriter() const {
-			codec::WriterSP tmp( plugin::createWriter( "ogg" ) );
+			codec::WriterSP tmp( new codec::OGGWriter() );
 
 			tmp->setChannels( this->channels_->itemData( this->channels_->currentIndex() ).toInt() );
-// 			tmp->setBitRate( this->bitRate_->itemData( this->bitRate_->currentIndex() ).toInt() );
 			tmp->setSampleRate( this->sampleRate_->itemData( this->sampleRate_->currentIndex() ).toInt() );
+			switch( this->brGroup_->checkedId() ) {
+			case 0:
+				break;
+			case 1:
+				tmp->setQuality( this->quality_->itemData( this->quality_->currentIndex() ).toInt() );
+				break;
+			default:
+				;
+			}
 
 			return tmp;
 		}

@@ -32,7 +32,7 @@ namespace khopper {
 		channels_( -1 ),
 		filePath_(),
 		opening_( false ),
-		quality_( -1.0 ),
+		quality_( 0.0 ),
 		sampleBuffer_(),
 		sampleQueue_(),
 		sampleRate_( -1 ),
@@ -48,17 +48,17 @@ namespace khopper {
 				this->close();
 			}
 
-			this->setupMuxer_();
-			this->setupEncoder_();
-			this->openResource_();
-			this->writeHeader_();
+			this->setupMuxer();
+			this->setupEncoder();
+			this->openResource();
+			this->writeHeader();
 
 			this->opening_ = true;
 		}
 
 		void AbstractWriter::close() {
 			this->flush();
-			this->closeResource_();
+			this->closeResource();
 			this->opening_ = false;
 		}
 
@@ -70,14 +70,14 @@ namespace khopper {
 				std::copy( this->sampleQueue_.begin(), copyEnd, this->sampleBuffer_.begin() );
 				this->sampleQueue_.erase( this->sampleQueue_.begin(), copyEnd );
 
-				this->writeFrame_( &this->sampleBuffer_[0], this->sampleBuffer_.size() );
+				this->writeFrame( &this->sampleBuffer_[0], this->sampleBuffer_.size() );
 			}
 		}
 
 		void AbstractWriter::flush() {
 			if( this->opening_ && !this->sampleQueue_.empty() ) {
 				std::copy( this->sampleQueue_.begin(), this->sampleQueue_.end(), this->sampleBuffer_.begin() );
-				this->writeFrame_( &this->sampleBuffer_[0], this->sampleBuffer_.size() );
+				this->writeFrame( &this->sampleBuffer_[0], this->sampleBuffer_.size() );
 				this->sampleQueue_.clear();
 			}
 		}

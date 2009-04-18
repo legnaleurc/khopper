@@ -1,5 +1,5 @@
 /**
- * @file defaultwriter.hpp
+ * @file oggwriter.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,10 +19,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_CODEC_DEFAULTWRITER_HPP
-#define KHOPPER_CODEC_DEFAULTWRITER_HPP
+#ifndef KHOPPER_CODEC_OGGWRITER_HPP
+#define KHOPPER_CODEC_OGGWRITER_HPP
 
-#include "plugin/abstractwriter.hpp"
+#include "defaultwriter.hpp"
 
 struct AVFormatContext;
 struct AVOutputFormat;
@@ -33,38 +33,19 @@ namespace khopper {
 	namespace codec {
 
 		/**
-		 * @brief Default audio writer
-		 * @sa DefaultReader
+		 * @brief Ogg writer
 		 *
-		 * This class provides a default audio writer implementation.
+		 * This class provides a ogg audio writer implementation.
 		 */
-		class KHOPPER_DLL_EXPORT DefaultWriter : public AbstractWriter {
+		class OGGWriter : public DefaultWriter {
 		public:
 			/**
 			 * @brief Default constructor
 			 */
-			DefaultWriter();
-			/**
-			 * @brief Virtual destructor
-			 */
-			virtual ~DefaultWriter();
+			OGGWriter();
 
 		protected:
-			std::tr1::shared_ptr< AVFormatContext > formatContext() {
-				return this->pFormatContext_;
-			}
-			bool isVariable() const;
-
 			virtual void setupMuxer();
-			virtual void setupEncoder();
-			virtual void openResource();
-			virtual void closeResource();
-			virtual void writeHeader();
-			virtual void writeFrame( const char *, std::size_t );
-
-		private:
-			std::tr1::shared_ptr< AVFormatContext > pFormatContext_;
-			AVStream * pStream_;
 		};
 
 	}
