@@ -21,7 +21,7 @@
  */
 #include "outputoption.hpp"
 
-#include "util/os.hpp"
+#include "plugin/plugincontext.hpp"
 
 #include <QVBoxLayout>
 #include <QDialogButtonBox>
@@ -45,8 +45,7 @@ namespace khopper {
 			mainBox->addWidget( this->optionTabs_ );
 
 			// Load all plugins, including readers and writers
-			plugin::PluginContext pc;
-			foreach( QString fileName, pc.getPluginList() ) {
+			foreach( QString fileName, plugin::PluginContext::getList() ) {
 				qDebug() << fileName;
 				QPluginLoader piLoader( fileName );
 				QObject * plugin = piLoader.instance();

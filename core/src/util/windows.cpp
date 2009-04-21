@@ -20,12 +20,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "util/os.hpp"
-#include "util/error.hpp"
+#include "plugin/plugincontext.hpp"
 
-#include <QString>
 #include <QRegExp>
-#include <QApplication>
-#include <QPluginLoader>
 
 namespace khopper {
 
@@ -49,26 +46,13 @@ namespace khopper {
 
 	namespace plugin {
 
-		PluginContext::PluginContext():
-		d_( qApp->applicationDirPath() ) {
-			this->d_.cd( "plugins" );
+		const QStringList & PluginContext::getFilter_() {
+			static QStringList f( "*.dll" );
+			return f;
 		}
 
-		QStringList PluginContext::getPluginList() const {
-			QStringList list;
-			foreach( QString fileName, this->d_.entryList( QStringList( "*.dll" ), QDir::Files ) ) {
-				list << this->d_.absoluteFilePath( fileName );
-			}
-			return list;
-		}
-
-		QObject * PluginContext::load( QString name ) const {
-			QPluginLoader pl( this->d_.absoluteFilePath( name.append( ".dll" ) ) );
-			QObject * tmp = pl.instance();
-			if( !tmp ) {
-				throw error::RunTimeError( pl.errorString() );
-			}
-			return tmp;
+		QString PluginContext::toRealName_( const QString & name ) {
+			return name + ".dll";
 		}
 
 	}

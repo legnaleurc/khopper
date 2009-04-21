@@ -24,9 +24,7 @@
 
 #include "util/tr1.hpp"
 
-#include <QDir>
-
-#include <list>
+#include <QString>
 
 namespace khopper {
 
@@ -42,29 +40,6 @@ namespace khopper {
 		 * @return Complete path
 		 */
 		KHOPPER_DLL_EXPORT QString join( const QString & front, const QString & back );
-
-	}
-
-	namespace plugin {
-
-		/**
-		 * @brief Plug-in context
-		 */
-		class KHOPPER_DLL_EXPORT PluginContext {
-		public:
-			/// Default constructor
-			PluginContext();
-
-			/// get plugin list
-			QStringList getPluginList() const;
-			/**
-			 * @brief Load plugin by plugin name
-			 * @param name plugin name
-			 */
-			QObject * load( QString name ) const;
-		private:
-			std::list< QDir > d_;
-		};
 
 	}
 

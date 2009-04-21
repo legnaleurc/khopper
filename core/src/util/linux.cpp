@@ -20,12 +20,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "util/os.hpp"
-#include "util/error.hpp"
+#include "plugin/plugincontext.hpp"
 
 #include <QRegExp>
-#include <QApplication>
-#include <QPluginLoader>
-#include <QLibraryInfo>
 
 namespace khopper {
 
@@ -49,47 +46,13 @@ namespace khopper {
 
 	namespace plugin {
 
-		PluginContext::PluginContext():
-		d_() {
-			QDir tmp( qApp->applicationDirPath() );
-			if( tmp.cd( "plugins" ) ) {
-				this->d_.push_back( tmp );
-			}
-			tmp = QDir( QLibraryInfo::location( QLibraryInfo::PluginsPath ) );
-			if( tmp.exists() ) {
-				this->d_.push_back( tmp );
-			}
+		const QStringList & PluginContext::getFilter_() {
+			static QStringList f( "*.so" );
+			return f;
 		}
 
-		QStringList PluginContext::getPluginList() const {
-			QStringList list;
-			foreach( QDir d, this->d_ ) {
-				foreach( QString fileName, d.entryList( QStringList( "*.so" ), QDir::Files ) ) {
-					list << d.absoluteFilePath( fileName );
-				}
-			}
-			return list;
-		}
-
-		QObject * PluginContext::load( QString name ) const {
-			QObject * result = NULL;
-			foreach( QDir d, this->d_ ) {
-				name.prepend( "lib" ).append( ".so" );
-				if( d.exists( name ) ) {
-					QPluginLoader pl( d.absoluteFilePath( name ) );
-					QObject * tmp = pl.instance();
-					if( !tmp ) {
-						throw error::RunTimeError( pl.errorString() );
-					}
-					result = tmp;
-					break;
-				}
-			}
-			if( !result ) {
-				throw error::IOError( "Find no such plugin." );
-			} else {
-				return result;
-			}
+		QString PluginContext::toRealName_( const QString & name ) {
+			return QString( "lib" ) + name + ".so";
 		}
 
 	}

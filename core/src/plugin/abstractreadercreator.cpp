@@ -20,7 +20,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "plugin/abstractreadercreator.hpp"
-#include "plugin_impl.hpp"
+#include "plugin/plugincontext.hpp"
 #include "codec/defaultreader.hpp"
 
 #ifndef LOKI_CLASS_LEVEL_THREADING
@@ -49,12 +49,12 @@ namespace khopper {
 		> ReaderFactory;
 
 		bool registerReader( const std::string & key, const std::string & name ) {
-			return registerProduct< codec::AbstractReader, ReaderFactory >( key, name );
+			return private_::registerProduct< codec::AbstractReader, ReaderFactory >( key, name );
 		}
 
 		codec::ReaderSP createReader( const std::string & key ) {
 			try {
-				return createProduct< codec::AbstractReader, ReaderFactory >( key );
+				return private_::createProduct< codec::AbstractReader, ReaderFactory >( key );
 			} catch( std::exception & e ) {
 				return codec::ReaderSP( new codec::DefaultReader );
 			}

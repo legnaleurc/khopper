@@ -20,7 +20,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "plugin/abstractwritercreator.hpp"
-#include "plugin_impl.hpp"
+#include "plugin/plugincontext.hpp"
 #include "codec/defaultwriter.hpp"
 
 #ifndef LOKI_CLASS_LEVEL_THREADING
@@ -49,12 +49,12 @@ namespace khopper {
 		> WriterFactory;
 
 		bool registerWriter( const std::string & key, const std::string & name ) {
-			return registerProduct< codec::AbstractWriter, WriterFactory >( key, name );
+			return private_::registerProduct< codec::AbstractWriter, WriterFactory >( key, name );
 		}
 
 		codec::WriterSP createWriter( const std::string & key ) {
 			try {
-				return createProduct< codec::AbstractWriter, WriterFactory >( key );
+				return private_::createProduct< codec::AbstractWriter, WriterFactory >( key );
 			} catch( std::exception & e ) {
 				return codec::WriterSP( new codec::DefaultWriter );
 			}

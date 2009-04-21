@@ -7,7 +7,7 @@ SRC_DIRS =	\
 	./src/util
 
 DEPENDPATH  += $${INC_DIRS} $${SRC_DIRS}
-INCLUDEPATH += $${INC_DIRS} ./src/plugin
+INCLUDEPATH += $${INC_DIRS}
 MOC_DIR      = $${ROOT_PATH}/tmp/moc
 
 # Input files
@@ -21,11 +21,11 @@ HEADERS +=	\
 	./include/plugin/abstractcreator.hpp	\
 	./include/plugin/abstractreadercreator.hpp	\
 	./include/plugin/abstractwritercreator.hpp	\
+	./include/plugin/plugincontext.hpp	\
 	./include/util/error.hpp	\
 	./include/util/os.hpp	\
 	./include/util/text.hpp	\
-	./include/util/tr1.hpp	\
-	./src/plugin/plugin_impl.hpp
+	./include/util/tr1.hpp
 SOURCES +=	\
 	./src/codec/abstractreader.cpp	\
 	./src/codec/abstractwriter.cpp	\
@@ -34,6 +34,7 @@ SOURCES +=	\
 	./src/plugin/abstractpanel.cpp	\
 	./src/plugin/abstractreadercreator.cpp	\
 	./src/plugin/abstractwritercreator.cpp	\
+	./src/plugin/plugincontext.cpp	\
 	./src/util/error.cpp	\
 	./src/util/text.cpp
 
