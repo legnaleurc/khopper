@@ -26,6 +26,8 @@
 
 #include <QDir>
 
+#include <list>
+
 namespace khopper {
 
 	/**
@@ -61,7 +63,7 @@ namespace khopper {
 			 */
 			QObject * load( QString name ) const;
 		private:
-			QDir d_;
+			std::list< QDir > d_;
 		};
 
 	}
