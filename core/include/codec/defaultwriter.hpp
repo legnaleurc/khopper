@@ -25,7 +25,6 @@
 #include "codec/abstractwriter.hpp"
 
 struct AVFormatContext;
-struct AVOutputFormat;
 struct AVStream;
 
 namespace khopper {
