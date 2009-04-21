@@ -207,7 +207,7 @@ namespace khopper {
 					this->cvt_->start();
 					this->progress_->exec();
 				} catch( error::RunTimeError & e ) {
-					this->showErrorMessage_( tr( "Run-time error!" ), trUtf8( e.what() ) );
+					this->showErrorMessage_( tr( "Run-time error!" ), e.getMessage() );
 				} catch( std::exception & e ) {
 					this->showErrorMessage_( tr( "Unknown error!" ), trUtf8( e.what() ) );
 				}

@@ -34,53 +34,56 @@ namespace khopper {
 	/// Error classes
 	namespace error {
 
-		/**
-		 * @brief Base class of error types
-		 *
-		 * This class is the common code of error types,
-		 * to avoid duplicate code generation.
-		 *
-		 * Message will encode to UTF-8.
-		 */
-		class KHOPPER_DLL_EXPORT ErrorBase : public std::exception {
-		public:
-			/**
-			 * @brief Construct with an error message
-			 * @param [in] msg Error message
-			 */
-			explicit ErrorBase( const char * msg );
-			explicit ErrorBase( const std::string & msg );
-			explicit ErrorBase( const std::wstring & msg );
-			explicit ErrorBase( const QString & msg );
-			/**
-			 * @brief Virtual destructor
-			 */
-			virtual ~ErrorBase() throw();
+		namespace private_ {
 
 			/**
-			 * @brief Get the error message
-			 * @return Error message
+			 * @brief Base class of error types
+			 *
+			 * This class is the common code of error types,
+			 * to avoid duplicate code generation.
 			 */
-			virtual const char * what() const throw();
-		private:
-			std::string msg_;
-		};
+			class KHOPPER_DLL_EXPORT ErrorBase : public std::exception {
+			public:
+				/**
+				 * @brief Construct with an error message
+				 * @param [in] msg Error message
+				 */
+				explicit ErrorBase( const char * msg );
+				explicit ErrorBase( const std::string & msg );
+				explicit ErrorBase( const std::wstring & msg );
+				explicit ErrorBase( const QString & msg );
+				/**
+				 * @brief Virtual destructor
+				 */
+				virtual ~ErrorBase() throw();
+
+				virtual const char * what() const throw();
+				/**
+				 * @brief Get the error message
+				 * @return Error message
+				 */
+				const QString & getMessage() const;
+			private:
+				QString msg_;
+			};
+
+		}
 
 		/**
 		 * @brief Error class
 		 * @tparam Type Custom error extension
 		 */
 		template< typename Type >
-		class KHOPPER_DLL_EXPORT Error : public ErrorBase, public Type {
+		class KHOPPER_DLL_EXPORT Error : public private_::ErrorBase, public Type {
 		public:
 			/**
 			 * @brief Construct with an error message
 			 * @param [in] msg Error message
 			 */
-			explicit Error( const char * msg ) : ErrorBase( msg ) {}
-			explicit Error( const std::string & msg ) : ErrorBase( msg ) {}
-			explicit Error( const std::wstring & msg ) : ErrorBase( msg ) {}
-			explicit Error( const QString & msg ) : ErrorBase( msg ) {}
+			explicit Error( const char * msg ) : private_::ErrorBase( msg ) {}
+			explicit Error( const std::string & msg ) : private_::ErrorBase( msg ) {}
+			explicit Error( const std::wstring & msg ) : private_::ErrorBase( msg ) {}
+			explicit Error( const QString & msg ) : private_::ErrorBase( msg ) {}
 		};
 
 		/**

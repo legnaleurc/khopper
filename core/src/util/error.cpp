@@ -25,23 +25,31 @@ namespace khopper {
 
 	namespace error {
 
-		ErrorBase::ErrorBase( const char * msg ) : msg_( msg ) {
-		}
+		namespace private_ {
 
-		ErrorBase::ErrorBase( const std::string & msg ) : msg_( msg ) {
-		}
+			ErrorBase::ErrorBase( const char * msg ) : msg_( QString::fromUtf8( msg ) ) {
+			}
 
-		ErrorBase::ErrorBase( const std::wstring & msg ) : msg_( QString::fromStdWString( msg ).toUtf8().constData() ) {
-		}
+			ErrorBase::ErrorBase( const std::string & msg ) : msg_( QString::fromUtf8( msg.c_str() ) ) {
+			}
 
-		ErrorBase::ErrorBase( const QString & msg ) : msg_( msg.toUtf8().constData() ) {
-		}
+			ErrorBase::ErrorBase( const std::wstring & msg ) : msg_( QString::fromStdWString( msg ) ) {
+			}
 
-		ErrorBase::~ErrorBase() throw() {
-		}
+			ErrorBase::ErrorBase( const QString & msg ) : msg_( msg ) {
+			}
 
-		const char * ErrorBase::what() const throw() {
-			return this->msg_.c_str();
+			ErrorBase::~ErrorBase() throw() {
+			}
+
+			const char * ErrorBase::what() const throw() {
+				return this->msg_.toUtf8().constData();
+			}
+
+			const QString & ErrorBase::getMessage() const {
+				return this->msg_;
+			}
+
 		}
 
 	}
