@@ -22,7 +22,6 @@
 #include "plugin/plugincontext.hpp"
 
 #include <QApplication>
-#include <QLibraryInfo>
 
 namespace {
 
