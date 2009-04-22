@@ -40,9 +40,6 @@ namespace khopper {
 		 */
 		class KHOPPER_DLL_EXPORT PluginContext {
 		public:
-			/// Default constructor
-			//PluginContext();
-
 			/// get plugin list
 			static QStringList getList();
 			/**
@@ -52,10 +49,15 @@ namespace khopper {
 			static QObject * load( QString name );
 
 		private:
-			static const std::list< QDir > & getPaths_();
+			static std::list< QDir > & paths_();
 
 			static const QStringList & getFilter_();
 			static QString toRealName_( const QString & );
+
+			PluginContext();
+			PluginContext( const PluginContext & );
+			~PluginContext();
+			PluginContext & operator =( const PluginContext & );
 		};
 
 		namespace private_ {

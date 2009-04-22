@@ -33,7 +33,15 @@ namespace {
 		if( tmp.cd( "plugins" ) ) {
 			paths.push_back( tmp );
 		}
-		tmp = QDir( QLibraryInfo::location( QLibraryInfo::PluginsPath ) );
+		tmp = QDir::home();
+		if( tmp.cd( ".khopper/plugins" ) ) {
+			paths.push_back( tmp );
+		}
+		tmp = QDir( "/usr/local/lib/khopper/plugins" );
+		if( tmp.exists() ) {
+			paths.push_back( tmp );
+		}
+		tmp = QDir( "/usr/lib/khopper/plugins" );
 		if( tmp.exists() ) {
 			paths.push_back( tmp );
 		}
@@ -47,15 +55,15 @@ namespace khopper {
 
 	namespace plugin {
 
-		const std::list< QDir > & PluginContext::getPaths_() {
-			static std::list< QDir > p = initPaths();
+		std::list< QDir > & PluginContext::paths_() {
+			static std::list< QDir > p( initPaths() );
 			return p;
 		}
 
 		QStringList PluginContext::getList() {
 			QStringList list;
-			foreach( QDir d, getPaths_() ) {
-				foreach( QString fileName, d.entryList( getFilter_(), QDir::Files ) ) {
+			foreach( QDir d, PluginContext::paths_() ) {
+				foreach( QString fileName, d.entryList( PluginContext::getFilter_(), QDir::Files ) ) {
 					list << d.absoluteFilePath( fileName );
 				}
 			}
@@ -64,9 +72,9 @@ namespace khopper {
 
 		QObject * PluginContext::load( QString name ) {
 			QObject * result = NULL;
-			foreach( QDir d, getPaths_() ) {
+			foreach( QDir d, PluginContext::paths_() ) {
 				if( d.exists( name ) ) {
-					QPluginLoader pl( d.absoluteFilePath( toRealName_( name ) ) );
+					QPluginLoader pl( d.absoluteFilePath( PluginContext::toRealName_( name ) ) );
 					QObject * tmp = pl.instance();
 					if( !tmp ) {
 						throw error::RunTimeError( pl.errorString() );
