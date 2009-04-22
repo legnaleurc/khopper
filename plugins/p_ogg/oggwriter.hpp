@@ -1,5 +1,5 @@
 /**
- * @file converter.hpp
+ * @file oggwriter.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,53 +19,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_WIDGET_CONVERTER_HPP
-#define KHOPPER_WIDGET_CONVERTER_HPP
+#ifndef KHOPPER_CODEC_OGGWRITER_HPP
+#define KHOPPER_CODEC_OGGWRITER_HPP
 
-#include "track.hpp"
-#include "codec/abstractwriter.hpp"
-
-#include <QObject>
+#include "codec/defaultwriter.hpp"
 
 namespace khopper {
 
-	namespace widget {
+	namespace codec {
 
 		/**
-		 * @brief Controller of converting
+		 * @brief Ogg writer
+		 *
+		 * This class provides a ogg audio writer implementation.
 		 */
-		class Converter : public QObject {
-			Q_OBJECT
-
+		class OGGWriter : public DefaultWriter {
 		public:
 			/**
 			 * @brief Default constructor
 			 */
-			Converter( QObject * parent = 0 );
+			OGGWriter();
 
-			/**
-			 * @brief Convert @p track
-			 * @param [in] track track to convert
-			 * @param [in] targetPath output file path
-			 * @param [in] encoder encoder setting
-			 */
-			void convert( album::TrackCSP track, const QString & targetPath, codec::WriterSP encoder );
-
-		public slots:
-			/**
-			 * @brief Cancel converting
-			 */
-			void cancel();
-
-		signals:
-			/**
-			 * @brief Decoded duration
-			 * @param ms Time in second * 10000
-			 */
-			void decodedTime( int ms ) const;
-
-		private:
-			bool canceled_;
+		protected:
+			virtual void setupMuxer();
 		};
 
 	}

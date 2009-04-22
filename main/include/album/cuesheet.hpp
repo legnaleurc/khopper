@@ -24,7 +24,7 @@
 
 #include "track.hpp"
 
-#include "common/error.hpp"
+#include "util/error.hpp"
 
 #include <vector>
 #include <string>

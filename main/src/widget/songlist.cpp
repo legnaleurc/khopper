@@ -65,8 +65,8 @@ namespace khopper {
 			headers << "Album";
 			headers << "Duration";
 			headers << "Bit Rate";
-			headers << "Channels";
 			headers << "Sample Rate";
+			headers << "Channels";
 			this->model_->setHorizontalHeaderLabels( headers );
 
 			// Set model

@@ -1,5 +1,5 @@
 /**
- * @file converter.hpp
+ * @file wavpanel.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,53 +19,51 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_WIDGET_CONVERTER_HPP
-#define KHOPPER_WIDGET_CONVERTER_HPP
+#ifndef KHOPPER_WIDGET_WAVPANEL_HPP
+#define KHOPPER_WIDGET_WAVPANEL_HPP
 
-#include "track.hpp"
-#include "codec/abstractwriter.hpp"
+#include "plugin/abstractpanel.hpp"
 
-#include <QObject>
+#include <QComboBox>
 
 namespace khopper {
 
-	namespace widget {
+	namespace plugin {
 
 		/**
-		 * @brief Controller of converting
+		 * @brief Wav option widget
 		 */
-		class Converter : public QObject {
+		class WAVPanel : public AbstractPanel {
 			Q_OBJECT
+			Q_INTERFACES( khopper::plugin::AbstractPanel )
 
 		public:
 			/**
 			 * @brief Default constructor
+			 * @param parent Parent widget
+			 * @param f Window flags
 			 */
-			Converter( QObject * parent = 0 );
+			WAVPanel( QWidget * parent = 0, Qt::WindowFlags f = 0 );
 
 			/**
-			 * @brief Convert @p track
-			 * @param [in] track track to convert
-			 * @param [in] targetPath output file path
-			 * @param [in] encoder encoder setting
+			 * @brief Get encoder setting object
+			 * @return Smart pointer contains AbstractWriter
 			 */
-			void convert( album::TrackCSP track, const QString & targetPath, codec::WriterSP encoder );
-
-		public slots:
+			virtual codec::WriterSP getWriter() const;
 			/**
-			 * @brief Cancel converting
+			 * @brief Get file suffix
+			 * @return File extension, without leading '.'
 			 */
-			void cancel();
-
-		signals:
+			virtual QString getSuffix() const;
 			/**
-			 * @brief Decoded duration
-			 * @param ms Time in second * 10000
+			 * @brief Get tab title
+			 * @return Title use in tab widget
 			 */
-			void decodedTime( int ms ) const;
+			virtual QString getTitle() const;
 
 		private:
-			bool canceled_;
+			QComboBox * sampleRate_;
+			QComboBox * channels_;
 		};
 
 	}

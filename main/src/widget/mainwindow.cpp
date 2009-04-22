@@ -28,7 +28,7 @@
 #include "preference.hpp"
 #include "outputoption.hpp"
 
-#include "common/error.hpp"
+#include "util/error.hpp"
 #include "plugin/abstractpanel.hpp"
 
 #include <boost/format.hpp>
@@ -207,7 +207,7 @@ namespace khopper {
 					this->cvt_->start();
 					this->progress_->exec();
 				} catch( error::RunTimeError & e ) {
-					this->showErrorMessage_( tr( "Run-time error!" ), trUtf8( e.what() ) );
+					this->showErrorMessage_( tr( "Run-time error!" ), e.getMessage() );
 				} catch( std::exception & e ) {
 					this->showErrorMessage_( tr( "Unknown error!" ), trUtf8( e.what() ) );
 				}
@@ -277,7 +277,7 @@ namespace khopper {
 			QLabel * version = new QLabel( this->about_ );
 			version->setText( tr(
 				"<h1>Khopper</h1>"
-				"Version 0.1.70<br/>"
+				"Version 0.1.80<br/>"
 				"Part of FoolproofProject<br/>"
 			) );
 			topBox->addWidget( version );

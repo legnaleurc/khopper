@@ -1,5 +1,5 @@
 /**
- * @file converter.hpp
+ * @file defaultwriter.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,53 +19,51 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_WIDGET_CONVERTER_HPP
-#define KHOPPER_WIDGET_CONVERTER_HPP
+#ifndef KHOPPER_CODEC_DEFAULTWRITER_HPP
+#define KHOPPER_CODEC_DEFAULTWRITER_HPP
 
-#include "track.hpp"
 #include "codec/abstractwriter.hpp"
 
-#include <QObject>
+struct AVFormatContext;
+struct AVStream;
 
 namespace khopper {
 
-	namespace widget {
+	namespace codec {
 
 		/**
-		 * @brief Controller of converting
+		 * @brief Default audio writer
+		 * @sa DefaultReader
+		 *
+		 * This class provides a default audio writer implementation.
 		 */
-		class Converter : public QObject {
-			Q_OBJECT
-
+		class KHOPPER_DLL_EXPORT DefaultWriter : public AbstractWriter {
 		public:
 			/**
 			 * @brief Default constructor
 			 */
-			Converter( QObject * parent = 0 );
-
+			DefaultWriter();
 			/**
-			 * @brief Convert @p track
-			 * @param [in] track track to convert
-			 * @param [in] targetPath output file path
-			 * @param [in] encoder encoder setting
+			 * @brief Virtual destructor
 			 */
-			void convert( album::TrackCSP track, const QString & targetPath, codec::WriterSP encoder );
+			virtual ~DefaultWriter();
 
-		public slots:
-			/**
-			 * @brief Cancel converting
-			 */
-			void cancel();
+		protected:
+			std::tr1::shared_ptr< AVFormatContext > formatContext() {
+				return this->pFormatContext_;
+			}
+			bool isVariable() const;
 
-		signals:
-			/**
-			 * @brief Decoded duration
-			 * @param ms Time in second * 10000
-			 */
-			void decodedTime( int ms ) const;
+			virtual void setupMuxer();
+			virtual void setupEncoder();
+			virtual void openResource();
+			virtual void closeResource();
+			virtual void writeHeader();
+			virtual void writeFrame( const char *, std::size_t );
 
 		private:
-			bool canceled_;
+			std::tr1::shared_ptr< AVFormatContext > pFormatContext_;
+			AVStream * pStream_;
 		};
 
 	}

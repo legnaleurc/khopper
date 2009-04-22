@@ -20,9 +20,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "track.hpp"
-#include "plugin/readerplugin.hpp"
-#include "common/text.hpp"
-#include "common/error.hpp"
+#include "plugin/abstractreadercreator.hpp"
+#include "util/error.hpp"
+#include "util/text.hpp"
 
 namespace khopper {
 
@@ -53,10 +53,9 @@ namespace khopper {
 
 		void Track::load( const QString & filePath ) {
 			this->filePath_ = filePath;
-			QByteArray local = filePath.toLocal8Bit();
 
-			codec::ReaderSP decoder( plugin::createReader( text::getSuffix( local ) ) );
-			decoder->open( local.constData() );
+			codec::ReaderSP decoder( plugin::createReader( text::getSuffix( filePath ) ) );
+			decoder->open( filePath.toStdWString() );
 			if( decoder->isOpen() ) {
 				this->album_ = decoder->getAlbum().c_str();
 				this->artist_ = decoder->getArtist().c_str();

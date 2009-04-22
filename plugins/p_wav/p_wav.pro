@@ -9,14 +9,14 @@ SRC_DIRS = .
 INCLUDEPATH += $${INC_DIRS} $${SRC_DIRS}
 DEPANDPATH  += $${INC_DIRS}
 
-HEADERS = flacpanel.hpp
-SOURCES = flacpanel.cpp
+HEADERS = wavpanel.hpp
+SOURCES = wavpanel.cpp
 
 MOC_DIR = $${ROOT_PATH}/tmp/moc
 
 # Config
 CONFIG  += plugin debug_and_release
-TARGET   = $$qtLibraryTarget(kpp_flac)
+TARGET   = $$qtLibraryTarget(kpp_wav)
 
 CONFIG( debug, debug|release ) {
 	DESTDIR     = $${ROOT_PATH}/build/debug/plugins

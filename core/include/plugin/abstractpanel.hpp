@@ -22,7 +22,7 @@
 #ifndef KHOPPER_WIDGET_ABSTRACTPANEL_HPP
 #define KHOPPER_WIDGET_ABSTRACTPANEL_HPP
 
-#include "plugin/abstractwriter.hpp"
+#include "codec/abstractwriter.hpp"
 
 #include <QWidget>
 

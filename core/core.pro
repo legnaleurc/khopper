@@ -2,40 +2,46 @@
 ROOT_PATH = ..
 INC_DIRS = ./include
 SRC_DIRS =	\
-	./src/common	\
-	./src/plugin
+	./src/codec	\
+	./src/plugin	\
+	./src/util
 
 DEPENDPATH  += $${INC_DIRS} $${SRC_DIRS}
-INCLUDEPATH += $${INC_DIRS} ./src/plugin
+INCLUDEPATH += $${INC_DIRS}
 MOC_DIR      = $${ROOT_PATH}/tmp/moc
 
 # Input files
 HEADERS +=	\
+	./include/codec/abstractreader.hpp	\
+	./include/codec/abstractwriter.hpp	\
+	./include/codec/codec_base.hpp	\
+	./include/codec/defaultreader.hpp	\
+	./include/codec/defaultwriter.hpp	\
 	./include/plugin/abstractpanel.hpp	\
-	./include/plugin/abstractreader.hpp	\
-	./include/plugin/abstractwriter.hpp	\
-	./include/plugin/codec_base.hpp	\
-	./include/plugin/creator.hpp	\
-	./src/plugin/plugin_impl.hpp	\
-	./include/plugin/readerplugin.hpp	\
-	./include/plugin/writerplugin.hpp	\
-	./include/common/error.hpp	\
-	./include/common/os.hpp	\
-	./include/common/text.hpp	\
-	./include/common/tr1.hpp
+	./include/plugin/abstractcreator.hpp	\
+	./include/plugin/abstractreadercreator.hpp	\
+	./include/plugin/abstractwritercreator.hpp	\
+	./include/plugin/plugincontext.hpp	\
+	./include/util/error.hpp	\
+	./include/util/os.hpp	\
+	./include/util/text.hpp	\
+	./include/util/tr1.hpp
 SOURCES +=	\
+	./src/codec/abstractreader.cpp	\
+	./src/codec/abstractwriter.cpp	\
+	./src/codec/defaultreader.cpp	\
+	./src/codec/defaultwriter.cpp	\
 	./src/plugin/abstractpanel.cpp	\
-	./src/plugin/abstractreader.cpp	\
-	./src/plugin/abstractwriter.cpp	\
-	./src/plugin/readerplugin.cpp	\
-	./src/plugin/writerplugin.cpp	\
-	./src/common/error.cpp	\
-	./src/common/text.cpp
+	./src/plugin/abstractreadercreator.cpp	\
+	./src/plugin/abstractwritercreator.cpp	\
+	./src/plugin/plugincontext.cpp	\
+	./src/util/error.cpp	\
+	./src/util/text.cpp
 
 # Config
 TARGET   = k_core
 CONFIG  += debug_and_release
-VERSION  = 0.1.70
+VERSION  = 0.1.80
 
 CONFIG( debug, debug|release ) {
 	DESTDIR     = $${ROOT_PATH}/build/debug
@@ -53,13 +59,16 @@ CONFIG( debug, debug|release ) {
 }
 
 unix {
-	TEMPLATE = lib
+	TEMPLATE        = lib
 	QMAKE_CXXFLAGS += -std=c++0x
-	LIBS        += -lloki
-	SOURCES += ./src/common/linux.cpp
+	CONFIG         += link_pkgconfig
+	PKGCONFIG      += libavcodec libavformat libavutil
+	LIBS           += -lloki
+	SOURCES        += ./src/util/linux.cpp
 }
 
 win32 {
 	TEMPLATE = vclib
-	SOURCES += ./src/common/windows.cpp
+	SOURCES += ./src/util/windows.cpp ./src/codec/wfile.cpp
+	LIBS    += -lavcodec-52 -lavformat-52 -lavutil-49
 }

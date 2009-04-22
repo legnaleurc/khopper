@@ -21,10 +21,10 @@
  */
 #include "cuesheet.hpp"
 #include "track.hpp"
-#include "plugin/readerplugin.hpp"
-#include "common/error.hpp"
-#include "common/os.hpp"
-#include "common/text.hpp"
+#include "plugin/abstractreadercreator.hpp"
+#include "util/error.hpp"
+#include "util/os.hpp"
+#include "util/text.hpp"
 
 #include <QTextStream>
 #include <QRegExp>
@@ -116,7 +116,7 @@ namespace khopper {
 
 			// get the total length, because cue sheet don't provide it
 			codec::ReaderSP decoder( plugin::createReader( text::getSuffix( currentFile.first ) ) );
-			decoder->open( currentFile.first.toLocal8Bit().constData() );
+			decoder->open( currentFile.first.toStdWString() );
 			if( decoder->isOpen() ) {
 				std::for_each( this->tracks_.begin(), this->tracks_.end(), ::setBCS( decoder ) );
 

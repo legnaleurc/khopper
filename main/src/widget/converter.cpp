@@ -20,9 +20,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "converter.hpp"
-#include "plugin/readerplugin.hpp"
-#include "common/error.hpp"
-#include "common/text.hpp"
+#include "plugin/abstractreadercreator.hpp"
+#include "util/error.hpp"
+#include "util/text.hpp"
 
 namespace khopper {
 
@@ -35,8 +35,8 @@ namespace khopper {
 
 		void Converter::convert( album::TrackCSP track, const QString & targetPath, codec::WriterSP encoder ) {
 			codec::ReaderSP decoder( plugin::createReader( text::getSuffix( track->getFilePath() ) ) );
-			decoder->open( track->getFilePath().toLocal8Bit().constData() );
-			encoder->open( targetPath.toLocal8Bit().constData() );
+			decoder->open( track->getFilePath().toStdWString() );
+			encoder->open( targetPath.toStdWString() );
 			this->canceled_ = false;
 
 			if( !decoder->isOpen() || !encoder->isOpen() ) {
