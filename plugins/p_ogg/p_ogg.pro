@@ -37,7 +37,7 @@ CONFIG( debug, debug|release ) {
 
 unix {
 	TEMPLATE = lib
-	QMAKE_CXXFLAGS += -std=c++0x
+	QMAKE_CXXFLAGS += -std=c++0x $$system(pkg-config --cflags libavformat)
 }
 
 win32 {
