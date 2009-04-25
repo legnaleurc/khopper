@@ -24,6 +24,7 @@
 #include "songlist.hpp"
 
 #include <QHBoxLayout>
+#include <QtDebug>
 
 namespace khopper {
 
@@ -44,6 +45,7 @@ namespace khopper {
 			Phonon::AudioOutput * ao = new Phonon::AudioOutput( Phonon::MusicCategory, this );
 			Phonon::createPath( this->player_, ao );
 			this->volume_->setAudioOutput( ao );
+			connect( this->player_, SIGNAL( stateChanged( Phonon::State, Phonon::State ) ), this, SLOT( handleState_( Phonon::State, Phonon::State ) ) );
 
 			// Setting player panel
 			QHBoxLayout * playerBox = new QHBoxLayout;
@@ -75,12 +77,10 @@ namespace khopper {
 			this->songList_->appendTracks( tracks );
 		}
 
-		bool Player::play_() {
+		void Player::play_() {
 			const std::vector< album::TrackSP > & tracks( this->songList_->getTracks() );
 
-			if( tracks.empty() ) {
-				return false;
-			} else {
+			if( !tracks.empty() ) {
 				std::vector< album::TrackSP > selected( this->songList_->getSelectedTracks() );
 				if( selected.empty() ) {
 					this->player_->setCurrentSource( tracks[0]->getFilePath() );
@@ -89,12 +89,7 @@ namespace khopper {
 				}
 
 				this->player_->play();
-				if( this->player_->state() == Phonon::ErrorState ) {
-					return false;
-				}
 			}
-
-			return true;
 		}
 
 		void Player::stop_() {
@@ -106,12 +101,23 @@ namespace khopper {
 
 		void Player::playOrPause_() {
 			if( this->player_->state() != Phonon::PlayingState ) {
-				if( this->play_() ) {
-					this->ppb_->setText( tr( "Pause" ) );
-				}
+				this->play_();
 			} else {
 				this->ppb_->setText( tr( "Play" ) );
 				this->player_->pause();
+			}
+		}
+
+		void Player::handleState_( Phonon::State newState, Phonon::State /*oldState*/ ) {
+			switch( newState ) {
+				case Phonon::PlayingState:
+					this->ppb_->setText( tr( "Pause" ) );
+					break;
+				case Phonon::ErrorState:
+					emit this->error( tr( "Player error" ), this->player_->errorString() );
+					break;
+				default:
+					;
 			}
 		}
 

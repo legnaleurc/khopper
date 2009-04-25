@@ -59,13 +59,15 @@ namespace khopper {
 			 * @brief Emmited when convert action is required.
 			 */
 			void requireConvert();
+			void error( const QString & title, const QString & errMsg );
 
 		private slots:
 			void playOrPause_();
 			void stop_();
+			void handleState_( Phonon::State, Phonon::State );
 
 		private:
-			bool play_();
+			void play_();
 
 			Phonon::MediaObject * player_;
 			Phonon::SeekSlider * seeker_;
