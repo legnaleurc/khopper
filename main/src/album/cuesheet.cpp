@@ -116,8 +116,14 @@ namespace khopper {
 
 			// get the total length, because cue sheet don't provide it
 			codec::ReaderSP decoder( plugin::createReader( text::getSuffix( currentFile.first ) ) );
-			decoder->open( currentFile.first.toStdWString() );
+			try {
+				decoder->open( currentFile.first.toStdWString() );
+			} catch( error::private_::ErrorBase & e ) {
+				qDebug() << e.getMessage();
+				qWarning() << "Can not open media:" << currentFile.first;
+			}
 			if( decoder->isOpen() ) {
+				// set bit rate, channels, sample rate
 				std::for_each( this->tracks_.begin(), this->tracks_.end(), ::setBCS( decoder ) );
 
 				TrackSP last( this->tracks_.back() );

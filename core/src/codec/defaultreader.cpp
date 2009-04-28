@@ -79,8 +79,12 @@ namespace khopper {
 
 		void DefaultReader::openResource() {
 			AVFormatContext * pFC = NULL;
-			if( av_open_input_file( &pFC, ::wHelper( this->getFilePath() ).c_str(), NULL, 0, NULL ) != 0 ) {
-				throw error::IOError( std::wstring( L"Can not open `" ) + this->getFilePath() + L"\'" );
+			int ret = av_open_input_file( &pFC, ::wHelper( this->getFilePath() ).c_str(), NULL, 0, NULL );
+			if( ret != 0 ) {
+				throw error::IOError(
+					std::wstring( L"Can not open `" ) + this->getFilePath() + L"\':\n" +
+					L"->" + text::toStdWString( strerror( AVUNERROR( ret ) ) )
+				);
 			}
 			this->pFormatContext_.reset( pFC, av_close_input_file );
 		}
