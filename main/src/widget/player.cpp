@@ -78,6 +78,11 @@ namespace khopper {
 		}
 
 		void Player::play_() {
+			if( this->player_->state() == Phonon::PausedState ) {
+				this->player_->play();
+				return;
+			}
+
 			const std::vector< album::TrackSP > & tracks( this->songList_->getTracks() );
 
 			if( !tracks.empty() ) {
