@@ -1,4 +1,6 @@
-目前只有Linux版本，Windows尚未進入實用階段。
+Supported platform:
+	Linux
+	Windows
 授權：GPLv3 or later
 
 編譯需求：
@@ -12,9 +14,6 @@
 		http://www.ffmpeg.org/
 On Debian-based system:
 	# apt-get install libloki-dev libqt4-dev libphonon-dev libboost-dev libavcodec-dev libavformat-dev
-注意：
-	由於mp3編碼器所使用的libmp3lame，可能不會被維護者包入套件，請注意套件的說明。
-	若沒有libmp3lame，依然可以使用，只是會使用mp2的編碼器，可能導致不確定行為。
 
 編譯步驟：
 	$ qmake -r
@@ -27,8 +26,6 @@ On Debian-based system:
 	播放：
 		可播放的格式取決於Phonon所搭配的backend。
 		ape支援可能很少。
-支授輸出格式：
-	目前只實作MP3介面，可擴充，但需重新編譯。
 
 聯絡方式：
 	信箱：

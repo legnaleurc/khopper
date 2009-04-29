@@ -30,6 +30,10 @@ namespace khopper {
 		std::string toUtf8( const std::wstring & unicode ) {
 			return QString::fromStdWString( unicode ).toUtf8().constData();
 		}
+		std::wstring toStdWString( const char * str ) {
+			return QString::fromUtf8( str ).toStdWString();
+		}
+
 
 		std::string getSuffix( const QString & filePath ) {
 			return QFileInfo( filePath ).suffix().toUtf8().constData();
