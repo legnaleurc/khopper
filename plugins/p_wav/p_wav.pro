@@ -17,6 +17,7 @@ MOC_DIR = $${ROOT_PATH}/tmp/moc
 # Config
 CONFIG  += plugin debug_and_release
 TARGET   = $$qtLibraryTarget(kpp_wav)
+TEMPLATE = lib
 
 CONFIG( debug, debug|release ) {
 	DESTDIR     = $${ROOT_PATH}/build/debug/plugins
@@ -36,10 +37,5 @@ CONFIG( debug, debug|release ) {
 }
 
 unix {
-	TEMPLATE = lib
 	QMAKE_CXXFLAGS += -std=c++0x
-}
-
-win32 {
-	TEMPLATE = vclib
 }

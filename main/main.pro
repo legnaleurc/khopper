@@ -47,7 +47,9 @@ RESOURCES += main.qrc
 
 # config
 TARGET  = khopper
-CONFIG += debug_and_release
+TEMPLATE = app
+CONFIG += debug_and_release embed_manifest_exe
+CONFIG -= embed_manifest_dll
 QT     += phonon
 
 CONFIG( debug, debug|release ) {
@@ -68,10 +70,5 @@ CONFIG( debug, debug|release ) {
 }
 
 unix {
-	TEMPLATE = app
 	QMAKE_CXXFLAGS += -std=c++0x
-}
-
-win32 {
-	TEMPLATE = vcapp
 }

@@ -1,7 +1,7 @@
 # Path settings
 ROOT_PATH = ..
-INC_DIRS = ./include
-SRC_DIRS =	\
+INC_DIRS = . ./include
+SRC_DIRS = .	\
 	./src/codec	\
 	./src/plugin	\
 	./src/util
@@ -40,6 +40,7 @@ SOURCES +=	\
 
 # Config
 TARGET   = k_core
+TEMPLATE = lib
 CONFIG  += debug_and_release
 VERSION  = 0.1.80
 
@@ -59,7 +60,6 @@ CONFIG( debug, debug|release ) {
 }
 
 unix {
-	TEMPLATE        = lib
 	QMAKE_CXXFLAGS += -std=c++0x
 	CONFIG         += link_pkgconfig
 	PKGCONFIG      += libavcodec libavformat libavutil
@@ -68,7 +68,6 @@ unix {
 }
 
 win32 {
-	TEMPLATE = vclib
 	SOURCES += ./src/util/windows.cpp ./src/codec/wfile.cpp
 	LIBS    += -lavcodec-52 -lavformat-52 -lavutil-49
 }
