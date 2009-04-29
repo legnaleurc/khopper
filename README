@@ -1,36 +1,40 @@
-Supported platform:
+﻿Supported platform:
 	Linux
 	Windows
-授權：GPLv3 or later
+License:
+	GPLv3 or later
 
-編譯需求：
+Build dependency：
 	Loki:
 		http://loki-lib.sourceforge.net/
 	Qt >= 4.4:
 		http://www.qtsoftware.com/products
 	Boost C++ Libraries:
 		http://www.boost.org/
-	FFMpeg Libraries after 2008:
+	FFmpeg Libraries >= 0.5:
 		http://www.ffmpeg.org/
 On Debian-based system:
 	# apt-get install libloki-dev libqt4-dev libphonon-dev libboost-dev libavcodec-dev libavformat-dev
 
-編譯步驟：
-	$ qmake -r
-	$ make
+Build step:
+	Linux:
+		$ qmake -r
+		$ make
+	Windows:
+		> qmake -r -tp vc
 
-支援輸入格式：
-	轉檔：
-		可搭配的音訊格式取決於FFMpeg所編入的codec。
-		預設即支援wav, ape, flac, tta等。
-	播放：
-		可播放的格式取決於Phonon所搭配的backend。
-		ape支援可能很少。
+Supported formats:
+	Converting:
+		Depends on FFmpeg, and may extend by plugin.
+		At least, wav, ape, flac, tta ... should be available.
+	Playing:
+		Depends on Phonon's backend.
+		ape may have poor support.
 
-聯絡方式：
-	信箱：
+Contact:
+	mail:
 		legnaleurc@gmail.com
-	網頁：
+	site:
 		http://legnaleurc.blogspot.com/search/label/Khopper
-	檔案庫：
-		http://repo.or.cz/w/Khopper.git
+	repository:
+		http://github.com/legnaleurc/khopper/tree/master
