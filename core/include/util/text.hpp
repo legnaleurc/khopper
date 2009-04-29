@@ -34,7 +34,13 @@ namespace khopper {
 	 */
 	namespace text {
 
+		/**
+		 * @brief Encode unicode string to UTF-8
+		 */
 		KHOPPER_DLL_EXPORT std::string toUtf8( const std::wstring & unicode );
+		/**
+		 * @brief Convert narrow string to wide string
+		 */
 		KHOPPER_DLL_EXPORT std::wstring toStdWString( const char * str );
 
 		/// @brief Get suffix of a file name

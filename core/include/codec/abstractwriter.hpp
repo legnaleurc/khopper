@@ -189,12 +189,25 @@ namespace khopper {
 				return this->title_;
 			}
 
+			/// Setup muxer
 			virtual void setupMuxer() = 0;
+			/// Setup encoder
 			virtual void setupEncoder() = 0;
+			/// Open resource
 			virtual void openResource() = 0;
+			/**
+			 * @brief Close resource
+			 * @note no-fail
+			 */
 			virtual void closeResource() = 0;
+			/// Write header
 			virtual void writeHeader() = 0;
-			virtual void writeFrame( const char *, std::size_t ) = 0;
+			/**
+			 * @brief Write a frame
+			 * @param sample sample data
+			 * @param nSample sample size
+			 */
+			virtual void writeFrame( const char * sample, std::size_t nSample ) = 0;
 
 		private:
 			// prevent copying

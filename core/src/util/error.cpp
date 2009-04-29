@@ -25,31 +25,27 @@ namespace khopper {
 
 	namespace error {
 
-		namespace private_ {
+		BaseError::BaseError( const char * msg ) : msg_( QString::fromUtf8( msg ) ) {
+		}
 
-			ErrorBase::ErrorBase( const char * msg ) : msg_( QString::fromUtf8( msg ) ) {
-			}
+		BaseError::BaseError( const std::string & msg ) : msg_( QString::fromUtf8( msg.c_str() ) ) {
+		}
 
-			ErrorBase::ErrorBase( const std::string & msg ) : msg_( QString::fromUtf8( msg.c_str() ) ) {
-			}
+		BaseError::BaseError( const std::wstring & msg ) : msg_( QString::fromStdWString( msg ) ) {
+		}
 
-			ErrorBase::ErrorBase( const std::wstring & msg ) : msg_( QString::fromStdWString( msg ) ) {
-			}
+		BaseError::BaseError( const QString & msg ) : msg_( msg ) {
+		}
 
-			ErrorBase::ErrorBase( const QString & msg ) : msg_( msg ) {
-			}
+		BaseError::~BaseError() throw() {
+		}
 
-			ErrorBase::~ErrorBase() throw() {
-			}
+		const char * BaseError::what() const throw() {
+			return this->msg_.toUtf8().constData();
+		}
 
-			const char * ErrorBase::what() const throw() {
-				return this->msg_.toUtf8().constData();
-			}
-
-			const QString & ErrorBase::getMessage() const {
-				return this->msg_;
-			}
-
+		const QString & BaseError::getMessage() const {
+			return this->msg_;
 		}
 
 	}

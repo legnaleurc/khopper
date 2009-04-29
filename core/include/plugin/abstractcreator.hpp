@@ -25,31 +25,43 @@
 /**
  * @defgroup Plugins Plugin System
  *
- * 這是 Plugin System 模粗，基於 <a href="http://doc.trolltech.com/4.5/plugins-howto.html">Qt Plugin System</a>。
- * 本模組允許動態擴充轉檔格式，以及編碼、解碼器。
+ * This is Plugin System module, based on
+ * <a href="http://doc.trolltech.com/4.5/plugins-howto.html">
+ * Qt Plugin System</a>.
+ * This module allows you to extend converting formats, decoders,
+ * and encoders dynamicly.
  *
- * <h2>如何擴充轉檔格式</h2>
+ * <h2>How to write plugins</h2>
  *
- * <h3>輪出格式</h3>
- * 繼承 khopper::plugin::AbstractPanel 並覆寫所有 pure virtual functions，依照 Qt Plugin System 所寫的指示即可。
+ * <h3>Output formats</h3>
+ * Inherit khopper::plugin::AbstractPanel and override all pure virtual
+ * functions. Please fallow the instructions in the
+ * <a href="http://doc.trolltech.com/4.5/plugins-howto.html">
+ * Qt Plugin System</a> page.
  *
- * <h3>解碼器</h3>
- * 繼承 khopper::plugin::ReaderCreator，並覆寫 khopper::plugin::ReaderCreator::create_，
- * 使之回傳你想要的解碼器。 \n
- * 並在全域呼叫 khopper::plugin::registerReader，以註冊 plugin。下例：
+ * <h3>Decoders</h3>
+ * Inherit khopper::plugin::ReaderCreator, and override
+ * khopper::plugin::ReaderCreator::create_, make it return the decoder which
+ * you desired. \n
+ * Then call khopper::plugin::registerReader in global scope to register plugin
+ * to main program. Here is an example:
  * <pre>
  * const bool REGISTERED = khopper::plugin::registerReader( "mp3", "krp_mp3" );
  * </pre>
- * 其中，"mp3"為程式內使用之識別字，"krp_mp3"為 plugin 所使用的名稱。
+ * Which "mp3" means the key which khopper::plugin::createReader() will use.
+ * "krp_mp3" is the name of plugin namely the plugin project target name.
  *
- * <h3>編碼器</h3>
- * 繼承 khopper::plugin::WriterCreator，並覆寫 khopper::plugin::WriterCreator::create_，
- * 使之回傳你想要的解碼器。 \n
- * 並在全域呼叫 khopper::plugin::registerWriter，以註冊 plugin。下例：
+ * <h3>Encoder</h3>
+ * Inherit khopper::plugin::WriterCreator, and override
+ * khopper::plugin::WriterCreator::create_, make it return the encoder which
+ * you desired. \n
+ * Then call khopper::plugin::registerWriter in global scope to register plugin
+ * to main program. Here is an example:
  * <pre>
  * const bool REGISTERED = khopper::plugin::registerWriter( "mp3", "krp_mp3" );
  * </pre>
- * 其中，"mp3"為程式內使用之識別字，"krp_mp3"為 plugin 所使用的名稱。
+ * Which "mp3" means the key which khopper::plugin::createWriter() will use.
+ * "krp_mp3" is the name of plugin namely the plugin project target name.
  */
 // @{
 // @}

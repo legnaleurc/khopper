@@ -34,56 +34,68 @@ namespace khopper {
 	/// Error classes
 	namespace error {
 
-		namespace private_ {
-
+		/**
+		 * @brief Base class of error types
+		 *
+		 * This class is the common code of error types,
+		 * to avoid duplicate code generation.
+		 */
+		class KHOPPER_DLL_EXPORT BaseError : public std::exception {
+		public:
 			/**
-			 * @brief Base class of error types
-			 *
-			 * This class is the common code of error types,
-			 * to avoid duplicate code generation.
+			 * @brief Construct with an error message
 			 */
-			class KHOPPER_DLL_EXPORT ErrorBase : public std::exception {
-			public:
-				/**
-				 * @brief Construct with an error message
-				 * @param [in] msg Error message
-				 */
-				explicit ErrorBase( const char * msg );
-				explicit ErrorBase( const std::string & msg );
-				explicit ErrorBase( const std::wstring & msg );
-				explicit ErrorBase( const QString & msg );
-				/**
-				 * @brief Virtual destructor
-				 */
-				virtual ~ErrorBase() throw();
+			explicit BaseError( const char * msg );
+			/**
+			 * @brief Construct with an error message
+			 */
+			explicit BaseError( const std::string & msg );
+			/**
+			 * @brief Construct with an error message
+			 */
+			explicit BaseError( const std::wstring & msg );
+			/**
+			 * @brief Construct with an error message
+			 */
+			explicit BaseError( const QString & msg );
+			/**
+			 * @brief Virtual destructor
+			 */
+			virtual ~BaseError() throw();
 
-				virtual const char * what() const throw();
-				/**
-				 * @brief Get the error message
-				 * @return Error message
-				 */
-				const QString & getMessage() const;
-			private:
-				QString msg_;
-			};
-
-		}
+			/// Get error message
+			virtual const char * what() const throw();
+			/**
+			 * @brief Get the error message
+			 */
+			const QString & getMessage() const;
+		private:
+			QString msg_;
+		};
 
 		/**
 		 * @brief Error class
 		 * @tparam Type Custom error extension
 		 */
 		template< typename Type >
-		class KHOPPER_DLL_EXPORT Error : public private_::ErrorBase, public Type {
+		class KHOPPER_DLL_EXPORT Error : public BaseError, public Type {
 		public:
 			/**
 			 * @brief Construct with an error message
-			 * @param [in] msg Error message
 			 */
-			explicit Error( const char * msg ) : private_::ErrorBase( msg ) {}
-			explicit Error( const std::string & msg ) : private_::ErrorBase( msg ) {}
-			explicit Error( const std::wstring & msg ) : private_::ErrorBase( msg ) {}
-			explicit Error( const QString & msg ) : private_::ErrorBase( msg ) {}
+			explicit Error( const char * msg ) : BaseError( msg ) {}
+			/**
+			 * @brief Construct with an error message
+			 */
+			explicit Error( const std::string & msg ) : BaseError( msg ) {}
+			/**
+			 * @brief Construct with an error message
+			 */
+			explicit Error( const std::wstring & msg ) : BaseError( msg ) {}
+			/**
+			 * @brief Construct with an error message
+			 */
+			explicit Error( const QString & msg ) : BaseError( msg ) {}
 		};
 
 		/**

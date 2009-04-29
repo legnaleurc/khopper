@@ -59,6 +59,11 @@ namespace khopper {
 			 * @brief Emmited when convert action is required.
 			 */
 			void requireConvert();
+			/**
+			 * @brief Error message
+			 * @param title Error title
+			 * @param errMsg Error masage
+			 */
 			void error( const QString & title, const QString & errMsg );
 
 		private slots:

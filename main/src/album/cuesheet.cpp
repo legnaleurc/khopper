@@ -118,7 +118,7 @@ namespace khopper {
 			codec::ReaderSP decoder( plugin::createReader( text::getSuffix( currentFile.first ) ) );
 			try {
 				decoder->open( currentFile.first.toStdWString() );
-			} catch( error::private_::ErrorBase & e ) {
+			} catch( error::BaseError & e ) {
 				qDebug() << e.getMessage();
 				qWarning() << "Can not open media:" << currentFile.first;
 			}
