@@ -68,6 +68,8 @@
 
 #include "util/tr1.hpp"
 
+#include <cassert>
+
 namespace khopper {
 
 	/**
@@ -92,7 +94,9 @@ namespace khopper {
 			virtual ~AbstractCreator() {}
 			/// Create the product
 			std::tr1::shared_ptr< Product > create() const {
-				return this->create_();
+				std::tr1::shared_ptr< Product > pointer = this->create_();
+				assert( pointer || !"got null pointer" );
+				return pointer;
 			}
 		private:
 			AbstractCreator( const AbstractCreator & );
