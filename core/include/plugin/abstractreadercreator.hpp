@@ -45,13 +45,13 @@ namespace khopper {
 		 * @param name plugin name
 		 * @return if registered in factory
 		 */
-		KHOPPER_DLL_EXPORT bool registerReader( const std::string & key, const std::string & name );
+		KHOPPER_EXPORT bool registerReader( const std::string & key, const std::string & name );
 		/**
 		 * @ingroup Plugins
 		 * @brief Create reader
 		 * @param key format key
 		 */
-		KHOPPER_DLL_EXPORT codec::ReaderSP createReader( const std::string & key );
+		KHOPPER_EXPORT codec::ReaderSP createReader( const std::string & key );
 
 	}
 

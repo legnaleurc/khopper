@@ -45,13 +45,13 @@ namespace khopper {
 		 * @param name plugin name
 		 * @return if registered in factory
 		 */
-		KHOPPER_DLL_EXPORT bool registerWriter( const std::string & key, const std::string & name );
+		KHOPPER_EXPORT bool registerWriter( const std::string & key, const std::string & name );
 		/**
 		 * @ingroup Plugins
 		 * @brief Create writer plugin
 		 * @param key format key
 		 */
-		KHOPPER_DLL_EXPORT codec::WriterSP createWriter( const std::string & key );
+		KHOPPER_EXPORT codec::WriterSP createWriter( const std::string & key );
 
 	}
 

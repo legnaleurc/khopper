@@ -37,19 +37,19 @@ namespace khopper {
 		/**
 		 * @brief Encode unicode string to UTF-8
 		 */
-		KHOPPER_DLL_EXPORT std::string toUtf8( const std::wstring & unicode );
+		KHOPPER_EXPORT std::string toUtf8( const std::wstring & unicode );
 		/**
 		 * @brief Convert narrow string to wide string
 		 */
-		KHOPPER_DLL_EXPORT std::wstring toStdWString( const char * str );
+		KHOPPER_EXPORT std::wstring toStdWString( const char * str );
 
 		/// @brief Get suffix of a file name
-		KHOPPER_DLL_EXPORT std::string getSuffix( const QString & filePath );
+		KHOPPER_EXPORT std::string getSuffix( const QString & filePath );
 		/**
 		 * @brief Overloaded version for convenience
 		 * @sa getSuffix(const QString &)
 		 */
-		KHOPPER_DLL_EXPORT std::string getSuffix( const QByteArray & filePath );
+		KHOPPER_EXPORT std::string getSuffix( const QByteArray & filePath );
 
 	}
 

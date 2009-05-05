@@ -40,7 +40,7 @@ namespace khopper {
 		 * This class is the common code of error types,
 		 * to avoid duplicate code generation.
 		 */
-		class KHOPPER_DLL_EXPORT BaseError : public std::exception {
+		class KHOPPER_EXPORT BaseError : public std::exception {
 		public:
 			/**
 			 * @brief Construct with an error message
@@ -78,7 +78,7 @@ namespace khopper {
 		 * @tparam Type Custom error extension
 		 */
 		template< typename Type >
-		class KHOPPER_DLL_EXPORT Error : public BaseError, public Type {
+		class KHOPPER_EXPORT Error : public BaseError, public Type {
 		public:
 			/**
 			 * @brief Construct with an error message
@@ -101,21 +101,21 @@ namespace khopper {
 		/**
 		 * @brief Run-time error class
 		 */
-		class KHOPPER_DLL_EXPORT RunTime {};
+		class KHOPPER_EXPORT RunTime {};
 		/// Error on run-time
 		typedef Error< RunTime > RunTimeError;
 
 		/**
 		 * @brief System error class
 		 */
-		class KHOPPER_DLL_EXPORT System {};
+		class KHOPPER_EXPORT System {};
 		/// Error on system
 		typedef Error< System > SystemError;
 
 		/**
 		 * @brief Input/Ouput error class
 		 */
-		class KHOPPER_DLL_EXPORT IO {};
+		class KHOPPER_EXPORT IO {};
 		/// Error on I/O
 		typedef Error< IO > IOError;
 

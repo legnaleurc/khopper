@@ -35,7 +35,7 @@ namespace khopper {
 		 * @brief Audio reader interface
 		 * @sa AbstractWriter
 		 */
-		class KHOPPER_DLL_EXPORT AbstractReader {
+		class KHOPPER_EXPORT AbstractReader {
 		public:
 			/**
 			 * @brief Default constructor

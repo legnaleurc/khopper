@@ -91,7 +91,7 @@ namespace khopper {
 			 * khopper::plugin::AbstractWriterCreator instead.
 			 */
 			template< typename Product >
-			class KHOPPER_DLL_EXPORT AbstractCreator {
+			class KHOPPER_EXPORT AbstractCreator {
 			public:
 				/// Default constructor
 				AbstractCreator() {}

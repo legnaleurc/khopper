@@ -29,16 +29,22 @@
 // for stdint.h in C99
 #define __STDC_CONSTANT_MACROS
 
-#ifdef __GNUC__
-#include <tr1/memory>
-#else
-#include <memory>
-#endif
-
 #ifdef _MSC_VER
-#define KHOPPER_DLL_EXPORT __declspec(dllexport)
+# define KHOPPER_EXPORT __declspec(dllexport)
+# if _MSC_FULL_VER >= 150030729
+#  include <memory>
+# else
+// reserved for older msvc
+# endif
+# elif defined( __GNUC__ )
+# define KHOPPER_EXPORT
+# if __GNUC__ >= 4
+# include <tr1/memory>
+# else
+// reserved for older gcc
+# endif
 #else
-#define KHOPPER_DLL_EXPORT
+// reserved for other compilers
 #endif
 
 #endif

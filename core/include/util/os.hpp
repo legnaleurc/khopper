@@ -39,7 +39,7 @@ namespace khopper {
 		 * @param [in] back back part
 		 * @return Complete path
 		 */
-		KHOPPER_DLL_EXPORT QString join( const QString & front, const QString & back );
+		KHOPPER_EXPORT QString join( const QString & front, const QString & back );
 
 	}
 
