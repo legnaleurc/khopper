@@ -78,31 +78,41 @@ namespace khopper {
 	 */
 	namespace plugin {
 
-		/**
-		 * @ingroup Plugins
-		 * @brief Common creator factory
-		 * @tparam Product The product type of return
-		 * @sa ReaderCreator WriterCreator
-		 *
-		 * You will not use this class directly.
-		 */
-		template< typename Product >
-		class KHOPPER_DLL_EXPORT AbstractCreator {
-		public:
-			/// Default constructor
-			AbstractCreator() {}
-			virtual ~AbstractCreator() {}
-			/// Create the product
-			std::tr1::shared_ptr< Product > create() const {
-				std::tr1::shared_ptr< Product > pointer = this->create_();
-				assert( pointer || !"got null pointer" );
-				return pointer;
-			}
-		private:
-			AbstractCreator( const AbstractCreator & );
-			AbstractCreator & operator =( const AbstractCreator & );
-			virtual std::tr1::shared_ptr< Product > create_() const = 0;
-		};
+		namespace private_ {
+
+			/**
+			 * @ingroup Plugins
+			 * @brief Common creator factory
+			 * @tparam Product The product type of return
+			 * @sa khopper::plugin::AbstractReaderCreator khopper::plugin::AbstractWriterCreator
+			 *
+			 * You will not use this class directly.
+			 * Use khopper::plugin::AbstractReaderCreator or
+			 * khopper::plugin::AbstractWriterCreator instead.
+			 */
+			template< typename Product >
+			class KHOPPER_DLL_EXPORT AbstractCreator {
+			public:
+				/// Default constructor
+				AbstractCreator() {}
+				/// Destructor
+				virtual ~AbstractCreator() {}
+				/**
+				 * @brief Create the product
+				 * @note never null
+				 */
+				std::tr1::shared_ptr< Product > create() const {
+					std::tr1::shared_ptr< Product > pointer = this->create_();
+					assert( pointer || !"got null pointer" );
+					return pointer;
+				}
+			private:
+				AbstractCreator( const AbstractCreator & );
+				AbstractCreator & operator =( const AbstractCreator & );
+				virtual std::tr1::shared_ptr< Product > create_() const = 0;
+			};
+
+		}
 
 	}
 

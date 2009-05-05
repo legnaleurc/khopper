@@ -34,8 +34,9 @@ namespace khopper {
 		/**
 		 * @ingroup Plugins
 		 * @brief Reader creator interface
+		 * @sa private_::AbstractCreator
 		 */
-		typedef AbstractCreator< codec::AbstractReader > AbstractReaderCreator;
+		typedef private_::AbstractCreator< codec::AbstractReader > AbstractReaderCreator;
 
 		/**
 		 * @ingroup Plugins

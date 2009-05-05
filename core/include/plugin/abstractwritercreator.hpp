@@ -34,9 +34,9 @@ namespace khopper {
 		/**
 		 * @ingroup Plugins
 		 * @brief Wirter creator interface
-		 * @sa Creator
+		 * @sa private_::AbstractCreator
 		 */
-		typedef AbstractCreator< codec::AbstractWriter > AbstractWriterCreator;
+		typedef private_::AbstractCreator< codec::AbstractWriter > AbstractWriterCreator;
 
 		/**
 		 * @ingroup Plugins
