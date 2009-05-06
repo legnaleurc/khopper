@@ -54,7 +54,7 @@ namespace khopper {
 		 * @ingroup Codecs
 		 * @brief Codec error
 		 */
-		class KHOPPER_DLL_EXPORT Codec {};
+		class KHOPPER_EXPORT Codec {};
 		/// Error on encoding or decoding
 		typedef Error< Codec > CodecError;
 

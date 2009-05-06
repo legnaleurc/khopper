@@ -19,7 +19,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifdef _WIN32
+#ifndef _WIN32
 #error This file must compile on Windows only!
 #endif
 
@@ -119,7 +119,7 @@ namespace {
 		static int initialized = 0;
 		if( !initialized ) {
 			initialized = 1;
-#if LIBAVFORMAT_VERSION_MAJOR >= 53
+#if LIBAVFORMAT_VERSION_MAJOR < 53
 			return register_protocol( &wfile_protocol );
 #else
 			return av_register_protocol( &wfile_protocol );

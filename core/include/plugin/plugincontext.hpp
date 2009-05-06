@@ -38,7 +38,7 @@ namespace khopper {
 		/**
 		 * @brief Plug-in context
 		 */
-		class KHOPPER_DLL_EXPORT PluginContext {
+		class KHOPPER_EXPORT PluginContext {
 		public:
 			/// get plugin list
 			static QStringList getList();
