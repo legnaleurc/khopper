@@ -102,7 +102,12 @@ namespace khopper {
 				 * @note never null
 				 */
 				std::tr1::shared_ptr< Product > create() const {
-					std::tr1::shared_ptr< Product > pointer = this->create_();
+					std::tr1::shared_ptr< Product > pointer;
+					try {
+						pointer = this->create_();
+					} catch( std::bad_alloc & ) {
+						assert( !"memory allocation failed" );
+					}
 					assert( pointer || !"got null pointer" );
 					return pointer;
 				}
