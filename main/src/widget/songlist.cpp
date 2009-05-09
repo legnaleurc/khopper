@@ -77,30 +77,21 @@ namespace khopper {
 			connect( delSong, SIGNAL( triggered() ), this, SLOT( removeSelected_() ) );
 
 			// Set context menu
-			QMenu * codec = new QMenu( tr( "Change Text Codec" ), this );
+			QMenu * codecs = new QMenu( tr( "Change Text Codec" ), this );
 
 			QSignalMapper * sm = new QSignalMapper( this );
 
-			QAction * big5 = new QAction( tr( "Big5" ), this );
-			codec->addAction( big5 );
-			connect( big5, SIGNAL( triggered() ), sm, SLOT( map() ) );
-			sm->setMapping( big5, 2026 );
-			QAction * gb2312 = new QAction( tr( "GB2312" ), this );
-			codec->addAction( gb2312 );
-			connect( gb2312, SIGNAL( triggered() ), sm, SLOT( map() ) );
-			sm->setMapping( gb2312, 57 );
-			QAction * sjis = new QAction( tr( "Shift-JIS" ), this );
-			codec->addAction( sjis );
-			connect( sjis, SIGNAL( triggered() ), sm, SLOT( map() ) );
-			sm->setMapping( sjis, 17 );
-			QAction * utf8 = new QAction( tr( "UTF-8" ), this );
-			codec->addAction( utf8 );
-			connect( utf8, SIGNAL( triggered() ), sm, SLOT( map() ) );
-			sm->setMapping( utf8, 106 );
+			// generate codec menu
+			foreach( int mib, QTextCodec::availableMibs() ) {
+				QAction * codec = new QAction( QTextCodec::codecForMib( mib )->name(), this );
+				codecs->addAction( codec );
+				connect( codec, SIGNAL( triggered() ), sm, SLOT( map() ) );
+				sm->setMapping( codec, mib );
+			}
 
 			connect( sm, SIGNAL( mapped( int ) ), this, SLOT( changeTextCodec_( int ) ) );
 
-			this->contextMenu_->addMenu( codec );
+			this->contextMenu_->addMenu( codecs );
 			this->contextMenu_->addSeparator();
 
 			QAction * convert = new QAction( tr( "Convert" ), this );

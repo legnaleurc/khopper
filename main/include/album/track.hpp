@@ -347,7 +347,9 @@ namespace khopper {
 			 * @brief Set text codec
 			 */
 			void setTextCodec( QTextCodec * textCodec ) {
-				this->textCodec_ = textCodec;
+				if( textCodec ) {
+					this->textCodec_ = textCodec;
+				}
 			}
 			/**
 			 * @brief Set track title
