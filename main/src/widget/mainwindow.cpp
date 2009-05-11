@@ -277,10 +277,10 @@ namespace khopper {
 
 			QLabel * version = new QLabel( this->about_ );
 			version->setText( tr(
-				"<h1>Khopper</h1>"
-				"Version 0.1.80<br/>"
-				"Part of FoolproofProject<br/>"
-			) );
+				"<h1>%1</h1>"
+				"Version %2<br/>"
+				"Part of %3<br/>"
+			).arg( qApp->applicationName() ).arg( qApp->applicationVersion() ).arg( qApp->organizationName() ) );
 			topBox->addWidget( version );
 
 			QTabWidget * tw = new QTabWidget( this->about_ );
