@@ -25,6 +25,7 @@ HEADERS +=	\
 	./include/widget/player.hpp	\
 	./include/widget/preference.hpp	\
 	./include/widget/progress.hpp	\
+	./include/widget/seekslider.hpp	\
 	./include/widget/songlist.hpp	\
 	./include/widget/textcodec.hpp	\
 	./include/widget/threads.hpp
@@ -39,6 +40,7 @@ SOURCES +=	\
 	./src/widget/player.cpp	\
 	./src/widget/preference.cpp	\
 	./src/widget/progress.cpp	\
+	./src/widget/seekslider.cpp	\
 	./src/widget/songlist.cpp	\
 	./src/widget/textcodec.cpp	\
 	./src/widget/threads.cpp

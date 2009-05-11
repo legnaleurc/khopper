@@ -124,10 +124,6 @@ namespace khopper {
 			}
 		}
 
-		const std::vector< album::TrackSP > & SongList::getTracks() const {
-			return this->tracks_;
-		}
-
 		std::vector< album::TrackSP > SongList::getSelectedTracks() const {
 			QModelIndexList selected = this->selectionModel()->selectedRows( 0 );
 			std::sort( selected.begin(), selected.end(), ::indexRowCompD );

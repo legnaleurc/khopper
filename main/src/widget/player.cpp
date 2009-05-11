@@ -21,6 +21,7 @@
  */
 
 #include "player.hpp"
+#include "seekslider.hpp"
 #include "songlist.hpp"
 
 #include <QHBoxLayout>
@@ -86,14 +87,20 @@ namespace khopper {
 			const std::vector< album::TrackSP > & tracks( this->songList_->getTracks() );
 
 			if( !tracks.empty() ) {
-				std::vector< album::TrackSP > selected( this->songList_->getSelectedTracks() );
+				const std::vector< album::TrackSP > selected( this->songList_->getSelectedTracks() );
+				TrackSP track;
 				if( selected.empty() ) {
-					this->player_->setCurrentSource( tracks[0]->getFilePath() );
+					track = tracks[0];
 				} else {
-					this->player_->setCurrentSource( selected[0]->getFilePath() );
+					track = selected[0];
 				}
 
+				this->player_->setCurrentSource( track->getFilePath() );
+				double begin = track->getStartTime().toDouble();
+				double end = begin + track->getDuration().toDouble();
+				this->slider_->setRealRange( begin, end );
 				this->player_->play();
+				this->player_->seek( begin * 1000 );
 			}
 		}
 

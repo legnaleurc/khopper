@@ -32,6 +32,7 @@ namespace khopper {
 
 	namespace widget {
 
+		class SeekSlider;
 		class SongList;
 
 		/// Audio player
@@ -75,7 +76,7 @@ namespace khopper {
 			void play_();
 
 			Phonon::MediaObject * player_;
-			Phonon::SeekSlider * seeker_;
+			SeekSlider * seeker_;
 			Phonon::VolumeSlider * volume_;
 			QPushButton * ppb_;
 			SongList * songList_;
