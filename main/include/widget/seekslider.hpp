@@ -9,6 +9,8 @@ namespace khopper {
 	namespace widget {
 
 		class SeekSlider : public QWidget {
+			Q_OBJECT
+
 		public:
 			SeekSlider( Phonon::MediaObject * media, QWidget * parent = 0 );
 

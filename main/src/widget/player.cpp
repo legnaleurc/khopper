@@ -34,7 +34,7 @@ namespace khopper {
 		Player::Player( QWidget * parent, Qt::WindowFlags f ):
 		QWidget( parent, f ),
 		player_( new Phonon::MediaObject( this ) ),
-		seeker_( new Phonon::SeekSlider( this->player_, this ) ),
+		seeker_( new SeekSlider( this->player_, this ) ),
 		volume_( new Phonon::VolumeSlider( this ) ),
 		ppb_( new QPushButton( tr( "Play" ), this ) ),
 		songList_( new SongList( this ) ) {
@@ -88,7 +88,7 @@ namespace khopper {
 
 			if( !tracks.empty() ) {
 				const std::vector< album::TrackSP > selected( this->songList_->getSelectedTracks() );
-				TrackSP track;
+				album::TrackSP track;
 				if( selected.empty() ) {
 					track = tracks[0];
 				} else {
@@ -98,7 +98,7 @@ namespace khopper {
 				this->player_->setCurrentSource( track->getFilePath() );
 				double begin = track->getStartTime().toDouble();
 				double end = begin + track->getDuration().toDouble();
-				this->slider_->setRealRange( begin, end );
+				this->seeker_->setRealRange( begin, end );
 				this->player_->play();
 				this->player_->seek( begin * 1000 );
 			}
