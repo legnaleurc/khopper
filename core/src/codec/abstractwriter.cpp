@@ -21,6 +21,8 @@
  */
 #include "codec/abstractwriter.hpp"
 
+#include <cassert>
+
 namespace khopper {
 
 	namespace codec {

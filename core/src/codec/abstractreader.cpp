@@ -21,6 +21,8 @@
  */
 #include "codec/abstractreader.hpp"
 
+#include <cassert>
+
 namespace khopper {
 
 	namespace codec {
