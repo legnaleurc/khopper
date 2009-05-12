@@ -21,6 +21,7 @@
  */
 
 #include "player.hpp"
+#include "seekslider.hpp"
 #include "songlist.hpp"
 
 #include <QHBoxLayout>
@@ -33,7 +34,7 @@ namespace khopper {
 		Player::Player( QWidget * parent, Qt::WindowFlags f ):
 		QWidget( parent, f ),
 		player_( new Phonon::MediaObject( this ) ),
-		seeker_( new Phonon::SeekSlider( this->player_, this ) ),
+		seeker_( new SeekSlider( this->player_, this ) ),
 		volume_( new Phonon::VolumeSlider( this ) ),
 		ppb_( new QPushButton( tr( "Play" ), this ) ),
 		songList_( new SongList( this ) ) {
@@ -86,14 +87,20 @@ namespace khopper {
 			const std::vector< album::TrackSP > & tracks( this->songList_->getTracks() );
 
 			if( !tracks.empty() ) {
-				std::vector< album::TrackSP > selected( this->songList_->getSelectedTracks() );
+				const std::vector< album::TrackSP > selected( this->songList_->getSelectedTracks() );
+				album::TrackSP track;
 				if( selected.empty() ) {
-					this->player_->setCurrentSource( tracks[0]->getFilePath() );
+					track = tracks[0];
 				} else {
-					this->player_->setCurrentSource( selected[0]->getFilePath() );
+					track = selected[0];
 				}
 
+				this->player_->setCurrentSource( track->getFilePath() );
+				double begin = track->getStartTime().toDouble();
+				double end = begin + track->getDuration().toDouble();
+				this->seeker_->setRealRange( begin, end );
 				this->player_->play();
+				this->player_->seek( begin * 1000 );
 			}
 		}
 

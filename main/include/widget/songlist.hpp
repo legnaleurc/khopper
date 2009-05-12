@@ -52,13 +52,19 @@ namespace khopper {
 			/**
 			 * @brief Get all tracks
 			 */
-			const std::vector< album::TrackSP > & getTracks() const;
+			const std::vector< album::TrackSP > & getTracks() const {
+				return this->tracks_;
+			}
 			/**
 			 * @brief Get selected tracks
 			 *
 			 * The cost may be expansive.
 			 */
 			std::vector< album::TrackSP > getSelectedTracks() const;
+
+			bool isEmpty() const {
+				return this->tracks_.empty();
+			}
 
 		signals:
 			/**
