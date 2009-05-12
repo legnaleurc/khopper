@@ -31,7 +31,6 @@ namespace khopper {
 
 			if( this->media_ ) {
 				connect( this->media_, SIGNAL( stateChanged( Phonon::State, Phonon::State ) ), this, SLOT( changeState_( Phonon::State ) ) );
-// 				connect( this->media_, SIGNAL( totalTimeChanged( qint64 ) ), this, SLOT( length_( qint64 ) ) );
 				connect( this->media_, SIGNAL( tick( qint64 ) ), this, SLOT( tick_( qint64 ) ) );
 			} else {
 				this->changeState_( Phonon::StoppedState );
@@ -50,6 +49,7 @@ namespace khopper {
 				this->play_();
 				break;
 			case Phonon::StoppedState:
+				this->slider_->setValue( 0 );
 				this->setDisabled( true );
 				break;
 			default:
