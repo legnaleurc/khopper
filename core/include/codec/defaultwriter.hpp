@@ -54,7 +54,16 @@ namespace khopper {
 			}
 			bool isVariable() const;
 
+			/**
+			 * @brief setup muxer
+			 * @throws CodecError Unknown output format
+			 * @throws SystemError Memory allocation failure
+			 */
 			virtual void setupMuxer();
+			/**
+			 * @brief setup encoder
+			 * @throws CodecError Can not setup encoder
+			 */
 			virtual void setupEncoder();
 			virtual void openResource();
 			virtual void closeResource();

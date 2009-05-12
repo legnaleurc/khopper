@@ -50,9 +50,26 @@ namespace khopper {
 			virtual ~DefaultReader();
 
 		protected:
+			/**
+			 * @brief Open resource
+			 * @throws IOError Can not open file
+			 */
 			virtual void openResource();
+			/**
+			 * @brief Close resource
+			 */
 			virtual void closeResource();
+			/**
+			 * @brief Setup demuxer
+			 * @throws CodecError Can not find codec information.
+			 * @throws CodecError Can not find duration.
+			 */
 			virtual void setupDemuxer();
+			/**
+			 * @brief Setup decoder
+			 * @throws CodecError Can not find audio stream.
+			 * @throws CodecError Can not find decoder.
+			 */
 			virtual void setupDecoder();
 			virtual void readHeader();
 			virtual ByteArray readFrame( double &, bool & );

@@ -45,6 +45,8 @@ namespace khopper {
 			/**
 			 * @brief Load plugin by plugin name
 			 * @param name plugin name
+			 * @throws RunTimeError Plugin load error
+			 * @throws IOError Can not find this plugin
 			 */
 			static QObject * load( QString name );
 

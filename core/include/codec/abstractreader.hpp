@@ -272,6 +272,10 @@ namespace khopper {
 			}
 
 			virtual void openResource() = 0;
+			/**
+			 * @brief Close opened resource
+			 * @note If an exception was thrown, program will terminate immediately
+			 */
 			virtual void closeResource() = 0;
 			virtual void setupDemuxer() = 0;
 			virtual void setupDecoder() = 0;

@@ -155,7 +155,6 @@ namespace khopper {
 			stop = false;
 			// static just for speed
 			static uint8_t audio_buf[AVCODEC_MAX_AUDIO_FRAME_SIZE*3/2];
-			void * casting_hack = audio_buf;
 			uint8_t * audio_pkt_data = NULL;
 			int audio_pkt_size = 0;
 
@@ -177,7 +176,7 @@ namespace khopper {
 						break;
 					}
 					data_size = sizeof( audio_buf );
-					dp_len = avcodec_decode_audio2( this->pCodecContext_.get(), static_cast< int16_t * >( casting_hack ), &data_size, audio_pkt_data, audio_pkt_size );
+					dp_len = avcodec_decode_audio2( this->pCodecContext_.get(), static_cast< int16_t * >( static_cast< void * >( audio_buf ) ), &data_size, audio_pkt_data, audio_pkt_size );
 					if( dp_len < 0 ) {
 						audio_pkt_size = 0;
 						break;

@@ -57,8 +57,13 @@ namespace khopper {
 		}
 
 		void AbstractWriter::close() {
-			this->flush();
-			this->closeResource();
+			try {
+				this->flush();
+				this->closeResource();
+			} catch( ... ) {
+				// TODO: log an error
+				assert( !"a plugin can not clean up its own mess ..." );
+			}
 			this->opening_ = false;
 		}
 

@@ -80,7 +80,12 @@ namespace khopper {
 			this->title_.clear();
 			this->year_ = -1;
 
-			this->closeResource();
+			try {
+				this->closeResource();
+			} catch( ... ) {
+				// TODO: log an error
+				assert( !"a plugin can not clean up its own mess ..." );
+			}
 
 			this->hasNext_ = false;
 			this->opening_ = false;

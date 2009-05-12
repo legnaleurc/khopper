@@ -197,7 +197,7 @@ namespace khopper {
 			virtual void openResource() = 0;
 			/**
 			 * @brief Close resource
-			 * @note no-fail
+			 * @note If an exception was thrown, program will terminate immediately
 			 */
 			virtual void closeResource() = 0;
 			/// Write header
