@@ -49,9 +49,11 @@ namespace khopper {
 			virtual ~DefaultWriter();
 
 		protected:
+			/// Get format context
 			std::tr1::shared_ptr< AVFormatContext > formatContext() {
 				return this->pFormatContext_;
 			}
+			/// if is VBR
 			bool isVariable() const;
 
 			/**

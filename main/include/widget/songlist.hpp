@@ -62,6 +62,7 @@ namespace khopper {
 			 */
 			std::vector< album::TrackSP > getSelectedTracks() const;
 
+			/// Test if no track
 			bool isEmpty() const {
 				return this->tracks_.empty();
 			}

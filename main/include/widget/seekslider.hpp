@@ -29,14 +29,32 @@ namespace khopper {
 
 	namespace widget {
 
+		/**
+		 * @brief Seek slider bar
+		 *
+		 * I wrote this because Phonon::SeekSlider is not that useful.
+		 */
 		class SeekSlider : public QWidget {
 			Q_OBJECT
 
 		public:
+			/**
+			 * @brief Constructor
+			 * @param media media to be tracking
+			 * @param parent parent widget
+			 */
 			SeekSlider( Phonon::MediaObject * media, QWidget * parent = 0 );
 
+			/**
+			 * @brief Set media object
+			 * @param media media to be tracking
+			 */
 			void setMediaObject( Phonon::MediaObject * media );
-
+			/**
+			 * @brief Set song range
+			 * @param begin begin time stamp in media
+			 * @param end end time stamp in media
+			 */
 			void setRange( double begin, double end );
 
 		private slots:

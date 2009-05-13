@@ -271,16 +271,22 @@ namespace khopper {
 				this->year_ = year;
 			}
 
+			/// Open resource
 			virtual void openResource() = 0;
 			/**
 			 * @brief Close opened resource
 			 * @note If an exception was thrown, program will terminate immediately
 			 */
 			virtual void closeResource() = 0;
+			/// Setup demuxer
 			virtual void setupDemuxer() = 0;
+			/// Setup decoder
 			virtual void setupDecoder() = 0;
+			/// Read header
 			virtual void readHeader() = 0;
+			/// Read one frame
 			virtual ByteArray readFrame( double &, bool & ) = 0;
+			/// Seek frame
 			virtual bool seekFrame( double ) = 0;
 
 		private:
