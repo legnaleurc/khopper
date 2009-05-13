@@ -81,11 +81,14 @@ namespace khopper {
 		}
 
 		void SeekSlider::seek_( int time ) {
-			this->media_->seek( time );
+			this->media_->seek( this->begin_ + time );
 		}
 
 		void SeekSlider::tick_( qint64 time ) {
 			this->slider_->setValue( time - this->begin_ );
+			if( time >= this->end_ ) {
+				this->media_->stop();
+			}
 		}
 
 		void SeekSlider::play_() {
