@@ -125,6 +125,9 @@ namespace khopper {
 				case Phonon::PlayingState:
 					this->ppb_->setText( tr( "Pause" ) );
 					break;
+				case Phonon::StoppedState:
+					this->ppb_->setText( tr( "Play" ) );
+					break;
 				case Phonon::ErrorState:
 					emit this->error( tr( "Player error" ), this->player_->errorString() );
 					break;
