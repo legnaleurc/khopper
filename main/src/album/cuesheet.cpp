@@ -51,6 +51,15 @@ namespace {
 		const QString & title_;
 	};
 
+	struct setFile {
+		setFile( const QString & file ) : file_( file ) {}
+		void operator ()( khopper::album::TrackSP track ) {
+			track->setFilePath( this->file_ );
+		}
+	private:
+		const QString & file_;
+	};
+
 	struct setBCS {
 		setBCS( khopper::codec::ReaderCSP decoder ) : decoder_( decoder ) {}
 		void operator ()( khopper::album::TrackSP track ) {
@@ -76,6 +85,24 @@ namespace khopper {
 
 		void CUESheet::open( const QString & content, const QString & dirPath ) {
 			this->parseCUE_( content, dirPath );
+		}
+
+		void CUESheet::setMedia( const QString & filePath ) {
+			std::for_each( this->tracks_.begin(), this->tracks_.end(), ::setFile( filePath ) );
+
+			// get the total length, because cue sheet don't provide it
+			codec::ReaderSP decoder( plugin::createReader( text::getSuffix( filePath ) ) );
+			// NOTE: may throw exception
+			decoder->open( filePath.toStdWString() );
+			if( decoder->isOpen() ) {
+				// set bit rate, channels, sample rate
+				std::for_each( this->tracks_.begin(), this->tracks_.end(), ::setBCS( decoder ) );
+
+				TrackSP last( this->tracks_.back() );
+				last->setDuration( Index( decoder->getDuration() ) - last->getStartTime() );
+
+				decoder->close();
+			}
 		}
 
 		void CUESheet::parseCUE_( QString content, const QString & dirPath ) {
@@ -114,23 +141,7 @@ namespace khopper {
 			// set track album
 			std::for_each( this->tracks_.begin(), this->tracks_.end(), ::setAlbum( this->title_ ) );
 
-			// get the total length, because cue sheet don't provide it
-			codec::ReaderSP decoder( plugin::createReader( text::getSuffix( currentFile.first ) ) );
-			try {
-				decoder->open( currentFile.first.toStdWString() );
-			} catch( error::BaseError & e ) {
-				qDebug() << e.getMessage();
-				qWarning() << "Can not open media:" << currentFile.first;
-			}
-			if( decoder->isOpen() ) {
-				// set bit rate, channels, sample rate
-				std::for_each( this->tracks_.begin(), this->tracks_.end(), ::setBCS( decoder ) );
-
-				TrackSP last( this->tracks_.back() );
-				last->setDuration( Index( decoder->getDuration() ) - last->getStartTime() );
-
-				decoder->close();
-			}
+			this->setMedia( currentFile.first );
 		}
 
 		void CUESheet::parseSingle_( const QString & c, const QString & s, int trackNO ) {

@@ -228,6 +228,7 @@ namespace khopper {
 					QFileInfo fI( filePath );
 
 					if( fI.suffix() == "cue" ) {
+						// if cue sheet opened
 						QFile fin( filePath );
 						if( !fin.open( QIODevice::ReadOnly | QIODevice::Text ) ) {
 							this->showErrorMessage_( tr( "File open error!" ), tr( "Could not open the file: `" ) + filePath + "\'" );
@@ -239,14 +240,29 @@ namespace khopper {
 						this->codec_->setEncoded( raw_input );
 
 						if( this->codec_->exec() ) {
+							album::CUESheet sheet;
 							try {
-								album::CUESheet sheet( codec_->getDecoded(), fI.absolutePath() );
-								tracks.insert( tracks.end(), sheet.getTracks().begin(), sheet.getTracks().end() );
-							} catch( std::exception & e ) {
+								sheet.open( this->codec_->getDecoded(), fI.absolutePath() );
+							} catch( error::ParsingError & e ) {
 								this->showErrorMessage_( tr( "Error on parsing CUE Sheet!" ), trUtf8( e.what() ) );
+							} catch( error::BaseError & ) {
+								int ret = QMessageBox::warning( this, tr( "Can not decode media" ), tr( "I can not open the media, please select another file." ), QMessageBox::Ok, QMessageBox::Cancel );
+								while( ret == QMessageBox::Ok ) {
+									filePath = QFileDialog::getOpenFileName( this, tr( "Open audio" ), QDir::homePath() );
+									try {
+										sheet.setMedia( filePath );
+										break;
+									} catch( std::exception & e ) {
+										ret = QMessageBox::warning( this, tr( "Can not decode media" ), tr( "I can not open the media, please select another file." ), QMessageBox::Ok, QMessageBox::Cancel );
+									}
+								}
+							} catch( std::exception & e ) {
+								this->showErrorMessage_( tr( "Unknow error" ), trUtf8( e.what() ) );
 							}
+							tracks.insert( tracks.end(), sheet.getTracks().begin(), sheet.getTracks().end() );
 						}
 					} else {
+						// other, single media
 						album::TrackSP track( new album::Track );
 
 						try {

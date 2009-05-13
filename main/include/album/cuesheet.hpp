@@ -47,7 +47,9 @@ namespace khopper {
 			 * @brief Give a CUE Sheet content and create this object
 			 * @param [in] content CHESheet content
 			 * @param [in] dirPath where the CUE sheet comes from
-			 * @throw ParsingError Invalid CUE format
+			 * @throws ParsingError Invalid CUE format
+			 * @throws CodecError Decode media error
+			 * @throws IOError File not openable
 			 */
 			CUESheet( const QString & content, const QString & dirPath = QString() );
 
@@ -55,9 +57,19 @@ namespace khopper {
 			 * @brief Set CUE sheet by given whole content
 			 * @param [in] content CHESheet content
 			 * @param [in] dirPath where the CUE sheet comes from
-			 * @throw ParsingError Invalid CUE format
+			 * @throws ParsingError Invalid CUE format
+			 * @throws CodecError Decode media error
+			 * @throws IOError File not openable
 			 */
 			void open( const QString & content, const QString & dirPath = QString() );
+
+			/**
+			 * @brief Set media file
+			 * @param [in] filePath Audio path
+			 * @throws CodecError Decode media error
+			 * @throws IOError File not openable
+			 */
+			void setMedia( const QString & filePath );
 
 			/// Get artist
 			const QString & getArtist() const {
