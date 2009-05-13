@@ -71,7 +71,7 @@ namespace khopper {
 				break;
 			case Phonon::StoppedState:
 				this->slider_->setValue( 0 );
-				this->setDisabled( true );
+				this->slider_->setDisabled( true );
 				break;
 			default:
 				break;
