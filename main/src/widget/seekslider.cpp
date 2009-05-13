@@ -1,3 +1,24 @@
+/**
+ * @file seekslider.cpp
+ * @author Wei-Cheng Pan
+ *
+ * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
+ *
+ * This file is part of Khopper.
+ *
+ * Khopper is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Khopper is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 #include "seekslider.hpp"
 
 #include <QHBoxLayout>
@@ -37,7 +58,7 @@ namespace khopper {
 			}
 		}
 
-		void SeekSlider::setRealRange( double begin, double end ) {
+		void SeekSlider::setRange( double begin, double end ) {
 			this->begin_ = begin * 1000;
 			this->end_ = end * 1000;
 			this->slider_->setRange( 0, this->end_ - this->begin_ );

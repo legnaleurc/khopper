@@ -98,7 +98,7 @@ namespace khopper {
 				this->player_->setCurrentSource( track->getFilePath() );
 				double begin = track->getStartTime().toDouble();
 				double end = begin + track->getDuration().toDouble();
-				this->seeker_->setRealRange( begin, end );
+				this->seeker_->setRange( begin, end );
 				this->player_->play();
 				this->player_->seek( begin * 1000 );
 			}
