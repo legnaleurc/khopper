@@ -39,7 +39,7 @@ namespace khopper {
 			this->slider_->setDisabled( true );
 			this->slider_->setPageStep( 5000 );
 			this->slider_->setSingleStep( 500 );
-			connect( this->slider_, SIGNAL( valueChanged( int ) ), this, SLOT( seek_( int ) ) );
+			connect( this->slider_, SIGNAL( sliderMoved( int ) ), this, SLOT( seek_( int ) ) );
 
 			setMediaObject( media );
 		}
@@ -51,6 +51,8 @@ namespace khopper {
 			this->media_ = media;
 
 			if( this->media_ ) {
+				this->slider_->setTickInterval( 500 );
+				this->media_->setTickInterval( 500 );
 				connect( this->media_, SIGNAL( stateChanged( Phonon::State, Phonon::State ) ), this, SLOT( changeState_( Phonon::State ) ) );
 				connect( this->media_, SIGNAL( tick( qint64 ) ), this, SLOT( tick_( qint64 ) ) );
 			} else {
