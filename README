@@ -29,7 +29,7 @@ Supported formats:
 		At least, wav, ape, flac, tta ... should be available.
 	Playing:
 		Depends on Phonon's backend.
-		ape may have poor support.
+		ape may has poor support.
 
 Contact:
 	mail:
