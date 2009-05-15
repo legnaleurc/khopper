@@ -30,29 +30,24 @@ namespace khopper {
 
 	namespace album {
 
-		Index::Index() : minute( 0 ), second( 0 ), frame( 0 ) {
+		Index::Index():
+		minute( 0 ),
+		second( 0 ),
+		millisecond( 0 ) {
 		}
 
-		Index::Index( short int m, short int s, short int f ):
+		Index::Index( short int m, short int s, short int ms ):
 		minute( m ),
 		second( s ),
-		frame( f ) {
-		}
-
-		Index::Index( double d ) {
-			this->minute = static_cast< short >( std::floor( d / 60 ) );
-			d -= this->minute * 60;
-			this->second = static_cast< short >( std::floor( d ) );
-			d -= this->second;
-			this->frame = static_cast< short >( std::floor( d * 100 ) );
+		millisecond( ms ) {
 		}
 
 		Index & Index::operator -=( const Index & that ) {
-			if( this->frame < that.frame ) {
+			if( this->millisecond < that.millisecond ) {
 				--this->second;
-				this->frame += 100 - that.frame;
+				this->millisecond += 1000 - that.millisecond;
 			} else {
-				this->frame -= that.frame;
+				this->millisecond -= that.millisecond;
 			}
 			if( this->second < that.second ) {
 				--this->minute;
@@ -60,6 +55,7 @@ namespace khopper {
 			} else {
 				this->second -= that.second;
 			}
+			// FIXME: may be negative
 			this->minute -= that.minute;
 
 			return *this;
@@ -69,13 +65,31 @@ namespace khopper {
 			return Index( *this ) -= that;
 		}
 
-		double Index::toDouble() const {
-			return 60 * minute + second + frame / 100.0;
+		int Index::toMillisecond() const {
+			return ( this->minute * 60 + this->second ) * 1000 + this->millisecond * 10;
+		}
+
+		double Index::toSecond() const {
+			return 60 * minute + second + millisecond / 1000.0;
 		}
 
 		std::wstring Index::toStdWString() const {
-			boost::wformat tpl( L"%1%:%|2$02|.%|3$02|" );
-			return ( tpl % this->minute % this->second % this->frame ).str();
+			boost::wformat tpl( L"%1%:%|2$02|.%|3$03|" );
+			return ( tpl % this->minute % this->second % this->millisecond ).str();
+		}
+
+		Index Index::fromMillisecond( int millisecond ) {
+			Index tmp;
+			tmp.millisecond = millisecond % 1000;
+			millisecond /= 1000;
+			tmp.second = millisecond % 60;
+			millisecond /= 60;
+			tmp.minute = millisecond;
+			return tmp;
+		}
+
+		Index Index::fromSecond( double second ) {
+			return fromMillisecond( second * 1000 );
 		}
 
 	}

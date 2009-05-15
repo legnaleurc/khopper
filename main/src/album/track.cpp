@@ -61,7 +61,7 @@ namespace khopper {
 				this->artist_ = decoder->getArtist().c_str();
 				this->bitRate_ = decoder->getBitRate();
 				this->channels_ = decoder->getChannels();
-				this->duration_ = decoder->getDuration();
+				this->duration_ = Index::fromSecond( decoder->getDuration() );
 				this->sampleRate_ = decoder->getSampleRate();
 				this->title_ = decoder->getTitle().c_str();
 

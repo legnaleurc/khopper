@@ -55,7 +55,7 @@ namespace khopper {
 			 * @param begin begin time stamp in media
 			 * @param end end time stamp in media
 			 */
-			void setRange( double begin, double end );
+			void setRange( int begin, int end );
 
 		private slots:
 			void changeState_( Phonon::State );

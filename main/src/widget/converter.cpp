@@ -43,8 +43,8 @@ namespace khopper {
 				throw error::RunTimeError( "Can not open decoder or encoder!" );
 			}
 
-			double begin = track->getStartTime().toDouble();
-			double end = begin + track->getDuration().toDouble();
+			double begin = track->getStartTime().toSecond();
+			double end = begin + track->getDuration().toSecond();
 			decoder->setRange( begin, end );
 			if( !decoder->seek( begin ) ) {
 				throw error::CodecError( "Invalid start point" );
@@ -56,7 +56,7 @@ namespace khopper {
 					break;
 				}
 				encoder->write( decoder->read( decoded ) );
-				emit this->decodedTime( static_cast< int >( decoded * 10000 ) );
+				emit this->decodedTime( static_cast< int >( decoded * 1000 ) );
 			}
 
 			encoder->close();

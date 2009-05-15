@@ -60,9 +60,9 @@ namespace khopper {
 			}
 		}
 
-		void SeekSlider::setRange( double begin, double end ) {
-			this->begin_ = begin * 1000;
-			this->end_ = end * 1000;
+		void SeekSlider::setRange( int begin, int end ) {
+			this->begin_ = begin;
+			this->end_ = end;
 			this->slider_->setRange( 0, this->end_ - this->begin_ );
 		}
 

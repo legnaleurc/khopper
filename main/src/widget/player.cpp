@@ -95,11 +95,11 @@ namespace khopper {
 				}
 
 				this->player_->setCurrentSource( track->getFilePath() );
-				double begin = track->getStartTime().toDouble();
-				double end = begin + track->getDuration().toDouble();
+				int begin = track->getStartTime().toMillisecond();
+				int end = begin + track->getDuration().toMillisecond();
 				this->seeker_->setRange( begin, end );
 				this->player_->play();
-				this->player_->seek( begin * 1000 );
+				this->player_->seek( begin );
 			}
 		}
 

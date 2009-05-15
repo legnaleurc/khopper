@@ -32,6 +32,13 @@ namespace khopper {
 		 * @brief Track index information
 		 */
 		struct Index {
+			/// minite
+			short int minute;
+			/// second
+			short int second;
+			/// millisecond
+			short int millisecond;
+
 			/**
 			 * @brief Default constructor
 			 *
@@ -42,23 +49,11 @@ namespace khopper {
 			 * @brief Custom constructor
 			 * @param [in] m minute
 			 * @param [in] s second
-			 * @param [in] f frame
+			 * @param [in] ms millisecond
 			 *
-			 * Initialize to m:s.f.
+			 * Initialize to m:s.ms.
 			 */
-			Index( short int m, short int s, short int f );
-			/**
-			 * @brief Convert from double
-			 * @param [in] seconds Time stamp in seconds
-			 */
-			Index( double seconds );
-
-			/// minite
-			short int minute;
-			/// second
-			short int second;
-			/// frame
-			short int frame;
+			Index( short int m, short int s, short int ms );
 
 			/**
 			 * @brief Subtract assign operator
@@ -74,15 +69,29 @@ namespace khopper {
 			Index operator -( const Index & that ) const;
 
 			/**
-			 * @brief Convert to double
-			 * @return seconds in double
+			 * @brief Convert to millisecond
 			 */
-			double toDouble() const;
+			int toMillisecond() const;
+			/**
+			 * @brief Convert to second
+			 */
+			double toSecond() const;
 			/**
 			 * @brief Convert to std::wstring
 			 * @return mm:ss.ff
 			 */
 			std::wstring toStdWString() const;
+
+			/**
+			 * @brief Convert from int
+			 * @param [in] millisecond Time stamp in millisecond
+			 */
+			static Index fromMillisecond( int millisecond );
+			/**
+			 * @brief Convert from double
+			 * @param [in] second Time stamp in second
+			 */
+			static Index fromSecond( double second );
 		};
 
 	}
