@@ -213,24 +213,22 @@ namespace khopper {
 		}
 
 		void CUESheet::parseIndex_( const QString & type, const QString & num, const QString & m, const QString & s, const QString & f, int trackNO ) {
-			short int minute = m.toShort();
-			short int second = s.toShort();
-			short int frame = f.toShort();
+			Index tmp( m.toShort(), s.toShort(), f.toShort() * 10 );
 
 			if( type == "INDEX" ) {
 				short int n = num.toShort();
 				switch( n ) {
 				case 1:
 					// track start time
-					this->tracks_[trackNO]->setStartTime( Index( minute, second, frame ) );
-					if( trackNO > 0 && this->tracks_[trackNO-1]->getDuration().toSecond() == 0.0 ) {
+					this->tracks_[trackNO]->setStartTime( tmp );
+					if( trackNO > 0 && this->tracks_[trackNO-1]->getDuration().isZero() ) {
 						this->tracks_[trackNO-1]->setDuration( this->tracks_[trackNO]->getStartTime() - this->tracks_[trackNO-1]->getStartTime() );
 					}
 					break;
 				case 0:
 					// prevous track end time
 					if( trackNO > 0 ) {
-						this->tracks_[trackNO-1]->setDuration( Index( minute, second, frame ) - this->tracks_[trackNO-1]->getStartTime() );
+						this->tracks_[trackNO-1]->setDuration( tmp - this->tracks_[trackNO-1]->getStartTime() );
 					}
 					break;
 				default:
@@ -238,9 +236,9 @@ namespace khopper {
 					throw error::ParsingError( "Index value error!" );
 				}
 			} else if( type == "PREGAP" ) {
-				this->tracks_[trackNO]->setPreGap( Index( minute, second, frame ) );
+				this->tracks_[trackNO]->setPreGap( tmp );
 			} else if( type == "POSTGAP" ) {
-				this->tracks_[trackNO]->setPostGap( Index( minute, second, frame ) );
+				this->tracks_[trackNO]->setPostGap( tmp );
 			}
 		}
 

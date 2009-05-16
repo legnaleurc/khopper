@@ -42,6 +42,10 @@ namespace khopper {
 		millisecond( ms ) {
 		}
 
+		bool Index::isZero() const {
+			return ( this->minute == 0 ) && ( this->second == 0 ) && ( this->millisecond == 0 );
+		}
+
 		Index & Index::operator -=( const Index & that ) {
 			if( this->millisecond < that.millisecond ) {
 				--this->second;

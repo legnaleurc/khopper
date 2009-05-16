@@ -55,6 +55,9 @@ namespace khopper {
 			 */
 			Index( short int m, short int s, short int ms );
 
+			/// if equals to zero
+			bool isZero() const;
+
 			/**
 			 * @brief Subtract assign operator
 			 * @param that Subtrahend

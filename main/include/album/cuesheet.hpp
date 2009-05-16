@@ -51,7 +51,7 @@ namespace khopper {
 			 * @throws CodecError Decode media error
 			 * @throws IOError File not openable
 			 */
-			CUESheet( const QString & content, const QString & dirPath = QString() );
+			explicit CUESheet( const QString & content, const QString & dirPath = QString() );
 
 			/**
 			 * @brief Set CUE sheet by given whole content
