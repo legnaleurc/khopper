@@ -31,7 +31,10 @@ namespace khopper {
 		QWidget( parent ),
 		media_( NULL ),
 		slider_( new QSlider( Qt::Horizontal, parent ) ),
-		tracking_( true ) {
+		tracking_( true ),
+		begin_( 0 ),
+		end_( 0 ),
+		ticking_( false ) {
 			QHBoxLayout * layout = new QHBoxLayout( this );
 			this->setLayout( layout );
 
@@ -39,7 +42,7 @@ namespace khopper {
 			this->slider_->setDisabled( true );
 			this->slider_->setPageStep( 5000 );
 			this->slider_->setSingleStep( 500 );
-			connect( this->slider_, SIGNAL( sliderMoved( int ) ), this, SLOT( seek_( int ) ) );
+			connect( this->slider_, SIGNAL( valueChanged( int ) ), this, SLOT( seek_( int ) ) );
 
 			setMediaObject( media );
 		}
@@ -63,36 +66,51 @@ namespace khopper {
 		void SeekSlider::setRange( int begin, int end ) {
 			this->begin_ = begin;
 			this->end_ = end;
+			this->ticking_ = true;
 			this->slider_->setRange( 0, this->end_ - this->begin_ );
+			this->ticking_ = false;
 		}
 
 		void SeekSlider::changeState_( Phonon::State newState ) {
+			if( !this->media_ || ! this->media_->isSeekable() ) {
+				this->setDisabled( false );
+				return;
+			}
 			switch( newState ) {
 			case Phonon::PlayingState:
-				this->play_();
+				if( this->media_->tickInterval() == 0 ) {
+					this->media_->setTickInterval( 350 );
+				}
+			case Phonon::BufferingState:
+			case Phonon::PausedState:
+				this->slider_->setEnabled( true );
 				break;
 			case Phonon::StoppedState:
-				this->slider_->setValue( 0 );
+			case Phonon::LoadingState:
+			case Phonon::ErrorState:
 				this->slider_->setDisabled( true );
+				this->ticking_ = true;
+				this->slider_->setValue( 0 );
+				this->ticking_ = false;
 				break;
 			default:
-				break;
+				;
 			}
 		}
 
 		void SeekSlider::seek_( int time ) {
-			this->media_->seek( this->begin_ + time );
-		}
-
-		void SeekSlider::tick_( qint64 time ) {
-			this->slider_->setValue( time - this->begin_ );
-			if( time >= this->end_ ) {
-				this->media_->stop();
+			if( !this->ticking_ && this->media_ ) {
+				this->media_->seek( this->begin_ + time );
 			}
 		}
 
-		void SeekSlider::play_() {
-			this->slider_->setEnabled( true );
+		void SeekSlider::tick_( qint64 time ) {
+			this->ticking_ = true;
+			this->slider_->setValue( time - this->begin_ );
+			this->ticking_ = false;
+			if( time >= this->end_ ) {
+				this->media_->stop();
+			}
 		}
 
 	}

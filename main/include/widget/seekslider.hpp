@@ -63,13 +63,12 @@ namespace khopper {
 			void tick_( qint64 );
 
 		private:
-			void play_();
-
 			Phonon::MediaObject * media_;
 			QSlider * slider_;
 			bool tracking_;
 			qint64 begin_;
 			qint64 end_;
+			bool ticking_;
 		};
 
 	}
