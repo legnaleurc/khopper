@@ -70,7 +70,7 @@ namespace khopper {
 		}
 
 		int Index::toMillisecond() const {
-			return ( this->minute * 60 + this->second ) * 1000 + this->millisecond * 10;
+			return ( this->minute * 60 + this->second ) * 1000 + this->millisecond;
 		}
 
 		double Index::toSecond() const {
