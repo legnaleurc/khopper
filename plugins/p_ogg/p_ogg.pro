@@ -37,5 +37,5 @@ CONFIG( debug, debug|release ) {
 }
 
 unix {
-	QMAKE_CXXFLAGS += -std=c++0x $$system(pkg-config --cflags libavformat)
+	QMAKE_CXXFLAGS += $$system(pkg-config --cflags libavformat)
 }

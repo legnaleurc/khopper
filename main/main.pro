@@ -70,7 +70,3 @@ CONFIG( debug, debug|release ) {
 
 	unix:QMAKE_POST_LINK = strip $${DESTDIR}/$${TARGET}
 }
-
-unix {
-	QMAKE_CXXFLAGS += -std=c++0x
-}

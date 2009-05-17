@@ -60,7 +60,6 @@ CONFIG( debug, debug|release ) {
 }
 
 unix {
-	QMAKE_CXXFLAGS += -std=c++0x
 	CONFIG         += link_pkgconfig
 	PKGCONFIG      += libavcodec libavformat libavutil
 	LIBS           += -lloki

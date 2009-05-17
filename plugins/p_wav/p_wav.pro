@@ -35,7 +35,3 @@ CONFIG( debug, debug|release ) {
 
 	unix:QMAKE_POST_LINK = strip $${DESTDIR}/lib$${TARGET}.so
 }
-
-unix {
-	QMAKE_CXXFLAGS += -std=c++0x
-}
