@@ -2,7 +2,10 @@ Supported platform:
 	Linux
 	Windows
 License:
-	GPLv3 or later
+	core module:
+		LGPLv2.1 or later
+	others:
+		GPLv3 or later
 
 Build dependency：
 	Loki:
