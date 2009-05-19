@@ -104,17 +104,19 @@ namespace khopper {
 				std::tr1::shared_ptr< Product > create() const {
 					std::tr1::shared_ptr< Product > pointer;
 					try {
-						pointer = this->create_();
-					} catch( std::bad_alloc & ) {
+						pointer = this->doCreate();
+					} catch( ... ) {
 						assert( !"memory allocation failed" );
 					}
 					assert( pointer || !"got null pointer" );
 					return pointer;
 				}
 			private:
+				virtual std::tr1::shared_ptr< Product > doCreate() const = 0;
+
+				// no copy
 				AbstractCreator( const AbstractCreator & );
 				AbstractCreator & operator =( const AbstractCreator & );
-				virtual std::tr1::shared_ptr< Product > create_() const = 0;
 			};
 
 		}
