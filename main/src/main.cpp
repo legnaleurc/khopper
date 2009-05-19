@@ -35,7 +35,7 @@ int main( int argc, char * argv[] ) {
 	QApplication::setWindowIcon( QIcon( ":/image/logo.svg" ) );
 	QApplication::setOrganizationName( "FoolproofProject" );
 	QApplication::setApplicationName( "Khopper" );
-	QApplication::setApplicationVersion( "0.1.90" );
+	QApplication::setApplicationVersion( "0.2.0" );
 	QSettings::setDefaultFormat( QSettings::IniFormat );
 
 	khopper::widget::MainWindow window;
