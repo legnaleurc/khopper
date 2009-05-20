@@ -68,5 +68,5 @@ unix {
 
 win32 {
 	SOURCES += ./src/util/windows.cpp ./src/codec/wfile.cpp
-	LIBS    += -lavcodec-52 -lavformat-52 -lavutil-49
+	LIBS    += -lavcodec -lavformat -lavutil
 }
