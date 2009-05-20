@@ -36,7 +36,8 @@ namespace khopper {
 		seeker_( new SeekSlider( this->player_, this ) ),
 		volume_( new Phonon::VolumeSlider( this ) ),
 		ppb_( new QPushButton( tr( "Play" ), this ) ),
-		songList_( new SongList( this ) ) {
+		songList_( new SongList( this ) ),
+		currentTrack_() {
 			// Set main layout
 			QVBoxLayout * mainBox = new QVBoxLayout( this );
 			this->setLayout( mainBox );
@@ -87,19 +88,17 @@ namespace khopper {
 
 			if( !tracks.empty() ) {
 				const std::vector< album::TrackSP > selected( this->songList_->getSelectedTracks() );
-				album::TrackSP track;
 				if( selected.empty() ) {
-					track = tracks[0];
+					this->currentTrack_ = tracks[0];
 				} else {
-					track = selected[0];
+					this->currentTrack_ = selected[0];
 				}
 
-				this->player_->setCurrentSource( track->getFilePath() );
-				int begin = track->getStartTime().toMillisecond();
-				int end = begin + track->getDuration().toMillisecond();
+				this->player_->setCurrentSource( this->currentTrack_->getFilePath() );
+				int begin = this->currentTrack_->getStartTime().toMillisecond();
+				int end = begin + this->currentTrack_->getDuration().toMillisecond();
 				this->seeker_->setRange( begin, end );
 				this->player_->play();
-				this->player_->seek( begin );
 			}
 		}
 
@@ -119,19 +118,24 @@ namespace khopper {
 			}
 		}
 
-		void Player::handleState_( Phonon::State newState, Phonon::State /*oldState*/ ) {
+		void Player::handleState_( Phonon::State newState, Phonon::State oldState ) {
 			switch( newState ) {
-				case Phonon::PlayingState:
-					this->ppb_->setText( tr( "Pause" ) );
-					break;
-				case Phonon::StoppedState:
-					this->ppb_->setText( tr( "Play" ) );
-					break;
-				case Phonon::ErrorState:
-					emit this->error( tr( "Player error" ), this->player_->errorString() );
-					break;
+			case Phonon::PlayingState:
+				switch( oldState ) {
+				case Phonon::LoadingState:
+					this->player_->seek( this->currentTrack_->getStartTime().toMillisecond() );
 				default:
-					;
+					this->ppb_->setText( tr( "Pause" ) );
+				}
+				break;
+			case Phonon::StoppedState:
+				this->ppb_->setText( tr( "Play" ) );
+				break;
+			case Phonon::ErrorState:
+				emit this->error( tr( "Player error" ), this->player_->errorString() );
+				break;
+			default:
+				;
 			}
 		}
 

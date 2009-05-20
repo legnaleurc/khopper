@@ -80,6 +80,7 @@ namespace khopper {
 			Phonon::VolumeSlider * volume_;
 			QPushButton * ppb_;
 			SongList * songList_;
+			album::TrackSP currentTrack_;
 		};
 
 	}
