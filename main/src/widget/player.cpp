@@ -122,6 +122,7 @@ namespace khopper {
 			switch( newState ) {
 			case Phonon::PlayingState:
 				switch( oldState ) {
+				case Phonon::BufferingState:
 				case Phonon::LoadingState:
 					this->player_->seek( this->currentTrack_->getStartTime().toMillisecond() );
 				default:
