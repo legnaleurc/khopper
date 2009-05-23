@@ -192,9 +192,9 @@ namespace khopper {
 		}
 
 		void DefaultWriter::writeHeader() {
-			std::strncpy( this->pFormatContext_->title, this->getTitle().c_str(), sizeof( this->pFormatContext_->title ) );
-			std::strncpy( this->pFormatContext_->author, this->getArtist().c_str(), sizeof( this->pFormatContext_->author ) );
-			std::strncpy( this->pFormatContext_->album, this->getAlbum().c_str(), sizeof( this->pFormatContext_->album ) );
+			av_metadata_set( &this->pFormatContext_->metadata, "title", this->getTitle().c_str() );
+			av_metadata_set( &this->pFormatContext_->metadata, "author", this->getArtist().c_str() );
+			av_metadata_set( &this->pFormatContext_->metadata, "album", this->getAlbum().c_str() );
 
 			if( av_write_header( this->pFormatContext_.get() ) < 0 ) {
 				throw error::CodecError( "Can not write header" );
