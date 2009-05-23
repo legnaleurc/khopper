@@ -155,34 +155,34 @@ namespace khopper {
 			stop = false;
 			// static just for speed
 			static uint8_t audio_buf[AVCODEC_MAX_AUDIO_FRAME_SIZE*3/2];
-			uint8_t * audio_pkt_data = NULL;
-			int audio_pkt_size = 0;
 
 			int dp_len, data_size;
 
 			ByteArray data;
 
 			if( av_read_frame( this->pFormatContext_.get(), this->pPacket_.get() ) >= 0 ) {
-				audio_pkt_data = this->pPacket_->data;
-				audio_pkt_size = this->pPacket_->size;
 				int64_t curPts = -1;
 				int64_t decoded = 0;
 				if( this->pPacket_->pts != static_cast< int64_t >( AV_NOPTS_VALUE ) ) {
 					curPts = av_rescale( this->pPacket_->pts, AV_TIME_BASE * static_cast< int64_t >( this->pFormatContext_->streams[0]->time_base.num ), this->pFormatContext_->streams[0]->time_base.den );
 				}
-				while( audio_pkt_size > 0 ) {
+				while( this->pPacket_->size > 0 ) {
 					if( this->afterEnd( ::toGeneral( curPts ) ) ) {
 						stop = true;
 						break;
 					}
 					data_size = sizeof( audio_buf );
-					dp_len = avcodec_decode_audio2( this->pCodecContext_.get(), static_cast< int16_t * >( static_cast< void * >( audio_buf ) ), &data_size, audio_pkt_data, audio_pkt_size );
+					dp_len = avcodec_decode_audio3(
+						this->pCodecContext_.get(),
+						static_cast< int16_t * >( static_cast< void * >( audio_buf ) ),
+						&data_size,
+						this->pPacket_.get()
+					);
 					if( dp_len < 0 ) {
-						audio_pkt_size = 0;
 						break;
 					}
-					audio_pkt_data += dp_len;
-					audio_pkt_size -= dp_len;
+					this->pPacket_->data += dp_len;
+					this->pPacket_->size -= dp_len;
 					if( data_size <= 0 ) {
 						continue;
 					}
