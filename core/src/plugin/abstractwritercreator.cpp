@@ -55,7 +55,7 @@ namespace khopper {
 		codec::WriterSP createWriter( const std::string & key ) {
 			try {
 				return private_::createProduct< codec::AbstractWriter, WriterFactory >( key );
-			} catch( std::exception & e ) {
+			} catch( std::exception & ) {
 				return codec::WriterSP( new codec::DefaultWriter );
 			}
 		}

@@ -124,7 +124,7 @@ namespace khopper {
 			}
 		}
 
-		void Player::handleState_( Phonon::State newState, Phonon::State oldState ) {
+		void Player::handleState_( Phonon::State newState, Phonon::State /*oldState*/ ) {
 			switch( newState ) {
 			case Phonon::PlayingState:
 				if( this->starting_ ) {

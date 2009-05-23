@@ -252,7 +252,7 @@ namespace khopper {
 									try {
 										sheet.setMedia( filePath );
 										break;
-									} catch( std::exception & e ) {
+									} catch( std::exception & ) {
 										ret = QMessageBox::warning( this, tr( "Can not decode media" ), tr( "I can not open the media, please select another file." ), QMessageBox::Ok, QMessageBox::Cancel );
 									}
 								}

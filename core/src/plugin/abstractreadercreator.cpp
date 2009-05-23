@@ -55,7 +55,7 @@ namespace khopper {
 		codec::ReaderSP createReader( const std::string & key ) {
 			try {
 				return private_::createProduct< codec::AbstractReader, ReaderFactory >( key );
-			} catch( std::exception & e ) {
+			} catch( std::exception & ) {
 				return codec::ReaderSP( new codec::DefaultReader );
 			}
 		}
