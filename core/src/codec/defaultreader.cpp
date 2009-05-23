@@ -28,6 +28,8 @@ extern "C" {
 #include <libavformat/avformat.h>
 }
 
+#include <cstdlib>
+
 namespace {
 
 	inline std::string wHelper( const std::wstring & filePath ) {
@@ -133,14 +135,31 @@ namespace khopper {
 		}
 
 		void DefaultReader::readHeader() {
-			this->setTitle( this->pFormatContext_->title );
-			this->setArtist( this->pFormatContext_->author );
-			this->setCopyright( this->pFormatContext_->copyright );
-			this->setComment( this->pFormatContext_->comment );
-			this->setAlbum( this->pFormatContext_->album );
-			this->setYear( this->pFormatContext_->year );
-			this->setIndex( this->pFormatContext_->track );
-			this->setGenre( this->pFormatContext_->genre );
+			AVMetadataTag * mt = NULL;
+			if( ( mt = av_metadata_get( this->pFormatContext_->metadata, "title", NULL, 0 ) ) ) {
+				this->setTitle( mt->value );
+			}
+			if( ( mt = av_metadata_get( this->pFormatContext_->metadata, "author", NULL, 0 ) ) ) {
+				this->setArtist( mt->value );
+			}
+			if( ( mt = av_metadata_get( this->pFormatContext_->metadata, "copyright", NULL, 0 ) ) ) {
+				this->setCopyright( mt->value );
+			}
+			if( ( mt = av_metadata_get( this->pFormatContext_->metadata, "comment", NULL, 0 ) ) ) {
+				this->setComment( mt->value );
+			}
+			if( ( mt = av_metadata_get( this->pFormatContext_->metadata, "album", NULL, 0 ) ) ) {
+				this->setAlbum( mt->value );
+			}
+			if( ( mt = av_metadata_get( this->pFormatContext_->metadata, "year", NULL, 0 ) ) ) {
+				this->setYear( std::atoi( mt->value ) );
+			}
+			if( ( mt = av_metadata_get( this->pFormatContext_->metadata, "track", NULL, 0 ) ) ) {
+				this->setIndex( std::atoi( mt->value ) );
+			}
+			if( ( mt = av_metadata_get( this->pFormatContext_->metadata, "genre", NULL, 0 ) ) ) {
+				this->setGenre( mt->value );
+			}
 		}
 
 		void DefaultReader::closeResource() {

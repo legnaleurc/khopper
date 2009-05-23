@@ -20,6 +20,7 @@
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 #include "codec/abstractreader.hpp"
+#include "util/text.hpp"
 
 #include <cassert>
 
@@ -48,6 +49,10 @@ namespace khopper {
 		}
 
 		AbstractReader::~AbstractReader() {
+		}
+
+		void AbstractReader::open( const std::string & filePath ) {
+			this->open( text::toStdWString( filePath.c_str() ) );
 		}
 
 		void AbstractReader::open( const std::wstring & filePath ) {

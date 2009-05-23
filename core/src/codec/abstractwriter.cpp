@@ -46,7 +46,7 @@ namespace khopper {
 		}
 
 		void AbstractWriter::open( const std::string & filePath ) {
-			this->open( text::toStdWString( filePath ) );
+			this->open( text::toStdWString( filePath.c_str() ) );
 		}
 
 		void AbstractWriter::open( const std::wstring & filePath ) {
