@@ -47,6 +47,7 @@ namespace khopper {
 			 */
 			virtual ~AbstractWriter();
 
+			void open( const std::string & filePath );
 			/**
 			 * @brief Open file
 			 * @param filePath
