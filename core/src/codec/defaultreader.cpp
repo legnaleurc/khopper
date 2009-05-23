@@ -67,6 +67,7 @@ namespace khopper {
 		pFormatContext_(),
 		pCodecContext_(),
 		pPacket_( static_cast< AVPacket * >( av_malloc( sizeof( AVPacket ) ) ), ::p_helper ),
+		pStream_( NULL ),
 		timeBase_( 0.0 ) {
 			av_init_packet( this->pPacket_.get() );
 		}
@@ -112,9 +113,10 @@ namespace khopper {
 			if( a_stream == -1 ) {
 				throw error::CodecError( "Find no audio stream!" );
 			}
-			AVCodecContext * pCC = this->pFormatContext_->streams[a_stream]->codec;
+			this->pStream_ = this->pFormatContext_->streams[a_stream];
+			AVCodecContext * pCC = this->pStream_->codec;
 			// getting codec information
-			this->timeBase_ = av_q2d( this->pFormatContext_->streams[a_stream]->time_base );
+			this->timeBase_ = av_q2d( this->pStream_->time_base );
 			this->setBitRate( pCC->bit_rate );
 			this->setSampleRate( pCC->sample_rate );
 			this->setChannels( pCC->channels );
@@ -144,6 +146,7 @@ namespace khopper {
 		void DefaultReader::closeResource() {
 			// clear native information
 			this->timeBase_ = 0.0;
+			this->pStream_ = NULL;
 			// free the members in packet, not itself
 			av_free_packet( this->pPacket_.get() );
 			av_init_packet( this->pPacket_.get() );
@@ -164,7 +167,11 @@ namespace khopper {
 				int64_t curPts = -1;
 				int64_t decoded = 0;
 				if( this->pPacket_->pts != static_cast< int64_t >( AV_NOPTS_VALUE ) ) {
-					curPts = av_rescale( this->pPacket_->pts, AV_TIME_BASE * static_cast< int64_t >( this->pFormatContext_->streams[0]->time_base.num ), this->pFormatContext_->streams[0]->time_base.den );
+					curPts = av_rescale(
+						this->pPacket_->pts,
+						AV_TIME_BASE * static_cast< int64_t >( this->pStream_->time_base.num ),
+						this->pStream_->time_base.den
+					);
 				}
 				while( this->pPacket_->size > 0 ) {
 					if( this->afterEnd( ::toGeneral( curPts ) ) ) {
