@@ -71,6 +71,7 @@ namespace khopper {
 			void playOrPause_();
 			void stop_();
 			void handleState_( Phonon::State, Phonon::State );
+			void tick_( qint64 );
 
 		private:
 			void play_();
@@ -81,6 +82,9 @@ namespace khopper {
 			QPushButton * ppb_;
 			SongList * songList_;
 			album::TrackSP currentTrack_;
+			qint64 currentBeginTime_;
+			qint64 currentEndTime_;
+			bool starting_;
 		};
 
 	}

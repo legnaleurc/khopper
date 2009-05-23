@@ -37,7 +37,10 @@ namespace khopper {
 		volume_( new Phonon::VolumeSlider( this ) ),
 		ppb_( new QPushButton( tr( "Play" ), this ) ),
 		songList_( new SongList( this ) ),
-		currentTrack_() {
+		currentTrack_(),
+		currentBeginTime_( -1 ),
+		currentEndTime_( -1 ),
+		starting_( false ) {
 			// Set main layout
 			QVBoxLayout * mainBox = new QVBoxLayout( this );
 			this->setLayout( mainBox );
@@ -47,6 +50,7 @@ namespace khopper {
 			Phonon::createPath( this->player_, ao );
 			this->volume_->setAudioOutput( ao );
 			connect( this->player_, SIGNAL( stateChanged( Phonon::State, Phonon::State ) ), this, SLOT( handleState_( Phonon::State, Phonon::State ) ) );
+			connect( this->player_, SIGNAL( tick( qint64 ) ), this, SLOT( tick_( qint64 ) ) );
 
 			// Setting player panel
 			QHBoxLayout * playerBox = new QHBoxLayout;
@@ -95,9 +99,11 @@ namespace khopper {
 				}
 
 				this->player_->setCurrentSource( this->currentTrack_->getFilePath() );
-				int begin = this->currentTrack_->getStartTime().toMillisecond();
-				int end = begin + this->currentTrack_->getDuration().toMillisecond();
-				this->seeker_->setRange( begin, end );
+				this->currentBeginTime_ = this->currentTrack_->getStartTime().toMillisecond();
+				this->currentEndTime_ = this->currentBeginTime_ + this->currentTrack_->getDuration().toMillisecond();
+				this->seeker_->setRange( this->currentBeginTime_, this->currentEndTime_ );
+				qDebug() << this->currentBeginTime_ << this->currentEndTime_;
+				this->starting_ = true;
 				this->player_->play();
 			}
 		}
@@ -121,13 +127,11 @@ namespace khopper {
 		void Player::handleState_( Phonon::State newState, Phonon::State oldState ) {
 			switch( newState ) {
 			case Phonon::PlayingState:
-				switch( oldState ) {
-				case Phonon::BufferingState:
-				case Phonon::LoadingState:
-					this->player_->seek( this->currentTrack_->getStartTime().toMillisecond() );
-				default:
-					this->ppb_->setText( tr( "Pause" ) );
+				if( this->starting_ ) {
+					this->player_->seek( this->currentBeginTime_ );
+					this->starting_ = false;
 				}
+				this->ppb_->setText( tr( "Pause" ) );
 				break;
 			case Phonon::StoppedState:
 				this->ppb_->setText( tr( "Play" ) );
@@ -137,6 +141,13 @@ namespace khopper {
 				break;
 			default:
 				;
+			}
+		}
+
+		void Player::tick_( qint64 time ) {
+			qDebug() << time;
+			if( time >= this->currentEndTime_ ) {
+				this->stop_();
 			}
 		}
 
