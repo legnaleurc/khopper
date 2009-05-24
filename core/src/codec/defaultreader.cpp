@@ -183,6 +183,7 @@ namespace khopper {
 			ByteArray data;
 
 			if( av_read_frame( this->pFormatContext_.get(), this->pPacket_.get() ) >= 0 ) {
+				uint8_t * pktDataBackup = this->pPacket_->data;
 				int64_t curPts = -1;
 				int64_t decoded = 0;
 				if( this->pPacket_->pts != static_cast< int64_t >( AV_NOPTS_VALUE ) ) {
@@ -219,7 +220,8 @@ namespace khopper {
 					}
 					curPts += ptsDiff;
 				}
-				if( this->pPacket_->data ) {
+				if( pktDataBackup ) {
+					this->pPacket_->data = pktDataBackup;
 					av_free_packet( this->pPacket_.get() );
 				}
 
