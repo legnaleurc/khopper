@@ -85,7 +85,7 @@ namespace khopper {
 		}
 
 		bool DefaultWriter::isVariable() const {
-			return this->getQuality() == QSCALE_NONE;
+			return this->getQuality() != QSCALE_NONE;
 		}
 
 		void DefaultWriter::setupMuxer() {
@@ -187,6 +187,7 @@ namespace khopper {
 		}
 
 		void DefaultWriter::closeResource() {
+			this->writeFrame( NULL, 0 );
 			av_write_trailer( this->pFormatContext_.get() );
 			this->pFormatContext_.reset();
 		}
