@@ -46,6 +46,13 @@ namespace khopper {
 		 */
 		typedef std::deque< char > ByteArray;
 
+		struct Rational {
+			Rational() : num( 0 ), den( 1 ) {}
+			Rational( int n, int d ) : num( n ), den( d ) {}
+			int num;
+			int den;
+		};
+
 	}
 
 	namespace error {

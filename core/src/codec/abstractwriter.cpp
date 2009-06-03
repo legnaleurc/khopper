@@ -39,6 +39,7 @@ namespace khopper {
 		sampleBuffer_(),
 		sampleQueue_(),
 		sampleRate_( -1 ),
+		timebase_(),
 		title_() {
 		}
 

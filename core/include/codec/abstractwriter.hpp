@@ -118,6 +118,9 @@ namespace khopper {
 			void setSampleRate( int sampleRate ) {
 				this->sampleRate_ = sampleRate;
 			}
+			void setTimebase( const Rational & timebase ) {
+				this->timebase_ = timebase;
+			}
 			/**
 			 * @brief Set title
 			 * @sa getTitle
@@ -182,6 +185,9 @@ namespace khopper {
 			int getSampleRate() const {
 				return this->sampleRate_;
 			}
+			const Rational & getTimebase() const {
+				return this->timebase_;
+			}
 			/**
 			 * @brief Get title
 			 * @sa setTitle
@@ -225,6 +231,7 @@ namespace khopper {
 			std::vector< char > sampleBuffer_;
 			ByteArray sampleQueue_;
 			int sampleRate_;
+			Rational timebase_;
 			std::string title_;
 		};
 

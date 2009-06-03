@@ -44,6 +44,7 @@ namespace khopper {
 		index_( -1 ),
 		opening_( false ),
 		sampleRate_( -1 ),
+		timebase_(),
 		title_(),
 		year_( -1 ) {
 		}
@@ -84,6 +85,7 @@ namespace khopper {
 			this->genre_.clear();
 			this->index_ = -1;
 			this->sampleRate_ = -1;
+			this->timebase_ = Rational();
 			this->title_.clear();
 			this->year_ = -1;
 

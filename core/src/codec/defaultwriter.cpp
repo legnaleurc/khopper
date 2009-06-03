@@ -117,6 +117,8 @@ namespace khopper {
 			AVCodecContext * pCC = this->pStream_->codec;
 			pCC->codec_id = pOF->audio_codec;
 			pCC->codec_type = CODEC_TYPE_AUDIO;
+			pCC->time_base.num = 1;
+			pCC->time_base.den = this->getSampleRate();
 
 			// setting special parameters
 			pCC->bit_rate = this->getBitRate();

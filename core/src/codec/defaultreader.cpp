@@ -69,8 +69,7 @@ namespace khopper {
 		pFormatContext_(),
 		pCodecContext_(),
 		pPacket_( static_cast< AVPacket * >( av_malloc( sizeof( AVPacket ) ) ), ::p_helper ),
-		pStream_( NULL ),
-		timeBase_( 0.0 ) {
+		pStream_( NULL ) {
 			av_init_packet( this->pPacket_.get() );
 		}
 
@@ -118,7 +117,7 @@ namespace khopper {
 			this->pStream_ = this->pFormatContext_->streams[a_stream];
 			AVCodecContext * pCC = this->pStream_->codec;
 			// getting codec information
-			this->timeBase_ = av_q2d( this->pStream_->time_base );
+			this->setTimebase( Rational( this->pStream_->time_base.num, this->pStream_->time_base.den ) );
 			this->setBitRate( pCC->bit_rate );
 			this->setSampleRate( pCC->sample_rate );
 			this->setChannels( pCC->channels );
@@ -164,7 +163,6 @@ namespace khopper {
 
 		void DefaultReader::closeResource() {
 			// clear native information
-			this->timeBase_ = 0.0;
 			this->pStream_ = NULL;
 			// free the members in packet, not itself
 			av_free_packet( this->pPacket_.get() );
