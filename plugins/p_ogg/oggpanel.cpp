@@ -48,22 +48,30 @@ namespace khopper {
 			QVBoxLayout * codec = new QVBoxLayout;
 			mainBox->addLayout( codec );
 
+			// set lossless options
 			QRadioButton * lossless = new QRadioButton( tr( "Lossless (FLAC)" ), this );
 			this->brGroup_->addButton( lossless );
 			this->brGroup_->setId( lossless, 0 );
 			codec->addWidget( lossless );
-			lossless->setChecked( true );
 
+			// set lossy options
 			QHBoxLayout * lossyBox = new QHBoxLayout;
 			codec->addLayout( lossyBox );
 			QRadioButton * lossy = new QRadioButton( tr( "Lossy (Vorbis)" ), this );
 			this->brGroup_->addButton( lossy );
 			this->brGroup_->setId( lossy, 1 );
 			lossyBox->addWidget( lossy );
-			for( int i = 10; i >= -1; --i ) {
+			this->quality_->addItem( "10 (Highest)", QVariant( 10 ) );
+			for( int i = 9; i >= 0; --i ) {
 				this->quality_->addItem( QString::number( i ), QVariant( i ) );
 			}
+			this->quality_->addItem( "-1 (Lowest)", QVariant( -1 ) );
 			lossyBox->addWidget( this->quality_ );
+
+			// set mutex
+			connect( lossy, SIGNAL( toggled( bool ) ), this->quality_, SLOT( setEnabled( bool ) ) );
+			lossless->setChecked( true );
+			this->quality_->setDisabled( true );
 
 			this->channels_->addItem( tr( "Mono" ), QVariant( 1 ) );
 			this->channels_->addItem( tr( "Streao" ), QVariant( 2 ) );
