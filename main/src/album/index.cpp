@@ -93,7 +93,7 @@ namespace khopper {
 		}
 
 		Index Index::fromSecond( double second ) {
-			return fromMillisecond( second * 1000 );
+			return fromMillisecond( static_cast< int >( second * 1000 ) );
 		}
 
 	}
