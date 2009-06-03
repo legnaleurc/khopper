@@ -1,5 +1,6 @@
+include(../configure.pri)
+
 # Path settings
-ROOT_PATH = ..
 INC_DIRS = . ./include
 SRC_DIRS = .	\
 	./src/codec	\

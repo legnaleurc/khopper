@@ -1,6 +1,6 @@
+include(../configure.pri)
+
 # Path setting
-ROOT_PATH = ..
-CORE_PATH = $${ROOT_PATH}/core
 INC_DIRS =	\
 	$${CORE_PATH}/include	\
 	./include/album	\
