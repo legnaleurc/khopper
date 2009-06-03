@@ -16,6 +16,7 @@ MOC_DIR = $${ROOT_PATH}/tmp/moc
 # Config
 CONFIG  += plugin debug_and_release
 TARGET   = $$qtLibraryTarget(kpp_wav)
+VERSION  = $${KHOPPER_VERSION}
 TEMPLATE = lib
 
 CONFIG( debug, debug|release ) {

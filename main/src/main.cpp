@@ -28,6 +28,9 @@
 #include <QApplication>
 #include <QSettings>
 
+#define X(x) XX(x)
+#define XX(x) #x
+
 /// Main program
 int main( int argc, char * argv[] ) {
 	QApplication app( argc, argv );
@@ -35,7 +38,7 @@ int main( int argc, char * argv[] ) {
 	QApplication::setWindowIcon( QIcon( ":/image/logo.svg" ) );
 	QApplication::setOrganizationName( "FoolproofProject" );
 	QApplication::setApplicationName( "Khopper" );
-	QApplication::setApplicationVersion( "0.2.0" );
+	QApplication::setApplicationVersion( X(KHOPPER_VERSION) );
 	QSettings::setDefaultFormat( QSettings::IniFormat );
 
 	khopper::widget::MainWindow window;
