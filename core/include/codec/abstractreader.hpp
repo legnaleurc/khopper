@@ -46,6 +46,7 @@ namespace khopper {
 			 */
 			virtual ~AbstractReader();
 
+			void open( const std::string & filePath );
 			/**
 			 * @brief Open file
 			 * @param [in] filePath
@@ -159,6 +160,9 @@ namespace khopper {
 			int getSampleRate() const {
 				return this->sampleRate_;
 			}
+			const Rational & getTimebase() const {
+				return this->timebase_;
+			}
 			/**
 			 * @brief Get title
 			 * @sa setTitle
@@ -256,6 +260,9 @@ namespace khopper {
 			void setSampleRate( int sampleRate ) {
 				this->sampleRate_ = sampleRate;
 			}
+			void setTimebase( const Rational & timebase ) {
+				this->timebase_ = timebase;
+			}
 			/**
 			 * @brief Set track title
 			 * @sa getTitle
@@ -309,6 +316,7 @@ namespace khopper {
 			int index_;
 			bool opening_;
 			int sampleRate_;
+			Rational timebase_;
 			std::string title_;
 			int year_;
 		};

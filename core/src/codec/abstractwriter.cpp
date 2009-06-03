@@ -20,6 +20,7 @@
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 #include "codec/abstractwriter.hpp"
+#include "util/text.hpp"
 
 #include <cassert>
 
@@ -38,10 +39,15 @@ namespace khopper {
 		sampleBuffer_(),
 		sampleQueue_(),
 		sampleRate_( -1 ),
+		timebase_(),
 		title_() {
 		}
 
 		AbstractWriter::~AbstractWriter() {
+		}
+
+		void AbstractWriter::open( const std::string & filePath ) {
+			this->open( text::toStdWString( filePath.c_str() ) );
 		}
 
 		void AbstractWriter::open( const std::wstring & filePath ) {

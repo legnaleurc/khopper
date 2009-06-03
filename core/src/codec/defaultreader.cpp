@@ -28,6 +28,8 @@ extern "C" {
 #include <libavformat/avformat.h>
 }
 
+#include <cstdlib>
+
 namespace {
 
 	inline std::string wHelper( const std::wstring & filePath ) {
@@ -67,7 +69,7 @@ namespace khopper {
 		pFormatContext_(),
 		pCodecContext_(),
 		pPacket_( static_cast< AVPacket * >( av_malloc( sizeof( AVPacket ) ) ), ::p_helper ),
-		timeBase_( 0.0 ) {
+		pStream_( NULL ) {
 			av_init_packet( this->pPacket_.get() );
 		}
 
@@ -112,9 +114,10 @@ namespace khopper {
 			if( a_stream == -1 ) {
 				throw error::CodecError( "Find no audio stream!" );
 			}
-			AVCodecContext * pCC = this->pFormatContext_->streams[a_stream]->codec;
+			this->pStream_ = this->pFormatContext_->streams[a_stream];
+			AVCodecContext * pCC = this->pStream_->codec;
 			// getting codec information
-			this->timeBase_ = av_q2d( this->pFormatContext_->streams[a_stream]->time_base );
+			this->setTimebase( Rational( this->pStream_->time_base.num, this->pStream_->time_base.den ) );
 			this->setBitRate( pCC->bit_rate );
 			this->setSampleRate( pCC->sample_rate );
 			this->setChannels( pCC->channels );
@@ -131,19 +134,36 @@ namespace khopper {
 		}
 
 		void DefaultReader::readHeader() {
-			this->setTitle( this->pFormatContext_->title );
-			this->setArtist( this->pFormatContext_->author );
-			this->setCopyright( this->pFormatContext_->copyright );
-			this->setComment( this->pFormatContext_->comment );
-			this->setAlbum( this->pFormatContext_->album );
-			this->setYear( this->pFormatContext_->year );
-			this->setIndex( this->pFormatContext_->track );
-			this->setGenre( this->pFormatContext_->genre );
+			AVMetadataTag * mt = NULL;
+			if( ( mt = av_metadata_get( this->pFormatContext_->metadata, "title", NULL, 0 ) ) ) {
+				this->setTitle( mt->value );
+			}
+			if( ( mt = av_metadata_get( this->pFormatContext_->metadata, "author", NULL, 0 ) ) ) {
+				this->setArtist( mt->value );
+			}
+			if( ( mt = av_metadata_get( this->pFormatContext_->metadata, "copyright", NULL, 0 ) ) ) {
+				this->setCopyright( mt->value );
+			}
+			if( ( mt = av_metadata_get( this->pFormatContext_->metadata, "comment", NULL, 0 ) ) ) {
+				this->setComment( mt->value );
+			}
+			if( ( mt = av_metadata_get( this->pFormatContext_->metadata, "album", NULL, 0 ) ) ) {
+				this->setAlbum( mt->value );
+			}
+			if( ( mt = av_metadata_get( this->pFormatContext_->metadata, "year", NULL, 0 ) ) ) {
+				this->setYear( std::atoi( mt->value ) );
+			}
+			if( ( mt = av_metadata_get( this->pFormatContext_->metadata, "track", NULL, 0 ) ) ) {
+				this->setIndex( std::atoi( mt->value ) );
+			}
+			if( ( mt = av_metadata_get( this->pFormatContext_->metadata, "genre", NULL, 0 ) ) ) {
+				this->setGenre( mt->value );
+			}
 		}
 
 		void DefaultReader::closeResource() {
 			// clear native information
-			this->timeBase_ = 0.0;
+			this->pStream_ = NULL;
 			// free the members in packet, not itself
 			av_free_packet( this->pPacket_.get() );
 			av_init_packet( this->pPacket_.get() );
@@ -155,34 +175,39 @@ namespace khopper {
 			stop = false;
 			// static just for speed
 			static uint8_t audio_buf[AVCODEC_MAX_AUDIO_FRAME_SIZE*3/2];
-			uint8_t * audio_pkt_data = NULL;
-			int audio_pkt_size = 0;
 
 			int dp_len, data_size;
 
 			ByteArray data;
 
 			if( av_read_frame( this->pFormatContext_.get(), this->pPacket_.get() ) >= 0 ) {
-				audio_pkt_data = this->pPacket_->data;
-				audio_pkt_size = this->pPacket_->size;
+				uint8_t * pktDataBackup = this->pPacket_->data;
 				int64_t curPts = -1;
 				int64_t decoded = 0;
 				if( this->pPacket_->pts != static_cast< int64_t >( AV_NOPTS_VALUE ) ) {
-					curPts = av_rescale( this->pPacket_->pts, AV_TIME_BASE * static_cast< int64_t >( this->pFormatContext_->streams[0]->time_base.num ), this->pFormatContext_->streams[0]->time_base.den );
+					curPts = av_rescale(
+						this->pPacket_->pts,
+						AV_TIME_BASE * static_cast< int64_t >( this->pStream_->time_base.num ),
+						this->pStream_->time_base.den
+					);
 				}
-				while( audio_pkt_size > 0 ) {
+				while( this->pPacket_->size > 0 ) {
 					if( this->afterEnd( ::toGeneral( curPts ) ) ) {
 						stop = true;
 						break;
 					}
 					data_size = sizeof( audio_buf );
-					dp_len = avcodec_decode_audio2( this->pCodecContext_.get(), static_cast< int16_t * >( static_cast< void * >( audio_buf ) ), &data_size, audio_pkt_data, audio_pkt_size );
+					dp_len = avcodec_decode_audio3(
+						this->pCodecContext_.get(),
+						static_cast< int16_t * >( static_cast< void * >( audio_buf ) ),
+						&data_size,
+						this->pPacket_.get()
+					);
 					if( dp_len < 0 ) {
-						audio_pkt_size = 0;
 						break;
 					}
-					audio_pkt_data += dp_len;
-					audio_pkt_size -= dp_len;
+					this->pPacket_->data += dp_len;
+					this->pPacket_->size -= dp_len;
 					if( data_size <= 0 ) {
 						continue;
 					}
@@ -193,7 +218,8 @@ namespace khopper {
 					}
 					curPts += ptsDiff;
 				}
-				if( this->pPacket_->data ) {
+				if( pktDataBackup ) {
+					this->pPacket_->data = pktDataBackup;
 					av_free_packet( this->pPacket_.get() );
 				}
 

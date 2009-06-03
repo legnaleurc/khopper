@@ -50,6 +50,7 @@ namespace khopper {
 
 			QRadioButton * lossless = new QRadioButton( tr( "Lossless (FLAC)" ), this );
 			this->brGroup_->addButton( lossless );
+			this->brGroup_->setId( lossless, 0 );
 			codec->addWidget( lossless );
 			lossless->setChecked( true );
 
@@ -57,6 +58,7 @@ namespace khopper {
 			codec->addLayout( lossyBox );
 			QRadioButton * lossy = new QRadioButton( tr( "Lossy (Vorbis)" ), this );
 			this->brGroup_->addButton( lossy );
+			this->brGroup_->setId( lossy, 1 );
 			lossyBox->addWidget( lossy );
 			for( int i = 10; i >= -1; --i ) {
 				this->quality_->addItem( QString::number( i ), QVariant( i ) );
@@ -85,7 +87,7 @@ namespace khopper {
 				tmp->setQuality( this->quality_->itemData( this->quality_->currentIndex() ).toInt() );
 				break;
 			default:
-				;
+				qDebug( "%d\n", this->brGroup_->checkedId() );
 			}
 
 			return tmp;

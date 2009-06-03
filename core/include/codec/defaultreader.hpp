@@ -27,6 +27,7 @@
 struct AVFormatContext;
 struct AVCodecContext;
 struct AVPacket;
+struct AVStream;
 
 namespace khopper {
 
@@ -79,7 +80,7 @@ namespace khopper {
 			std::tr1::shared_ptr< AVFormatContext > pFormatContext_;
 			std::tr1::shared_ptr< AVCodecContext > pCodecContext_;
 			std::tr1::shared_ptr< AVPacket > pPacket_;
-			double timeBase_;
+			AVStream * pStream_;
 		};
 
 	}

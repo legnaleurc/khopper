@@ -85,7 +85,7 @@ namespace khopper {
 		}
 
 		bool DefaultWriter::isVariable() const {
-			return this->getQuality() == QSCALE_NONE;
+			return this->getQuality() != QSCALE_NONE;
 		}
 
 		void DefaultWriter::setupMuxer() {
@@ -94,11 +94,7 @@ namespace khopper {
 				throw error::CodecError( "Can not recognize output format" );
 			}
 
-#if LIBAVFORMAT_VERSION_MAJOR < 53
-			this->pFormatContext_.reset( av_alloc_format_context(), ::fc_helper );
-#else
 			this->pFormatContext_.reset( avformat_alloc_context(), ::fc_helper );
-#endif
 			if( !this->pFormatContext_ ) {
 				throw error::SystemError( "Memory allocation error" );
 			}
@@ -121,6 +117,8 @@ namespace khopper {
 			AVCodecContext * pCC = this->pStream_->codec;
 			pCC->codec_id = pOF->audio_codec;
 			pCC->codec_type = CODEC_TYPE_AUDIO;
+			pCC->time_base.num = 1;
+			pCC->time_base.den = this->getSampleRate();
 
 			// setting special parameters
 			pCC->bit_rate = this->getBitRate();
@@ -191,16 +189,19 @@ namespace khopper {
 		}
 
 		void DefaultWriter::closeResource() {
+			this->writeFrame( NULL, 0 );
 			av_write_trailer( this->pFormatContext_.get() );
 			this->pFormatContext_.reset();
 		}
 
 		void DefaultWriter::writeHeader() {
-			std::strncpy( this->pFormatContext_->title, this->getTitle().c_str(), sizeof( this->pFormatContext_->title ) );
-			std::strncpy( this->pFormatContext_->author, this->getArtist().c_str(), sizeof( this->pFormatContext_->author ) );
-			std::strncpy( this->pFormatContext_->album, this->getAlbum().c_str(), sizeof( this->pFormatContext_->album ) );
+			av_metadata_set( &this->pFormatContext_->metadata, "title", this->getTitle().c_str() );
+			av_metadata_set( &this->pFormatContext_->metadata, "author", this->getArtist().c_str() );
+			av_metadata_set( &this->pFormatContext_->metadata, "album", this->getAlbum().c_str() );
 
-			av_write_header( this->pFormatContext_.get() );
+			if( av_write_header( this->pFormatContext_.get() ) < 0 ) {
+				throw error::CodecError( "Can not write header" );
+			}
 		}
 
 		void DefaultWriter::writeFrame( const char * sample, std::size_t /*nSamples*/ ) {
@@ -210,17 +211,18 @@ namespace khopper {
 
 			AVPacket pkt;
 			av_init_packet( &pkt );
+
+			pkt.size = avcodec_encode_audio( pCC, audio_outbuf, sizeof( audio_outbuf ), static_cast< const short * >( static_cast< const void * >( sample ) ) );
+
 			pkt.data = audio_outbuf;
 			pkt.stream_index = this->pStream_->index;
 			pkt.flags |= PKT_FLAG_KEY;
-
-			pkt.size = avcodec_encode_audio( pCC, audio_outbuf, sizeof( audio_outbuf ), static_cast< const short * >( static_cast< const void * >( sample ) ) );
 
 			if( pCC->coded_frame->pts != static_cast< int64_t >( AV_NOPTS_VALUE ) ) {
 				pkt.pts = av_rescale_q( pCC->coded_frame->pts, pCC->time_base, this->pStream_->time_base );
 			}
 
-			if( av_write_frame( this->pFormatContext_.get(), &pkt ) != 0 ) {
+			if( av_interleaved_write_frame( this->pFormatContext_.get(), &pkt ) != 0 ) {
 				throw error::CodecError( "Can not write frame" );
 			}
 		}

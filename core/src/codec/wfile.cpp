@@ -87,11 +87,7 @@ namespace {
 		return nBytes;
 	}
 
-#if LIBAVFORMAT_VERSION_MAJOR >= 52
 	static int64_t wfile_seek( URLContext * h, int64_t pos, int whence ) {
-#else
-	static offset_t wfile_seek( URLContext *h, offset_t pos, int whence ) {
-#endif
 		//assert(whence == SEEK_SET || whence == SEEK_CUR || whence == SEEK_END);
 		const int fd = ( size_t )h->priv_data;
 		const __int64 nBytes = _lseeki64( fd, pos, whence );
@@ -119,11 +115,7 @@ namespace {
 		static int initialized = 0;
 		if( !initialized ) {
 			initialized = 1;
-#if LIBAVFORMAT_VERSION_MAJOR < 53
-			return register_protocol( &wfile_protocol );
-#else
 			return av_register_protocol( &wfile_protocol );
-#endif
 		} else {
 			return 0;
 		}
