@@ -108,7 +108,7 @@ namespace khopper {
 					} catch( ... ) {
 						assert( !"memory allocation failed" );
 					}
-					assert( pointer || !"got null pointer" );
+					assert( pointer || typeid( *pointer ) == typeid( Product ) || !"got null pointer" );
 					return pointer;
 				}
 			private:
