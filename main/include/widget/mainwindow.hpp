@@ -76,6 +76,7 @@ namespace khopper {
 			ConverterThread * cvt_;
 			Preference * preference_;
 			QWidget * about_;
+			QString lastOpenedDir_;
 
 			void initMenuBar_();
 			void initOptionWindow_();

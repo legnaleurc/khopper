@@ -71,7 +71,8 @@ namespace khopper {
 		progress_( new Progress( this ) ),
 		cvt_( new ConverterThread( this ) ),
 		preference_( new Preference( this ) ),
-		about_( new QWidget( this, Qt::Dialog ) ) {
+		about_( new QWidget( this, Qt::Dialog ) ),
+		lastOpenedDir_( QDir::homePath() ) {
 			// Setting menu bar
 			this->initMenuBar_();
 			// Setting about widget
@@ -216,11 +217,15 @@ namespace khopper {
 		}
 
 		void MainWindow::showOpenFilesDialog() {
-			QStringList filePaths = QFileDialog::getOpenFileNames( this, tr( "Open audio" ), QDir::homePath() );
+			QStringList filePaths = QFileDialog::getOpenFileNames( this, tr( "Open audio" ), this->lastOpenedDir_ );
 			this->open( filePaths );
 		}
 
 		void MainWindow::open( const QStringList & filePaths ) {
+			if( !filePaths.isEmpty() ) {
+				this->lastOpenedDir_ = QFileInfo( filePaths[0] ).absolutePath();
+			}
+
 			std::vector< album::TrackSP > tracks;
 
 			foreach( QString filePath, filePaths ) {
@@ -248,7 +253,12 @@ namespace khopper {
 							} catch( error::BaseError & ) {
 								int ret = QMessageBox::warning( this, tr( "Can not decode media" ), tr( "I can not open the media, please select another file." ), QMessageBox::Ok, QMessageBox::Cancel );
 								while( ret == QMessageBox::Ok ) {
-									filePath = QFileDialog::getOpenFileName( this, tr( "Open audio" ), QDir::homePath() );
+									filePath = QFileDialog::getOpenFileName( this, tr( "Open audio" ), this->lastOpenedDir_ );
+									if( !filePath.isEmpty() ) {
+										break;
+									} else {
+										this->lastOpenedDir_ = QFileInfo( filePath ).absolutePath();
+									}
 									try {
 										sheet.setMedia( filePath );
 										break;
