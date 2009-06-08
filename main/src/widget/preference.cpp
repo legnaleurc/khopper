@@ -25,6 +25,18 @@
 #include <QSettings>
 #include <QGroupBox>
 #include <QVBoxLayout>
+#include <QApplication>
+#include <QFontDialog>
+#include <QPushButton>
+
+namespace {
+
+	inline QString fontTemplate( const QFont & font ) {
+		static const QString tpl = "%1 %2pt";
+		return tpl.arg( font.family() ).arg( font.pointSize() );
+	}
+
+}
 
 namespace khopper {
 
@@ -32,16 +44,40 @@ namespace khopper {
 
 		Preference::Preference( QWidget * parent ):
 		QDialog( parent ),
+		currentFont_(),
+		cfLabel_( new QLabel( this ) ),
 		fnTpl_( new QLineEdit( this ) ),
 		buttons_( new QDialogButtonBox( QDialogButtonBox::Ok | QDialogButtonBox::Apply | QDialogButtonBox::Cancel, Qt::Horizontal, this ) ) {
 			QSettings setting;
-			setting.beginGroup( "preference" );
 
 			this->setWindowTitle( tr( "Preference" ) );
 
 			QVBoxLayout * mainBox = new QVBoxLayout( this );
 			this->setLayout( mainBox );
 
+			// set font
+			QGroupBox * fGroup = new QGroupBox( tr( "Font" ), this );
+			mainBox->addWidget( fGroup );
+
+			QHBoxLayout * fBox = new QHBoxLayout( fGroup );
+			fGroup->setLayout( fBox );
+
+			setting.beginGroup( "preference" );
+			if( setting.contains( "font" ) && this->currentFont_.fromString( setting.value( "font" ).toString() ) ) {
+				qApp->setFont( this->currentFont_ );
+			} else {
+				this->currentFont_.fromString( qApp->font().toString() );
+			}
+			setting.endGroup();
+
+			this->cfLabel_->setText( ::fontTemplate( this->currentFont_ ) );
+			fBox->addWidget( this->cfLabel_ );
+
+			QPushButton * change = new QPushButton( "...", this );
+			fBox->addWidget( change );
+			connect( change, SIGNAL( clicked() ), this, SLOT( changeFont_() ) );
+
+			// set name template
 			QGroupBox * fnGroup = new QGroupBox( tr( "File name template" ), this );
 			mainBox->addWidget( fnGroup );
 
@@ -49,7 +85,9 @@ namespace khopper {
 			fnGroup->setLayout( fnBox );
 
 			// Output name template
+			setting.beginGroup( "preference" );
 			this->fnTpl_->setText( setting.value( "filename", "%2i_%t" ).toString() );
+			setting.endGroup();
 			this->fnTpl_->setToolTip( tr(
 				"Keywords:\n"
 				"%t: title\n"
@@ -62,8 +100,6 @@ namespace khopper {
 
 			mainBox->addWidget( this->buttons_ );
 			connect( this->buttons_, SIGNAL( clicked( QAbstractButton * ) ), this, SLOT( perform_( QAbstractButton * ) ) );
-
-			setting.endGroup();
 		}
 
 		boost::format Preference::getTemplate() const {
@@ -73,6 +109,15 @@ namespace khopper {
 			tmp.replace( QRegExp( "%(\\d*)i" ), "%|3$0\\1|" );
 			tmp.replace( "%%", "%" );
 			return boost::format( tmp.toUtf8().constData() );
+		}
+
+		void Preference::changeFont_() {
+			bool ok = false;
+			QFont font = QFontDialog::getFont( &ok, this->currentFont_, this );
+			if( ok ) {
+				this->currentFont_ = font;
+			}
+			this->cfLabel_->setText( ::fontTemplate( this->currentFont_ ) );
 		}
 
 		void Preference::perform_( QAbstractButton * button ) {
@@ -97,6 +142,8 @@ namespace khopper {
 			QSettings setting;
 			setting.beginGroup( "preference" );
 
+			setting.setValue( "font", this->currentFont_.toString() );
+
 			setting.setValue( "filename", this->fnTpl_->text() );
 
 			setting.endGroup();
@@ -105,6 +152,9 @@ namespace khopper {
 		void Preference::revert_() {
 			QSettings setting;
 			setting.beginGroup( "preference" );
+
+			this->currentFont_.fromString( setting.value( "font", qApp->font().toString() ).toString() );
+			this->cfLabel_->setText( ::fontTemplate( this->currentFont_ ) );
 
 			this->fnTpl_->setText( setting.value( "filename", "%2i_%t" ).toString() );
 

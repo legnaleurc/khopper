@@ -27,6 +27,8 @@
 #include <QDialog>
 #include <QLineEdit>
 #include <QDialogButtonBox>
+#include <QLabel>
+#include <QFont>
 
 namespace khopper {
 
@@ -49,9 +51,12 @@ namespace khopper {
 			boost::format getTemplate() const;
 
 		private slots:
+			void changeFont_();
 			void perform_( QAbstractButton * );
 
 		private:
+			QFont currentFont_;
+			QLabel * cfLabel_;
 			QLineEdit * fnTpl_;
 			QDialogButtonBox * buttons_;
 
