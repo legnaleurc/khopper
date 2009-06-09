@@ -143,6 +143,7 @@ namespace khopper {
 			setting.beginGroup( "preference" );
 
 			setting.setValue( "font", this->currentFont_.toString() );
+			qApp->setFont( this->currentFont_ );
 
 			setting.setValue( "filename", this->fnTpl_->text() );
 
