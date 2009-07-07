@@ -66,14 +66,14 @@ namespace khopper {
 			void close();
 
 			/**
-			 * @brief Seek to @p timestamp
+			 * @brief Seek to @p ms
 			 * @return succeed of failed
 			 */
-			bool seek( double timestamp );
+			bool seek( int ms );
 			/**
 			 * @brief Set decode range
 			 */
-			void setRange( double begin, double end ) {
+			void setRange( int begin, int end ) {
 				this->begin_ = begin;
 				this->end_ = end;
 			}
@@ -82,7 +82,7 @@ namespace khopper {
 			 * @param [out] decoded
 			 * @return raw data
 			 */
-			ByteArray read( double & decoded );
+			ByteArray read( int & decoded );
 			/**
 			 * @brief Checks if there is any data to read
 			 */
@@ -136,7 +136,7 @@ namespace khopper {
 			 * @brief Get sample duration
 			 * @sa setDuration
 			 */
-			double getDuration() const {
+			int getDuration() const {
 				return this->duration_;
 			}
 			/**
@@ -180,9 +180,9 @@ namespace khopper {
 
 		protected:
 			/// If @p timestamp is after decoding begin timestamp
-			bool afterBegin( double timestamp ) const;
+			bool afterBegin( int ms ) const;
 			/// If @p timestamp is after decoding end timestamp
-			bool afterEnd( double timestamp ) const;
+			bool afterEnd( int ms ) const;
 
 			/**
 			 * @brief Set album
@@ -230,7 +230,7 @@ namespace khopper {
 			 * @brief Set duration
 			 * @sa getDuration
 			 */
-			void setDuration( double duration ) {
+			void setDuration( int duration ) {
 				this->duration_ = duration;
 			}
 			/**
@@ -292,9 +292,9 @@ namespace khopper {
 			/// Read header
 			virtual void readHeader() = 0;
 			/// Read one frame
-			virtual ByteArray readFrame( double &, bool & ) = 0;
+			virtual ByteArray readFrame( int &, bool & ) = 0;
 			/// Seek frame
-			virtual bool seekFrame( double ) = 0;
+			virtual bool seekFrame( int ) = 0;
 
 		private:
 			// prevent copying
@@ -303,13 +303,13 @@ namespace khopper {
 
 			std::string album_;
 			std::string artist_;
-			double begin_;
+			int begin_;
 			int bitRate_;
 			int channels_;
 			std::string comment_;
 			std::string copyright_;
-			double duration_;
-			double end_;
+			int duration_;
+			int end_;
 			std::wstring filePath_;
 			std::string genre_;
 			bool hasNext_;

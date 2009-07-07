@@ -44,20 +44,20 @@ namespace khopper {
 				throw error::RunTimeError( "Can not open decoder or encoder!" );
 			}
 
-			double begin = track->getStartTime().toSecond();
-			double end = begin + track->getDuration().toSecond();
+			int begin = track->getStartTime().toMillisecond();
+			int end = begin + track->getDuration().toMillisecond();
 			decoder->setRange( begin, end );
 			if( !decoder->seek( begin ) ) {
 				throw error::CodecError( "Invalid start point" );
 			}
 
-			double decoded;
+			int decoded;
 			while( decoder->hasNext() ) {
 				if( this->canceled_ ) {
 					break;
 				}
 				encoder->write( decoder->read( decoded ) );
-				emit this->decodedTime( static_cast< int >( decoded * 1000 ) );
+				emit this->decodedTime( decoded );
 			}
 
 			encoder->close();

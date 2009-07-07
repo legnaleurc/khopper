@@ -31,13 +31,13 @@ namespace khopper {
 		AbstractReader::AbstractReader():
 		album_(),
 		artist_(),
-		begin_( -1.0 ),
+		begin_( -1 ),
 		bitRate_( -1 ),
 		channels_( -1 ),
 		comment_(),
 		copyright_(),
-		duration_( -1.0 ),
-		end_( -1.0 ),
+		duration_( -1 ),
+		end_( -1 ),
 		filePath_(),
 		genre_(),
 		hasNext_( false ),
@@ -74,14 +74,14 @@ namespace khopper {
 		void AbstractReader::close() {
 			this->album_.clear();
 			this->artist_.clear();
-			this->begin_ = -1.0;
+			this->begin_ = -1;
 			this->bitRate_ = -1;
 			this->channels_ = -1;
 			this->comment_.clear();
 			this->copyright_.clear();
-			this->duration_ = -1.0;
+			this->duration_ = -1;
 			this->filePath_.clear();
-			this->end_ = -1.0;
+			this->end_ = -1;
 			this->genre_.clear();
 			this->index_ = -1;
 			this->sampleRate_ = -1;
@@ -100,8 +100,8 @@ namespace khopper {
 			this->opening_ = false;
 		}
 
-		ByteArray AbstractReader::read( double & decoded ) {
-			decoded = 0.0;
+		ByteArray AbstractReader::read( int & decoded ) {
+			decoded = 0;
 			if( !this->opening_ || !this->hasNext_ ) {
 				return ByteArray();
 			}
@@ -115,26 +115,26 @@ namespace khopper {
 			return data;
 		}
 
-		bool AbstractReader::seek( double timestamp ) {
-			bool succeed = this->seekFrame( timestamp );
+		bool AbstractReader::seek( int ms ) {
+			bool succeed = this->seekFrame( ms );
 			if( succeed ) {
 				this->hasNext_ = true;
 			}
 			return succeed;
 		}
 
-		bool AbstractReader::afterBegin( double timestamp ) const {
+		bool AbstractReader::afterBegin( int ms ) const {
 			if( this->begin_ < 0 ) {
 				return true;
 			}
-			return timestamp >= this->begin_;
+			return ms >= this->begin_;
 		}
 
-		bool AbstractReader::afterEnd( double timestamp ) const {
+		bool AbstractReader::afterEnd( int ms ) const {
 			if( this->end_ < 0 ) {
 				return false;
 			}
-			return timestamp >= this->end_;
+			return ms >= this->end_;
 		}
 
 	}

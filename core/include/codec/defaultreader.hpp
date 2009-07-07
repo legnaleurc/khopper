@@ -73,8 +73,8 @@ namespace khopper {
 			 */
 			virtual void setupDecoder();
 			virtual void readHeader();
-			virtual ByteArray readFrame( double &, bool & );
-			virtual bool seekFrame( double );
+			virtual ByteArray readFrame( int &, bool & );
+			virtual bool seekFrame( int );
 
 		private:
 			std::tr1::shared_ptr< AVFormatContext > pFormatContext_;

@@ -44,12 +44,12 @@ namespace {
 		av_freep( &p );
 	}
 
-	inline int64_t toNative( double timestamp ) {
-		return timestamp * AV_TIME_BASE;
+	inline int64_t toNative( int ms ) {
+		return static_cast< int64_t >( ms ) * AV_TIME_BASE / 1000;
 	}
 
-	inline double toGeneral( int64_t timestamp ) {
-		return static_cast< double >( timestamp ) / AV_TIME_BASE;
+	inline int toMS( int64_t timestamp ) {
+		return timestamp * 1000 / AV_TIME_BASE;
 	}
 
 	inline bool initFFmpeg() {
@@ -74,6 +74,7 @@ namespace khopper {
 		}
 
 		DefaultReader::~DefaultReader() {
+			// FIXME: virtual function call in destructor
 			if( this->isOpen() ) {
 				this->close();
 			}
@@ -171,28 +172,32 @@ namespace khopper {
 			this->pFormatContext_.reset();
 		}
 
-		ByteArray DefaultReader::readFrame( double & duration, bool & stop ) {
+		ByteArray DefaultReader::readFrame( int & duration, bool & stop ) {
 			stop = false;
-			// static just for speed
-			static uint8_t audio_buf[AVCODEC_MAX_AUDIO_FRAME_SIZE*3/2];
+			uint8_t audio_buf[AVCODEC_MAX_AUDIO_FRAME_SIZE*3/2];
 
 			int dp_len, data_size;
 
 			ByteArray data;
 
+			// read a frame
 			if( av_read_frame( this->pFormatContext_.get(), this->pPacket_.get() ) >= 0 ) {
+				// backup buffer pointer
 				uint8_t * pktDataBackup = this->pPacket_->data;
+				// current presentation timestamp: in second * AV_TIME_BASE
 				int64_t curPts = -1;
+				// decoded time: in second * AV_TIME_BASE
 				int64_t decoded = 0;
+				// rescale presentation timestamp
 				if( this->pPacket_->pts != static_cast< int64_t >( AV_NOPTS_VALUE ) ) {
-					curPts = av_rescale(
+					curPts = AV_TIME_BASE * av_rescale(
 						this->pPacket_->pts,
-						AV_TIME_BASE * static_cast< int64_t >( this->pStream_->time_base.num ),
+						this->pStream_->time_base.num,
 						this->pStream_->time_base.den
 					);
 				}
 				while( this->pPacket_->size > 0 ) {
-					if( this->afterEnd( ::toGeneral( curPts ) ) ) {
+					if( this->afterEnd( ::toMS( curPts ) ) ) {
 						stop = true;
 						break;
 					}
@@ -211,8 +216,8 @@ namespace khopper {
 					if( data_size <= 0 ) {
 						continue;
 					}
-					int64_t ptsDiff = (static_cast< int64_t >( AV_TIME_BASE )/2 * data_size) / (this->pCodecContext_->sample_rate * this->pCodecContext_->channels);
-					if( this->afterBegin( ::toGeneral( curPts ) ) ) {
+					int64_t ptsDiff = ( static_cast< int64_t >( AV_TIME_BASE ) / 2 * data_size ) / ( this->pCodecContext_->sample_rate * this->pCodecContext_->channels );
+					if( this->afterBegin( ::toMS( curPts ) ) ) {
 						data.insert( data.end(), audio_buf, audio_buf + data_size );
 						decoded += ptsDiff;
 					}
@@ -223,14 +228,14 @@ namespace khopper {
 					av_free_packet( this->pPacket_.get() );
 				}
 
-				duration = static_cast< double >( decoded ) / AV_TIME_BASE;
+				duration = ::toMS( decoded );
 			}
 
 			return data;
 		}
 
-		bool DefaultReader::seekFrame( double timestamp ) {
-			bool succeed = av_seek_frame( this->pFormatContext_.get(), -1, ::toNative( timestamp ), AVSEEK_FLAG_BACKWARD ) >= 0;
+		bool DefaultReader::seekFrame( int ms ) {
+			bool succeed = av_seek_frame( this->pFormatContext_.get(), -1, ::toNative( ms ), AVSEEK_FLAG_BACKWARD ) >= 0;
 			if( succeed ) {
 				avcodec_flush_buffers( this->pCodecContext_.get() );
 			}
