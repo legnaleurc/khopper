@@ -91,7 +91,7 @@ namespace khopper {
 			}
 
 			if( this->pFormatContext_->duration != static_cast< int64_t >( AV_NOPTS_VALUE ) ) {
-				this->setDuration( this->pFormatContext_->duration / static_cast< double >( AV_TIME_BASE ) );
+				this->setDuration( ::toMS( this->pFormatContext_->duration ) );
 			} else {
 				throw error::CodecError( "Can not get duration!" );
 			}
