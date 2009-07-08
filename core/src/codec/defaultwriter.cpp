@@ -78,12 +78,6 @@ namespace khopper {
 			this->setQuality( QSCALE_NONE );
 		}
 
-		DefaultWriter::~DefaultWriter() {
-			if( this->isOpen() ) {
-				this->close();
-			}
-		}
-
 		bool DefaultWriter::isVariable() const {
 			return this->getQuality() != QSCALE_NONE;
 		}

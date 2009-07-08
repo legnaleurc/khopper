@@ -45,11 +45,11 @@ namespace {
 	}
 
 	inline int64_t toNative( int ms ) {
-		return static_cast< int64_t >( ms ) * AV_TIME_BASE / 1000;
+		return av_rescale( ms, AV_TIME_BASE, 1000 );
 	}
 
 	inline int toMS( int64_t timestamp ) {
-		return timestamp * 1000 / AV_TIME_BASE;
+		return av_rescale( timestamp, 1000, AV_TIME_BASE );
 	}
 
 	inline bool initFFmpeg() {
@@ -71,13 +71,6 @@ namespace khopper {
 		pPacket_( static_cast< AVPacket * >( av_malloc( sizeof( AVPacket ) ) ), ::p_helper ),
 		pStream_( NULL ) {
 			av_init_packet( this->pPacket_.get() );
-		}
-
-		DefaultReader::~DefaultReader() {
-			// FIXME: virtual function call in destructor
-			if( this->isOpen() ) {
-				this->close();
-			}
 		}
 
 		void DefaultReader::openResource() {

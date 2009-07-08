@@ -45,10 +45,6 @@ namespace khopper {
 			 * @brief Default constructor
 			 */
 			DefaultReader();
-			/**
-			 * @brief Virtual destructor
-			 */
-			virtual ~DefaultReader();
 
 		protected:
 			/**

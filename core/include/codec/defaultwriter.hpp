@@ -43,10 +43,6 @@ namespace khopper {
 			 * @brief Default constructor
 			 */
 			DefaultWriter();
-			/**
-			 * @brief Virtual destructor
-			 */
-			virtual ~DefaultWriter();
 
 		protected:
 			/// Get format context
