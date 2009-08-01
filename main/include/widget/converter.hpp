@@ -60,7 +60,7 @@ namespace khopper {
 		signals:
 			/**
 			 * @brief Decoded duration
-			 * @param ms Time in second * 10000
+			 * @param ms Time in second * 1000
 			 */
 			void decodedTime( int ms ) const;
 
