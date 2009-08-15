@@ -26,7 +26,8 @@
 
 #include <QWidget>
 #include <QPushButton>
-#include <Phonon>
+#include <Phonon/MediaObject>
+#include <Phonon/VolumeSlider>
 
 namespace khopper {
 

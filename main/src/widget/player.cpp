@@ -24,6 +24,7 @@
 #include "songlist.hpp"
 
 #include <QHBoxLayout>
+#include <Phonon/AudioOutput>
 #include <QtDebug>
 
 namespace khopper {
