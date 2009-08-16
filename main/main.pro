@@ -1,34 +1,31 @@
 include(../configure.pri)
 
 # Path setting
-INC_DIRS =	\
-	$${CORE_PATH}/include	\
-	./include/album	\
-	./include/widget
+INC_DIRS = $${CORE_PATH}/include
 SRC_DIRS =	\
 	./src/album	\
 	./src/widget
 
 DEPENDPATH  += $${INC_DIRS} $${SRC_DIRS}
-INCLUDEPATH += $${INC_DIRS}
+INCLUDEPATH += $${INC_DIRS} $${SRC_DIRS}
 MOC_DIR      = $${ROOT_PATH}/tmp/moc
 RCC_DIR      = $${ROOT_PATH}/tmp/rcc
 
 # Input files
 HEADERS +=	\
-	./include/album/cuesheet.hpp	\
-	./include/album/index.hpp	\
-	./include/album/track.hpp	\
-	./include/widget/converter.hpp	\
-	./include/widget/mainwindow.hpp	\
-	./include/widget/outputoption.hpp	\
-	./include/widget/player.hpp	\
-	./include/widget/preference.hpp	\
-	./include/widget/progress.hpp	\
-	./include/widget/seekslider.hpp	\
-	./include/widget/songlist.hpp	\
-	./include/widget/textcodec.hpp	\
-	./include/widget/threads.hpp
+	./src/album/cuesheet.hpp	\
+	./src/album/index.hpp	\
+	./src/album/track.hpp	\
+	./src/widget/converter.hpp	\
+	./src/widget/mainwindow.hpp	\
+	./src/widget/outputoption.hpp	\
+	./src/widget/player.hpp	\
+	./src/widget/preference.hpp	\
+	./src/widget/progress.hpp	\
+	./src/widget/seekslider.hpp	\
+	./src/widget/songlist.hpp	\
+	./src/widget/textcodec.hpp	\
+	./src/widget/threads.hpp
 SOURCES +=	\
 	./src/album/cuesheet.cpp	\
 	./src/album/index.cpp	\
