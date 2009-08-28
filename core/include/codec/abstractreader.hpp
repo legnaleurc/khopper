@@ -133,7 +133,7 @@ namespace khopper {
 				return this->copyright_;
 			}
 			/**
-			 * @brief Get sample duration
+			 * @brief Get sample duration in millisecond
 			 * @sa setDuration
 			 */
 			int getDuration() const {
@@ -227,7 +227,7 @@ namespace khopper {
 				this->copyright_ = copyright;
 			}
 			/**
-			 * @brief Set duration
+			 * @brief Set duration in millisecond
 			 * @sa getDuration
 			 */
 			void setDuration( int duration ) {

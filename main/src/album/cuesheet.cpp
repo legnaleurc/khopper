@@ -99,7 +99,7 @@ namespace khopper {
 				std::for_each( this->tracks_.begin(), this->tracks_.end(), ::setBCS( decoder ) );
 
 				TrackSP last( this->tracks_.back() );
-				last->setDuration( Index::fromSecond( decoder->getDuration() ) - last->getStartTime() );
+				last->setDuration( Index::fromMillisecond( decoder->getDuration() ) - last->getStartTime() );
 
 				decoder->close();
 			}
