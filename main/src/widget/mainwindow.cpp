@@ -254,12 +254,13 @@ namespace khopper {
 								int ret = QMessageBox::warning( this, tr( "Can not decode media" ), tr( "I can not open the media, please select another file." ), QMessageBox::Ok, QMessageBox::Cancel );
 								while( ret == QMessageBox::Ok ) {
 									filePath = QFileDialog::getOpenFileName( this, tr( "Open audio" ), this->lastOpenedDir_ );
-									if( !filePath.isEmpty() ) {
+									if( filePath.isEmpty() ) {
 										break;
 									} else {
 										this->lastOpenedDir_ = QFileInfo( filePath ).absolutePath();
 									}
 									try {
+										qDebug() << filePath;
 										sheet.setMedia( filePath );
 										break;
 									} catch( std::exception & ) {
