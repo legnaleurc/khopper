@@ -46,7 +46,7 @@ namespace khopper {
 
 		namespace private_ {
 
-			class PluginManager {
+			class KHOPPER_EXPORT PluginManager {
 			public:
 				PluginManager();
 				void reloadPlugins();
