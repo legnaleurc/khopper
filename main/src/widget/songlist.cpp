@@ -58,6 +58,9 @@ namespace khopper {
 			this->setSelectionBehavior( SelectRows );
 			this->setEditTriggers( DoubleClicked );
 
+			this->setWordWrap( false );
+			this->setShowGrid( false );
+
 			// Set header
 			QStringList headers;
 			headers << "Title";
@@ -121,6 +124,8 @@ namespace khopper {
 				this->model_->item( row + offset, 5 )->setEditable( false );
 				this->model_->setItem( row + offset, 6, new QStandardItem( QString::number( tracks[row]->getChannels() ) ) );
 				this->model_->item( row + offset, 6 )->setEditable( false );
+
+				this->resizeRowToContents( row + offset );
 			}
 		}
 
