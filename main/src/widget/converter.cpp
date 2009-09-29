@@ -23,6 +23,7 @@
 #include "plugin/abstractreadercreator.hpp"
 #include "util/error.hpp"
 #include "util/text.hpp"
+#include <QtDebug>
 
 namespace khopper {
 
@@ -35,6 +36,7 @@ namespace khopper {
 
 		void Converter::convert( album::TrackCSP track, const QString & targetPath, codec::WriterSP encoder ) {
 			codec::ReaderSP decoder( plugin::createReader( text::getSuffix( track->getFilePath() ) ) );
+			qDebug() << track->getFilePath();
 			decoder->open( track->getFilePath().toStdWString() );
 			encoder->setTimebase( decoder->getTimebase() );
 			encoder->open( targetPath.toStdWString() );

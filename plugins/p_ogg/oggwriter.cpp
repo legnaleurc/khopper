@@ -41,6 +41,14 @@ namespace khopper {
 			}
 		}
 
+		QString OGGWriter::getID() const {
+			return "";
+		}
+
+		QString OGGWriter::getVersion() const {
+			return "";
+		}
+
 	}
 
 }

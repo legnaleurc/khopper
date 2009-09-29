@@ -66,6 +66,7 @@
 // @{
 // @}
 
+#include "plugin/abstractplugin.hpp"
 #include "util/tr1.hpp"
 
 #include <cassert>
@@ -91,12 +92,8 @@ namespace khopper {
 			 * khopper::plugin::AbstractWriterCreator instead.
 			 */
 			template< typename Product >
-			class KHOPPER_EXPORT AbstractCreator {
+			class KHOPPER_EXPORT AbstractCreator : public AbstractPlugin {
 			public:
-				/// Default constructor
-				AbstractCreator() {}
-				/// Destructor
-				virtual ~AbstractCreator() {}
 				/**
 				 * @brief Create the product
 				 * @note never null

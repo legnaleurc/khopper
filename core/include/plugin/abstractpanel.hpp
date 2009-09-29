@@ -22,6 +22,7 @@
 #ifndef KHOPPER_WIDGET_ABSTRACTPANEL_HPP
 #define KHOPPER_WIDGET_ABSTRACTPANEL_HPP
 
+#include "plugin/abstractplugin.hpp"
 #include "codec/abstractwriter.hpp"
 
 #include <QWidget>
@@ -37,7 +38,7 @@ namespace khopper {
 		 * All output option panel will inherit this class, \n
 		 * and must register to factory. \n
 		 */
-		class KHOPPER_EXPORT AbstractPanel : public QWidget {
+		class KHOPPER_EXPORT AbstractPanel : public QWidget, public AbstractPlugin {
 		public:
 			/**
 			 * @brief Default constructor

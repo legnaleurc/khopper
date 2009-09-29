@@ -40,6 +40,9 @@ namespace khopper {
 			 */
 			OGGWriter();
 
+			virtual QString getID() const;
+			virtual QString getVersion() const;
+
 		protected:
 			virtual void setupMuxer();
 		};

@@ -1,5 +1,5 @@
 /**
- * @file plugincontext.hpp
+ * @file pluginmanager.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,8 +19,8 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_PLUGINCONTEXT_HPP
-#define KHOPPER_PLUGINCONTEXT_HPP
+#ifndef KHOPPER_PLUGIN_PLUGINMANAGER_HPP
+#define KHOPPER_PLUGIN_PLUGINMANAGER_HPP
 
 #include "plugin/abstractcreator.hpp"
 #include "util/error.hpp"
@@ -28,39 +28,46 @@
 #include <QPluginLoader>
 #include <QDir>
 
+#ifndef LOKI_CLASS_LEVEL_THREADING
+# define LOKI_CLASS_LEVEL_THREADING
+#endif
+
+#include <loki/Singleton.h>
+
 #include <string>
 #include <list>
+#include <map>
 
 namespace khopper {
 
 	namespace plugin {
 
-		/**
-		 * @brief Plug-in context
-		 */
-		class KHOPPER_EXPORT PluginContext {
-		public:
-			/// get plugin list
-			static QStringList getList();
-			/**
-			 * @brief Load plugin by plugin name
-			 * @param name plugin name
-			 * @throws RunTimeError Plugin load error
-			 * @throws IOError Can not find this plugin
-			 */
-			static QObject * load( QString name );
+		class AbstractPanel;
 
-		private:
-			static std::list< QDir > & paths_();
+		namespace private_ {
 
-			static const QStringList & getFilter_();
-			static QString toRealName_( const QString & );
+			class PluginManager {
+			public:
+				PluginManager();
+				void reloadPlugins();
+				QObject * getPluginInstance( const QString & name ) const;
+				const std::list< AbstractPanel * > & getPanels() const {
+					return this->loadedPanels_;
+				}
 
-			PluginContext();
-			PluginContext( const PluginContext & );
-			~PluginContext();
-			PluginContext & operator =( const PluginContext & );
-		};
+			private:
+				std::map< std::string, QObject * > loadedPlugins_;
+				std::list< AbstractPanel * > loadedPanels_;
+			};
+
+		}
+
+		typedef Loki::SingletonHolder<
+			private_::PluginManager,
+			Loki::CreateUsingNew,
+			Loki::DefaultLifetime,
+			Loki::ClassLevelLockable
+		> PluginManager;
 
 		namespace private_ {
 
@@ -86,7 +93,7 @@ namespace khopper {
 				 * so don't worry about it's life time.
 				 */
 				ProductCreator * operator()() {
-					ProductCreator * c = qobject_cast< ProductCreator * >( PluginContext::load( this->plugin_.c_str() ) );
+					ProductCreator * c = qobject_cast< ProductCreator * >( plugin::PluginManager::Instance().getPluginInstance( this->plugin_.c_str() ) );
 					if( !c ) {
 						throw error::RunTimeError( "Invalid plugin!" );
 					}

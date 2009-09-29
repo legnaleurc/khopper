@@ -102,6 +102,14 @@ namespace khopper {
 			cBox->addWidget( this->channels_ );
 		}
 
+		QString MP3Panel::getID() const {
+			return "kpp_mp3";
+		}
+
+		QString MP3Panel::getVersion() const {
+			return "";
+		}
+
 		codec::WriterSP MP3Panel::getWriter() const {
 			codec::WriterSP encoder( plugin::createWriter( "mp3" ) );
 

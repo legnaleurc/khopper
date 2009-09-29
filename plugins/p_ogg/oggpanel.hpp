@@ -40,6 +40,8 @@ namespace khopper {
 			/// Default constructor
 			OGGPanel( QWidget * parent = 0, Qt::WindowFlags f = 0 );
 
+			virtual QString getID() const;
+			virtual QString getVersion() const;
 			/// Get configured Writer instance
 			virtual codec::WriterSP getWriter() const;
 			/// Get file suffix

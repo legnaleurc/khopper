@@ -60,6 +60,14 @@ namespace khopper {
 			cBox->addWidget( this->channels_ );
 		}
 
+		QString WAVPanel::getID() const {
+			return "kpp_wav";
+		}
+
+		QString WAVPanel::getVersion() const {
+			return "";
+		}
+
 		codec::WriterSP WAVPanel::getWriter() const {
 			codec::WriterSP encoder( plugin::createWriter( "wav" ) );
 

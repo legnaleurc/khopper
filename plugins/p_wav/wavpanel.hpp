@@ -45,6 +45,8 @@ namespace khopper {
 			 */
 			WAVPanel( QWidget * parent = 0, Qt::WindowFlags f = 0 );
 
+			virtual QString getID() const;
+			virtual QString getVersion() const;
 			/**
 			 * @brief Get encoder setting object
 			 * @return Smart pointer contains AbstractWriter

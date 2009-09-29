@@ -18,11 +18,12 @@ HEADERS +=	\
 	./include/codec/codec_base.hpp	\
 	./include/codec/defaultreader.hpp	\
 	./include/codec/defaultwriter.hpp	\
+	./include/plugin/abstractplugin.hpp	\
 	./include/plugin/abstractpanel.hpp	\
 	./include/plugin/abstractcreator.hpp	\
 	./include/plugin/abstractreadercreator.hpp	\
 	./include/plugin/abstractwritercreator.hpp	\
-	./include/plugin/plugincontext.hpp	\
+	./include/plugin/pluginmanager.hpp	\
 	./include/util/error.hpp	\
 	./include/util/os.hpp	\
 	./include/util/text.hpp	\
@@ -35,7 +36,7 @@ SOURCES +=	\
 	./src/plugin/abstractpanel.cpp	\
 	./src/plugin/abstractreadercreator.cpp	\
 	./src/plugin/abstractwritercreator.cpp	\
-	./src/plugin/plugincontext.cpp	\
+	./src/plugin/pluginmanager.cpp	\
 	./src/util/error.cpp	\
 	./src/util/text.cpp
 

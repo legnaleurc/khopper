@@ -62,6 +62,14 @@ namespace khopper {
 			cBox->addWidget( this->channels_ );
 		}
 
+		QString FlacPanel::getID() const {
+			return "kpp_flac";
+		}
+
+		QString FlacPanel::getVersion() const {
+			return "";
+		}
+
 		codec::WriterSP FlacPanel::getWriter() const {
 			codec::WriterSP encoder( plugin::createWriter( "flac" ) );
 

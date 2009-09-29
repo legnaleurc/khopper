@@ -21,7 +21,7 @@
  */
 #include "outputoption.hpp"
 
-#include "plugin/plugincontext.hpp"
+#include "plugin/pluginmanager.hpp"
 
 #include <QVBoxLayout>
 #include <QDialogButtonBox>
@@ -44,19 +44,9 @@ namespace khopper {
 
 			mainBox->addWidget( this->optionTabs_ );
 
-			// Load all plugins, including readers and writers
-			foreach( QString fileName, plugin::PluginContext::getList() ) {
-				qDebug() << fileName;
-				QPluginLoader piLoader( fileName );
-				QObject * plugin = piLoader.instance();
-				if( plugin ) {
-					plugin::AbstractPanel * option = qobject_cast< plugin::AbstractPanel * >( plugin );
-					if( option ) {
-						this->table_.insert( std::make_pair( this->optionTabs_->addTab( option, option->getTitle() ), option ) );
-					}
-				} else {
-					qWarning() << piLoader.errorString();
-				}
+			foreach( plugin::AbstractPanel * panel, plugin::PluginManager::Instance().getPanels() ) {
+				qDebug() << panel;
+				this->table_.insert( std::make_pair( this->optionTabs_->addTab( panel, panel->getTitle() ), panel ) );
 			}
 
 			QDialogButtonBox * buttons = new QDialogButtonBox( QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, this );

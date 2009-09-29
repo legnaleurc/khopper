@@ -83,6 +83,14 @@ namespace khopper {
 			mainBox->addWidget( this->sampleRate_ );
 		}
 
+		QString OGGPanel::getID() const {
+			return "kpp_ogg";
+		}
+
+		QString OGGPanel::getVersion() const {
+			return "";
+		}
+
 		codec::WriterSP OGGPanel::getWriter() const {
 			codec::WriterSP tmp( new codec::OGGWriter() );
 
