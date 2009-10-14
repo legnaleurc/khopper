@@ -58,10 +58,10 @@
  * Then call khopper::plugin::registerWriter in global scope to register plugin
  * to main program. Here is an example:
  * <pre>
- * const bool REGISTERED = khopper::plugin::registerWriter( "mp3", "krp_mp3" );
+ * const bool REGISTERED = khopper::plugin::registerWriter( "mp3", "kwp_mp3" );
  * </pre>
  * Which "mp3" means the key which khopper::plugin::createWriter() will use.
- * "krp_mp3" is the name of plugin namely the plugin project target name.
+ * "kwp_mp3" is the name of plugin namely the plugin project target name.
  */
 // @{
 // @}

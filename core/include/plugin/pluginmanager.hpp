@@ -46,11 +46,23 @@ namespace khopper {
 
 		namespace private_ {
 
+			/**
+			 * @ingroup Plugins
+			 * @brief Private plugin manager
+			 */
 			class KHOPPER_EXPORT PluginManager {
 			public:
+				/// default constructor
 				PluginManager();
+				/**
+				 * @brief reload all plugins
+				 *
+				 * Will discard duplicated plugins.
+				 */
 				void reloadPlugins();
+				/// get plugin instance by name
 				QObject * getPluginInstance( const QString & name ) const;
+				/// get panel plugins
 				const std::list< AbstractPanel * > & getPanels() const {
 					return this->loadedPanels_;
 				}
@@ -62,6 +74,7 @@ namespace khopper {
 
 		}
 
+		/// PluginManager singleton
 		typedef Loki::SingletonHolder<
 			private_::PluginManager,
 			Loki::CreateUsingNew,
