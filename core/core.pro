@@ -25,7 +25,6 @@ HEADERS +=	\
 	./include/plugin/abstractwritercreator.hpp	\
 	./include/plugin/pluginmanager.hpp	\
 	./include/util/error.hpp	\
-	./include/util/os.hpp	\
 	./include/util/text.hpp	\
 	./include/util/tr1.hpp
 SOURCES +=	\
@@ -65,10 +64,9 @@ unix {
 	CONFIG         += link_pkgconfig
 	PKGCONFIG      += libavcodec libavformat libavutil
 	LIBS           += -lloki
-	SOURCES        += ./src/util/linux.cpp
 }
 
 win32 {
-	SOURCES += ./src/util/windows.cpp ./src/codec/wfile.cpp
+	SOURCES += ./src/codec/wfile.cpp
 	LIBS    += -lavcodec -lavformat -lavutil
 }

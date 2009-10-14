@@ -51,6 +51,14 @@ namespace khopper {
 		 */
 		KHOPPER_EXPORT std::string getSuffix( const QByteArray & filePath );
 
+		/**
+		 * @brief Join paths to one path
+		 * @param [in] front front part
+		 * @param [in] back back part
+		 * @return Complete path
+		 */
+		KHOPPER_EXPORT QString joinPath( const QString & front, const QString & back );
+
 	}
 
 }

@@ -23,7 +23,6 @@
 #include "track.hpp"
 #include "plugin/abstractreadercreator.hpp"
 #include "util/error.hpp"
-#include "util/os.hpp"
 #include "util/text.hpp"
 
 #include <QTextStream>
@@ -180,7 +179,7 @@ namespace khopper {
 		}
 
 		std::pair< QString, Track::FileType > CUESheet::parseFile_( const QString & fileName, const QString & type, const QString & dirPath ) {
-			QString filePath = os::join( dirPath, stripQuote( fileName ) );
+			QString filePath = text::joinPath( dirPath, stripQuote( fileName ) );
 			if( type == "BINARY" ) {
 				return std::make_pair( filePath, Track::BINARY );
 			} else if( type == "MOTOROLA" ) {

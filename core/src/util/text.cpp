@@ -22,6 +22,7 @@
 #include "util/text.hpp"
 
 #include <QFileInfo>
+#include <QRegExp>
 
 namespace khopper {
 
@@ -40,6 +41,20 @@ namespace khopper {
 		}
 		std::string getSuffix( const QByteArray & filePath ) {
 			return getSuffix( QString::fromLocal8Bit( filePath.constData() ) );
+		}
+
+		QString joinPath( const QString & front, const QString & back ) {
+			// kill all tail '/' in front
+			// kill all lead '/' in back
+			// return front + '/' + back
+			QRegExp fp( "(.*)/*" );
+			QRegExp bp( "/*(.*)" );
+
+			if( fp.exactMatch( front ) && bp.exactMatch( back ) ) {
+				return fp.cap( 1 ) + "/" + bp.cap( 1 );
+			} else {
+				return "";
+			}
 		}
 
 	}
