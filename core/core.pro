@@ -43,7 +43,6 @@ SOURCES +=	\
 TARGET   = k_core
 TEMPLATE = lib
 CONFIG  += debug_and_release
-VERSION  = $${KHOPPER_VERSION}
 
 CONFIG( debug, debug|release ) {
 	DESTDIR     = $${ROOT_PATH}/build/debug

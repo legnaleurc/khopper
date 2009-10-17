@@ -50,7 +50,6 @@ TEMPLATE = app
 CONFIG += debug_and_release embed_manifest_exe
 CONFIG -= embed_manifest_dll
 QT     += phonon
-DEFINES += KHOPPER_VERSION=$${KHOPPER_VERSION}
 
 CONFIG( debug, debug|release ) {
 	DESTDIR     = $${ROOT_PATH}/build/debug
