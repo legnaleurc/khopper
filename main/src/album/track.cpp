@@ -35,7 +35,7 @@ namespace khopper {
 		}
 
 		void Track::set( const QString & key, const std::string & value ) {
-			this->set( key, QVariant( value.c_str() ) );
+			this->set( key, QVariant( QByteArray( value.c_str() ) ) );
 		}
 
 		void Track::set( const QString & key, const QString & value ) {
