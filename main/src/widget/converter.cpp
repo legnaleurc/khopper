@@ -46,8 +46,8 @@ namespace khopper {
 				throw error::RunTimeError( "Can not open decoder or encoder!" );
 			}
 
-			int begin = track->getStartTime().toMillisecond();
-			int end = begin + track->getDuration().toMillisecond();
+			int begin = track->get( "start_time" ).value< album::Index >().toMillisecond();
+			int end = begin + track->get( "duration" ).value< album::Index >().toMillisecond();
 			decoder->setRange( begin, end );
 			if( !decoder->seek( begin ) ) {
 				throw error::CodecError( "Invalid start point" );

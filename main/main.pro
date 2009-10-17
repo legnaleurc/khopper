@@ -13,6 +13,7 @@ RCC_DIR      = $${ROOT_PATH}/tmp/rcc
 
 # Input files
 HEADERS +=	\
+	./src/album/album.hpp	\
 	./src/album/cuesheet.hpp	\
 	./src/album/index.hpp	\
 	./src/album/track.hpp	\
@@ -27,6 +28,7 @@ HEADERS +=	\
 	./src/widget/textcodec.hpp	\
 	./src/widget/threads.hpp
 SOURCES +=	\
+	./src/album/album.cpp	\
 	./src/album/cuesheet.cpp	\
 	./src/album/index.cpp	\
 	./src/album/track.cpp	\

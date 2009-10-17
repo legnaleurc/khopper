@@ -55,11 +55,11 @@ namespace khopper {
 		void ConverterThread::run() {
 			try {
 				for( std::size_t i = 0; i < this->tracks_.size(); ++i ) {
-					this->encoder_->setTitle( this->tracks_[i]->getTitle().toUtf8().constData() );
-					this->encoder_->setArtist( this->tracks_[i]->getArtist().toUtf8().constData() );
-					this->encoder_->setAlbum( this->tracks_[i]->getAlbum().toUtf8().constData() );
-					emit taskName( this->tracks_[i]->getTitle() );
-					emit taskGoal( this->tracks_[i]->getDuration().toMillisecond() );
+					this->encoder_->setTitle( this->tracks_[i]->get( "title" ).toString().toUtf8().constData() );
+					this->encoder_->setArtist( this->tracks_[i]->get( "artist" ).toString().toUtf8().constData() );
+					this->encoder_->setAlbum( this->tracks_[i]->get( "album" ).toString().toUtf8().constData() );
+					emit taskName( this->tracks_[i]->get( "title" ).toString() );
+					emit taskGoal( this->tracks_[i]->get( "duration" ).value< album::Index >().toMillisecond() );
 					emit currentTask( i + 1 );
 
 					this->converter_.convert( this->tracks_[i], this->paths_[i], this->encoder_ );

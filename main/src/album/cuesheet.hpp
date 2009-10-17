@@ -22,6 +22,7 @@
 #ifndef KHOPPER_ALBUM_CUESHEET_HPP
 #define KHOPPER_ALBUM_CUESHEET_HPP
 
+#include "album.hpp"
 #include "track.hpp"
 
 #include "util/error.hpp"
@@ -36,7 +37,7 @@ namespace khopper {
 		/**
 		 * @brief The CUE parser
 		 */
-		class CUESheet {
+		class CUESheet : public Album {
 		public:
 			/**
 			 * @brief Default constructor

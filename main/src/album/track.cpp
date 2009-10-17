@@ -29,26 +29,41 @@ namespace khopper {
 	namespace album {
 
 		Track::Track():
-		album_(),
-		artist_(),
-		bitRate_( 0 ),
-		channels_( 0 ),
-		comments_(),
-		dataType_( AUDIO ),
-		duration_(),
+		fields_(),
 		filePath_(),
-		fileType_( BINARY ),
-		flags_( NONE ),
-		garbage_(),
-		index_( 0 ),
-		isrc_(),
-		postGap_(),
-		preGap_(),
-		sampleRate_(),
-		songWriter_(),
-		startTime_(),
-		textCodec_( QTextCodec::codecForName( "UTF-8" ) ),
-		title_() {
+		textCodec_( QTextCodec::codecForName( "UTF-8" ) ) {
+		}
+
+		void Track::set( const QString & key, const std::string & value ) {
+			this->set( key, QVariant( value.c_str() ) );
+		}
+
+		void Track::set( const QString & key, const QString & value ) {
+			this->set( key, QVariant( this->textCodec_->fromUnicode( value ) ) );
+		}
+
+		void Track::set( const QString & key, const QVariant & value ) {
+			QMap< QString, QVariant >::iterator it = this->fields_.find( key );
+			if( it == this->fields_.end() ) {
+				this->fields_.insert( key, value );
+			} else {
+				it.value() = value;
+			}
+		}
+
+		QVariant Track::get( const QString & key ) const {
+			QMap< QString, QVariant >::const_iterator it = this->fields_.find( key );
+			if( it == this->fields_.end() ) {
+				// no such data, invalid
+				return QVariant();
+			} else {
+				if( it.value().canConvert( QVariant::ByteArray ) ) {
+					// should decode using textcodec
+					return this->textCodec_->toUnicode( it.value().toByteArray() );
+				} else {
+					return it.value();
+				}
+			}
 		}
 
 		void Track::load( const QString & filePath ) {
@@ -57,13 +72,13 @@ namespace khopper {
 			codec::ReaderSP decoder( plugin::createReader( text::getSuffix( filePath ) ) );
 			decoder->open( filePath.toStdWString() );
 			if( decoder->isOpen() ) {
-				this->album_ = decoder->getAlbum().c_str();
-				this->artist_ = decoder->getArtist().c_str();
-				this->bitRate_ = decoder->getBitRate();
-				this->channels_ = decoder->getChannels();
-				this->duration_ = Index::fromMillisecond( decoder->getDuration() );
-				this->sampleRate_ = decoder->getSampleRate();
-				this->title_ = decoder->getTitle().c_str();
+				this->set( "album", decoder->getAlbum() );
+				this->set( "artist", decoder->getArtist() );
+				this->set( "bit_rate", decoder->getBitRate() );
+				this->set( "channels", decoder->getChannels() );
+				this->set( "duration", QVariant::fromValue( Index::fromMillisecond( decoder->getDuration() ) ) );
+				this->set( "sample_rate", decoder->getSampleRate() );
+				this->set( "title", decoder->getTitle() );
 
 				decoder->close();
 			} else {

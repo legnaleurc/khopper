@@ -100,8 +100,8 @@ namespace khopper {
 				}
 
 				this->player_->setCurrentSource( this->currentTrack_->getFilePath() );
-				this->currentBeginTime_ = this->currentTrack_->getStartTime().toMillisecond();
-				this->currentEndTime_ = this->currentBeginTime_ + this->currentTrack_->getDuration().toMillisecond();
+				this->currentBeginTime_ = this->currentTrack_->get( "start_time" ).value< album::Index >().toMillisecond();
+				this->currentEndTime_ = this->currentBeginTime_ + this->currentTrack_->get( "duration" ).value< album::Index >().toMillisecond();
 				this->seeker_->setRange( this->currentBeginTime_, this->currentEndTime_ );
 				qDebug() << this->currentBeginTime_ << this->currentEndTime_;
 				this->starting_ = true;

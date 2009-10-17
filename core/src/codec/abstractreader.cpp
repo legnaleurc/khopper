@@ -23,6 +23,7 @@
 #include "util/text.hpp"
 
 #include <cassert>
+#include <QtDebug>
 
 namespace khopper {
 
@@ -112,6 +113,7 @@ namespace khopper {
 				this->hasNext_ = false;
 			}
 
+			qDebug() << "Sended" << data.size() << this->hasNext_;
 			return data;
 		}
 

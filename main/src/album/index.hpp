@@ -24,6 +24,8 @@
 
 #include <string>
 
+#include <QMetaType>
+
 namespace khopper {
 
 	namespace album {
@@ -100,5 +102,7 @@ namespace khopper {
 	}
 
 }
+
+Q_DECLARE_METATYPE(khopper::album::Index)
 
 #endif

@@ -40,6 +40,33 @@ namespace {
 		return l.row() > r.row();
 	}
 
+	struct HeaderData {
+		HeaderData( const QByteArray & i, const QString & h, bool e ):
+		id( i ), header( h ), editable( e ) {}
+		QByteArray id;
+		QString header;
+		bool editable;
+	};
+
+	typedef QList< HeaderData > HeaderDataList;
+
+	inline HeaderDataList initHeaderList() {
+		return HeaderDataList()
+		<< HeaderData( "title", QObject::tr( "Title" ), true )
+		<< HeaderData( "artist", QObject::tr( "Artist" ), true )
+		<< HeaderData( "album", QObject::tr( "Album" ), true )
+		<< HeaderData( "duration", QObject::tr( "Duration" ), false )
+		<< HeaderData( "bit_rate", QObject::tr( "Bit Rate" ), false )
+		<< HeaderData( "sample_rate", QObject::tr( "Sample Rate" ), false )
+		<< HeaderData( "channels", QObject::tr( "Channels" ), false )
+		;
+	}
+
+	inline const HeaderDataList & getHeaderList() {
+		static HeaderDataList hdl( initHeaderList() );
+		return hdl;
+	}
+
 }
 
 namespace khopper {
@@ -63,13 +90,9 @@ namespace khopper {
 
 			// Set header
 			QStringList headers;
-			headers << "Title";
-			headers << "Artist";
-			headers << "Album";
-			headers << "Duration";
-			headers << "Bit Rate";
-			headers << "Sample Rate";
-			headers << "Channels";
+			foreach( HeaderData hd, getHeaderList() ) {
+				headers << hd.header;
+			}
 			this->model_->setHorizontalHeaderLabels( headers );
 
 			// Set model
@@ -111,21 +134,26 @@ namespace khopper {
 			int offset = this->model_->rowCount();
 			// add all tracks
 			for( std::size_t row = 0; row < tracks.size(); ++row ) {
-				this->model_->setItem( row + offset, 0, new QStandardItem( tracks[row]->getTitle() ) );
-				this->model_->setItem( row + offset, 1, new QStandardItem( tracks[row]->getArtist() ) );
-				this->model_->setItem( row + offset, 2, new QStandardItem( tracks[row]->getAlbum() ) );
+				const std::size_t currentRow = row + offset;
+				for( int col = 0; col < getHeaderList().size(); ++col ) {
+					this->model_->setItem( currentRow, col, new QStandardItem( tracks[row]->get( getHeaderList()[col].id ).toString() ) );
+					this->model_->item( currentRow, col )->setEditable( getHeaderList()[col].editable );
+				}
+//				this->model_->setItem( row + offset, 0, new QStandardItem( tracks[row]->getTitle() ) );
+//				this->model_->setItem( row + offset, 1, new QStandardItem( tracks[row]->getArtist() ) );
+//				this->model_->setItem( row + offset, 2, new QStandardItem( tracks[row]->getAlbum() ) );
 
 				// fields should not be editable
-				this->model_->setItem( row + offset, 3, new QStandardItem( QString::fromStdWString( tracks[row]->getDuration().toStdWString() ) ) );
-				this->model_->item( row + offset, 3 )->setEditable( false );
-				this->model_->setItem( row + offset, 4, new QStandardItem( QString::number( tracks[row]->getBitRate() ) ) );
-				this->model_->item( row + offset, 4 )->setEditable( false );
-				this->model_->setItem( row + offset, 5, new QStandardItem( QString::number( tracks[row]->getSampleRate() ) ) );
-				this->model_->item( row + offset, 5 )->setEditable( false );
-				this->model_->setItem( row + offset, 6, new QStandardItem( QString::number( tracks[row]->getChannels() ) ) );
-				this->model_->item( row + offset, 6 )->setEditable( false );
+//				this->model_->setItem( row + offset, 3, new QStandardItem( QString::fromStdWString( tracks[row]->getDuration().toStdWString() ) ) );
+//				this->model_->item( row + offset, 3 )->setEditable( false );
+//				this->model_->setItem( row + offset, 4, new QStandardItem( QString::number( tracks[row]->getBitRate() ) ) );
+//				this->model_->item( row + offset, 4 )->setEditable( false );
+//				this->model_->setItem( row + offset, 5, new QStandardItem( QString::number( tracks[row]->getSampleRate() ) ) );
+//				this->model_->item( row + offset, 5 )->setEditable( false );
+//				this->model_->setItem( row + offset, 6, new QStandardItem( QString::number( tracks[row]->getChannels() ) ) );
+//				this->model_->item( row + offset, 6 )->setEditable( false );
 
-				this->resizeRowToContents( row + offset );
+				this->resizeRowToContents( currentRow );
 			}
 		}
 
@@ -148,9 +176,10 @@ namespace khopper {
 				album::TrackSP track( this->tracks_[index.row()] );
 				track->setTextCodec( codec );
 
-				this->model_->item( index.row(), 0 )->setText( track->getTitle() );
-				this->model_->item( index.row(), 1 )->setText( track->getArtist() );
-				this->model_->item( index.row(), 2 )->setText( track->getAlbum() );
+				// FIXME: generic
+				this->model_->item( index.row(), 0 )->setText( track->get( "title" ).toString() );
+				this->model_->item( index.row(), 1 )->setText( track->get( "artist" ).toString() );
+				this->model_->item( index.row(), 2 )->setText( track->get( "album" ).toString() );
 			}
 		}
 

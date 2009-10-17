@@ -29,6 +29,7 @@ extern "C" {
 }
 
 #include <cstring>
+#include <QtDebug>
 
 namespace {
 

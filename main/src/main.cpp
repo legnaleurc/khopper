@@ -27,6 +27,7 @@
 
 #include <QApplication>
 #include <QSettings>
+#include <QTextCodec>
 
 #define X(x) XX(x)
 #define XX(x) #x
@@ -40,6 +41,8 @@ int main( int argc, char * argv[] ) {
 	QApplication::setApplicationName( "Khopper" );
 	QApplication::setApplicationVersion( X(KHOPPER_VERSION) );
 	QSettings::setDefaultFormat( QSettings::IniFormat );
+	QTextCodec::setCodecForCStrings( QTextCodec::codecForName( "UTF-8" ) );
+	QTextCodec::setCodecForTr( QTextCodec::codecForName( "UTF-8" ) );
 
 	khopper::widget::MainWindow window;
 	window.setWindowTitle( "Khopper" );

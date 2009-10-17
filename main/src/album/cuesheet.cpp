@@ -27,6 +27,7 @@
 
 #include <QTextStream>
 #include <QRegExp>
+#include <QStringList>
 #include <QtDebug>
 
 #include <algorithm>
@@ -44,7 +45,7 @@ namespace {
 	struct setAlbum {
 		setAlbum( const QString & title ) : title_( title ) {}
 		void operator ()( khopper::album::TrackSP track ) {
-			track->setAlbum( this->title_ );
+			track->set( "album", this->title_ );
 		}
 	private:
 		const QString & title_;
@@ -62,9 +63,9 @@ namespace {
 	struct setBCS {
 		setBCS( khopper::codec::ReaderCSP decoder ) : decoder_( decoder ) {}
 		void operator ()( khopper::album::TrackSP track ) {
-			track->setBitRate( this->decoder_->getBitRate() );
-			track->setSampleRate( this->decoder_->getSampleRate() );
-			track->setChannels( this->decoder_->getChannels() );
+			track->set( "bit_rate", this->decoder_->getBitRate() );
+			track->set( "simple_rate", this->decoder_->getSampleRate() );
+			track->set( "channels", this->decoder_->getChannels() );
 		}
 	private:
 		khopper::codec::ReaderCSP decoder_;
@@ -98,7 +99,7 @@ namespace khopper {
 				std::for_each( this->tracks_.begin(), this->tracks_.end(), ::setBCS( decoder ) );
 
 				TrackSP last( this->tracks_.back() );
-				last->setDuration( Index::fromMillisecond( decoder->getDuration() ) - last->getStartTime() );
+				last->set( "duration", QVariant::fromValue( Index::fromMillisecond( decoder->getDuration() ) - last->get( "start_time" ).value< Index >() ) );
 
 				decoder->close();
 			}
@@ -155,25 +156,25 @@ namespace khopper {
 				}
 			} else if( c == "ISRC" ) {
 				if( trackNO != -1 ) {
-					this->tracks_[trackNO]->setISRC( content );
+					this->tracks_[trackNO]->set( "isrc", content );
 				}
 			} else if( c == "PERFORMER" ) {
 				if( trackNO == -1 ) {
 					this->artist_ = content;
 				} else {
-					this->tracks_[trackNO]->setArtist( content );
+					this->tracks_[trackNO]->set( "artist", content );
 				}
 			} else if( c == "SONGWRITER" ) {
 				if( trackNO == -1 ) {
 					this->songWriter_ = content;
 				} else {
-					this->tracks_[trackNO]->setSongWriter( content );
+					this->tracks_[trackNO]->set( "song_writer", content );
 				}
 			} else if( c == "TITLE" ) {
 				if( trackNO == -1 ) {
 					this->title_ = content;
 				} else {
-					this->tracks_[trackNO]->setTitle( content );
+					this->tracks_[trackNO]->set( "title", content );
 				}
 			}
 		}
@@ -195,20 +196,21 @@ namespace khopper {
 			}
 		}
 
-		void CUESheet::parseFlags_( const QString & flag, int trackNO ) {
-			if( trackNO != -1 ) {
-				if( flag == "DATA" ) {
-					this->tracks_[trackNO]->addFlag( Track::DATA );
-				} else if( flag == "DCP" ) {
-					this->tracks_[trackNO]->addFlag( Track::DCP );
-				} else if( flag == "4CH" ) {
-					this->tracks_[trackNO]->addFlag( Track::CH4 );
-				} else if( flag == "PRE" ) {
-					this->tracks_[trackNO]->addFlag( Track::PRE );
-				} else if( flag == "SCMS" ) {
-					this->tracks_[trackNO]->addFlag( Track::SCMS );
-				}
-			}
+		// NOTE: deprecated
+		void CUESheet::parseFlags_( const QString & /*flag*/, int /*trackNO*/ ) {
+//			if( trackNO != -1 ) {
+//				if( flag == "DATA" ) {
+//					this->tracks_[trackNO]->addFlag( Track::DATA );
+//				} else if( flag == "DCP" ) {
+//					this->tracks_[trackNO]->addFlag( Track::DCP );
+//				} else if( flag == "4CH" ) {
+//					this->tracks_[trackNO]->addFlag( Track::CH4 );
+//				} else if( flag == "PRE" ) {
+//					this->tracks_[trackNO]->addFlag( Track::PRE );
+//				} else if( flag == "SCMS" ) {
+//					this->tracks_[trackNO]->addFlag( Track::SCMS );
+//				}
+//			}
 		}
 
 		void CUESheet::parseIndex_( const QString & type, const QString & num, const QString & m, const QString & s, const QString & f, int trackNO ) {
@@ -219,15 +221,15 @@ namespace khopper {
 				switch( n ) {
 				case 1:
 					// track start time
-					this->tracks_[trackNO]->setStartTime( tmp );
-					if( trackNO > 0 && this->tracks_[trackNO-1]->getDuration().isZero() ) {
-						this->tracks_[trackNO-1]->setDuration( this->tracks_[trackNO]->getStartTime() - this->tracks_[trackNO-1]->getStartTime() );
+					this->tracks_[trackNO]->set( "start_time", QVariant::fromValue( tmp ) );
+					if( trackNO > 0 && this->tracks_[trackNO-1]->get( "duration" ).value< Index >().isZero() ) {
+						this->tracks_[trackNO-1]->set( "duration", QVariant::fromValue( this->tracks_[trackNO]->get( "start_time" ).value< Index >() - this->tracks_[trackNO-1]->get( "start_time" ).value< Index >() ) );
 					}
 					break;
 				case 0:
 					// prevous track end time
 					if( trackNO > 0 ) {
-						this->tracks_[trackNO-1]->setDuration( tmp - this->tracks_[trackNO-1]->getStartTime() );
+						this->tracks_[trackNO-1]->set( "duration", QVariant::fromValue( tmp - this->tracks_[trackNO-1]->get( "start_time" ).value< Index >() ) );
 					}
 					break;
 				default:
@@ -235,43 +237,45 @@ namespace khopper {
 					throw error::ParsingError( "Index value error!" );
 				}
 			} else if( type == "PREGAP" ) {
-				this->tracks_[trackNO]->setPreGap( tmp );
+				this->tracks_[trackNO]->set( "pregap", QVariant::fromValue( tmp ) );
 			} else if( type == "POSTGAP" ) {
-				this->tracks_[trackNO]->setPostGap( tmp );
+				this->tracks_[trackNO]->set( "postgap", QVariant::fromValue( tmp ) );
 			}
 		}
 
-		void CUESheet::parseComment_( const QString & key, const QString & value, int trackNO ) {
-			if( trackNO == -1 ) {
-				this->comments_.insert( std::make_pair( key, value ) );
-			} else {
-				this->tracks_[trackNO]->addComment( key, value );
-			}
+		// NOTE: deprecated
+		void CUESheet::parseComment_( const QString & /*key*/, const QString & /*value*/, int /*trackNO*/ ) {
+//			if( trackNO == -1 ) {
+//				this->comments_.insert( std::make_pair( key, value ) );
+//			} else {
+//				this->tracks_[trackNO]->addComment( key, value );
+//			}
 		}
 
-		void CUESheet::parseTrack_( const QString & num, const std::pair< QString, Track::FileType > & audioData, const QString & type ) {
+		void CUESheet::parseTrack_( const QString & num, const std::pair< QString, Track::FileType > & audioData, const QString & /*type*/ ) {
 			TrackSP track( new Track );
-			track->setIndex( num.toShort() );
+			track->set( "index", num.toShort() );
 			track->setFilePath( audioData.first );
-			if( type == "AUDIO" ) {
-				track->setDataType( Track::AUDIO );
-			} else if( type == "CDG" ) {
-				track->setDataType( Track::CDG );
-			} else if( type == "MODE1/2048" ) {
-				track->setDataType( Track::MODE1_2048 );
-			} else if( type == "MODE1/2352" ) {
-				track->setDataType( Track::MODE1_2352 );
-			} else if( type == "MODE2/2336" ) {
-				track->setDataType( Track::MODE2_2336 );
-			} else if( type == "MODE2/2352" ) {
-				track->setDataType( Track::MODE2_2352 );
-			} else if( type == "CDI/2336" ) {
-				track->setDataType( Track::CDI_2336 );
-			} else if( type == "CDI/2352" ) {
-				track->setDataType( Track::CDI_2352 );
-			} else {
-				track->setDataType( Track::AUDIO );
-			}
+			// NOTE: deprecated
+//			if( type == "AUDIO" ) {
+//				track->setDataType( Track::AUDIO );
+//			} else if( type == "CDG" ) {
+//				track->setDataType( Track::CDG );
+//			} else if( type == "MODE1/2048" ) {
+//				track->setDataType( Track::MODE1_2048 );
+//			} else if( type == "MODE1/2352" ) {
+//				track->setDataType( Track::MODE1_2352 );
+//			} else if( type == "MODE2/2336" ) {
+//				track->setDataType( Track::MODE2_2336 );
+//			} else if( type == "MODE2/2352" ) {
+//				track->setDataType( Track::MODE2_2352 );
+//			} else if( type == "CDI/2336" ) {
+//				track->setDataType( Track::CDI_2336 );
+//			} else if( type == "CDI/2352" ) {
+//				track->setDataType( Track::CDI_2352 );
+//			} else {
+//				track->setDataType( Track::AUDIO );
+//			}
 			this->tracks_.push_back( track );
 		}
 
@@ -279,7 +283,9 @@ namespace khopper {
 			if( trackNO == -1 ) {
 				this->garbage_.push_back( line );
 			} else {
-				this->tracks_[trackNO]->addGarbage( line );
+				QStringList garbage = this->tracks_[trackNO]->get( "garbage" ).toStringList();
+				garbage.append( line );
+				this->tracks_[trackNO]->set( "garbage", garbage );
 			}
 		}
 

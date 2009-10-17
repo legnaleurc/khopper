@@ -52,7 +52,7 @@
 namespace {
 
 	inline QString applyFormat( boost::format tpl, khopper::album::TrackCSP track ) {
-		return QString::fromUtf8( ( tpl % track->getTitle().toUtf8().constData() % track->getArtist().toUtf8().constData() % track->getIndex() ).str().c_str() );
+		return QString::fromUtf8( ( tpl % track->get( "title" ).toString().toUtf8().constData() % track->get( "artist" ).toString().toUtf8().constData() % track->get( "index" ).toInt() ).str().c_str() );
 	}
 
 }
