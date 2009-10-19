@@ -282,11 +282,11 @@ namespace khopper {
 		}
 #endif
 		bool DefaultReader::seekFrame( double timestamp ) {
-			bool succeed = av_seek_frame( this->pFormatContext_.get(), -1, ::toNative( timestamp ), AVSEEK_FLAG_BACKWARD ) >= 0;
-			if( succeed ) {
+			int succeed = av_seek_frame( this->pFormatContext_.get(), -1, ::toNative( timestamp ), AVSEEK_FLAG_BACKWARD ) >= 0;
+			if( succeed >= 0 ) {
 				avcodec_flush_buffers( this->pCodecContext_.get() );
 			}
-			return succeed;
+			return succeed >= 0;
 		}
 
 	}
