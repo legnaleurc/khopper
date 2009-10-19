@@ -23,7 +23,7 @@
 #define KHOPPER_WIDGET_SEEKSLIDER_HPP
 
 #include <QSlider>
-#include <Phonon>
+#include <Phonon/MediaObject>
 
 namespace khopper {
 

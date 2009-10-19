@@ -25,6 +25,7 @@
 
 #include <QHBoxLayout>
 #include <QtDebug>
+#include <Phonon/AudioOutput>
 
 namespace khopper {
 
