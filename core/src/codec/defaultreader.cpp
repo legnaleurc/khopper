@@ -185,12 +185,6 @@ namespace khopper {
 			if( ret < 0 ) {
 				return data;
 			}
-#if LIBAVCODEC_VERSION_MAJOR < 53
-			uint8_t * audio_pkt_data = this->pPacket_->data;
-			int audio_pkt_size = this->pPacket_->size;
-#else
-			uint8_t * pktDataBackup = this->pPacket_->data;
-#endif
 			int64_t curPts = -1;
 			int64_t decoded = 0;
 			if( this->pPacket_->pts != static_cast< int64_t >( AV_NOPTS_VALUE ) ) {
@@ -201,8 +195,11 @@ namespace khopper {
 				);
 			}
 #if LIBAVCODEC_VERSION_MAJOR < 53
+			uint8_t * audio_pkt_data = this->pPacket_->data;
+			int audio_pkt_size = this->pPacket_->size;
 			while( audio_pkt_size > 0 ) {
 #else
+			uint8_t * pktDataBackup = this->pPacket_->data;
 			while( this->pPacket_->size > 0 ) {
 #endif
 				if( this->afterEnd( toGeneral( curPts ) ) ) {
