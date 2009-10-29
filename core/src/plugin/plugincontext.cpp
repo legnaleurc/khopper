@@ -71,9 +71,10 @@ namespace khopper {
 
 		QObject * PluginContext::load( QString name ) {
 			QObject * result = NULL;
+			name = PluginContext::toRealName_( name );
 			foreach( QDir d, PluginContext::paths_() ) {
 				if( d.exists( name ) ) {
-					QPluginLoader pl( d.absoluteFilePath( PluginContext::toRealName_( name ) ) );
+					QPluginLoader pl( d.absoluteFilePath( name ) );
 					QObject * tmp = pl.instance();
 					if( !tmp ) {
 						throw error::RunTimeError( pl.errorString() );
