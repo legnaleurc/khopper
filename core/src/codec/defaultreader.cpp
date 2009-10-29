@@ -183,6 +183,7 @@ namespace khopper {
 
 			ret = av_read_frame( this->pFormatContext_.get(), this->pPacket_.get() );
 			if( ret < 0 ) {
+				stop = true;
 				return data;
 			}
 			int64_t curPts = -1;
@@ -261,7 +262,8 @@ namespace khopper {
 		}
 
 		bool DefaultReader::seekFrame( double timestamp ) {
-			int succeed = av_seek_frame( this->pFormatContext_.get(), -1, ::toNative( timestamp ), AVSEEK_FLAG_BACKWARD ) >= 0;
+			timestamp = av_rescale( timestamp, pStream_->time_base.den, pStream_->time_base.num );
+			int succeed = av_seek_frame( this->pFormatContext_.get(), pStream_->index, timestamp, AVSEEK_FLAG_ANY | AVSEEK_FLAG_BACKWARD );
 			if( succeed >= 0 ) {
 				avcodec_flush_buffers( this->pCodecContext_.get() );
 			}
