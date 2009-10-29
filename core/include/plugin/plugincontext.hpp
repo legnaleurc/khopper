@@ -86,7 +86,7 @@ namespace khopper {
 				 * so don't worry about it's life time.
 				 */
 				ProductCreator * operator()() {
-					ProductCreator * c = qobject_cast< ProductCreator * >( PluginContext::load( this->plugin_.c_str() ) );
+					ProductCreator * c = dynamic_cast< ProductCreator * >( PluginContext::load( this->plugin_.c_str() ) );
 					if( !c ) {
 						throw error::RunTimeError( "Invalid plugin!" );
 					}
