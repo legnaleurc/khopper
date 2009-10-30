@@ -24,8 +24,6 @@
 
 #include "util/text.hpp"
 
-#include <QtDebug>
-
 /* register plugin */
 namespace {
 	bool registered = khopper::plugin::registerReader( "flac", "kpr_flac" );
@@ -167,13 +165,14 @@ namespace khopper {
 				}
 			}
 
+			self->offset_ += decoded;
 			self->decodedTime_ = decoded / ( double )frame->header.sample_rate;
 
 			return FLAC__STREAM_DECODER_WRITE_STATUS_CONTINUE;
 		}
 
 		void FlacReader::errorCallback_(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorStatus status, void *client_data) {
-			qDebug() << status;
+			// TODO: report error!
 		}
 
 	}
