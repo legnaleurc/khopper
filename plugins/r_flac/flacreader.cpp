@@ -45,24 +45,25 @@ namespace khopper {
 
 		FlacReader::FlacReader():
 			AbstractReader(),
-			pFD_( FLAC__stream_decoder_new(), FLAC__stream_decoder_delete ),
+			pFD_(),
 			buffer_(),
 			offset_( 0 ),
 			decodedTime_( 0.0 ) {
-			if( !this->pFD_ ) {
-				/* error! */
-			}
-			if( !FLAC__stream_decoder_set_md5_checking( this->pFD_.get(), true ) ) {
-				/* error! */
-			}
 		}
 
 		FlacReader::~FlacReader() {
 		}
 
 		void FlacReader::openResource() {
-			FLAC__StreamDecoderInitStatus initStatus;
-			initStatus = FLAC__stream_decoder_init_file(
+			this->pFD_.reset( FLAC__stream_decoder_new(), FLAC__stream_decoder_delete );
+			if( !this->pFD_ ) {
+				throw error::CodecError( "Not enough memory! (from khopper::codec::FlacReader)" );
+			}
+			if( !FLAC__stream_decoder_set_md5_checking( this->pFD_.get(), true ) ) {
+				throw error::CodecError( "Can\'t check md5! (from khopper::codec::FlacReader)" );
+			}
+
+			FLAC__StreamDecoderInitStatus initStatus = FLAC__stream_decoder_init_file(
 				this->pFD_.get(),
 				text::toUtf8( this->getFilePath() ).c_str(),
 				writeCallback_,
@@ -71,12 +72,15 @@ namespace khopper {
 				this
 			);
 			if( initStatus != FLAC__STREAM_DECODER_INIT_STATUS_OK ) {
-				/* error! */
+				throw error::CodecError( std::string( FLAC__StreamDecoderInitStatusString[initStatus] ) + " (from khopper::codec::FlacReader)" );
 			}
 		}
 
 		void FlacReader::closeResource() {
-			// FIXME
+			this->pFD_.reset();
+			this->buffer_.clear();
+			this->offset_ = 0;
+			this->decodedTime_ = 0.0;
 		}
 
 		void FlacReader::setupDemuxer() {
@@ -88,7 +92,7 @@ namespace khopper {
 		void FlacReader::readHeader() {
 			FLAC__bool ok = FLAC__stream_decoder_process_until_end_of_metadata( this->pFD_.get() );
 			if( !ok ) {
-				/* error */
+				throw error::CodecError( "Can\'t read metadata (from khopper::codec::FlacReader)" );
 			}
 		}
 
@@ -113,13 +117,14 @@ namespace khopper {
 			}
 		}
 
-		void FlacReader::metadataCallback_( const FLAC__StreamDecoder * decoder, const FLAC__StreamMetadata * metadata, void * client_data ) {
+		void FlacReader::metadataCallback_( const FLAC__StreamDecoder * /*decoder*/, const FLAC__StreamMetadata * metadata, void * client_data ) {
 			FlacReader * self = static_cast< FlacReader * >( client_data );
 			switch( metadata->type ) {
 			case FLAC__METADATA_TYPE_STREAMINFO:
 				self->setSampleRate( metadata->data.stream_info.sample_rate );
 				self->setChannels( metadata->data.stream_info.channels );
 				self->setDuration( metadata->data.stream_info.total_samples / metadata->data.stream_info.sample_rate );
+				self->setBitRate( 0 );
 				break;
 			case FLAC__METADATA_TYPE_PADDING:
 				break;
@@ -141,7 +146,7 @@ namespace khopper {
 		}
 
 		FLAC__StreamDecoderWriteStatus FlacReader::writeCallback_(
-			const FLAC__StreamDecoder * decoder,
+			const FLAC__StreamDecoder * /*decoder*/,
 			const FLAC__Frame * frame,
 			const FLAC__int32 * const buffer[],
 			void * client_data ) {
@@ -171,8 +176,8 @@ namespace khopper {
 			return FLAC__STREAM_DECODER_WRITE_STATUS_CONTINUE;
 		}
 
-		void FlacReader::errorCallback_(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorStatus status, void *client_data) {
-			// TODO: report error!
+		void FlacReader::errorCallback_(const FLAC__StreamDecoder * /*decoder*/, FLAC__StreamDecoderErrorStatus status, void * /*client_data*/) {
+			throw error::CodecError( std::string( FLAC__StreamDecoderErrorStatusString[status] ) + " (from khopper::codec::FlacReader)" );
 		}
 
 	}
