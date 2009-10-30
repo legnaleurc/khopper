@@ -40,3 +40,7 @@ unix {
 	CONFIG    += link_pkgconfig
 	PKGCONFIG += flac
 }
+
+win32 {
+	win32:LIBS += -lFLAC
+}
