@@ -26,7 +26,7 @@
 
 /* register plugin */
 namespace {
-	bool registered = khopper::plugin::registerReader( "flac", "kpr_flac" );
+	static const bool registered = khopper::plugin::registerReader( "flac", "kpr_flac" );
 }
 Q_EXPORT_PLUGIN2( kpr_flac, khopper::plugin::FlacReaderCreator )
 
@@ -39,33 +39,50 @@ namespace khopper {
 	}
 }
 
+namespace {
+	FILE * fileHelper( const std::wstring & filePath ) {
+#ifdef Q_OS_WIN32
+		FILE * fin = NULL;
+		errno_t ret = _wfopen_s( &fin, filePath.c_str(), L"rb" );
+		if( ret != 0 ) {
+			return NULL;
+		}
+		return fin;
+#else
+		return fopen( khopper::text::toUtf8( filePath ).c_str(), "rb" );
+#endif
+	}
+}
+
 namespace khopper {
 
 	namespace codec {
 
 		FlacReader::FlacReader():
 			AbstractReader(),
-			pFD_(),
+			pFD_( FLAC__stream_decoder_new(), FLAC__stream_decoder_delete ),
 			buffer_(),
 			offset_( 0 ),
 			decodedTime_( 0.0 ) {
+				if( !this->pFD_ ) {
+					throw error::CodecError( "Not enough memory! (from khopper::codec::FlacReader)" );
+				}
 		}
 
 		FlacReader::~FlacReader() {
+			if( this->isOpen() ) {
+				this->close();
+			}
 		}
 
 		void FlacReader::openResource() {
-			this->pFD_.reset( FLAC__stream_decoder_new(), FLAC__stream_decoder_delete );
-			if( !this->pFD_ ) {
-				throw error::CodecError( "Not enough memory! (from khopper::codec::FlacReader)" );
-			}
 			if( !FLAC__stream_decoder_set_md5_checking( this->pFD_.get(), true ) ) {
 				throw error::CodecError( "Can\'t check md5! (from khopper::codec::FlacReader)" );
 			}
 
-			FLAC__StreamDecoderInitStatus initStatus = FLAC__stream_decoder_init_file(
+			FLAC__StreamDecoderInitStatus initStatus = FLAC__stream_decoder_init_FILE(
 				this->pFD_.get(),
-				text::toUtf8( this->getFilePath() ).c_str(),
+				fileHelper( this->getFilePath() ),
 				writeCallback_,
 				metadataCallback_,
 				errorCallback_,
@@ -77,7 +94,7 @@ namespace khopper {
 		}
 
 		void FlacReader::closeResource() {
-			this->pFD_.reset();
+			FLAC__stream_decoder_finish( this->pFD_.get() );
 			this->buffer_.clear();
 			this->offset_ = 0;
 			this->decodedTime_ = 0.0;
