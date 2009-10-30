@@ -62,7 +62,7 @@ namespace khopper {
 			this->bitRate_->addItem( "192", QVariant( 192000 ) );
 			this->bitRate_->addItem( "256", QVariant( 256000 ) );
 			this->bitRate_->addItem( "320", QVariant( 320000 ) );
-			this->bitRate_->setCurrentIndex( 3 );
+			this->bitRate_->setCurrentIndex( 4 );
 			cbrBox->addWidget( this->bitRate_ );
 
 			QHBoxLayout * vbrBox = new QHBoxLayout;
