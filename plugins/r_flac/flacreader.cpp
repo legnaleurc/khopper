@@ -49,7 +49,8 @@ namespace khopper {
 			AbstractReader(),
 			pFD_( FLAC__stream_decoder_new(), FLAC__stream_decoder_delete ),
 			buffer_(),
-			offset_( 0 ) {
+			offset_( 0 ),
+			decodedTime_( 0.0 ) {
 			if( !this->pFD_ ) {
 				/* error! */
 			}
@@ -71,6 +72,10 @@ namespace khopper {
 			if( initStatus != FLAC__STREAM_DECODER_INIT_STATUS_OK ) {
 				/* error! */
 			}
+		}
+
+		void FlacReader::closeResource() {
+			// FIXME
 		}
 
 		void FlacReader::setupDemuxer() {
@@ -96,11 +101,13 @@ namespace khopper {
 		}
 
 		ByteArray FlacReader::readFrame( double & decoded, bool & stop ) {
+			stop = false;
 			FLAC__bool ok = FLAC__stream_decoder_process_single( this->pFD_.get() );
 			if( !ok ) {
 				stop = true;
 				return ByteArray();
 			} else {
+				decoded = this->decodedTime_;
 				return this->buffer_;
 			}
 		}
@@ -140,6 +147,7 @@ namespace khopper {
 			FlacReader * self = static_cast< FlacReader * >( client_data );
 			self->buffer_.clear();
 
+			unsigned int decoded = 0;
 			for( unsigned int i = 0; i < frame->header.blocksize; ++i ) {
 				double ts = ( self->offset_ + i ) / ( double )frame->header.sample_rate;
 				if( self->afterBegin( ts ) ) {
@@ -148,11 +156,15 @@ namespace khopper {
 					}
 					for( unsigned int c = 0; c < frame->header.channels; ++c ) {
 						FLAC__int16 d = static_cast< FLAC__int16 >( buffer[c][i] );
+						// little endian
 						self->buffer_.push_back( d );
 						self->buffer_.push_back( d >> 8 );
 					}
+					++decoded;
 				}
 			}
+
+			self->decodedTime_ = decoded / ( double )frame->header.sample_rate;
 
 			return FLAC__STREAM_DECODER_WRITE_STATUS_CONTINUE;
 		}
