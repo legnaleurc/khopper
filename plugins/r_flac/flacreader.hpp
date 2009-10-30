@@ -24,13 +24,36 @@
 
 #include "codec/defaultreader.hpp"
 
+extern "C" {
+#include <FLAC/stream_decoder.h>
+}
+
 namespace khopper {
 
 	namespace codec {
 
-		class FlacReader : public DefaultReader {
+		class FlacReader : public AbstractReader {
+		public:
+			FlacReader();
+			virtual ~FlacReader();
+
 		protected:
+			virtual void openResource();
+			virtual void closeResource();
+			virtual void setupDemuxer();
+			virtual void setupDecoder();
+			virtual void readHeader();
+			virtual ByteArray readFrame( double &, bool & );
 			virtual bool seekFrame( double );
+
+		private:
+			static void metadataCallback_( const FLAC__StreamDecoder *, const FLAC__StreamMetadata *, void * );
+			static FLAC__StreamDecoderWriteStatus writeCallback_( const FLAC__StreamDecoder *, const FLAC__Frame *, const FLAC__int32 * const [], void * );
+			static void errorCallback_( const FLAC__StreamDecoder *, FLAC__StreamDecoderErrorStatus, void * );
+
+			std::tr1::shared_ptr< FLAC__StreamDecoder > pFD_;
+			ByteArray buffer_;
+			uint64_t offset_;
 		};
 
 	}
