@@ -59,6 +59,9 @@ namespace khopper {
 			}
 		}
 
+		FlacReader::~FlacReader() {
+		}
+
 		void FlacReader::openResource() {
 			FLAC__StreamDecoderInitStatus initStatus;
 			initStatus = FLAC__stream_decoder_init_file(

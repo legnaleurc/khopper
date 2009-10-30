@@ -24,9 +24,7 @@
 
 #include "codec/defaultreader.hpp"
 
-extern "C" {
 #include <FLAC/stream_decoder.h>
-}
 
 namespace khopper {
 
