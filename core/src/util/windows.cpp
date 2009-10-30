@@ -52,7 +52,8 @@ namespace khopper {
 		}
 
 		QString PluginContext::toRealName_( const QString & name ) {
-			return name + ".dll";
+			// FIXME: dirty hack
+			return name + "0.dll";
 		}
 
 	}
