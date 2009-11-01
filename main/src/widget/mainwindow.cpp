@@ -85,7 +85,7 @@ namespace khopper {
 
 			// Add song list
 			mainBox->addWidget( this->player_ );
-			connect( this->player_, SIGNAL( dropFile( const QStringList & ) ), this, SLOT( open( const QStringList & ) ) );
+			connect( this->player_, SIGNAL( fileDropped( const QStringList & ) ), this, SLOT( open( const QStringList & ) ) );
 			connect( this->player_, SIGNAL( requireConvert() ), this, SLOT( fire_() ) );
 			connect( this->player_, SIGNAL( error( const QString &, const QString & ) ), this, SLOT( showErrorMessage_( const QString &, const QString & ) ) );
 
