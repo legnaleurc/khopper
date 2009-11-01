@@ -108,6 +108,7 @@ namespace khopper {
 					} catch( ... ) {
 						// FIXME: compile error, don't know why
 						// assert( !"memory allocation failed" );
+						pointer.reset();
 					}
 					assert( pointer || !"got null pointer" );
 					return pointer;
