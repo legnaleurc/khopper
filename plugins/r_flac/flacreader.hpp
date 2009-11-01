@@ -49,6 +49,8 @@ namespace khopper {
 			static FLAC__StreamDecoderWriteStatus writeCallback_( const FLAC__StreamDecoder *, const FLAC__Frame *, const FLAC__int32 * const [], void * );
 			static void errorCallback_( const FLAC__StreamDecoder *, FLAC__StreamDecoderErrorStatus, void * );
 
+			void parseVorbisComments_( const FLAC__StreamMetadata_VorbisComment & );
+
 			std::tr1::shared_ptr< FLAC__StreamDecoder > pFD_;
 			ByteArray buffer_;
 			uint64_t offset_;

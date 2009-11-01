@@ -24,6 +24,10 @@
 
 #include "util/text.hpp"
 
+#include <QStringList>
+#include <QMultiMap>
+#include <QtDebug>
+
 /* register plugin */
 namespace {
 	static const bool registered = khopper::plugin::registerReader( "flac", "kpr_flac" );
@@ -78,6 +82,9 @@ namespace khopper {
 		void FlacReader::openResource() {
 			if( !FLAC__stream_decoder_set_md5_checking( this->pFD_.get(), true ) ) {
 				throw error::CodecError( "Can\'t check md5! (from khopper::codec::FlacReader)" );
+			}
+			if( !FLAC__stream_decoder_set_metadata_respond_all( this->pFD_.get() ) ) {
+				throw error::CodecError( "Can\'t retrive all metadata! (from khopper::codec::FlacReader)" );
 			}
 
 			FLAC__StreamDecoderInitStatus initStatus = FLAC__stream_decoder_init_FILE(
@@ -134,6 +141,33 @@ namespace khopper {
 			}
 		}
 
+		void FlacReader::parseVorbisComments_( const FLAC__StreamMetadata_VorbisComment & comments ) {
+			QMultiMap< QString, QString > tags;
+			for( unsigned int i = 0; i < comments.num_comments; ++i ) {
+				QStringList uc = QString::fromUtf8( static_cast< const char * >( static_cast< const void * >( comments.comments[i].entry ) ) ).split( '=' );
+				tags.insert( uc[0].toUpper(), uc[1] );
+			}
+			for( QMultiMap< QString, QString >::const_iterator it = tags.begin(); it != tags.end(); ++it ) {
+				if( it.key() == "TITLE" ) {
+					this->setTitle( QStringList( tags.values( it.key() ) ).join( " & " ).toUtf8().constData() );
+				} else if( it.key() == "ALBUM" ) {
+					this->setAlbum( QStringList( tags.values( it.key() ) ).join( " & " ).toUtf8().constData() );
+				} else if( it.key() == "TRACKNUMBER" ) {
+					this->setIndex( it.value().toInt() );
+				} else if( it.key() == "ARTIST" ) {
+					this->setArtist( QStringList( tags.values( it.key() ) ).join( " & " ).toUtf8().constData() );
+				} else if( it.key() == "PERFORMER" ) {
+					this->setArtist( QStringList( tags.values( it.key() ) ).join( " & " ).toUtf8().constData() );
+				} else if( it.key() == "GENRE" ) {
+					this->setGenre( QStringList( tags.values( it.key() ) ).join( " & " ).toUtf8().constData() );
+				} else if( it.key() == "DATE" ) {
+					this->setYear( it.value().toInt() );
+				} else {
+					qDebug() << "readed `" << it.key() << "\' but ignored";
+				}
+			}
+		}
+
 		void FlacReader::metadataCallback_( const FLAC__StreamDecoder * /*decoder*/, const FLAC__StreamMetadata * metadata, void * client_data ) {
 			FlacReader * self = static_cast< FlacReader * >( client_data );
 			switch( metadata->type ) {
@@ -144,21 +178,28 @@ namespace khopper {
 				self->setBitRate( 0 );
 				break;
 			case FLAC__METADATA_TYPE_PADDING:
+				qDebug( "FLAC__METADATA_TYPE_PADDING" );
 				break;
 			case FLAC__METADATA_TYPE_APPLICATION:
+				qDebug( "FLAC__METADATA_TYPE_APPLICATION" );
 				break;
 			case FLAC__METADATA_TYPE_SEEKTABLE:
+				qDebug( "FLAC__METADATA_TYPE_SEEKTABLE" );
 				break;
 			case FLAC__METADATA_TYPE_VORBIS_COMMENT:
+				self->parseVorbisComments_( metadata->data.vorbis_comment );
 				break;
 			case FLAC__METADATA_TYPE_CUESHEET:
+				qDebug( "FLAC__METADATA_TYPE_CUESHEET" );
 				break;
 			case FLAC__METADATA_TYPE_PICTURE:
+				qDebug( "FLAC__METADATA_TYPE_PICTURE" );
 				break;
 			case FLAC__METADATA_TYPE_UNDEFINED:
+				qDebug( "FLAC__METADATA_TYPE_UNDEFINED" );
 				break;
 			default:
-				;
+				qDebug( "METADATA IS WRONG" );
 			}
 		}
 
