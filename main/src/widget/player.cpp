@@ -66,7 +66,7 @@ namespace khopper {
 			playerBox->addWidget( this->seeker_ );
 			playerBox->addWidget( this->volume_ );
 
-			connect( this->songList_, SIGNAL( dropFile( const QStringList & ) ), this, SIGNAL( dropFile( const QStringList & ) ) );
+			connect( this->songList_, SIGNAL( fileDropped( const QStringList & ) ), this, SIGNAL( fileDropped( const QStringList & ) ) );
 			connect( this->songList_, SIGNAL( requireConvert() ), this, SIGNAL( requireConvert() ) );
 			mainBox->addWidget( this->songList_ );
 		}
