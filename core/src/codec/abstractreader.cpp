@@ -108,7 +108,10 @@ namespace khopper {
 
 			bool stop = false;
 			ByteArray data( this->readFrame( decoded, stop ) );
-			if( data.empty() || stop ) {
+			while( !stop && data.empty() ) {
+				data = this->readFrame( decoded, stop );
+			}
+			if( stop ) {
 				this->hasNext_ = false;
 			}
 

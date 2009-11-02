@@ -94,6 +94,8 @@ namespace khopper {
 			template< typename Product >
 			class KHOPPER_EXPORT AbstractCreator : public AbstractPlugin {
 			public:
+				AbstractCreator() {}
+				virtual ~AbstractCreator() {}
 				/**
 				 * @brief Create the product
 				 * @note never null
@@ -103,7 +105,9 @@ namespace khopper {
 					try {
 						pointer = this->doCreate();
 					} catch( ... ) {
-						assert( !"memory allocation failed" );
+						// FIXME: compile error, don't know why
+						// assert( !"memory allocation failed" );
+						pointer.reset();
 					}
 					assert( pointer || typeid( *pointer ) == typeid( Product ) || !"got null pointer" );
 					return pointer;

@@ -30,6 +30,7 @@
 # define KHOPPER_EXPORT __declspec(dllexport)
 # if _MSC_FULL_VER >= 150030729
 #  include <memory>
+#  include <stdint.h>
 # else
 // reserved for older msvc
 # endif

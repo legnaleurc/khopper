@@ -68,6 +68,8 @@ namespace khopper {
 						break;
 					}
 				}
+			} catch( error::BaseError & e ) {
+				emit error( tr( "Error on converting!" ), e.getMessage() );
 			} catch( std::exception & e ) {
 				emit error( tr( "Error on converting!" ), trUtf8( e.what() ) );
 			}
