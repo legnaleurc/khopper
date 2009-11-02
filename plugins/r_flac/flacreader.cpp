@@ -127,7 +127,7 @@ namespace khopper {
 		}
 
 		bool FlacReader::seekFrame( int ms ) {
-			FLAC__uint64 ts = ms * this->getSampleRate() / 1000;
+			FLAC__uint64 ts = static_cast< FLAC__uint64 >( ms ) * this->getSampleRate() / 1000;
 			FLAC__bool ok = FLAC__stream_decoder_seek_absolute( this->pFD_.get(), ts );
 			if( ok ) {
 				this->offset_ = ts;
