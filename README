@@ -19,7 +19,7 @@ Build dependency：
 	libFLAC >= 1.2.1
 		http://flac.sourceforge.net/
 On Debian-based system:
-	# apt-get install libloki-dev libqt4-dev libphonon-dev libboost-dev libavcodec-dev libavformat-dev libflac-dev
+	# apt-get install libloki-dev libqt4-dev libphonon-dev libboost-dev libavcodec-dev libavformat-dev libflac-dev pkg-config
 
 Build step:
 	Linux:
