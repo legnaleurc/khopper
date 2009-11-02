@@ -24,14 +24,14 @@ CONFIG( debug, debug|release ) {
 	OBJECTS_DIR = $${ROOT_PATH}/tmp/obj/debug
 
 	unix:LIBS  += -L$${ROOT_PATH}/build/debug -lk_core
-	win32:LIBS += -L$${ROOT_PATH}/build/debug -lk_core0
+	win32:LIBS += -L$${ROOT_PATH}/build/debug -lk_core0 -lFLAC_dynamic_d
 } else {
 	DESTDIR     = $${ROOT_PATH}/build/release/plugins
 	OBJECTS_DIR = $${ROOT_PATH}/tmp/obj/release
 	DEFINES    += QT_NO_DEBUG_OUTPUT
 
 	unix:LIBS  += -L$${ROOT_PATH}/build/release -lk_core
-	win32:LIBS += -L$${ROOT_PATH}/build/release -lk_core0
+	win32:LIBS += -L$${ROOT_PATH}/build/release -lk_core0 -lFLAC_dynamic
 
 	unix:QMAKE_POST_LINK = strip $${DESTDIR}/lib$${TARGET}.so
 }
@@ -39,8 +39,4 @@ CONFIG( debug, debug|release ) {
 unix {
 	CONFIG    += link_pkgconfig
 	PKGCONFIG += flac
-}
-
-win32 {
-	win32:LIBS += -lFLAC
 }
