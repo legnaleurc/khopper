@@ -220,8 +220,8 @@ namespace khopper {
 			unsigned int decoded = 0;
 			for( unsigned int i = 0; i < frame->header.blocksize; ++i ) {
 				double ts = ( self->offset_ + i ) / ( double )frame->header.sample_rate;
-				if( self->afterBegin( ts ) ) {
-					if( self->afterEnd( ts ) ) {
+				if( self->afterBegin( ts * 1000 ) ) {
+					if( self->afterEnd( ts * 1000 ) ) {
 						return FLAC__STREAM_DECODER_WRITE_STATUS_ABORT;
 					}
 					for( unsigned int c = 0; c < frame->header.channels; ++c ) {
