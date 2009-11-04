@@ -74,7 +74,7 @@ namespace khopper {
 			/**
 			 * @brief Convert to millisecond
 			 */
-			int toMillisecond() const;
+			int64_t toMillisecond() const;
 			/**
 			 * @brief Convert to second
 			 */
@@ -89,7 +89,7 @@ namespace khopper {
 			 * @brief Convert from int
 			 * @param [in] millisecond Time stamp in millisecond
 			 */
-			static Index fromMillisecond( int millisecond );
+			static Index fromMillisecond( int64_t millisecond );
 			/**
 			 * @brief Convert from double
 			 * @param [in] second Time stamp in second

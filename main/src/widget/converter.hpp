@@ -62,7 +62,7 @@ namespace khopper {
 			 * @brief Decoded duration
 			 * @param ms Time in second * 1000
 			 */
-			void decodedTime( int ms ) const;
+			void decodedTime( qint64 ms ) const;
 
 		private:
 			bool canceled_;

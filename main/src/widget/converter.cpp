@@ -53,7 +53,7 @@ namespace khopper {
 				throw error::CodecError( "Invalid start point" );
 			}
 
-			int decoded;
+			int64_t decoded;
 			while( decoder->hasNext() ) {
 				if( this->canceled_ ) {
 					break;

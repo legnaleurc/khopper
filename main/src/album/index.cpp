@@ -69,8 +69,8 @@ namespace khopper {
 			return Index( *this ) -= that;
 		}
 
-		int Index::toMillisecond() const {
-			return ( this->minute * 60 + this->second ) * 1000 + this->millisecond;
+		int64_t Index::toMillisecond() const {
+			return ( static_cast< int64_t >( this->minute ) * 60 + this->second ) * 1000 + this->millisecond;
 		}
 
 		double Index::toSecond() const {
@@ -82,7 +82,7 @@ namespace khopper {
 			return ( tpl % this->minute % this->second % this->millisecond ).str();
 		}
 
-		Index Index::fromMillisecond( int millisecond ) {
+		Index Index::fromMillisecond( int64_t millisecond ) {
 			Index tmp;
 			tmp.millisecond = millisecond % 1000;
 			millisecond /= 1000;

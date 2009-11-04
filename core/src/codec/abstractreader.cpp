@@ -31,13 +31,13 @@ namespace khopper {
 		AbstractReader::AbstractReader():
 		album_(),
 		artist_(),
-		begin_( -1 ),
+		msBegin_( -1 ),
 		bitRate_( -1 ),
 		channels_( -1 ),
 		comment_(),
 		copyright_(),
-		duration_( -1 ),
-		end_( -1 ),
+		msDuration_( -1 ),
+		msEnd_( -1 ),
 		filePath_(),
 		genre_(),
 		hasNext_( false ),
@@ -74,14 +74,14 @@ namespace khopper {
 		void AbstractReader::close() {
 			this->album_.clear();
 			this->artist_.clear();
-			this->begin_ = -1;
+			this->msBegin_ = -1;
 			this->bitRate_ = -1;
 			this->channels_ = -1;
 			this->comment_.clear();
 			this->copyright_.clear();
-			this->duration_ = -1;
+			this->msDuration_ = -1;
 			this->filePath_.clear();
-			this->end_ = -1;
+			this->msEnd_ = -1;
 			this->genre_.clear();
 			this->index_ = -1;
 			this->sampleRate_ = -1;
@@ -100,16 +100,16 @@ namespace khopper {
 			this->opening_ = false;
 		}
 
-		ByteArray AbstractReader::read( int & decoded ) {
-			decoded = 0;
+		ByteArray AbstractReader::read( int64_t & msDecoded ) {
+			msDecoded = 0;
 			if( !this->opening_ || !this->hasNext_ ) {
 				return ByteArray();
 			}
 
 			bool stop = false;
-			ByteArray data( this->readFrame( decoded, stop ) );
+			ByteArray data( this->readFrame( msDecoded, stop ) );
 			while( !stop && data.empty() ) {
-				data = this->readFrame( decoded, stop );
+				data = this->readFrame( msDecoded, stop );
 			}
 			if( stop ) {
 				this->hasNext_ = false;
@@ -118,7 +118,7 @@ namespace khopper {
 			return data;
 		}
 
-		bool AbstractReader::seek( int ms ) {
+		bool AbstractReader::seek( int64_t ms ) {
 			bool succeed = this->seekFrame( ms );
 			if( succeed ) {
 				this->hasNext_ = true;
@@ -126,18 +126,18 @@ namespace khopper {
 			return succeed;
 		}
 
-		bool AbstractReader::afterBegin( int ms ) const {
-			if( this->begin_ < 0 ) {
+		bool AbstractReader::afterBegin( int64_t ms ) const {
+			if( this->msBegin_ < 0 ) {
 				return true;
 			}
-			return ms >= this->begin_;
+			return ms >= this->msBegin_;
 		}
 
-		bool AbstractReader::afterEnd( int ms ) const {
-			if( this->end_ < 0 ) {
+		bool AbstractReader::afterEnd( int64_t ms ) const {
+			if( this->msEnd_ < 0 ) {
 				return false;
 			}
-			return ms >= this->end_;
+			return ms >= this->msEnd_;
 		}
 
 	}

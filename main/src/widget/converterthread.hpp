@@ -84,7 +84,7 @@ namespace khopper {
 			/**
 			 * @brief Send task goal
 			 */
-			void taskGoal( int duration );
+			void taskGoal( qint64 msDuration );
 			/**
 			 * @brief Send current task count
 			 */
@@ -93,7 +93,7 @@ namespace khopper {
 			 * @brief Progress notifyer
 			 * @param duration Convert duration
 			 */
-			void step( int duration );
+			void step( qint64 msDuration );
 
 		protected:
 			/**

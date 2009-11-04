@@ -112,9 +112,9 @@ namespace khopper {
 
 			// Converter thread
 			connect( this->cvt_, SIGNAL( taskName( const QString & ) ), this->progress_, SLOT( setItemName( const QString & ) ) );
-			connect( this->cvt_, SIGNAL( taskGoal( int ) ), this->progress_, SLOT( setMaximum( int ) ) );
+			connect( this->cvt_, SIGNAL( taskGoal( qint64 ) ), this->progress_, SLOT( setMaximum( qint64 ) ) );
 			connect( this->cvt_, SIGNAL( currentTask( int ) ), this->progress_, SLOT( setCurrent( int ) ) );
-			connect( this->cvt_, SIGNAL( step( int ) ), this, SLOT( incProgress_( int ) ) );
+			connect( this->cvt_, SIGNAL( step( qint64 ) ), this, SLOT( incProgress_( qint64 ) ) );
 			connect( this->cvt_, SIGNAL( finished() ), this->progress_, SLOT( accept() ) );
 			connect( this->cvt_, SIGNAL( error( const QString &, const QString & ) ), this, SLOT( showErrorMessage_( const QString &, const QString & ) ) );
 			// NOTE: works, but danger
@@ -128,7 +128,7 @@ namespace khopper {
 			}
 		}
 
-		void MainWindow::incProgress_( int diff ) {
+		void MainWindow::incProgress_( qint64 diff ) {
 			this->progress_->setValue( this->progress_->getValue() + diff );
 		}
 
