@@ -88,7 +88,7 @@ namespace khopper {
 		}
 
 		void CUESheet::setMedia( const QUrl & uri ) {
-			std::for_each( this->tracks_.begin(), this->tracks_.end(), setFile( uri ) );
+			std::for_each( this->trackBegin(), this->trackEnd(), setFile( uri ) );
 
 			// get the total length, because cue sheet don't provide it
 			// FIXME: not always local file
@@ -97,9 +97,9 @@ namespace khopper {
 			decoder->open( uri );
 			if( decoder->isOpen() ) {
 				// set bit rate, channels, sample rate
-				std::for_each( this->tracks_.begin(), this->tracks_.end(), setBCS( decoder ) );
+				std::for_each( this->trackBegin(), this->trackEnd(), setBCS( decoder ) );
 
-				TrackSP last( this->tracks_.back() );
+				TrackSP last( this->trackBack() );
 				last->set( "duration", QVariant::fromValue( Index::fromMillisecond( decoder->getDuration() ) - last->get( "start_time" ).value< Index >() ) );
 
 				decoder->close();
@@ -140,7 +140,7 @@ namespace khopper {
 			}
 
 			// set track album
-			std::for_each( this->tracks_.begin(), this->tracks_.end(), ::setAlbum( this->title_ ) );
+			std::for_each( this->trackBegin(), this->trackEnd(), setAlbum( this->get( "title" ).toString() ) );
 
 			this->setMedia( currentFile.first );
 		}
@@ -149,33 +149,33 @@ namespace khopper {
 			QString content = stripQuote( s );
 			if( c == "CATALOG" ) {
 				if( trackNO == -1 ) {
-					this->catalog_ = content;
+					this->set( "catalog", content );
 				}
 			} else if( c == "CDTEXTFILE" ) {
 				if( trackNO == -1 ) {
-					this->cdTextFile_ = content;
+					this->set( "cd_text_file", content );
 				}
 			} else if( c == "ISRC" ) {
 				if( trackNO != -1 ) {
-					this->tracks_[trackNO]->set( "isrc", content );
+					(*this)[trackNO]->set( "isrc", content );
 				}
 			} else if( c == "PERFORMER" ) {
 				if( trackNO == -1 ) {
-					this->artist_ = content;
+					this->set( "artist", content );
 				} else {
-					this->tracks_[trackNO]->set( "artist", content );
+					(*this)[trackNO]->set( "artist", content );
 				}
 			} else if( c == "SONGWRITER" ) {
 				if( trackNO == -1 ) {
-					this->songWriter_ = content;
+					this->set( "song_writer", content );
 				} else {
-					this->tracks_[trackNO]->set( "song_writer", content );
+					(*this)[trackNO]->set( "song_writer", content );
 				}
 			} else if( c == "TITLE" ) {
 				if( trackNO == -1 ) {
-					this->title_ = content;
+					this->set( "title", content );
 				} else {
-					this->tracks_[trackNO]->set( "title", content );
+					(*this)[trackNO]->set( "title", content );
 				}
 			}
 		}
@@ -222,15 +222,15 @@ namespace khopper {
 				switch( n ) {
 				case 1:
 					// track start time
-					this->tracks_[trackNO]->set( "start_time", QVariant::fromValue( tmp ) );
-					if( trackNO > 0 && this->tracks_[trackNO-1]->get( "duration" ).value< Index >().isZero() ) {
-						this->tracks_[trackNO-1]->set( "duration", QVariant::fromValue( this->tracks_[trackNO]->get( "start_time" ).value< Index >() - this->tracks_[trackNO-1]->get( "start_time" ).value< Index >() ) );
+					(*this)[trackNO]->set( "start_time", QVariant::fromValue( tmp ) );
+					if( trackNO > 0 && (*this)[trackNO-1]->get( "duration" ).value< Index >().isZero() ) {
+						(*this)[trackNO-1]->set( "duration", QVariant::fromValue( (*this)[trackNO]->get( "start_time" ).value< Index >() - (*this)[trackNO-1]->get( "start_time" ).value< Index >() ) );
 					}
 					break;
 				case 0:
 					// prevous track end time
 					if( trackNO > 0 ) {
-						this->tracks_[trackNO-1]->set( "duration", QVariant::fromValue( tmp - this->tracks_[trackNO-1]->get( "start_time" ).value< Index >() ) );
+						(*this)[trackNO-1]->set( "duration", QVariant::fromValue( tmp - (*this)[trackNO-1]->get( "start_time" ).value< Index >() ) );
 					}
 					break;
 				default:
@@ -238,9 +238,9 @@ namespace khopper {
 					throw error::ParsingError( "Index value error!" );
 				}
 			} else if( type == "PREGAP" ) {
-				this->tracks_[trackNO]->set( "pregap", QVariant::fromValue( tmp ) );
+				(*this)[trackNO]->set( "pregap", QVariant::fromValue( tmp ) );
 			} else if( type == "POSTGAP" ) {
-				this->tracks_[trackNO]->set( "postgap", QVariant::fromValue( tmp ) );
+				(*this)[trackNO]->set( "postgap", QVariant::fromValue( tmp ) );
 			}
 		}
 
@@ -277,16 +277,23 @@ namespace khopper {
 //			} else {
 //				track->setDataType( Track::AUDIO );
 //			}
-			this->tracks_.push_back( track );
+			this->pushBack( track );
 		}
 
 		void CUESheet::parseGarbage_( const QString & line, int trackNO ) {
 			if( trackNO == -1 ) {
-				this->garbage_.push_back( line );
+				QVariant garbage( this->get( "garbage" ) );
+				if( !garbage.isValid() ) {
+					this->set( "garbage", QStringList( line ) );
+				} else {
+					QStringList tmp( garbage.toStringList() );
+					tmp.append( line );
+					this->set( "garbage", tmp );
+				}
 			} else {
-				QStringList garbage = this->tracks_[trackNO]->get( "garbage" ).toStringList();
+				QStringList garbage = (*this)[trackNO]->get( "garbage" ).toStringList();
 				garbage.append( line );
-				this->tracks_[trackNO]->set( "garbage", garbage );
+				(*this)[trackNO]->set( "garbage", garbage );
 			}
 		}
 

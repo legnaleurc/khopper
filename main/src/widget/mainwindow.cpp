@@ -299,7 +299,7 @@ namespace khopper {
 						} catch( std::exception & e ) {
 							this->showErrorMessage_( tr( "Unknow error" ), trUtf8( e.what() ) );
 						}
-						tracks.insert( tracks.end(), sheet.getTracks().begin(), sheet.getTracks().end() );
+						tracks.insert( tracks.end(), sheet.trackBegin(), sheet.trackEnd() );
 					}
 				} else {
 					// other, single media
