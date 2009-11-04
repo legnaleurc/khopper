@@ -48,58 +48,6 @@ namespace khopper {
 		class Track {
 		public:
 			/**
-			 * @brief Type of audio file
-			 */
-			enum FileType {
-				/// Binary
-				BINARY,
-				/// Motorola
-				MOTOROLA,
-				/// AIFF
-				AIFF,
-				/// wave
-				WAVE,
-				/// Mpeg 1 Layer 3
-				MP3
-			};
-
-			/// Track type
-			enum DataType {
-				/// AUDIO
-				AUDIO,
-				/// CDG
-				CDG,
-				/// MODE1/2048
-				MODE1_2048,
-				/// MODE1/2352
-				MODE1_2352,
-				/// MODE1/2336
-				MODE2_2336,
-				/// MODE1/2352
-				MODE2_2352,
-				/// CDI/2336
-				CDI_2336,
-				/// CDI/2352
-				CDI_2352
-			};
-
-			/// Track flag
-			enum Flag {
-				/// NONE
-				NONE = 0x00000,
-				/// DCP
-				DCP  = 0x00001,
-				/// CH4
-				CH4  = 0x00010,
-				/// PRE
-				PRE  = 0x00100,
-				/// SCMS
-				SCMS = 0x01000,
-				/// DATA
-				DATA = 0x10000
-			};
-
-			/**
 			 * @brief Default constructor
 			 */
 			Track();

@@ -115,7 +115,7 @@ namespace khopper {
 			QRegExp INDEX( "\\s*(INDEX|PREGAP|POSTGAP)\\s+((\\d+)\\s+)?(\\d+):(\\d+):(\\d+)\\s*" );
 
 			int trackNO = -1;
-			std::pair< QString, Track::FileType > currentFile;
+			std::pair< QString, QString > currentFile;
 			QTextStream sin( &content, QIODevice::ReadOnly );
 			QString line = sin.readLine();
 
@@ -180,38 +180,15 @@ namespace khopper {
 			}
 		}
 
-		std::pair< QString, Track::FileType > CUESheet::parseFile_( const QString & fileName, const QString & type, const QString & dirPath ) {
+		std::pair< QString, QString > CUESheet::parseFile_( const QString & fileName, const QString & type, const QString & dirPath ) {
 			QString filePath = text::joinPath( dirPath, stripQuote( fileName ) );
-			if( type == "BINARY" ) {
-				return std::make_pair( filePath, Track::BINARY );
-			} else if( type == "MOTOROLA" ) {
-				return std::make_pair( filePath, Track::MOTOROLA );
-			} else if( type == "AIFF" ) {
-				return std::make_pair( filePath, Track::AIFF );
-			} else if( type == "WAVE" ) {
-				return std::make_pair( filePath, Track::WAVE );
-			} else if( type == "MP3" ) {
-				return std::make_pair( filePath, Track::MP3 );
-			} else {
-				return std::make_pair( filePath, Track::BINARY );
-			}
+			return std::make_pair( filePath, type );
 		}
 
-		// NOTE: deprecated
-		void CUESheet::parseFlags_( const QString & /*flag*/, int /*trackNO*/ ) {
-//			if( trackNO != -1 ) {
-//				if( flag == "DATA" ) {
-//					this->tracks_[trackNO]->addFlag( Track::DATA );
-//				} else if( flag == "DCP" ) {
-//					this->tracks_[trackNO]->addFlag( Track::DCP );
-//				} else if( flag == "4CH" ) {
-//					this->tracks_[trackNO]->addFlag( Track::CH4 );
-//				} else if( flag == "PRE" ) {
-//					this->tracks_[trackNO]->addFlag( Track::PRE );
-//				} else if( flag == "SCMS" ) {
-//					this->tracks_[trackNO]->addFlag( Track::SCMS );
-//				}
-//			}
+		void CUESheet::parseFlags_( const QString & flag, int /*trackNO*/ ) {
+			QSet< QString > flags( this->get( "flags" ).value< QSet< QString > >() );
+			flags.insert( flag );
+			this->set( "flags", QVariant::fromValue< QSet< QString > >( flags ) );
 		}
 
 		void CUESheet::parseIndex_( const QString & type, const QString & num, const QString & m, const QString & s, const QString & f, int trackNO ) {
@@ -244,52 +221,32 @@ namespace khopper {
 			}
 		}
 
-		// NOTE: deprecated
-		void CUESheet::parseComment_( const QString & /*key*/, const QString & /*value*/, int /*trackNO*/ ) {
-//			if( trackNO == -1 ) {
-//				this->comments_.insert( std::make_pair( key, value ) );
-//			} else {
-//				this->tracks_[trackNO]->addComment( key, value );
-//			}
+		void CUESheet::parseComment_( const QString & key, const QString & value, int trackNO ) {
+			if( trackNO == -1 ) {
+				QStringList comments( this->get( "comments" ).toStringList() );
+				comments.append( QString( "%1:%2;" ).arg( key ).arg( value ) );
+				this->set( "comments", comments );
+			} else {
+				QStringList comments( (*this)[trackNO]->get( "comments" ).toStringList() );
+				comments.append( QString( "%1:%2;" ).arg( key ).arg( value ) );
+				(*this)[trackNO]->set( "comments", comments );
+			}
 		}
 
-		void CUESheet::parseTrack_( const QString & num, const std::pair< QString, Track::FileType > & audioData, const QString & /*type*/ ) {
+		void CUESheet::parseTrack_( const QString & num, const std::pair< QString, QString > & audioData, const QString & type ) {
 			TrackSP track( new Track );
 			track->set( "index", num.toShort() );
+			track->set( "file_type", audioData.second );
+			track->set( "data_type", type );
 			track->setURI( audioData.first );
-			// NOTE: deprecated
-//			if( type == "AUDIO" ) {
-//				track->setDataType( Track::AUDIO );
-//			} else if( type == "CDG" ) {
-//				track->setDataType( Track::CDG );
-//			} else if( type == "MODE1/2048" ) {
-//				track->setDataType( Track::MODE1_2048 );
-//			} else if( type == "MODE1/2352" ) {
-//				track->setDataType( Track::MODE1_2352 );
-//			} else if( type == "MODE2/2336" ) {
-//				track->setDataType( Track::MODE2_2336 );
-//			} else if( type == "MODE2/2352" ) {
-//				track->setDataType( Track::MODE2_2352 );
-//			} else if( type == "CDI/2336" ) {
-//				track->setDataType( Track::CDI_2336 );
-//			} else if( type == "CDI/2352" ) {
-//				track->setDataType( Track::CDI_2352 );
-//			} else {
-//				track->setDataType( Track::AUDIO );
-//			}
 			this->pushBack( track );
 		}
 
 		void CUESheet::parseGarbage_( const QString & line, int trackNO ) {
 			if( trackNO == -1 ) {
-				QVariant garbage( this->get( "garbage" ) );
-				if( !garbage.isValid() ) {
-					this->set( "garbage", QStringList( line ) );
-				} else {
-					QStringList tmp( garbage.toStringList() );
-					tmp.append( line );
-					this->set( "garbage", tmp );
-				}
+				QStringList garbage( this->get( "garbage" ).toStringList() );
+				garbage.append( line );
+				this->set( "garbage", garbage );
 			} else {
 				QStringList garbage = (*this)[trackNO]->get( "garbage" ).toStringList();
 				garbage.append( line );

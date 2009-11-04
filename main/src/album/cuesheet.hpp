@@ -117,11 +117,11 @@ namespace khopper {
 
 			void parseCUE_( QString, const QString & );
 			void parseSingle_( const QString &, const QString &, int );
-			std::pair< QString, Track::FileType > parseFile_( const QString &, const QString &, const QString & );
+			std::pair< QString, QString > parseFile_( const QString &, const QString &, const QString & );
 			void parseFlags_( const QString &, int );
 			void parseIndex_( const QString &, const QString &, const QString &, const QString &, const QString &, int );
 			void parseComment_( const QString &, const QString &, int );
-			void parseTrack_( const QString &, const std::pair< QString, Track::FileType > &, const QString & );
+			void parseTrack_( const QString &, const std::pair< QString, QString > &, const QString & );
 			void parseGarbage_( const QString &, int );
 		};
 
@@ -137,5 +137,7 @@ namespace khopper {
 	}
 
 }
+
+Q_DECLARE_METATYPE(QSet<QString>)
 
 #endif
