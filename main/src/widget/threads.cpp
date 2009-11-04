@@ -34,7 +34,7 @@ namespace khopper {
 		paths_(),
 		canceled_( false ),
 		converter_( this ) {
-			connect( &this->converter_, SIGNAL( decodedTime( int ) ), this, SIGNAL( step( int ) ) );
+			connect( &this->converter_, SIGNAL( decodedTime( qint64 ) ), this, SIGNAL( step( qint64 ) ) );
 			connect( this, SIGNAL( canceled() ), &this->converter_, SLOT( cancel() ) );
 		}
 

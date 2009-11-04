@@ -69,20 +69,20 @@ namespace khopper {
 			 * @brief Seek to @p ms
 			 * @return succeed of failed
 			 */
-			bool seek( int ms );
+			bool seek( int64_t ms );
 			/**
 			 * @brief Set decode range
 			 */
-			void setRange( int begin, int end ) {
-				this->begin_ = begin;
-				this->end_ = end;
+			void setRange( int64_t msBegin, int64_t msEnd ) {
+				this->msBegin_ = msBegin;
+				this->msEnd_ = msEnd;
 			}
 			/**
 			 * @brief Read frame
 			 * @param [out] decoded
 			 * @return raw data
 			 */
-			ByteArray read( int & decoded );
+			ByteArray read( int64_t & msDecoded );
 			/**
 			 * @brief Checks if there is any data to read
 			 */
@@ -136,8 +136,8 @@ namespace khopper {
 			 * @brief Get sample duration in millisecond
 			 * @sa setDuration
 			 */
-			int getDuration() const {
-				return this->duration_;
+			int64_t getDuration() const {
+				return this->msDuration_;
 			}
 			/**
 			 * @brief Get genre
@@ -180,9 +180,9 @@ namespace khopper {
 
 		protected:
 			/// If @p timestamp is after decoding begin timestamp
-			bool afterBegin( int ms ) const;
+			bool afterBegin( int64_t ms ) const;
 			/// If @p timestamp is after decoding end timestamp
-			bool afterEnd( int ms ) const;
+			bool afterEnd( int64_t ms ) const;
 
 			/**
 			 * @brief Set album
@@ -230,8 +230,8 @@ namespace khopper {
 			 * @brief Set duration in millisecond
 			 * @sa getDuration
 			 */
-			void setDuration( int duration ) {
-				this->duration_ = duration;
+			void setDuration( int64_t msDuration ) {
+				this->msDuration_ = msDuration;
 			}
 			/**
 			 * @brief Get file path
@@ -292,9 +292,9 @@ namespace khopper {
 			/// Read header
 			virtual void readHeader() = 0;
 			/// Read one frame
-			virtual ByteArray readFrame( int &, bool & ) = 0;
+			virtual ByteArray readFrame( int64_t &, bool & ) = 0;
 			/// Seek frame
-			virtual bool seekFrame( int ) = 0;
+			virtual bool seekFrame( int64_t ) = 0;
 
 		private:
 			// prevent copying
@@ -303,13 +303,13 @@ namespace khopper {
 
 			std::string album_;
 			std::string artist_;
-			int begin_;
+			int64_t msBegin_;
 			int bitRate_;
 			int channels_;
 			std::string comment_;
 			std::string copyright_;
-			int duration_;
-			int end_;
+			int64_t msDuration_;
+			int64_t msEnd_;
 			std::wstring filePath_;
 			std::string genre_;
 			bool hasNext_;

@@ -126,8 +126,8 @@ namespace khopper {
 			}
 		}
 
-		bool FlacReader::seekFrame( int ms ) {
-			FLAC__uint64 ts = static_cast< FLAC__uint64 >( ms ) * this->getSampleRate() / 1000;
+		bool FlacReader::seekFrame( int64_t ms ) {
+			FLAC__uint64 ts = ms * this->getSampleRate() / 1000;
 			FLAC__bool ok = FLAC__stream_decoder_seek_absolute( this->pFD_.get(), ts );
 			if( ok ) {
 				this->offset_ = ts;
@@ -135,14 +135,14 @@ namespace khopper {
 			return ok;
 		}
 
-		ByteArray FlacReader::readFrame( int & decoded, bool & stop ) {
+		ByteArray FlacReader::readFrame( int64_t & msDecoded, bool & stop ) {
 			stop = false;
 			FLAC__bool ok = FLAC__stream_decoder_process_single( this->pFD_.get() );
 			if( !ok ) {
 				stop = true;
 				return ByteArray();
 			} else {
-				decoded = this->decodedTime_ * 1000;
+				msDecoded = this->decodedTime_ * 1000;
 				return this->buffer_;
 			}
 		}

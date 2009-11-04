@@ -64,12 +64,12 @@ namespace khopper {
 			return this->prog_->value();
 		}
 
-		void Progress::setMaximum( int maximum ) {
+		void Progress::setMaximum( qint64 maximum ) {
 			this->prog_->setMaximum( maximum );
 			this->prog_->setValue( 0 );
 		}
 
-		void Progress::setValue( int value ) {
+		void Progress::setValue( qint64 value ) {
 			this->prog_->setValue( value );
 		}
 

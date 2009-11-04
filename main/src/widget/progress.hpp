@@ -52,12 +52,12 @@ namespace khopper {
 			/**
 			 * @brief Set maximum progress
 			 */
-			void setMaximum( int maximum );
+			void setMaximum( qint64 maximum );
 			/**
 			 * @brief Set current progress
 			 * @sa getValue
 			 */
-			void setValue( int value );
+			void setValue( qint64 value );
 			/**
 			 * @brief Set current item name
 			 */

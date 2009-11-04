@@ -41,8 +41,8 @@ namespace khopper {
 			virtual void setupDemuxer();
 			virtual void setupDecoder();
 			virtual void readHeader();
-			virtual ByteArray readFrame( int &, bool & );
-			virtual bool seekFrame( int );
+			virtual ByteArray readFrame( int64_t &, bool & );
+			virtual bool seekFrame( int64_t );
 
 		private:
 			static void metadataCallback_( const FLAC__StreamDecoder *, const FLAC__StreamMetadata *, void * );

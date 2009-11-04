@@ -44,7 +44,7 @@ namespace {
 		av_freep( &p );
 	}
 
-	inline int64_t toNative( int ms ) {
+	inline int64_t toNative( int64_t ms ) {
 		return av_rescale( ms, AV_TIME_BASE, 1000 );
 	}
 
@@ -91,7 +91,7 @@ namespace khopper {
 			}
 
 			if( this->pFormatContext_->duration != static_cast< int64_t >( AV_NOPTS_VALUE ) ) {
-				this->setDuration( ::toMS( this->pFormatContext_->duration ) );
+				this->setDuration( toMS( this->pFormatContext_->duration ) );
 			} else {
 				throw error::CodecError( "Can not get duration!" );
 			}
@@ -165,7 +165,7 @@ namespace khopper {
 			this->pFormatContext_.reset();
 		}
 
-		ByteArray DefaultReader::readFrame( int & duration, bool & stop ) {
+		ByteArray DefaultReader::readFrame( int64_t & duration, bool & stop ) {
 			stop = false;
 			uint8_t audio_buf[AVCODEC_MAX_AUDIO_FRAME_SIZE*3/2];
 			int ret = 0;
@@ -259,7 +259,7 @@ namespace khopper {
 			return data;
 		}
 
-		bool DefaultReader::seekFrame( int ms ) {
+		bool DefaultReader::seekFrame( int64_t ms ) {
 			ms = av_rescale( ms, pStream_->time_base.den, pStream_->time_base.num );
 			int succeed = av_seek_frame( this->pFormatContext_.get(), pStream_->index, toNative( ms ), AVSEEK_FLAG_ANY | AVSEEK_FLAG_BACKWARD );
 			if( succeed >= 0 ) {

@@ -85,7 +85,7 @@ namespace khopper {
 		private slots:
 			void fire_();
 			void showErrorMessage_( const QString &, const QString & );
-			void incProgress_( int );
+			void incProgress_( qint64 );
 			void changeOutputPath_();
 			QString getOutDir_( album::TrackSP ) const;
 		};
