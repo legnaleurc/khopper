@@ -131,7 +131,7 @@ namespace khopper {
 				this->hasNext_ = false;
 			}
 
-			qDebug() << "Sended" << data.size() << this->hasNext_;
+//			qDebug() << "Sended" << data.size() << this->hasNext_;
 			return data;
 		}
 

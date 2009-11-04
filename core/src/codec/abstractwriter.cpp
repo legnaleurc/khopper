@@ -77,7 +77,7 @@ namespace khopper {
 		}
 
 		void AbstractWriter::write( const ByteArray & data ) {
-			qDebug() << "Received" << data.size();
+//			qDebug() << "Received" << data.size();
 			this->sampleQueue_.insert( this->sampleQueue_.end(), data.begin(), data.end() );
 
 			while( this->sampleQueue_.size() >= this->sampleBuffer_.size() ) {
