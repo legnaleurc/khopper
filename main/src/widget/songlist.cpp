@@ -182,11 +182,8 @@ namespace khopper {
 		}
 
 		void SongList::dropEvent( QDropEvent * event ) {
-			this->droppingFiles_.clear();
 			if( event->mimeData()->hasUrls() ) {
-				foreach( QUrl url, event->mimeData()->urls() ) {
-					this->droppingFiles_.push_back( url.toLocalFile() );
-				}
+				this->droppingFiles_ = event->mimeData()->urls();
 				QTimer::singleShot( 0, this, SLOT( dropFiles_() ) );
 			}
 			event->acceptProposedAction();

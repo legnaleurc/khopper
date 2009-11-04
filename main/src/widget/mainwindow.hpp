@@ -28,6 +28,8 @@
 #include <QComboBox>
 #include <QLineEdit>
 #include <QCheckBox>
+#include <QList>
+#include <QUrl>
 
 namespace khopper {
 
@@ -64,7 +66,7 @@ namespace khopper {
 			 * @brief Open files
 			 * @param [in] filePaths file path
 			 */
-			void open( const QStringList & filePaths );
+			void open( const QList< QUrl > & uris );
 
 		private:
 			TextCodec * codec_;

@@ -49,7 +49,15 @@ int main( int argc, char * argv[] ) {
 	window.resize( 640, 480 );
 	window.show();
 
-	window.open( QApplication::arguments().mid( 1 ) );
+	QList< QUrl > tmp;
+	foreach( QString path, QApplication::arguments().mid( 1 ) ) {
+		tmp.push_back( path );
+		if( tmp.back().scheme().isEmpty() ) {
+			tmp.back().setScheme( "file" );
+		}
+	}
+
+	window.open( tmp );
 
 	return app.exec();
 }
