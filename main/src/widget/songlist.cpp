@@ -156,19 +156,6 @@ namespace khopper {
 					this->model_->setItem( currentRow, col, new QStandardItem( displayHelper( tracks[row]->get( getHeaderList()[col].id ) ) ) );
 					this->model_->item( currentRow, col )->setEditable( getHeaderList()[col].editable );
 				}
-//				this->model_->setItem( row + offset, 0, new QStandardItem( tracks[row]->getTitle() ) );
-//				this->model_->setItem( row + offset, 1, new QStandardItem( tracks[row]->getArtist() ) );
-//				this->model_->setItem( row + offset, 2, new QStandardItem( tracks[row]->getAlbum() ) );
-
-				// fields should not be editable
-//				this->model_->setItem( row + offset, 3, new QStandardItem( QString::fromStdWString( tracks[row]->getDuration().toStdWString() ) ) );
-//				this->model_->item( row + offset, 3 )->setEditable( false );
-//				this->model_->setItem( row + offset, 4, new QStandardItem( QString::number( tracks[row]->getBitRate() ) ) );
-//				this->model_->item( row + offset, 4 )->setEditable( false );
-//				this->model_->setItem( row + offset, 5, new QStandardItem( QString::number( tracks[row]->getSampleRate() ) ) );
-//				this->model_->item( row + offset, 5 )->setEditable( false );
-//				this->model_->setItem( row + offset, 6, new QStandardItem( QString::number( tracks[row]->getChannels() ) ) );
-//				this->model_->item( row + offset, 6 )->setEditable( false );
 
 				this->resizeRowToContents( currentRow );
 			}
