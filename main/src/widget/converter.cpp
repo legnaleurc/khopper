@@ -35,9 +35,10 @@ namespace khopper {
 		}
 
 		void Converter::convert( album::TrackCSP track, const QString & targetPath, codec::WriterSP encoder ) {
-			codec::ReaderSP decoder( plugin::createReader( text::getSuffix( track->getFilePath() ) ) );
-			qDebug() << track->getFilePath();
-			decoder->open( track->getFilePath().toStdWString() );
+			// FIXME: not always local file
+			codec::ReaderSP decoder( plugin::createReader( text::getSuffix( track->getURI().toLocalFile() ) ) );
+			qDebug() << track->getURI();
+			decoder->open( track->getURI() );
 			encoder->setTimebase( decoder->getTimebase() );
 			encoder->open( targetPath.toStdWString() );
 			this->canceled_ = false;

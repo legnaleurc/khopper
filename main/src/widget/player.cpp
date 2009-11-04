@@ -100,7 +100,7 @@ namespace khopper {
 					this->currentTrack_ = selected[0];
 				}
 
-				this->player_->setCurrentSource( this->currentTrack_->getFilePath() );
+				this->player_->setCurrentSource( this->currentTrack_->getURI() );
 				this->currentBeginTime_ = this->currentTrack_->getStartTime().toMillisecond();
 				this->currentEndTime_ = this->currentBeginTime_ + this->currentTrack_->getDuration().toMillisecond();
 				this->seeker_->setRange( this->currentBeginTime_, this->currentEndTime_ );

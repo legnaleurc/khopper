@@ -175,8 +175,9 @@ namespace khopper {
 		}
 
 		QString MainWindow::getOutDir_( album::TrackSP track ) const {
+			// FIXME: not always local file
 			if( this->useSourcePath_->isChecked() ) {
-				return QFileInfo( track->getFilePath() ).absolutePath();
+				return QFileInfo( track->getURI().toLocalFile() ).absolutePath();
 			} else {
 				return this->outputPath_->text();
 			}
