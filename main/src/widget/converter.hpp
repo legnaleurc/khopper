@@ -49,7 +49,7 @@ namespace khopper {
 			 * @param [in] targetPath output file path
 			 * @param [in] encoder encoder setting
 			 */
-			void convert( album::TrackCSP track, const QString & targetPath, codec::WriterSP encoder );
+			void convert( album::TrackCSP track, const QUrl & targetURI, codec::WriterSP encoder );
 
 		public slots:
 			/**
@@ -62,7 +62,7 @@ namespace khopper {
 			 * @brief Decoded duration
 			 * @param ms Time in second * 1000
 			 */
-			void decodedTime( int ms ) const;
+			void decodedTime( qint64 ms ) const;
 
 		private:
 			bool canceled_;

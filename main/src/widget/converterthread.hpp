@@ -1,5 +1,5 @@
 /**
- * @file threads.hpp
+ * @file converterthread.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,8 +19,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_WIDGET_THREADS_HPP
-#define KHOPPER_WIDGET_THREADS_HPP
+#ifndef KHOPPER_WIDGET_CONVERTERTHREAD_HPP
+#define KHOPPER_WIDGET_CONVERTERTHREAD_HPP
 
 #include "track.hpp"
 #include "converter.hpp"
@@ -51,7 +51,7 @@ namespace khopper {
 			 * @param [in] output Encoder object
 			 * @param [in] paths Output file paths
 			 */
-			void setOutput( codec::WriterSP output, const QStringList & paths );
+			void setOutput( codec::WriterSP output, const QList< QUrl > & paths );
 
 			/**
 			 * @brief Set tracks to convert
@@ -84,7 +84,7 @@ namespace khopper {
 			/**
 			 * @brief Send task goal
 			 */
-			void taskGoal( int duration );
+			void taskGoal( qint64 msDuration );
 			/**
 			 * @brief Send current task count
 			 */
@@ -93,7 +93,7 @@ namespace khopper {
 			 * @brief Progress notifyer
 			 * @param duration Convert duration
 			 */
-			void step( int duration );
+			void step( qint64 msDuration );
 
 		protected:
 			/**
@@ -104,7 +104,7 @@ namespace khopper {
 		private:
 			codec::WriterSP encoder_;
 			std::vector< album::TrackSP > tracks_;
-			QStringList paths_;
+			QList< QUrl > paths_;
 			bool canceled_;
 			Converter converter_;
 		};

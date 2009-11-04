@@ -26,6 +26,7 @@
 #include <QHBoxLayout>
 #include <Phonon/AudioOutput>
 #include <QtDebug>
+#include <Phonon/AudioOutput>
 
 namespace khopper {
 
@@ -66,7 +67,7 @@ namespace khopper {
 			playerBox->addWidget( this->seeker_ );
 			playerBox->addWidget( this->volume_ );
 
-			connect( this->songList_, SIGNAL( dropFile( const QStringList & ) ), this, SIGNAL( dropFile( const QStringList & ) ) );
+			connect( this->songList_, SIGNAL( fileDropped( const QList< QUrl > & ) ), this, SIGNAL( fileDropped( const QList< QUrl > & ) ) );
 			connect( this->songList_, SIGNAL( requireConvert() ), this, SIGNAL( requireConvert() ) );
 			mainBox->addWidget( this->songList_ );
 		}
@@ -99,7 +100,7 @@ namespace khopper {
 					this->currentTrack_ = selected[0];
 				}
 
-				this->player_->setCurrentSource( this->currentTrack_->getFilePath() );
+				this->player_->setCurrentSource( this->currentTrack_->getURI() );
 				this->currentBeginTime_ = this->currentTrack_->get( "start_time" ).value< album::Index >().toMillisecond();
 				this->currentEndTime_ = this->currentBeginTime_ + this->currentTrack_->get( "duration" ).value< album::Index >().toMillisecond();
 				this->seeker_->setRange( this->currentBeginTime_, this->currentEndTime_ );

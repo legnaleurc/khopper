@@ -30,7 +30,7 @@
 #include <QAction>
 #include <QSignalMapper>
 #include <QTextCodec>
-#include <QtDebug>
+#include <QTimer>
 
 #include <algorithm>
 
@@ -77,7 +77,8 @@ namespace khopper {
 		QTableView( parent ),
 		model_( new QStandardItemModel( this ) ),
 		contextMenu_( new QMenu( this ) ),
-		tracks_() {
+		tracks_(),
+		droppingFiles_() {
 			// Set drag and drop
 			this->setAcceptDrops( true );
 
@@ -211,13 +212,14 @@ namespace khopper {
 
 		void SongList::dropEvent( QDropEvent * event ) {
 			if( event->mimeData()->hasUrls() ) {
-				QStringList local;
-				foreach( QUrl url, event->mimeData()->urls() ) {
-					local.push_back( url.toLocalFile() );
-				}
-				emit dropFile( local );
+				this->droppingFiles_ = event->mimeData()->urls();
+				QTimer::singleShot( 0, this, SLOT( dropFiles_() ) );
 			}
 			event->acceptProposedAction();
+		}
+
+		void SongList::dropFiles_() {
+			emit fileDropped( this->droppingFiles_ );
 		}
 
 	}

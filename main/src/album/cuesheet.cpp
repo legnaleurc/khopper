@@ -52,12 +52,12 @@ namespace {
 	};
 
 	struct setFile {
-		setFile( const QString & file ) : file_( file ) {}
+		setFile( const QUrl & file ) : file_( file ) {}
 		void operator ()( khopper::album::TrackSP track ) {
-			track->setFilePath( this->file_ );
+			track->setURI( this->file_ );
 		}
 	private:
-		const QString & file_;
+		const QUrl & file_;
 	};
 
 	struct setBCS {
@@ -87,16 +87,17 @@ namespace khopper {
 			this->parseCUE_( content, dirPath );
 		}
 
-		void CUESheet::setMedia( const QString & filePath ) {
-			std::for_each( this->tracks_.begin(), this->tracks_.end(), ::setFile( filePath ) );
+		void CUESheet::setMedia( const QUrl & uri ) {
+			std::for_each( this->tracks_.begin(), this->tracks_.end(), setFile( uri ) );
 
 			// get the total length, because cue sheet don't provide it
-			codec::ReaderSP decoder( plugin::createReader( text::getSuffix( filePath ) ) );
+			// FIXME: not always local file
+			codec::ReaderSP decoder( plugin::createReader( text::getSuffix( uri.toLocalFile() ) ) );
 			// NOTE: may throw exception
-			decoder->open( filePath.toStdWString() );
+			decoder->open( uri );
 			if( decoder->isOpen() ) {
 				// set bit rate, channels, sample rate
-				std::for_each( this->tracks_.begin(), this->tracks_.end(), ::setBCS( decoder ) );
+				std::for_each( this->tracks_.begin(), this->tracks_.end(), setBCS( decoder ) );
 
 				TrackSP last( this->tracks_.back() );
 				last->set( "duration", QVariant::fromValue( Index::fromMillisecond( decoder->getDuration() ) - last->get( "start_time" ).value< Index >() ) );
@@ -255,7 +256,7 @@ namespace khopper {
 		void CUESheet::parseTrack_( const QString & num, const std::pair< QString, Track::FileType > & audioData, const QString & /*type*/ ) {
 			TrackSP track( new Track );
 			track->set( "index", num.toShort() );
-			track->setFilePath( audioData.first );
+			track->setURI( audioData.first );
 			// NOTE: deprecated
 //			if( type == "AUDIO" ) {
 //				track->setDataType( Track::AUDIO );

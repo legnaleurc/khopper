@@ -21,7 +21,7 @@
  */
 #include "mainwindow.hpp"
 #include "player.hpp"
-#include "threads.hpp"
+#include "converterthread.hpp"
 #include "textcodec.hpp"
 #include "progress.hpp"
 #include "cuesheet.hpp"
@@ -86,7 +86,7 @@ namespace khopper {
 
 			// Add song list
 			mainBox->addWidget( this->player_ );
-			connect( this->player_, SIGNAL( dropFile( const QStringList & ) ), this, SLOT( open( const QStringList & ) ) );
+			connect( this->player_, SIGNAL( fileDropped( const QList< QUrl > & ) ), this, SLOT( open( const QList< QUrl > & ) ) );
 			connect( this->player_, SIGNAL( requireConvert() ), this, SLOT( fire_() ) );
 			connect( this->player_, SIGNAL( error( const QString &, const QString & ) ), this, SLOT( showErrorMessage_( const QString &, const QString & ) ) );
 
@@ -112,9 +112,9 @@ namespace khopper {
 
 			// Converter thread
 			connect( this->cvt_, SIGNAL( taskName( const QString & ) ), this->progress_, SLOT( setItemName( const QString & ) ) );
-			connect( this->cvt_, SIGNAL( taskGoal( int ) ), this->progress_, SLOT( setMaximum( int ) ) );
+			connect( this->cvt_, SIGNAL( taskGoal( qint64 ) ), this->progress_, SLOT( setMaximum( qint64 ) ) );
 			connect( this->cvt_, SIGNAL( currentTask( int ) ), this->progress_, SLOT( setCurrent( int ) ) );
-			connect( this->cvt_, SIGNAL( step( int ) ), this, SLOT( incProgress_( int ) ) );
+			connect( this->cvt_, SIGNAL( step( qint64 ) ), this, SLOT( incProgress_( qint64 ) ) );
 			connect( this->cvt_, SIGNAL( finished() ), this->progress_, SLOT( accept() ) );
 			connect( this->cvt_, SIGNAL( error( const QString &, const QString & ) ), this, SLOT( showErrorMessage_( const QString &, const QString & ) ) );
 			// NOTE: works, but danger
@@ -128,7 +128,7 @@ namespace khopper {
 			}
 		}
 
-		void MainWindow::incProgress_( int diff ) {
+		void MainWindow::incProgress_( qint64 diff ) {
 			this->progress_->setValue( this->progress_->getValue() + diff );
 		}
 
@@ -175,8 +175,9 @@ namespace khopper {
 		}
 
 		QString MainWindow::getOutDir_( album::TrackSP track ) const {
+			// FIXME: not always local file
 			if( this->useSourcePath_->isChecked() ) {
-				return QFileInfo( track->getFilePath() ).absolutePath();
+				return QFileInfo( track->getURI().toLocalFile() ).absolutePath();
 			} else {
 				return this->outputPath_->text();
 			}
@@ -196,9 +197,9 @@ namespace khopper {
 
 				try {
 					// generate output paths
-					QStringList outputPaths;
+					QList< QUrl > outputPaths;
 					for( std::size_t i = 0; i < tracks.size(); ++i ) {
-						outputPaths.push_back( this->getOutDir_( tracks[i] ) + "/" + ::applyFormat( this->preference_->getTemplate(), tracks[i] ) + "." + option->getSuffix() );
+						outputPaths.push_back( this->getOutDir_( tracks[i] ) + "/" + applyFormat( this->preference_->getTemplate(), tracks[i] ) + "." + option->getSuffix() );
 					}
 
 					// set progress bar
@@ -218,70 +219,97 @@ namespace khopper {
 
 		void MainWindow::showOpenFilesDialog() {
 			QStringList filePaths = QFileDialog::getOpenFileNames( this, tr( "Open audio" ), this->lastOpenedDir_ );
-			this->open( filePaths );
+			QList< QUrl > tmp;
+			foreach( QString path, filePaths ) {
+				tmp.push_back( QUrl::fromLocalFile( path ) );
+			}
+			this->open( tmp );
 		}
 
-		void MainWindow::open( const QStringList & filePaths ) {
-			if( !filePaths.isEmpty() ) {
-				this->lastOpenedDir_ = QFileInfo( filePaths[0] ).absolutePath();
+		void MainWindow::open( const QList< QUrl > & uris ) {
+			if( !uris.isEmpty() ) {
+				// FIXME: not always local file
+				this->lastOpenedDir_ = QFileInfo( uris[0].toLocalFile() ).absolutePath();
 			}
 
 			std::vector< album::TrackSP > tracks;
 
-			foreach( QString filePath, filePaths ) {
-				if( filePath != "" ) {
-					QFileInfo fI( filePath );
+			foreach( QUrl uri, uris ) {
+				// TODO: handle remote resource
+				if( uri.isEmpty() || uri.scheme() != "file" ) {
+					continue;
+				}
 
-					if( fI.suffix() == "cue" ) {
-						// if cue sheet opened
-						QFile fin( filePath );
-						if( !fin.open( QIODevice::ReadOnly | QIODevice::Text ) ) {
-							this->showErrorMessage_( tr( "File open error!" ), tr( "Could not open the file: `" ) + filePath + "\'" );
-						}
+				QFileInfo fI( uri.toLocalFile() );
 
-						QByteArray raw_input = fin.readAll();
-						fin.close();
+				if( fI.suffix() == "cue" ) {
+					// if cue sheet opened
+					QFile fin( fI.absoluteFilePath() );
+					if( !fin.open( QIODevice::ReadOnly | QIODevice::Text ) ) {
+						this->showErrorMessage_(
+							tr( "File open error!" ),
+							tr( "Could not open the file: `%1\'" ).arg( fI.absoluteFilePath() )
+						);
+					}
 
-						this->codec_->setEncoded( raw_input );
+					QByteArray raw_input = fin.readAll();
+					fin.close();
 
-						if( this->codec_->exec() ) {
-							album::CUESheet sheet;
-							try {
-								sheet.open( this->codec_->getDecoded(), fI.absolutePath() );
-							} catch( error::ParsingError & e ) {
-								this->showErrorMessage_( tr( "Error on parsing CUE Sheet!" ), trUtf8( e.what() ) );
-							} catch( error::BaseError & ) {
-								int ret = QMessageBox::warning( this, tr( "Can not decode media" ), tr( "I can not open the media, please select another file." ), QMessageBox::Ok, QMessageBox::Cancel );
-								while( ret == QMessageBox::Ok ) {
-									filePath = QFileDialog::getOpenFileName( this, tr( "Open audio" ), this->lastOpenedDir_ );
-									if( filePath.isEmpty() ) {
-										break;
-									} else {
-										this->lastOpenedDir_ = QFileInfo( filePath ).absolutePath();
-									}
-									try {
-										qDebug() << filePath;
-										sheet.setMedia( filePath );
-										break;
-									} catch( std::exception & ) {
-										ret = QMessageBox::warning( this, tr( "Can not decode media" ), tr( "I can not open the media, please select another file." ), QMessageBox::Ok, QMessageBox::Cancel );
-									}
-								}
-							} catch( std::exception & e ) {
-								this->showErrorMessage_( tr( "Unknow error" ), trUtf8( e.what() ) );
-							}
-							tracks.insert( tracks.end(), sheet.getTracks().begin(), sheet.getTracks().end() );
-						}
-					} else {
-						// other, single media
-						album::TrackSP track( new album::Track );
+					this->codec_->setEncoded( raw_input );
 
+					if( this->codec_->exec() ) {
+						album::CUESheet sheet;
 						try {
-							track->load( filePath );
-							tracks.push_back( track );
+							sheet.open( this->codec_->getDecoded(), fI.absolutePath() );
+						} catch( error::ParsingError & e ) {
+							this->showErrorMessage_( tr( "Error on parsing CUE Sheet!" ), trUtf8( e.what() ) );
+						} catch( error::BaseError & ) {
+							int ret = QMessageBox::warning(
+								this,
+								tr( "Can not decode media" ),
+								tr( "I can not open the media, please select another file." ),
+								QMessageBox::Ok,
+								QMessageBox::Cancel
+							);
+							while( ret == QMessageBox::Ok ) {
+								QString filePath = QFileDialog::getOpenFileName(
+									this,
+									tr( "Open audio" ),
+									this->lastOpenedDir_
+								);
+								if( filePath.isEmpty() ) {
+									break;
+								} else {
+									this->lastOpenedDir_ = QFileInfo( filePath ).absolutePath();
+								}
+								try {
+									qDebug() << filePath;
+									sheet.setMedia( QUrl::fromLocalFile( filePath ) );
+									break;
+								} catch( std::exception & ) {
+									ret = QMessageBox::warning(
+										this,
+										tr( "Can not decode media" ),
+										tr( "I can not open the media, please select another file." ),
+										QMessageBox::Ok,
+										QMessageBox::Cancel
+									);
+								}
+							}
 						} catch( std::exception & e ) {
-							this->showErrorMessage_( tr( "Can not decode this file!" ), trUtf8( e.what() ) );
+							this->showErrorMessage_( tr( "Unknow error" ), trUtf8( e.what() ) );
 						}
+						tracks.insert( tracks.end(), sheet.getTracks().begin(), sheet.getTracks().end() );
+					}
+				} else {
+					// other, single media
+					album::TrackSP track( new album::Track );
+
+					try {
+						track->load( uri );
+						tracks.push_back( track );
+					} catch( std::exception & e ) {
+						this->showErrorMessage_( tr( "Can not decode this file!" ), trUtf8( e.what() ) );
 					}
 				}
 			}

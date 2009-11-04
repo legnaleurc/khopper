@@ -70,7 +70,7 @@ namespace khopper {
 			 * @throws CodecError Decode media error
 			 * @throws IOError File not openable
 			 */
-			void setMedia( const QString & filePath );
+			void setMedia( const QUrl & uri );
 
 			/// Get artist
 			const QString & getArtist() const {

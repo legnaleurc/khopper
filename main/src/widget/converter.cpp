@@ -34,12 +34,13 @@ namespace khopper {
 		canceled_( false ) {
 		}
 
-		void Converter::convert( album::TrackCSP track, const QString & targetPath, codec::WriterSP encoder ) {
-			codec::ReaderSP decoder( plugin::createReader( text::getSuffix( track->getFilePath() ) ) );
-			qDebug() << track->getFilePath();
-			decoder->open( track->getFilePath().toStdWString() );
+		void Converter::convert( album::TrackCSP track, const QUrl & targetURI, codec::WriterSP encoder ) {
+			// FIXME: not always local file
+			codec::ReaderSP decoder( plugin::createReader( text::getSuffix( track->getURI().toLocalFile() ) ) );
+			qDebug() << track->getURI();
+			decoder->open( track->getURI() );
 			encoder->setTimebase( decoder->getTimebase() );
-			encoder->open( targetPath.toStdWString() );
+			encoder->open( targetURI );
 			this->canceled_ = false;
 
 			if( !decoder->isOpen() || !encoder->isOpen() ) {
@@ -53,7 +54,7 @@ namespace khopper {
 				throw error::CodecError( "Invalid start point" );
 			}
 
-			int decoded;
+			int64_t decoded;
 			while( decoder->hasNext() ) {
 				if( this->canceled_ ) {
 					break;

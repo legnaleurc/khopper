@@ -16,8 +16,10 @@ Build dependency：
 		http://www.boost.org/
 	FFmpeg Libraries >= 0.5:
 		http://www.ffmpeg.org/
+	libFLAC >= 1.2.1
+		http://flac.sourceforge.net/
 On Debian-based system:
-	# apt-get install libloki-dev libqt4-dev libphonon-dev libboost-dev libavcodec-dev libavformat-dev
+	# apt-get install libloki-dev libqt4-dev libphonon-dev libboost-dev libavcodec-dev libavformat-dev libflac-dev pkg-config
 
 Build step:
 	Linux:
@@ -32,7 +34,6 @@ Supported formats:
 		At least, wav, ape, flac, tta ... should be available.
 	Playing:
 		Depends on Phonon's backend.
-		ape may has poor support.
 
 Contact:
 	mail:

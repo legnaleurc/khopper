@@ -28,6 +28,8 @@
 #include <QComboBox>
 #include <QLineEdit>
 #include <QCheckBox>
+#include <QList>
+#include <QUrl>
 
 namespace khopper {
 
@@ -64,7 +66,7 @@ namespace khopper {
 			 * @brief Open files
 			 * @param [in] filePaths file path
 			 */
-			void open( const QStringList & filePaths );
+			void open( const QList< QUrl > & uris );
 
 		private:
 			TextCodec * codec_;
@@ -85,7 +87,7 @@ namespace khopper {
 		private slots:
 			void fire_();
 			void showErrorMessage_( const QString &, const QString & );
-			void incProgress_( int );
+			void incProgress_( qint64 );
 			void changeOutputPath_();
 			QString getOutDir_( album::TrackSP ) const;
 		};

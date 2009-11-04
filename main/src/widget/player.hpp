@@ -56,7 +56,7 @@ namespace khopper {
 			 * @brief Emitted when drop an openable file
 			 * @param paths File path
 			 */
-			void dropFile( const QStringList & paths );
+			void fileDropped( const QList< QUrl > & paths );
 			/**
 			 * @brief Emmited when convert action is required.
 			 */

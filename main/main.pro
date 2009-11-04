@@ -26,7 +26,7 @@ HEADERS +=	\
 	./src/widget/seekslider.hpp	\
 	./src/widget/songlist.hpp	\
 	./src/widget/textcodec.hpp	\
-	./src/widget/threads.hpp
+	./src/widget/converterthread.hpp
 SOURCES +=	\
 	./src/album/album.cpp	\
 	./src/album/cuesheet.cpp	\
@@ -42,7 +42,7 @@ SOURCES +=	\
 	./src/widget/seekslider.cpp	\
 	./src/widget/songlist.cpp	\
 	./src/widget/textcodec.cpp	\
-	./src/widget/threads.cpp
+	./src/widget/converterthread.cpp
 
 RESOURCES += main.qrc
 
@@ -52,7 +52,6 @@ TEMPLATE = app
 CONFIG += debug_and_release embed_manifest_exe
 CONFIG -= embed_manifest_dll
 QT     += phonon
-DEFINES += KHOPPER_VERSION=$${KHOPPER_VERSION}
 
 CONFIG( debug, debug|release ) {
 	DESTDIR     = $${ROOT_PATH}/build/debug

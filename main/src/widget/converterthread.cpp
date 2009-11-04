@@ -1,5 +1,5 @@
 /**
- * @file threads.cpp
+ * @file converterthread.cpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,7 +19,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "threads.hpp"
+#include "converterthread.hpp"
 
 #include <QFileInfo>
 
@@ -34,11 +34,11 @@ namespace khopper {
 		paths_(),
 		canceled_( false ),
 		converter_( this ) {
-			connect( &this->converter_, SIGNAL( decodedTime( int ) ), this, SIGNAL( step( int ) ) );
+			connect( &this->converter_, SIGNAL( decodedTime( qint64 ) ), this, SIGNAL( step( qint64 ) ) );
 			connect( this, SIGNAL( canceled() ), &this->converter_, SLOT( cancel() ) );
 		}
 
-		void ConverterThread::setOutput( codec::WriterSP output, const QStringList & paths ) {
+		void ConverterThread::setOutput( codec::WriterSP output, const QList< QUrl > & paths ) {
 			this->encoder_ = output;
 			this->paths_ = paths;
 		}
@@ -68,6 +68,8 @@ namespace khopper {
 						break;
 					}
 				}
+			} catch( error::BaseError & e ) {
+				emit error( tr( "Error on converting!" ), e.getMessage() );
 			} catch( std::exception & e ) {
 				emit error( tr( "Error on converting!" ), trUtf8( e.what() ) );
 			}

@@ -30,7 +30,7 @@ namespace khopper {
 
 		Track::Track():
 		fields_(),
-		filePath_(),
+		uri_(),
 		textCodec_( QTextCodec::codecForName( "UTF-8" ) ) {
 		}
 
@@ -66,11 +66,12 @@ namespace khopper {
 			}
 		}
 
-		void Track::load( const QString & filePath ) {
-			this->filePath_ = filePath;
+		void Track::load( const QUrl & uri ) {
+			this->uri_ = uri;
 
-			codec::ReaderSP decoder( plugin::createReader( text::getSuffix( filePath ) ) );
-			decoder->open( filePath.toStdWString() );
+			// FIXME: not always local file
+			codec::ReaderSP decoder( plugin::createReader( text::getSuffix( uri.toLocalFile() ) ) );
+			decoder->open( uri );
 			if( decoder->isOpen() ) {
 				this->set( "album", decoder->getAlbum() );
 				this->set( "artist", decoder->getArtist() );
