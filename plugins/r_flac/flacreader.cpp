@@ -132,7 +132,7 @@ namespace khopper {
 		ByteArray FlacReader::readFrame( double & decoded, bool & stop ) {
 			stop = false;
 			FLAC__bool ok = FLAC__stream_decoder_process_single( this->pFD_.get() );
-			if( !ok ) {
+			if( !ok || FLAC__stream_decoder_get_state( this->pFD_.get() ) == FLAC__STREAM_DECODER_END_OF_STREAM ) {
 				stop = true;
 				return ByteArray();
 			} else {
