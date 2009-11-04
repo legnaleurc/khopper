@@ -34,13 +34,13 @@ namespace khopper {
 		canceled_( false ) {
 		}
 
-		void Converter::convert( album::TrackCSP track, const QString & targetPath, codec::WriterSP encoder ) {
+		void Converter::convert( album::TrackCSP track, const QUrl & targetURI, codec::WriterSP encoder ) {
 			// FIXME: not always local file
 			codec::ReaderSP decoder( plugin::createReader( text::getSuffix( track->getURI().toLocalFile() ) ) );
 			qDebug() << track->getURI();
 			decoder->open( track->getURI() );
 			encoder->setTimebase( decoder->getTimebase() );
-			encoder->open( targetPath.toStdWString() );
+			encoder->open( targetURI );
 			this->canceled_ = false;
 
 			if( !decoder->isOpen() || !encoder->isOpen() ) {

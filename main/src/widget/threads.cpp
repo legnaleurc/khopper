@@ -38,7 +38,7 @@ namespace khopper {
 			connect( this, SIGNAL( canceled() ), &this->converter_, SLOT( cancel() ) );
 		}
 
-		void ConverterThread::setOutput( codec::WriterSP output, const QStringList & paths ) {
+		void ConverterThread::setOutput( codec::WriterSP output, const QList< QUrl > & paths ) {
 			this->encoder_ = output;
 			this->paths_ = paths;
 		}

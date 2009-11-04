@@ -51,7 +51,7 @@ namespace khopper {
 			 * @param [in] output Encoder object
 			 * @param [in] paths Output file paths
 			 */
-			void setOutput( codec::WriterSP output, const QStringList & paths );
+			void setOutput( codec::WriterSP output, const QList< QUrl > & paths );
 
 			/**
 			 * @brief Set tracks to convert
@@ -104,7 +104,7 @@ namespace khopper {
 		private:
 			codec::WriterSP encoder_;
 			std::vector< album::TrackSP > tracks_;
-			QStringList paths_;
+			QList< QUrl > paths_;
 			bool canceled_;
 			Converter converter_;
 		};

@@ -32,12 +32,12 @@ extern "C" {
 
 namespace {
 
-	inline std::string wHelper( const std::wstring & filePath ) {
-#ifdef _WIN32
-		return std::string( "wfile://" ) + khopper::text::toUtf8( filePath );
-#else
-		return khopper::text::toUtf8( filePath );
+	inline std::string wHelper( const QUrl & uri ) {
+		QUrl tmp( uri );
+#ifdef Q_OS_WIN32
+		tmp.setScheme( "wfile" );
 #endif
+		return tmp.toString().toStdString();
 	}
 
 	inline void fc_helper( AVFormatContext * oc ) {
@@ -83,18 +83,18 @@ namespace khopper {
 		}
 
 		void DefaultWriter::setupMuxer() {
-			AVOutputFormat * pOF = guess_format( NULL, ::wHelper( this->getFilePath() ).c_str(), NULL );
+			AVOutputFormat * pOF = guess_format( NULL, wHelper( this->getURI() ).c_str(), NULL );
 			if( pOF == NULL ) {
 				throw error::CodecError( "Can not recognize output format" );
 			}
 
-			this->pFormatContext_.reset( avformat_alloc_context(), ::fc_helper );
+			this->pFormatContext_.reset( avformat_alloc_context(), fc_helper );
 			if( !this->pFormatContext_ ) {
 				throw error::SystemError( "Memory allocation error" );
 			}
 			this->pFormatContext_->oformat = pOF;
 
-			std::strncpy( this->pFormatContext_->filename, text::toUtf8( this->getFilePath() ).c_str(), sizeof( this->pFormatContext_->filename ) );
+			std::strncpy( this->pFormatContext_->filename, this->getURI().toString().toStdString().c_str(), sizeof( this->pFormatContext_->filename ) );
 		}
 
 		void DefaultWriter::setupEncoder() {
@@ -176,8 +176,8 @@ namespace khopper {
 		void DefaultWriter::openResource() {
 			AVOutputFormat * pOF = this->pFormatContext_->oformat;
 			if( !( pOF->flags & AVFMT_NOFILE ) ) {
-				if( url_fopen( &this->pFormatContext_->pb, ::wHelper( this->getFilePath() ).c_str(), URL_WRONLY ) < 0 ) {
-					throw error::IOError( std::wstring( L"Can not open file: `" ) + this->getFilePath() + L"\'" );
+				if( url_fopen( &this->pFormatContext_->pb, wHelper( this->getURI() ).c_str(), URL_WRONLY ) < 0 ) {
+					throw error::IOError( QString( "Can not open file: `%1\'" ).arg( this->getURI().toString() ) );
 				}
 			}
 		}

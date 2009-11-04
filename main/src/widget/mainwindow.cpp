@@ -197,9 +197,9 @@ namespace khopper {
 
 				try {
 					// generate output paths
-					QStringList outputPaths;
+					QList< QUrl > outputPaths;
 					for( std::size_t i = 0; i < tracks.size(); ++i ) {
-						outputPaths.push_back( this->getOutDir_( tracks[i] ) + "/" + ::applyFormat( this->preference_->getTemplate(), tracks[i] ) + "." + option->getSuffix() );
+						outputPaths.push_back( this->getOutDir_( tracks[i] ) + "/" + applyFormat( this->preference_->getTemplate(), tracks[i] ) + "." + option->getSuffix() );
 					}
 
 					// set progress bar
