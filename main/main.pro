@@ -25,7 +25,7 @@ HEADERS +=	\
 	./src/widget/seekslider.hpp	\
 	./src/widget/songlist.hpp	\
 	./src/widget/textcodec.hpp	\
-	./src/widget/threads.hpp
+	./src/widget/converterthread.hpp
 SOURCES +=	\
 	./src/album/cuesheet.cpp	\
 	./src/album/index.cpp	\
@@ -40,7 +40,7 @@ SOURCES +=	\
 	./src/widget/seekslider.cpp	\
 	./src/widget/songlist.cpp	\
 	./src/widget/textcodec.cpp	\
-	./src/widget/threads.cpp
+	./src/widget/converterthread.cpp
 
 RESOURCES += main.qrc
 

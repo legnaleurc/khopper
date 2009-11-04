@@ -21,7 +21,7 @@
  */
 #include "mainwindow.hpp"
 #include "player.hpp"
-#include "threads.hpp"
+#include "converterthread.hpp"
 #include "textcodec.hpp"
 #include "progress.hpp"
 #include "cuesheet.hpp"

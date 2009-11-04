@@ -1,5 +1,5 @@
 /**
- * @file threads.cpp
+ * @file converterthread.cpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,7 +19,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "threads.hpp"
+#include "converterthread.hpp"
 
 #include <QFileInfo>
 
