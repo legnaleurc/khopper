@@ -32,12 +32,13 @@ extern "C" {
 
 namespace {
 
-	inline std::string wHelper( const std::wstring & filePath ) {
-#ifdef _WIN32
-		return std::string( "wfile://" ) + khopper::text::toUtf8( filePath );
-#else
-		return khopper::text::toUtf8( filePath );
+	inline std::string wHelper( const QUrl & uri ) {
+		// FIXME: not always local file
+		QUrl tmp( uri );
+#ifdef Q_OS_WIN32
+		tmp.setScheme( "wfile" );
 #endif
+		return tmp.toLocalFile().toStdString();
 	}
 
 	inline void p_helper( AVPacket * p ) {
@@ -75,11 +76,13 @@ namespace khopper {
 
 		void DefaultReader::openResource() {
 			AVFormatContext * pFC = NULL;
-			int ret = av_open_input_file( &pFC, ::wHelper( this->getFilePath() ).c_str(), NULL, 0, NULL );
+			int ret = av_open_input_file( &pFC, wHelper( this->getURI() ).c_str(), NULL, 0, NULL );
 			if( ret != 0 ) {
 				throw error::IOError(
-					std::wstring( L"Can not open `" ) + this->getFilePath() + L"\':\n" +
-					L"->" + text::toStdWString( strerror( AVUNERROR( ret ) ) )
+					QString(
+						"Can not open `%1\':\n"
+						"%2"
+					).arg( this->getURI().toString() ).arg( strerror( AVUNERROR( ret ) ) )
 				);
 			}
 			this->pFormatContext_.reset( pFC, av_close_input_file );

@@ -27,6 +27,7 @@
 
 #include <QByteArray>
 #include <QTextCodec>
+#include <QUrl>
 
 #include <vector>
 #include <map>
@@ -100,7 +101,7 @@ namespace khopper {
 			/**
 			 * @brief Load track from @p filePath
 			 */
-			void load( const QString & filePath );
+			void load( const QUrl & uri );
 
 			/**
 			 * @brief Get album
@@ -143,8 +144,8 @@ namespace khopper {
 			 *
 			 * Encoded string in locale.
 			 */
-			const QString & getFilePath() const {
-				return this->filePath_;
+			const QUrl & getURI() const {
+				return this->uri_;
 			}
 			/**
 			 * @brief Get track index
@@ -252,15 +253,15 @@ namespace khopper {
 			 * @brief Set file path
 			 * @sa getFilePath() setFilePath(const QString &)
 			 */
-			void setFilePath( const QByteArray & filePath ) {
-				this->setFilePath( QString::fromLocal8Bit( filePath.constData() ) );
-			}
+//			void setFilePath( const QByteArray & filePath ) {
+//				this->setFilePath( QString::fromLocal8Bit( filePath.constData() ) );
+//			}
 			/**
 			 * @brief Set file path
 			 * @sa getFilePath() setFilePath(const QByteArray &)
 			 */
-			void setFilePath( const QString & filePath ) {
-				this->filePath_ = filePath;
+			void setURI( const QUrl & uri ) {
+				this->uri_ = uri;
 			}
 			/**
 			 * @brief Add flag
@@ -374,7 +375,7 @@ namespace khopper {
 			std::map< QByteArray, QByteArray > comments_;
 			DataType dataType_;
 			Index duration_;
-			QString filePath_;
+			QUrl uri_;
 			FileType fileType_;
 			Flag flags_;
 			std::vector< QByteArray > garbage_;

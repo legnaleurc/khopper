@@ -26,7 +26,8 @@
 
 #include <QTableView>
 #include <QStandardItemModel>
-#include <QStringList>
+#include <QList>
+#include <QUrl>
 
 namespace khopper {
 
@@ -73,7 +74,7 @@ namespace khopper {
 			 * @brief Emitted when drop an openable file
 			 * @param paths File path
 			 */
-			void fileDropped( const QStringList & paths );
+			void fileDropped( const QList< QUrl > & uris );
 			/**
 			 * @brief Emmited when convert action is required.
 			 */
@@ -98,7 +99,7 @@ namespace khopper {
 			QStandardItemModel * model_;
 			QMenu * contextMenu_;
 			std::vector< album::TrackSP > tracks_;
-			QStringList droppingFiles_;
+			QList< QUrl > droppingFiles_;
 		};
 
 	}

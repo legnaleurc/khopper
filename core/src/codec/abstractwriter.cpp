@@ -33,7 +33,7 @@ namespace khopper {
 		artist_(),
 		bitRate_( -1 ),
 		channels_( -1 ),
-		filePath_(),
+		uri_(),
 		opening_( false ),
 		quality_( 0.0 ),
 		sampleBuffer_(),
@@ -46,12 +46,12 @@ namespace khopper {
 		AbstractWriter::~AbstractWriter() {
 		}
 
-		void AbstractWriter::open( const std::string & filePath ) {
-			this->open( text::toStdWString( filePath.c_str() ) );
-		}
+//		void AbstractWriter::open( const std::string & filePath ) {
+//			this->open( text::toStdWString( filePath.c_str() ) );
+//		}
 
-		void AbstractWriter::open( const std::wstring & filePath ) {
-			this->filePath_ = filePath;
+		void AbstractWriter::open( const QUrl & uri ) {
+			this->uri_ = uri;
 			if( this->isOpen() ) {
 				this->close();
 			}

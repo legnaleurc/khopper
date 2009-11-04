@@ -24,6 +24,8 @@
 
 #include "codec_base.hpp"
 
+#include <QUrl>
+
 #include <string>
 #include <vector>
 
@@ -47,7 +49,7 @@ namespace khopper {
 			 */
 			virtual ~AbstractWriter();
 
-			void open( const std::string & filePath );
+			void open( const QUrl & uri );
 			/**
 			 * @brief Open file
 			 * @param filePath
@@ -55,7 +57,7 @@ namespace khopper {
 			 * AbstractWriter do not handle path encoding,
 			 * so you should help yourself.
 			 */
-			void open( const std::wstring & filePath );
+//			void open( const std::wstring & filePath );
 			/// Check if audio writer is opening
 			bool isOpen() const {
 				return this->opening_;
@@ -162,8 +164,8 @@ namespace khopper {
 			 * @brief Get file path
 			 * @sa setFilePath
 			 */
-			const std::wstring & getFilePath() const {
-				return this->filePath_;
+			const QUrl & getURI() const {
+				return this->uri_;
 			}
 			/**
 			 * @brief Get quality
@@ -225,7 +227,7 @@ namespace khopper {
 			std::string artist_;
 			int bitRate_;
 			int channels_;
-			std::wstring filePath_;
+			QUrl uri_;
 			bool opening_;
 			double quality_;
 			std::vector< char > sampleBuffer_;

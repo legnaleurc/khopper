@@ -22,8 +22,6 @@
 #include "flacreader.hpp"
 #include "flacreadercreator.hpp"
 
-#include "util/text.hpp"
-
 #include <QStringList>
 #include <QMultiMap>
 #include <QtDebug>
@@ -50,16 +48,17 @@ namespace khopper {
 }
 
 namespace {
-	FILE * fileHelper( const std::wstring & filePath ) {
+	FILE * fileHelper( const QUrl & uri ) {
+		// FIXME: not always local file
 #ifdef Q_OS_WIN32
 		FILE * fin = NULL;
-		errno_t ret = _wfopen_s( &fin, filePath.c_str(), L"rb" );
+		errno_t ret = _wfopen_s( &fin, uri.toLocalFile().toStdWString().c_str(), L"rb" );
 		if( ret != 0 ) {
 			return NULL;
 		}
 		return fin;
 #else
-		return fopen( khopper::text::toUtf8( filePath ).c_str(), "rb" );
+		return fopen( uri.toLocalFile().toStdString().c_str(), "rb" );
 #endif
 	}
 }
@@ -95,7 +94,7 @@ namespace khopper {
 
 			FLAC__StreamDecoderInitStatus initStatus = FLAC__stream_decoder_init_FILE(
 				this->pFD_.get(),
-				fileHelper( this->getFilePath() ),
+				fileHelper( this->getURI() ),
 				writeCallback_,
 				metadataCallback_,
 				errorCallback_,

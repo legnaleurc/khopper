@@ -24,6 +24,8 @@
 
 #include "codec_base.hpp"
 
+#include <QUrl>
+
 #include <string>
 
 namespace khopper {
@@ -46,7 +48,9 @@ namespace khopper {
 			 */
 			virtual ~AbstractReader();
 
-			void open( const std::string & filePath );
+			void open( const QUrl & uri );
+
+//			void open( const std::string & filePath );
 			/**
 			 * @brief Open file
 			 * @param [in] filePath
@@ -54,7 +58,7 @@ namespace khopper {
 			 * AbstractReader do not handle path encoding,
 			 * so you should help yourself.
 			 */
-			void open( const std::wstring & filePath );
+//			void open( const std::wstring & filePath );
 			/// Check if audio reader is opening
 			bool isOpen() const {
 				return this->opening_;
@@ -236,8 +240,8 @@ namespace khopper {
 			/**
 			 * @brief Get file path
 			 */
-			const std::wstring & getFilePath() const {
-				return this->filePath_;
+			const QUrl & getURI() const {
+				return this->uri_;
 			}
 			/**
 			 * @brief Set genre
@@ -310,7 +314,7 @@ namespace khopper {
 			std::string copyright_;
 			int64_t msDuration_;
 			int64_t msEnd_;
-			std::wstring filePath_;
+			QUrl uri_;
 			std::string genre_;
 			bool hasNext_;
 			int index_;

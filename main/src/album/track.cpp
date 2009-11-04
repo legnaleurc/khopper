@@ -36,7 +36,7 @@ namespace khopper {
 		comments_(),
 		dataType_( AUDIO ),
 		duration_(),
-		filePath_(),
+		uri_(),
 		fileType_( BINARY ),
 		flags_( NONE ),
 		garbage_(),
@@ -51,11 +51,12 @@ namespace khopper {
 		title_() {
 		}
 
-		void Track::load( const QString & filePath ) {
-			this->filePath_ = filePath;
+		void Track::load( const QUrl & uri ) {
+			this->uri_ = uri;
 
-			codec::ReaderSP decoder( plugin::createReader( text::getSuffix( filePath ) ) );
-			decoder->open( filePath.toStdWString() );
+			// FIXME: not always local file
+			codec::ReaderSP decoder( plugin::createReader( text::getSuffix( uri.toLocalFile() ) ) );
+			decoder->open( uri );
 			if( decoder->isOpen() ) {
 				this->album_ = decoder->getAlbum().c_str();
 				this->artist_ = decoder->getArtist().c_str();
