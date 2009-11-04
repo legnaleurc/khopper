@@ -22,6 +22,8 @@
 #ifndef KHOPPER_ALBUM_INDEX_HPP
 #define KHOPPER_ALBUM_INDEX_HPP
 
+#include "util/tr1.hpp"
+
 #include <string>
 
 #include <QMetaType>
