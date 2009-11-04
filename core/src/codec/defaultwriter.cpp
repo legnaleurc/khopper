@@ -34,11 +34,11 @@ extern "C" {
 namespace {
 
 	inline std::string wHelper( const QUrl & uri ) {
-		QUrl tmp( uri );
+		QString tmp( uri.toLocalFile() );
 #ifdef Q_OS_WIN32
-		tmp.setScheme( "wfile" );
+		tmp.prepend( "wfile://" );
 #endif
-		return tmp.toString().toStdString();
+		return tmp.toStdString();
 	}
 
 	inline void fc_helper( AVFormatContext * oc ) {

@@ -142,7 +142,7 @@ namespace khopper {
 			// set track album
 			std::for_each( this->trackBegin(), this->trackEnd(), setAlbum( this->get( "title" ).toString() ) );
 
-			this->setMedia( currentFile.first );
+			this->setMedia( QUrl::fromLocalFile( currentFile.first ) );
 		}
 
 		void CUESheet::parseSingle_( const QString & c, const QString & s, int trackNO ) {

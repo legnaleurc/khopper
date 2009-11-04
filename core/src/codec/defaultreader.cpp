@@ -34,11 +34,11 @@ namespace {
 
 	inline std::string wHelper( const QUrl & uri ) {
 		// FIXME: not always local file
-		QUrl tmp( uri );
+		QString tmp( uri.toLocalFile() );
 #ifdef Q_OS_WIN32
-		tmp.setScheme( "wfile" );
+		tmp.prepend( "wfile://" );
 #endif
-		return tmp.toLocalFile().toStdString();
+		return tmp.toStdString();
 	}
 
 	inline void p_helper( AVPacket * p ) {
