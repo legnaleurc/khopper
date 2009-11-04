@@ -82,6 +82,10 @@ namespace khopper {
 			return ( tpl % this->minute % this->second % this->millisecond ).str();
 		}
 
+		QString Index::toString() const {
+			return QString::fromStdWString( this->toStdWString() );
+		}
+
 		Index Index::fromMillisecond( int64_t millisecond ) {
 			Index tmp;
 			tmp.millisecond = millisecond % 1000;

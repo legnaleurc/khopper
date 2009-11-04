@@ -64,7 +64,7 @@ namespace {
 		setBCS( khopper::codec::ReaderCSP decoder ) : decoder_( decoder ) {}
 		void operator ()( khopper::album::TrackSP track ) {
 			track->set( "bit_rate", this->decoder_->getBitRate() );
-			track->set( "simple_rate", this->decoder_->getSampleRate() );
+			track->set( "sample_rate", this->decoder_->getSampleRate() );
 			track->set( "channels", this->decoder_->getChannels() );
 		}
 	private:

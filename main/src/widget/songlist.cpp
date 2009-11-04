@@ -31,6 +31,7 @@
 #include <QSignalMapper>
 #include <QTextCodec>
 #include <QTimer>
+#include <QtDebug>
 
 #include <algorithm>
 
@@ -65,6 +66,21 @@ namespace {
 	inline const HeaderDataList & getHeaderList() {
 		static HeaderDataList hdl( initHeaderList() );
 		return hdl;
+	}
+
+	QString displayHelper( const QVariant & v ) {
+		if( v.canConvert( QVariant::String ) ) {
+			return v.toString();
+		} else if( v.canConvert( QVariant::Int ) ) {
+			return QString::number( v.toInt() );
+		} else if( v.canConvert< khopper::album::Index >() ) {
+			return v.value< khopper::album::Index >().toString();
+		} else if( !v.isValid() ) {
+			qDebug() << v;
+			return "!!!";
+		} else {
+			return "to be continue";
+		}
 	}
 
 }
@@ -137,7 +153,7 @@ namespace khopper {
 			for( std::size_t row = 0; row < tracks.size(); ++row ) {
 				const std::size_t currentRow = row + offset;
 				for( int col = 0; col < getHeaderList().size(); ++col ) {
-					this->model_->setItem( currentRow, col, new QStandardItem( tracks[row]->get( getHeaderList()[col].id ).toString() ) );
+					this->model_->setItem( currentRow, col, new QStandardItem( displayHelper( tracks[row]->get( getHeaderList()[col].id ) ) ) );
 					this->model_->item( currentRow, col )->setEditable( getHeaderList()[col].editable );
 				}
 //				this->model_->setItem( row + offset, 0, new QStandardItem( tracks[row]->getTitle() ) );

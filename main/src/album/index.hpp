@@ -86,6 +86,7 @@ namespace khopper {
 			 * @return mm:ss.ff
 			 */
 			std::wstring toStdWString() const;
+			QString toString() const;
 
 			/**
 			 * @brief Convert from int
