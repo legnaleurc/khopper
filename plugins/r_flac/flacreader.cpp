@@ -172,9 +172,10 @@ namespace khopper {
 			FlacReader * self = static_cast< FlacReader * >( client_data );
 			switch( metadata->type ) {
 			case FLAC__METADATA_TYPE_STREAMINFO:
+				qDebug( "FLAC__METADATA_TYPE_STREAMINFO" );
 				self->setSampleRate( metadata->data.stream_info.sample_rate );
 				self->setChannels( metadata->data.stream_info.channels );
-				self->setDuration( metadata->data.stream_info.total_samples / metadata->data.stream_info.sample_rate );
+				self->setDuration( static_cast< double >( metadata->data.stream_info.total_samples ) / metadata->data.stream_info.sample_rate );
 				self->setBitRate( 0 );
 				break;
 			case FLAC__METADATA_TYPE_PADDING:
