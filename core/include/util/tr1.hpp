@@ -38,6 +38,7 @@
 # define KHOPPER_EXPORT
 # if __GNUC__ >= 4
 # include <tr1/memory>
+# include <cstdint>
 # else
 // reserved for older gcc
 # endif

@@ -6,3 +6,4 @@ CORE_PATH = $${ROOT_PATH}/core
 # project
 VERSION  = 0.2.60
 DEFINES += KHOPPER_VERSION=$${VERSION}
+unix:QMAKE_CXXFLAGS += -std=c++0x
