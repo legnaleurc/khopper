@@ -46,29 +46,6 @@ namespace khopper {
 		 */
 		typedef std::deque< char > ByteArray;
 
-		/**
-		 * @ingroup Codecs
-		 * @brief Simple structure to represent rational number
-		 */
-		struct Rational {
-			/**
-			 * @brief Default constructor
-			 *
-			 * Default value is 0/1.
-			 */
-			Rational() : num( 0 ), den( 1 ) {}
-			/**
-			 * @brief Constructor
-			 *
-			 * The value is @p n/@p d.
-			 */
-			Rational( int n, int d ) : num( n ), den( d ) {}
-			/// numerator
-			int num;
-			/// denominator
-			int den;
-		};
-
 	}
 
 	namespace error {

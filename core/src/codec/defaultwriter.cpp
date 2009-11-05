@@ -21,7 +21,6 @@
  */
 #include "codec/defaultwriter.hpp"
 #include "util/error.hpp"
-#include "util/text.hpp"
 
 extern "C" {
 #include <libavcodec/avcodec.h>

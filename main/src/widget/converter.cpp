@@ -39,7 +39,6 @@ namespace khopper {
 			codec::ReaderSP decoder( plugin::createReader( text::getSuffix( track->getURI().toLocalFile() ) ) );
 			qDebug() << track->getURI();
 			decoder->open( track->getURI() );
-			encoder->setTimebase( decoder->getTimebase() );
 			encoder->open( targetURI );
 			this->canceled_ = false;
 

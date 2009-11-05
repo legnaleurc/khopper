@@ -49,7 +49,6 @@ namespace khopper {
 			 */
 			virtual ~AbstractWriter();
 
-			void open( const QUrl & uri );
 			/**
 			 * @brief Open file
 			 * @param filePath
@@ -57,7 +56,7 @@ namespace khopper {
 			 * AbstractWriter do not handle path encoding,
 			 * so you should help yourself.
 			 */
-//			void open( const std::wstring & filePath );
+			void open( const QUrl & uri );
 			/// Check if audio writer is opening
 			bool isOpen() const {
 				return this->opening_;
@@ -119,9 +118,6 @@ namespace khopper {
 			 */
 			void setSampleRate( int sampleRate ) {
 				this->sampleRate_ = sampleRate;
-			}
-			void setTimebase( const Rational & timebase ) {
-				this->timebase_ = timebase;
 			}
 			/**
 			 * @brief Set title
@@ -187,9 +183,6 @@ namespace khopper {
 			int getSampleRate() const {
 				return this->sampleRate_;
 			}
-			const Rational & getTimebase() const {
-				return this->timebase_;
-			}
 			/**
 			 * @brief Get title
 			 * @sa setTitle
@@ -233,7 +226,6 @@ namespace khopper {
 			std::vector< char > sampleBuffer_;
 			ByteArray sampleQueue_;
 			int sampleRate_;
-			Rational timebase_;
 			std::string title_;
 		};
 

@@ -48,9 +48,6 @@ namespace khopper {
 			 */
 			virtual ~AbstractReader();
 
-			void open( const QUrl & uri );
-
-//			void open( const std::string & filePath );
 			/**
 			 * @brief Open file
 			 * @param [in] filePath
@@ -58,7 +55,7 @@ namespace khopper {
 			 * AbstractReader do not handle path encoding,
 			 * so you should help yourself.
 			 */
-//			void open( const std::wstring & filePath );
+			void open( const QUrl & uri );
 			/// Check if audio reader is opening
 			bool isOpen() const {
 				return this->opening_;
@@ -164,9 +161,6 @@ namespace khopper {
 			int getSampleRate() const {
 				return this->sampleRate_;
 			}
-			const Rational & getTimebase() const {
-				return this->timebase_;
-			}
 			/**
 			 * @brief Get title
 			 * @sa setTitle
@@ -264,9 +258,6 @@ namespace khopper {
 			void setSampleRate( int sampleRate ) {
 				this->sampleRate_ = sampleRate;
 			}
-			void setTimebase( const Rational & timebase ) {
-				this->timebase_ = timebase;
-			}
 			/**
 			 * @brief Set track title
 			 * @sa getTitle
@@ -320,7 +311,6 @@ namespace khopper {
 			int index_;
 			bool opening_;
 			int sampleRate_;
-			Rational timebase_;
 			std::string title_;
 			int year_;
 		};

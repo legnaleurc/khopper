@@ -20,7 +20,6 @@
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 #include "codec/abstractreader.hpp"
-#include "util/text.hpp"
 
 #include <cassert>
 #include <QtDebug>
@@ -45,7 +44,6 @@ namespace khopper {
 		index_( -1 ),
 		opening_( false ),
 		sampleRate_( -1 ),
-		timebase_(),
 		title_(),
 		year_( -1 ) {
 		}
@@ -68,25 +66,6 @@ namespace khopper {
 			this->hasNext_ = true;
 		}
 
-//		void AbstractReader::open( const std::string & filePath ) {
-//			this->open( text::toStdWString( filePath.c_str() ) );
-//		}
-
-//		void AbstractReader::open( const std::wstring & filePath ) {
-//			if( this->opening_ ) {
-//				this->close();
-//			}
-//			this->filePath_ = filePath;
-//
-//			this->openResource();
-//			this->setupDemuxer();
-//			this->setupDecoder();
-//			this->readHeader();
-//
-//			this->opening_ = true;
-//			this->hasNext_ = true;
-//		}
-
 		void AbstractReader::close() {
 			this->album_.clear();
 			this->artist_.clear();
@@ -101,7 +80,6 @@ namespace khopper {
 			this->genre_.clear();
 			this->index_ = -1;
 			this->sampleRate_ = -1;
-			this->timebase_ = Rational();
 			this->title_.clear();
 			this->year_ = -1;
 

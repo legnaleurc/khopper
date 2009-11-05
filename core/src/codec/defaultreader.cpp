@@ -21,7 +21,6 @@
  */
 #include "codec/defaultreader.hpp"
 #include "util/error.hpp"
-#include "util/text.hpp"
 
 extern "C" {
 #include <libavcodec/avcodec.h>
@@ -114,7 +113,6 @@ namespace khopper {
 			this->pStream_ = this->pFormatContext_->streams[a_stream];
 			AVCodecContext * pCC = this->pStream_->codec;
 			// getting codec information
-			this->setTimebase( Rational( this->pStream_->time_base.num, this->pStream_->time_base.den ) );
 			this->setBitRate( pCC->bit_rate );
 			this->setSampleRate( pCC->sample_rate );
 			this->setChannels( pCC->channels );
