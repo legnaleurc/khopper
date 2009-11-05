@@ -186,6 +186,13 @@ namespace khopper {
 				break;
 			case FLAC__METADATA_TYPE_SEEKTABLE:
 				qDebug( "FLAC__METADATA_TYPE_SEEKTABLE" );
+#ifndef QT_NO_DEBUG_OUTPUT
+				for( uint64_t i = 0, last = 0; i < metadata->data.seek_table.num_points; ++i ) {
+					FLAC__StreamMetadata_SeekPoint * sp = metadata->data.seek_table.points + i;
+					qDebug() << sp->sample_number << sp->stream_offset << sp->frame_samples << sp->sample_number - last;
+					last = sp->sample_number;
+				}
+#endif
 				break;
 			case FLAC__METADATA_TYPE_VORBIS_COMMENT:
 				self->parseVorbisComments_( metadata->data.vorbis_comment );
