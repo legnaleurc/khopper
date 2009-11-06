@@ -24,6 +24,8 @@
 
 #include "util/text.hpp"
 
+#include <QtDebug>
+
 /* register plugin */
 namespace {
 	static const bool registered = khopper::plugin::registerWriter( "flac", "kpw_flac" );
@@ -40,18 +42,23 @@ namespace khopper {
 }
 
 namespace {
-	FILE * fileHelper( const std::wstring & filePath ) {
+	static inline FILE * fileHelper( const std::wstring & filePath ) {
 #ifdef Q_OS_WIN32
 		FILE * fin = NULL;
-		errno_t ret = _wfopen_s( &fin, filePath.c_str(), L"rb" );
+		errno_t ret = _wfopen_s( &fin, filePath.c_str(), L"wb" );
 		if( ret != 0 ) {
 			return NULL;
 		}
 		return fin;
 #else
-		return fopen( khopper::text::toUtf8( filePath ).c_str(), "rb" );
+		return fopen( khopper::text::toUtf8( filePath ).c_str(), "wb" );
 #endif
 	}
+
+	static inline int32_t S32LEfromS8S8( int8_t s8_0, int8_t s8_1 ) {
+		return ( static_cast< int16_t >( s8_1 ) << 8 ) | s8_0;
+	}
+
 }
 
 namespace khopper {
@@ -65,31 +72,98 @@ namespace khopper {
 		metadata_() {
 			if( !this->pFE_ ) {
 				// error
+				qDebug( "new error" );
 			}
 		}
 
+		FlacWriter::~FlacWriter() {
+		}
+
 		void FlacWriter::setupEncoder() {
-			FLAC__stream_encoder_set_channels( this->pFE_.get(), this->getChannels() );
-			FLAC__stream_encoder_set_bits_per_sample( this->pFE_.get(), 16 );
-			FLAC__stream_encoder_set_sample_rate( this->pFE_.get(), this->getSampleRate() );
+			FLAC__bool ok = true;
+			ok &= FLAC__stream_encoder_set_channels( this->pFE_.get(), this->getChannels() );
+			// TODO: forcing sample format S16LE, but may cause other problems.
+			ok &= FLAC__stream_encoder_set_bits_per_sample( this->pFE_.get(), 16 );
+			ok &= FLAC__stream_encoder_set_sample_rate( this->pFE_.get(), this->getSampleRate() );
 			// FLAC__stream_encoder_set_total_samples_estimate()
+			if( !ok ) {
+				// error
+				qDebug( "encoder error" );
+			}
+			this->getSampleBuffer().resize( 1024 * 16 * this->getChannels() );
 		}
 
 		void FlacWriter::setupMuxer() {
 			FLAC__StreamMetadata * tmp = FLAC__metadata_object_new( FLAC__METADATA_TYPE_VORBIS_COMMENT );
+			if( tmp == NULL ) {
+				// error
+				qDebug( "metadata error" );
+			}
 			FLAC__StreamMetadata_VorbisComment_Entry entry;
-			FLAC__metadata_object_vorbiscomment_entry_from_name_value_pair( &entry, "TITLE", this->getTitle().c_str() );
-			FLAC__metadata_object_vorbiscomment_append_comment( tmp, entry, false );
-			FLAC__metadata_object_vorbiscomment_entry_from_name_value_pair( &entry, "ALBUM", this->getAlbum().c_str() );
-			FLAC__metadata_object_vorbiscomment_append_comment( tmp, entry, false );
-			FLAC__metadata_object_vorbiscomment_entry_from_name_value_pair( &entry, "ARTIST", this->getArtist().c_str() );
-			FLAC__metadata_object_vorbiscomment_append_comment( tmp, entry, false );
+			FLAC__bool ok = true;
+			ok &= FLAC__metadata_object_vorbiscomment_entry_from_name_value_pair( &entry, "TITLE", this->getTitle().c_str() );
+			ok &= FLAC__metadata_object_vorbiscomment_append_comment( tmp, entry, false );
+			ok &= FLAC__metadata_object_vorbiscomment_entry_from_name_value_pair( &entry, "ALBUM", this->getAlbum().c_str() );
+			ok &= FLAC__metadata_object_vorbiscomment_append_comment( tmp, entry, false );
+			ok &= FLAC__metadata_object_vorbiscomment_entry_from_name_value_pair( &entry, "ARTIST", this->getArtist().c_str() );
+			ok &= FLAC__metadata_object_vorbiscomment_append_comment( tmp, entry, false );
+			if( !ok ) {
+				qDebug( "metadata error" );
+			}
 			this->metadataOwner_.push_back( std::tr1::shared_ptr< FLAC__StreamMetadata >( tmp, FLAC__metadata_object_delete ) );
 			this->metadata_.push_back( tmp );
 
-			tmp = FLAC__metadata_object_new( FLAC__METADATA_TYPE_SEEKTABLE );
-			this->metadataOwner_.push_back( std::tr1::shared_ptr< FLAC__StreamMetadata >( tmp, FLAC__metadata_object_delete ) );
-			this->metadata_.push_back( tmp );
+//			tmp = FLAC__metadata_object_new( FLAC__METADATA_TYPE_SEEKTABLE );
+//			this->metadataOwner_.push_back( std::tr1::shared_ptr< FLAC__StreamMetadata >( tmp, FLAC__metadata_object_delete ) );
+//			this->metadata_.push_back( tmp );
+		}
+
+		void FlacWriter::openResource() {
+			FLAC__StreamEncoderInitStatus init_status = FLAC__stream_encoder_init_FILE(
+				this->pFE_.get(),
+				fileHelper( this->getFilePath() ),
+				progressCallback_,
+				this
+			);
+			if( init_status != FLAC__STREAM_ENCODER_INIT_STATUS_OK ) {
+				// error
+				qDebug( "%s", FLAC__StreamEncoderInitStatusString[init_status] );
+			}
+		}
+
+		void FlacWriter::writeHeader() {
+		}
+
+		void FlacWriter::writeFrame( const char * sample, std::size_t nSample ) {
+			// TODO: assumed that sample format is S16LE, please fix the interface later
+			const int32_t buf_size = nSample * sizeof( char ) / sizeof( int16_t );
+			std::vector< int32_t > buffer( buf_size );
+			for( int i = 0; i < buf_size; ++i ) {
+				buffer[i] = S32LEfromS8S8( sample[2*i], sample[2*i+1] );
+			}
+
+			FLAC__bool ok = FLAC__stream_encoder_process_interleaved( this->pFE_.get(), &buffer[0], buf_size / this->getChannels() );
+			if( !ok ) {
+				// error
+				qDebug( "write error" );
+			}
+		}
+
+		void FlacWriter::closeResource() {
+			FLAC__stream_encoder_finish( this->pFE_.get() );
+			this->metadata_.clear();
+			this->metadataOwner_.clear();
+		}
+
+		void FlacWriter::progressCallback_(
+			const FLAC__StreamEncoder * encoder,
+			FLAC__uint64 bytes_written,
+			FLAC__uint64 samples_written,
+			unsigned frames_written,
+			unsigned total_frames_estimate,
+			void * /*client_data*/ ) {
+			qDebug() << bytes_written << samples_written << frames_written << total_frames_estimate;
+			qDebug() << FLAC__StreamEncoderStateString[FLAC__stream_encoder_get_state( encoder )];
 		}
 
 	}
