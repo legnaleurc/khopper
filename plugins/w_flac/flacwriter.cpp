@@ -116,6 +116,11 @@ namespace khopper {
 //			tmp = FLAC__metadata_object_new( FLAC__METADATA_TYPE_SEEKTABLE );
 //			this->metadataOwner_.push_back( std::tr1::shared_ptr< FLAC__StreamMetadata >( tmp, FLAC__metadata_object_delete ) );
 //			this->metadata_.push_back( tmp );
+
+			ok &= FLAC__stream_encoder_set_metadata( this->pFE_.get(), &this->metadata_[0], this->metadata_.size() );
+			if( !ok ) {
+				qDebug( "metadata error" );
+			}
 		}
 
 		void FlacWriter::openResource() {
