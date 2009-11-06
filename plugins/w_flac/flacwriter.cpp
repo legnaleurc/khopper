@@ -112,16 +112,18 @@ namespace khopper {
 			this->metadataOwner_.push_back( std::tr1::shared_ptr< FLAC__StreamMetadata >( tmp, FLAC__metadata_object_delete ) );
 			this->metadata_.push_back( tmp );
 
+			tmp = FLAC__metadata_object_new( FLAC__METADATA_TYPE_SEEKTABLE );
+			// FIXME: dirty hack
+			FLAC__metadata_object_seektable_template_append_spaced_points_by_samples( tmp, this->getSampleRate(), this->getSampleRate() * 7200 );
+			this->metadataOwner_.push_back( std::tr1::shared_ptr< FLAC__StreamMetadata >( tmp, FLAC__metadata_object_delete ) );
+			this->metadata_.push_back( tmp );
+
 //			tmp = FLAC__metadata_object_new( FLAC__METADATA_TYPE_PADDING );
 //			if( tmp == NULL ) {
 //				// error
 //				qDebug( "metadata error" );
 //			}
 //			tmp->length = 2048;
-//			this->metadataOwner_.push_back( std::tr1::shared_ptr< FLAC__StreamMetadata >( tmp, FLAC__metadata_object_delete ) );
-//			this->metadata_.push_back( tmp );
-
-//			tmp = FLAC__metadata_object_new( FLAC__METADATA_TYPE_SEEKTABLE );
 //			this->metadataOwner_.push_back( std::tr1::shared_ptr< FLAC__StreamMetadata >( tmp, FLAC__metadata_object_delete ) );
 //			this->metadata_.push_back( tmp );
 
