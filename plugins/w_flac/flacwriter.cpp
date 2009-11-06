@@ -55,10 +55,6 @@ namespace {
 #endif
 	}
 
-	static inline int32_t S32LEfromS8S8( int8_t s8_0, int8_t s8_1 ) {
-		return ( static_cast< int16_t >( s8_1 ) << 8 ) | s8_0;
-	}
-
 }
 
 namespace khopper {
@@ -85,6 +81,8 @@ namespace khopper {
 			// TODO: forcing sample format S16LE, but may cause other problems.
 			ok &= FLAC__stream_encoder_set_bits_per_sample( this->pFE_.get(), 16 );
 			ok &= FLAC__stream_encoder_set_sample_rate( this->pFE_.get(), this->getSampleRate() );
+			ok &= FLAC__stream_encoder_set_compression_level( this->pFE_.get(), 5 );
+			ok &= FLAC__stream_encoder_set_verify( this->pFE_.get(), true );
 			// FLAC__stream_encoder_set_total_samples_estimate()
 			if( !ok ) {
 				// error
@@ -94,13 +92,14 @@ namespace khopper {
 		}
 
 		void FlacWriter::setupMuxer() {
+			FLAC__bool ok = true;
+
 			FLAC__StreamMetadata * tmp = FLAC__metadata_object_new( FLAC__METADATA_TYPE_VORBIS_COMMENT );
 			if( tmp == NULL ) {
 				// error
 				qDebug( "metadata error" );
 			}
 			FLAC__StreamMetadata_VorbisComment_Entry entry;
-			FLAC__bool ok = true;
 			ok &= FLAC__metadata_object_vorbiscomment_entry_from_name_value_pair( &entry, "TITLE", this->getTitle().c_str() );
 			ok &= FLAC__metadata_object_vorbiscomment_append_comment( tmp, entry, false );
 			ok &= FLAC__metadata_object_vorbiscomment_entry_from_name_value_pair( &entry, "ALBUM", this->getAlbum().c_str() );
@@ -112,6 +111,15 @@ namespace khopper {
 			}
 			this->metadataOwner_.push_back( std::tr1::shared_ptr< FLAC__StreamMetadata >( tmp, FLAC__metadata_object_delete ) );
 			this->metadata_.push_back( tmp );
+
+//			tmp = FLAC__metadata_object_new( FLAC__METADATA_TYPE_PADDING );
+//			if( tmp == NULL ) {
+//				// error
+//				qDebug( "metadata error" );
+//			}
+//			tmp->length = 2048;
+//			this->metadataOwner_.push_back( std::tr1::shared_ptr< FLAC__StreamMetadata >( tmp, FLAC__metadata_object_delete ) );
+//			this->metadata_.push_back( tmp );
 
 //			tmp = FLAC__metadata_object_new( FLAC__METADATA_TYPE_SEEKTABLE );
 //			this->metadataOwner_.push_back( std::tr1::shared_ptr< FLAC__StreamMetadata >( tmp, FLAC__metadata_object_delete ) );
@@ -142,9 +150,11 @@ namespace khopper {
 		void FlacWriter::writeFrame( const char * sample, std::size_t nSample ) {
 			// TODO: assumed that sample format is S16LE, please fix the interface later
 			const int32_t buf_size = nSample * sizeof( char ) / sizeof( int16_t );
+			// TODO: big or little endian
+			const int16_t * buffer_ = static_cast< const int16_t * >( static_cast< const void * >( sample ) );
 			std::vector< int32_t > buffer( buf_size );
 			for( int i = 0; i < buf_size; ++i ) {
-				buffer[i] = S32LEfromS8S8( sample[2*i], sample[2*i+1] );
+				buffer[i] = buffer_[i];
 			}
 
 			FLAC__bool ok = FLAC__stream_encoder_process_interleaved( this->pFE_.get(), &buffer[0], buf_size / this->getChannels() );
@@ -171,7 +181,6 @@ namespace khopper {
 			unsigned total_frames_estimate,
 			void * /*client_data*/ ) {
 			qDebug() << bytes_written << samples_written << frames_written << total_frames_estimate;
-			qDebug() << FLAC__StreamEncoderStateString[FLAC__stream_encoder_get_state( encoder )];
 		}
 
 	}
