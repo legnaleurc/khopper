@@ -44,7 +44,7 @@ namespace khopper {
 }
 
 namespace {
-	FILE * fileHelper( const std::wstring & filePath ) {
+	static inline FILE * fileHelper( const std::wstring & filePath ) {
 #ifdef Q_OS_WIN32
 		FILE * fin = NULL;
 		errno_t ret = _wfopen_s( &fin, filePath.c_str(), L"rb" );
@@ -180,6 +180,7 @@ namespace khopper {
 				break;
 			case FLAC__METADATA_TYPE_PADDING:
 				qDebug( "FLAC__METADATA_TYPE_PADDING" );
+				qDebug() << metadata->length;
 				break;
 			case FLAC__METADATA_TYPE_APPLICATION:
 				qDebug( "FLAC__METADATA_TYPE_APPLICATION" );
