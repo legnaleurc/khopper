@@ -23,6 +23,7 @@
 #include "flacwritercreator.hpp"
 
 #include "util/text.hpp"
+#include "util/error.hpp"
 
 #include <QtDebug>
 
@@ -64,11 +65,9 @@ namespace khopper {
 		FlacWriter::FlacWriter():
 		AbstractWriter(),
 		pFE_( FLAC__stream_encoder_new(), FLAC__stream_encoder_delete ),
-		metadataOwner_(),
-		metadata_() {
+		metadataOwner_() {
 			if( !this->pFE_ ) {
-				// error
-				qDebug( "new error" );
+				throw error::SystemError( "memory allocation error" );
 			}
 		}
 
@@ -85,19 +84,18 @@ namespace khopper {
 			ok &= FLAC__stream_encoder_set_verify( this->pFE_.get(), true );
 			// FLAC__stream_encoder_set_total_samples_estimate()
 			if( !ok ) {
-				// error
-				qDebug( "encoder error" );
+				throw error::CodecError( "encoder parameter error" );
 			}
 			this->getSampleBuffer().resize( 1024 * 16 * this->getChannels() );
 		}
 
 		void FlacWriter::setupMuxer() {
 			FLAC__bool ok = true;
+			std::vector< FLAC__StreamMetadata * > metadata;
 
 			FLAC__StreamMetadata * tmp = FLAC__metadata_object_new( FLAC__METADATA_TYPE_VORBIS_COMMENT );
 			if( tmp == NULL ) {
-				// error
-				qDebug( "metadata error" );
+				throw error::SystemError( "memory allocation error" );
 			}
 			FLAC__StreamMetadata_VorbisComment_Entry entry;
 			ok &= FLAC__metadata_object_vorbiscomment_entry_from_name_value_pair( &entry, "TITLE", this->getTitle().c_str() );
@@ -107,16 +105,19 @@ namespace khopper {
 			ok &= FLAC__metadata_object_vorbiscomment_entry_from_name_value_pair( &entry, "ARTIST", this->getArtist().c_str() );
 			ok &= FLAC__metadata_object_vorbiscomment_append_comment( tmp, entry, false );
 			if( !ok ) {
-				qDebug( "metadata error" );
+				throw error::CodecError( "encoder vorbis comment error" );
 			}
 			this->metadataOwner_.push_back( std::tr1::shared_ptr< FLAC__StreamMetadata >( tmp, FLAC__metadata_object_delete ) );
-			this->metadata_.push_back( tmp );
+			metadata.push_back( tmp );
 
 			tmp = FLAC__metadata_object_new( FLAC__METADATA_TYPE_SEEKTABLE );
+			if( tmp == NULL ) {
+				throw error::SystemError( "memory allocation error" );
+			}
 			// FIXME: dirty hack
 			FLAC__metadata_object_seektable_template_append_spaced_points_by_samples( tmp, this->getSampleRate(), this->getSampleRate() * 7200 );
 			this->metadataOwner_.push_back( std::tr1::shared_ptr< FLAC__StreamMetadata >( tmp, FLAC__metadata_object_delete ) );
-			this->metadata_.push_back( tmp );
+			metadata.push_back( tmp );
 
 //			tmp = FLAC__metadata_object_new( FLAC__METADATA_TYPE_PADDING );
 //			if( tmp == NULL ) {
@@ -127,9 +128,9 @@ namespace khopper {
 //			this->metadataOwner_.push_back( std::tr1::shared_ptr< FLAC__StreamMetadata >( tmp, FLAC__metadata_object_delete ) );
 //			this->metadata_.push_back( tmp );
 
-			ok &= FLAC__stream_encoder_set_metadata( this->pFE_.get(), &this->metadata_[0], this->metadata_.size() );
+			ok &= FLAC__stream_encoder_set_metadata( this->pFE_.get(), &metadata[0], metadata.size() );
 			if( !ok ) {
-				qDebug( "metadata error" );
+				throw error::CodecError( "encoder metadata error" );
 			}
 		}
 
@@ -141,8 +142,7 @@ namespace khopper {
 				this
 			);
 			if( init_status != FLAC__STREAM_ENCODER_INIT_STATUS_OK ) {
-				// error
-				qDebug( "%s", FLAC__StreamEncoderInitStatusString[init_status] );
+				throw error::CodecError( FLAC__StreamEncoderInitStatusString[init_status] );
 			}
 		}
 
@@ -161,22 +161,21 @@ namespace khopper {
 
 			FLAC__bool ok = FLAC__stream_encoder_process_interleaved( this->pFE_.get(), &buffer[0], buf_size / this->getChannels() );
 			if( !ok ) {
-				// error
-				qDebug( "write error" );
+				throw error::CodecError( FLAC__StreamEncoderStateString[FLAC__stream_encoder_get_state( this->pFE_.get() )] );
 			}
 		}
 
 		void FlacWriter::closeResource() {
 			FLAC__bool ok = FLAC__stream_encoder_finish( this->pFE_.get() );
 			if( !ok ) {
+				// nothrow
 				qDebug() << FLAC__StreamEncoderStateString[FLAC__stream_encoder_get_state( this->pFE_.get() )];
 			}
-			this->metadata_.clear();
 			this->metadataOwner_.clear();
 		}
 
 		void FlacWriter::progressCallback_(
-			const FLAC__StreamEncoder * encoder,
+			const FLAC__StreamEncoder * /*encoder*/,
 			FLAC__uint64 bytes_written,
 			FLAC__uint64 samples_written,
 			unsigned frames_written,
