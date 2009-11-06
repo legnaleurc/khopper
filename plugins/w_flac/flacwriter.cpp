@@ -155,7 +155,10 @@ namespace khopper {
 		}
 
 		void FlacWriter::closeResource() {
-			FLAC__stream_encoder_finish( this->pFE_.get() );
+			FLAC__bool ok = FLAC__stream_encoder_finish( this->pFE_.get() );
+			if( !ok ) {
+				qDebug() << FLAC__StreamEncoderStateString[FLAC__stream_encoder_get_state( this->pFE_.get() )];
+			}
 			this->metadata_.clear();
 			this->metadataOwner_.clear();
 		}
