@@ -22,7 +22,9 @@
 #ifndef KHOPPER_CODEC_OGGWRITER_HPP
 #define KHOPPER_CODEC_OGGWRITER_HPP
 
-#include "codec/defaultwriter.hpp"
+#include "codec/abstractwriter.hpp"
+
+#include <vorbis/vorbisenc.h>
 
 namespace khopper {
 
@@ -33,15 +35,34 @@ namespace khopper {
 		 *
 		 * This class provides a ogg audio writer implementation.
 		 */
-		class OGGWriter : public DefaultWriter {
+		class OggWriter : public AbstractWriter {
 		public:
 			/**
 			 * @brief Default constructor
 			 */
-			OGGWriter();
+			OggWriter();
+			virtual ~OggWriter();
+
+			void setVBRQuality( float quality ) {
+				this->quality_ = quality;
+			}
 
 		protected:
+			virtual void openResource();
+			virtual void closeResource();
 			virtual void setupMuxer();
+			virtual void setupEncoder();
+			virtual void writeHeader();
+			virtual void writeFrame( const char *, std::size_t );
+
+		private:
+			std::tr1::shared_ptr< FILE > fout_;
+			std::tr1::shared_ptr< vorbis_info > encoder_;
+			std::tr1::shared_ptr< ogg_stream_state > muxer_;
+			std::tr1::shared_ptr< vorbis_dsp_state > dsp_;
+			std::tr1::shared_ptr< vorbis_block > block_;
+			std::tr1::shared_ptr< vorbis_comment > comments_;
+			float quality_;
 		};
 
 	}

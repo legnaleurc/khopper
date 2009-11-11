@@ -84,7 +84,7 @@ namespace khopper {
 		}
 
 		codec::WriterSP OGGPanel::getWriter() const {
-			codec::WriterSP tmp( new codec::OGGWriter() );
+			codec::OggWriter * tmp( new codec::OggWriter() );
 
 			tmp->setChannels( this->channels_->itemData( this->channels_->currentIndex() ).toInt() );
 			tmp->setSampleRate( this->sampleRate_->itemData( this->sampleRate_->currentIndex() ).toInt() );
@@ -92,13 +92,13 @@ namespace khopper {
 			case 0:
 				break;
 			case 1:
-				tmp->setQuality( this->quality_->itemData( this->quality_->currentIndex() ).toInt() );
+				tmp->setVBRQuality( this->quality_->itemData( this->quality_->currentIndex() ).toInt() / 10.f );
 				break;
 			default:
 				qDebug( "%d\n", this->brGroup_->checkedId() );
 			}
 
-			return tmp;
+			return codec::WriterSP( tmp );
 		}
 
 		QString OGGPanel::getSuffix() const {
