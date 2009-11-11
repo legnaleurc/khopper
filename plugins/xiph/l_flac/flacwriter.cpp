@@ -26,8 +26,8 @@
 
 #include <QtDebug>
 
-std::tr1::shared_ptr< khopper::codec::FlacWriter > createFlacWriter() {
-	return std::tr1::shared_ptr< khopper::codec::FlacWriter >( new khopper::codec::FlacWriter() );
+khopper::codec::FlacWriter * createFlacWriter() {
+	return new khopper::codec::FlacWriter;
 }
 
 namespace {

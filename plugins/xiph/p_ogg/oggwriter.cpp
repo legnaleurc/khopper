@@ -30,9 +30,9 @@ namespace {
 	static inline FILE * fileHelper( const std::wstring & filePath ) {
 #ifdef _WIN32
 		FILE * fout = NULL;
-		errno_t ret = wfopen_s( &fout, filePath.c_str(), L"wb" );
+		errno_t ret = _wfopen_s( &fout, filePath.c_str(), L"wb" );
 		if( ret != 0 ) {
-			return NULL
+			return NULL;
 		}
 		return fout;
 #else

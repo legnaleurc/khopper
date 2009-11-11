@@ -60,7 +60,7 @@ namespace khopper {
 
 }
 
-typedef std::tr1::shared_ptr< khopper::codec::FlacWriter > ( * FlacWriterCreator )();
-extern "C" KHOPPER_EXPORT std::tr1::shared_ptr< khopper::codec::FlacWriter > createFlacWriter();
+typedef khopper::codec::FlacWriter * ( * FlacWriterCreator )();
+extern "C" KHOPPER_EXPORT khopper::codec::FlacWriter * createFlacWriter();
 
 #endif
