@@ -33,6 +33,12 @@
 
 Q_EXPORT_PLUGIN2( kpp_ogg, khopper::plugin::OGGPanel )
 
+#ifdef Q_OS_WIN32
+static const char * LIBFLAC = "kl_flac0";
+#else
+static const char * LIBFLAC = "libkl_flac";
+#endif
+
 namespace khopper {
 
 	namespace plugin {
@@ -89,7 +95,7 @@ namespace khopper {
 			int id = this->brGroup_->checkedId();
 
 			if( id == 0 ) {
-				FlacWriterCreator loader = reinterpret_cast< FlacWriterCreator >( QLibrary::resolve( "libkl_flac", "createFlacWriter" ) );
+				FlacWriterCreator loader = reinterpret_cast< FlacWriterCreator >( QLibrary::resolve( LIBFLAC, "createFlacWriter" ) );
 				if( loader == NULL ) {
 					qDebug( "dll error !!!" );
 				}
