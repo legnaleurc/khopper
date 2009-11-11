@@ -20,8 +20,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "flacpanel.hpp"
-
-#include "plugin/abstractwritercreator.hpp"
+#include "flacwriter.hpp"
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -30,6 +29,8 @@
 #include <QVariant>
 #include <QLabel>
 #include <QtPlugin>
+#include <QLibrary>
+#include <QtDebug>
 
 Q_EXPORT_PLUGIN2( kpp_flac, khopper::plugin::FlacPanel )
 
@@ -63,7 +64,11 @@ namespace khopper {
 		}
 
 		codec::WriterSP FlacPanel::getWriter() const {
-			codec::WriterSP encoder( plugin::createWriter( "flac" ) );
+			FlacWriterCreator loader = reinterpret_cast< FlacWriterCreator >( QLibrary::resolve( "libkl_flac", "createFlacWriter" ) );
+			if( loader == NULL ) {
+				qDebug( "dll error !!!" );
+			}
+			std::tr1::shared_ptr< codec::FlacWriter > encoder( loader() );
 
 			encoder->setSampleRate( this->sampleRate_->itemData( this->sampleRate_->currentIndex() ).toInt() );
 			encoder->setChannels( this->channels_->itemData( this->channels_->currentIndex() ).toInt() );

@@ -21,14 +21,15 @@
  */
 #include "oggpanel.hpp"
 
-#include "plugin/abstractwritercreator.hpp"
 #include "oggwriter.hpp"
+#include "flacwriter.hpp"
 
 #include <QtPlugin>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QVariant>
 #include <QRadioButton>
+#include <QLibrary>
 
 Q_EXPORT_PLUGIN2( kpp_ogg, khopper::plugin::OGGPanel )
 
@@ -84,21 +85,29 @@ namespace khopper {
 		}
 
 		codec::WriterSP OGGPanel::getWriter() const {
-			codec::OggWriter * tmp( new codec::OggWriter() );
+			codec::WriterSP tmp;
+			int id = this->brGroup_->checkedId();
+
+			if( id == 0 ) {
+				FlacWriterCreator loader = reinterpret_cast< FlacWriterCreator >( QLibrary::resolve( "libkl_flac", "createFlacWriter" ) );
+				if( loader == NULL ) {
+					qDebug( "dll error !!!" );
+				}
+				std::tr1::shared_ptr< codec::FlacWriter > flac( loader() );
+				flac->setOggMode( true );
+				tmp = flac;
+			} else if( id == 1 ) {
+				codec::OggWriter * vorbis = new codec::OggWriter;
+				vorbis->setVBRQuality( this->quality_->itemData( this->quality_->currentIndex() ).toInt() / 10.f );
+				tmp.reset( vorbis );
+			} else {
+				qDebug( "%d\n", id );
+			}
 
 			tmp->setChannels( this->channels_->itemData( this->channels_->currentIndex() ).toInt() );
 			tmp->setSampleRate( this->sampleRate_->itemData( this->sampleRate_->currentIndex() ).toInt() );
-			switch( this->brGroup_->checkedId() ) {
-			case 0:
-				break;
-			case 1:
-				tmp->setVBRQuality( this->quality_->itemData( this->quality_->currentIndex() ).toInt() / 10.f );
-				break;
-			default:
-				qDebug( "%d\n", this->brGroup_->checkedId() );
-			}
 
-			return codec::WriterSP( tmp );
+			return tmp;
 		}
 
 		QString OGGPanel::getSuffix() const {

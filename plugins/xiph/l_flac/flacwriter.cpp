@@ -20,29 +20,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "flacwriter.hpp"
-#include "flacwritercreator.hpp"
 
 #include "util/text.hpp"
 #include "util/error.hpp"
 
 #include <QtDebug>
 
-/* register plugin */
-namespace {
-	static const bool registered = khopper::plugin::registerWriter( "flac", "kpw_flac" );
-}
-Q_EXPORT_PLUGIN2( kpw_flac, khopper::plugin::FlacWriterCreator )
-
-/* define plugin */
-namespace khopper {
-	namespace plugin {
-		codec::WriterSP FlacWriterCreator::doCreate() const {
-			return codec::WriterSP( new codec::FlacWriter );
-		}
-	}
+std::tr1::shared_ptr< khopper::codec::FlacWriter > createFlacWriter() {
+	return std::tr1::shared_ptr< khopper::codec::FlacWriter >( new khopper::codec::FlacWriter() );
 }
 
 namespace {
+
 	static inline FILE * fileHelper( const std::wstring & filePath ) {
 #ifdef Q_OS_WIN32
 		FILE * fin = NULL;
@@ -65,7 +54,8 @@ namespace khopper {
 		FlacWriter::FlacWriter():
 		AbstractWriter(),
 		pFE_( FLAC__stream_encoder_new(), FLAC__stream_encoder_delete ),
-		metadataOwner_() {
+		metadataOwner_(),
+		ogg_( false ) {
 			if( !this->pFE_ ) {
 				throw error::SystemError( "memory allocation error" );
 			}
@@ -80,6 +70,9 @@ namespace khopper {
 			// TODO: forcing sample format S16LE, but may cause other problems.
 			ok &= FLAC__stream_encoder_set_bits_per_sample( this->pFE_.get(), 16 );
 			ok &= FLAC__stream_encoder_set_sample_rate( this->pFE_.get(), this->getSampleRate() );
+			if( this->ogg_ ) {
+				ok &= FLAC__stream_encoder_set_ogg_serial_number( this->pFE_.get(), 0xcafebabeL );
+			}
 			ok &= FLAC__stream_encoder_set_compression_level( this->pFE_.get(), 5 );
 			ok &= FLAC__stream_encoder_set_verify( this->pFE_.get(), true );
 			// FLAC__stream_encoder_set_total_samples_estimate()
@@ -135,12 +128,22 @@ namespace khopper {
 		}
 
 		void FlacWriter::openResource() {
-			FLAC__StreamEncoderInitStatus init_status = FLAC__stream_encoder_init_FILE(
-				this->pFE_.get(),
-				fileHelper( this->getFilePath() ),
-				progressCallback_,
-				this
-			);
+			FLAC__StreamEncoderInitStatus init_status;
+			if( this->ogg_ ) {
+				init_status = FLAC__stream_encoder_init_ogg_FILE(
+					this->pFE_.get(),
+					fileHelper( this->getFilePath() ),
+					progressCallback_,
+					this
+				);
+			} else {
+				init_status = FLAC__stream_encoder_init_FILE(
+					this->pFE_.get(),
+					fileHelper( this->getFilePath() ),
+					progressCallback_,
+					this
+				);
+			}
 			if( init_status != FLAC__STREAM_ENCODER_INIT_STATUS_OK ) {
 				throw error::CodecError( FLAC__StreamEncoderInitStatusString[init_status] );
 			}
@@ -172,6 +175,7 @@ namespace khopper {
 				qDebug() << FLAC__StreamEncoderStateString[FLAC__stream_encoder_get_state( this->pFE_.get() )];
 			}
 			this->metadataOwner_.clear();
+			this->ogg_ = false;
 		}
 
 		void FlacWriter::progressCallback_(

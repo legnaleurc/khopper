@@ -1,4 +1,4 @@
-include(../../configure.pri)
+include(../../../configure.pri)
 
 # Path setting
 INC_DIRS = .	\
@@ -8,14 +8,14 @@ SRC_DIRS = .
 INCLUDEPATH += $${INC_DIRS} $${SRC_DIRS}
 DEPANDPATH  += $${INC_DIRS}
 
-HEADERS = flacwriter.hpp flacwritercreator.hpp
+HEADERS = flacwriter.hpp
 SOURCES = flacwriter.cpp
 
 MOC_DIR = $${ROOT_PATH}/tmp/moc
 
 # Config
-CONFIG  += plugin debug_and_release
-TARGET   = $$qtLibraryTarget(kpw_flac)
+CONFIG  += debug_and_release
+TARGET   = kl_flac
 VERSION  = $${KHOPPER_VERSION}
 TEMPLATE = lib
 

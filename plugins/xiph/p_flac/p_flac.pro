@@ -1,21 +1,22 @@
-include(../../configure.pri)
+include(../../../configure.pri)
 
 # Path setting
 INC_DIRS = .	\
-	$${CORE_PATH}/include
+	$${CORE_PATH}/include	\
+	../l_flac
 SRC_DIRS = .
 
 INCLUDEPATH += $${INC_DIRS} $${SRC_DIRS}
 DEPANDPATH  += $${INC_DIRS}
 
-HEADERS = oggpanel.hpp oggwriter.hpp
-SOURCES = oggpanel.cpp oggwriter.cpp
+HEADERS = flacpanel.hpp
+SOURCES = flacpanel.cpp
 
 MOC_DIR = $${ROOT_PATH}/tmp/moc
 
 # Config
 CONFIG  += plugin debug_and_release
-TARGET   = $$qtLibraryTarget(kpp_ogg)
+TARGET   = $$qtLibraryTarget(kpp_flac)
 VERSION  = $${KHOPPER_VERSION}
 TEMPLATE = lib
 
@@ -34,8 +35,4 @@ CONFIG( debug, debug|release ) {
 	win32:LIBS += -L$${ROOT_PATH}/build/release -lk_core0
 
 	unix:QMAKE_POST_LINK = strip $${DESTDIR}/lib$${TARGET}.so
-}
-
-unix {
-	QMAKE_CXXFLAGS += $$system(pkg-config --cflags libavformat)
 }
