@@ -70,13 +70,12 @@ namespace khopper {
 				qDebug( "lame param error" );
 			}
 			this->getSampleBuffer().resize( lame_get_framesize( this->gfp_.get() ) * 4 );
-			qDebug( "lame encoded size: %d", lame_get_frameNum( this->gfp_.get() ) );
 		}
 
 		void Mp3Writer::writeFrame( const char * samples, std::size_t nSamples ) {
 			int ret = 0;
 			short int * audio = static_cast< short int * >( const_cast< void * >( static_cast< const void * >( samples ) ) );
-			int nsamples = nSamples / sizeof( short int );
+			int nsamples = nSamples / sizeof( short int ) / this->getChannels();
 			std::vector< unsigned char > buffer( 1.25 * nsamples + 7200 );
 
 			if( this->getChannels() == 1 ) {
@@ -118,7 +117,8 @@ namespace khopper {
 
 			ret = lame_get_lametag_frame( this->gfp_.get(), &buffer[0], buffer.size() );
 			if( ret > 0 ) {
-				qDebug( "yes!" );
+				fseek( this->fout_.get(), 0L, SEEK_SET );
+				fwrite( &buffer[0], sizeof( char ), ret, this->fout_.get() );
 			}
 
 			this->quality_ = -1;
