@@ -34,12 +34,12 @@ namespace {
 
 	static inline FILE * fileHelper( const std::wstring & filePath ) {
 #ifdef Q_OS_WIN32
-		FILE * fin = NULL;
-		errno_t ret = _wfopen_s( &fin, filePath.c_str(), L"wb" );
+		FILE * fout = NULL;
+		errno_t ret = _wfopen_s( &fout, filePath.c_str(), L"wb" );
 		if( ret != 0 ) {
 			return NULL;
 		}
-		return fin;
+		return fout;
 #else
 		return fopen( khopper::text::toUtf8( filePath ).c_str(), "wb" );
 #endif
