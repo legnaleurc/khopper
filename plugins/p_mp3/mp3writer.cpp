@@ -49,6 +49,7 @@ namespace khopper {
 			lame_set_in_samplerate( this->gfp_.get(), this->getSampleRate() );
 			if( this->quality_ < 0 ) {
 				lame_set_brate( this->gfp_.get(), this->getBitRate() / 1000 );
+				lame_set_bWriteVbrTag( this->gfp_.get(), 0 );
 			} else {
 				lame_set_VBR( this->gfp_.get(), vbr_default );
 				lame_set_VBR_q( this->gfp_.get(), this->quality_ );
@@ -56,22 +57,26 @@ namespace khopper {
 			}
 			lame_set_mode( this->gfp_.get(), JOINT_STEREO );
 			lame_set_quality( this->gfp_.get(), 2 );
+		}
+
+		void Mp3Writer::writeHeader() {
+			id3tag_init( this->gfp_.get() );
+			id3tag_set_title( this->gfp_.get(), this->getTitle().c_str() );
+			id3tag_set_artist( this->gfp_.get(), this->getArtist().c_str() );
+			id3tag_set_album( this->gfp_.get(), this->getAlbum().c_str() );
 
 			int ret = lame_init_params( this->gfp_.get() );
 			if( ret < 0 ) {
 				qDebug( "lame param error" );
 			}
-
-			this->getSampleBuffer().resize( lame_get_framesize( this->gfp_.get() ) );
-		}
-
-		void Mp3Writer::writeHeader() {
+			this->getSampleBuffer().resize( lame_get_framesize( this->gfp_.get() ) * 4 );
+			qDebug( "lame encoded size: %d", lame_get_frameNum( this->gfp_.get() ) );
 		}
 
 		void Mp3Writer::writeFrame( const char * samples, std::size_t nSamples ) {
 			int ret = 0;
 			short int * audio = static_cast< short int * >( const_cast< void * >( static_cast< const void * >( samples ) ) );
-			int nsamples = lame_get_framesize( this->gfp_.get() );
+			int nsamples = nSamples / sizeof( short int );
 			std::vector< unsigned char > buffer( 1.25 * nsamples + 7200 );
 
 			if( this->getChannels() == 1 ) {
