@@ -8,8 +8,8 @@ SRC_DIRS = .
 INCLUDEPATH += $${INC_DIRS} $${SRC_DIRS}
 DEPANDPATH  += $${INC_DIRS}
 
-HEADERS = mp3panel.hpp
-SOURCES = mp3panel.cpp
+HEADERS = mp3panel.hpp mp3writer.hpp
+SOURCES = mp3panel.cpp mp3writer.cpp
 
 MOC_DIR = $${ROOT_PATH}/tmp/moc
 

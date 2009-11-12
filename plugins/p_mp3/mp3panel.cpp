@@ -20,6 +20,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "mp3panel.hpp"
+#include "mp3writer.hpp"
 
 #include "plugin/abstractwritercreator.hpp"
 
@@ -104,14 +105,15 @@ namespace khopper {
 		}
 
 		codec::WriterSP MP3Panel::getWriter() const {
-			codec::WriterSP encoder( plugin::createWriter( "mp3" ) );
+			codec::Mp3Writer * encoder = new codec::Mp3Writer;
+//			codec::WriterSP encoder( plugin::createWriter( "mp3" ) );
 
 			switch( this->brChoise_->checkedId() ) {
 			case 0:
 				encoder->setBitRate( this->bitRate_->itemData( this->bitRate_->currentIndex() ).toInt() );
 				break;
 			case 1:
-				encoder->setQuality( this->level_->itemData( this->level_->currentIndex() ).toInt() );
+				encoder->setVBRQuality( this->level_->itemData( this->level_->currentIndex() ).toInt() );
 				break;
 			default:
 				;
@@ -119,7 +121,7 @@ namespace khopper {
 			encoder->setSampleRate( this->sampleRate_->itemData( this->sampleRate_->currentIndex() ).toInt() );
 			encoder->setChannels( this->channels_->itemData( this->channels_->currentIndex() ).toInt() );
 
-			return encoder;
+			return codec::WriterSP( encoder );
 		}
 
 		QString MP3Panel::getSuffix() const {
