@@ -60,10 +60,7 @@ namespace khopper {
 		}
 
 		void Mp3Writer::writeHeader() {
-			id3tag_init( this->gfp_.get() );
-			id3tag_set_title( this->gfp_.get(), this->getTitle().c_str() );
-			id3tag_set_artist( this->gfp_.get(), this->getArtist().c_str() );
-			id3tag_set_album( this->gfp_.get(), this->getAlbum().c_str() );
+			lame_set_write_id3tag_automatic( this->gfp_.get(), 0 );
 
 			int ret = lame_init_params( this->gfp_.get() );
 			if( ret < 0 ) {
