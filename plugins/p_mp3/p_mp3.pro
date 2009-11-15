@@ -35,3 +35,8 @@ CONFIG( debug, debug|release ) {
 
 	unix:QMAKE_POST_LINK = strip $${DESTDIR}/lib$${TARGET}.so
 }
+
+unix {
+	CONFIG    += link_pkgconfig
+	PKGCONFIG += taglib
+}

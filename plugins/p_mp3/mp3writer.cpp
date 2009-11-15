@@ -23,6 +23,8 @@
 
 #include "util/text.hpp"
 
+#include <id3v2tag.h>
+
 namespace khopper {
 
 	namespace codec {
@@ -30,7 +32,8 @@ namespace khopper {
 		Mp3Writer::Mp3Writer():
 		AbstractWriter(),
 		gfp_(),
-		quality_( -1 ) {
+		quality_( -1 ),
+		id3v2Offset_( -1L ) {
 		}
 
 		Mp3Writer::~Mp3Writer() {
@@ -61,6 +64,16 @@ namespace khopper {
 
 		void Mp3Writer::writeHeader() {
 			lame_set_write_id3tag_automatic( this->gfp_.get(), 0 );
+
+			TagLib::ID3v2::Tag tag;
+			tag.setTitle( TagLib::String( this->getTitle(), TagLib::String::UTF8 ) );
+			tag.setArtist( TagLib::String( this->getArtist(), TagLib::String::UTF8 ) );
+			tag.setAlbum( TagLib::String( this->getAlbum(), TagLib::String::UTF8 ) );
+
+			TagLib::ByteVector id3v2 = tag.render();
+			qDebug( "ID3v2 length: %d", id3v2.size() );
+			this->id3v2Offset_ = id3v2.size();
+			fwrite( id3v2.data(), sizeof( id3v2[0] ), id3v2.size(), this->fout_.get() );
 
 			int ret = lame_init_params( this->gfp_.get() );
 			if( ret < 0 ) {
@@ -114,10 +127,11 @@ namespace khopper {
 
 			ret = lame_get_lametag_frame( this->gfp_.get(), &buffer[0], buffer.size() );
 			if( ret > 0 ) {
-				fseek( this->fout_.get(), 0L, SEEK_SET );
+				fseek( this->fout_.get(), this->id3v2Offset_, SEEK_SET );
 				fwrite( &buffer[0], sizeof( char ), ret, this->fout_.get() );
 			}
 
+			this->id3v2Offset_ = -1L;
 			this->quality_ = -1;
 			this->gfp_.reset();
 			this->fout_.reset();

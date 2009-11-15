@@ -51,6 +51,7 @@ namespace khopper {
 			std::tr1::shared_ptr< FILE > fout_;
 			std::tr1::shared_ptr< lame_global_flags > gfp_;
 			int quality_;
+			long id3v2Offset_;
 		};
 
 	}
