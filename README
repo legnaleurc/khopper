@@ -10,16 +10,22 @@ License:
 Build dependency：
 	Loki:
 		http://loki-lib.sourceforge.net/
-	Qt >= 4.4:
+	Qt >= 4.4 (with Phonon module):
 		http://www.qtsoftware.com/products
 	Boost C++ Libraries:
 		http://www.boost.org/
 	FFmpeg Libraries >= 0.5:
 		http://www.ffmpeg.org/
-	libFLAC >= 1.2.1
+	libFLAC >= 1.2.1:
 		http://flac.sourceforge.net/
+	libvorbis:
+		http://www.xiph.org/downloads/
+	LAME:
+		http://lame.sourceforge.net/
+	TagLib:
+		http://developer.kde.org/~wheeler/taglib.html
 On Debian-based system:
-	# apt-get install libloki-dev libqt4-dev libphonon-dev libboost-dev libavcodec-dev libavformat-dev libflac-dev pkg-config
+	# apt-get install libloki-dev libqt4-dev libphonon-dev libboost-dev libavcodec-dev libavformat-dev libflac-dev pkg-config libvorbis-dev libmp3lame-dev libtag1-dev
 
 Build step:
 	Linux:
