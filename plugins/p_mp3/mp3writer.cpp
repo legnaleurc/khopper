@@ -36,7 +36,7 @@ namespace {
 		}
 		return fout;
 #else
-		return fopen( text::toUtf8( utf8Path ).c_str(), "wb" );
+		return fopen( khopper::text::toUtf8( utf8Path ).c_str(), "wb" );
 #endif
 	}
 
