@@ -25,6 +25,23 @@
 
 #include <id3v2tag.h>
 
+namespace {
+
+	static inline FILE * fileHelper( const std::wstring & utf8Path ) {
+#ifdef Q_OS_WIN32
+		FILE * fout = NULL;
+		errno_t ret = _wfopen_s( &fout, utf8Path.c_str(), L"wb" );
+		if( ret != 0 ) {
+			return NULL;
+		}
+		return fout;
+#else
+		return fopen( text::toUtf8( utf8Path ).c_str(), "wb" );
+#endif
+	}
+
+}
+
 namespace khopper {
 
 	namespace codec {
@@ -44,7 +61,7 @@ namespace khopper {
 		}
 
 		void Mp3Writer::openResource() {
-			this->fout_.reset( fopen( text::toUtf8( this->getFilePath() ).c_str(), "wb" ), fclose );
+			this->fout_.reset( fileHelper( this->getFilePath() ), fclose );
 		}
 
 		void Mp3Writer::setupEncoder() {

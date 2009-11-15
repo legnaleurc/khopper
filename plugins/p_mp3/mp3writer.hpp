@@ -24,7 +24,7 @@
 
 #include "codec/abstractwriter.hpp"
 
-#include <lame/lame.h>
+#include <lame.h>
 
 namespace khopper {
 
