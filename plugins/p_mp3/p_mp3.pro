@@ -23,14 +23,14 @@ CONFIG( debug, debug|release ) {
 	DESTDIR     = $${ROOT_PATH}/build/debug/plugins
 	OBJECTS_DIR = $${ROOT_PATH}/tmp/obj/debug
 
-	unix:LIBS  += -L$${ROOT_PATH}/build/debug -lk_core
+	unix:LIBS  += -L$${ROOT_PATH}/build/debug -lk_core -lmp3lame
 	win32:LIBS += -L$${ROOT_PATH}/build/debug -lk_core0
 } else {
 	DESTDIR     = $${ROOT_PATH}/build/release/plugins
 	OBJECTS_DIR = $${ROOT_PATH}/tmp/obj/release
 	DEFINES    += QT_NO_DEBUG_OUTPUT
 
-	unix:LIBS  += -L$${ROOT_PATH}/build/release -lk_core
+	unix:LIBS  += -L$${ROOT_PATH}/build/release -lk_core -lmp3lame
 	win32:LIBS += -L$${ROOT_PATH}/build/release -lk_core0
 
 	unix:QMAKE_POST_LINK = strip $${DESTDIR}/lib$${TARGET}.so
