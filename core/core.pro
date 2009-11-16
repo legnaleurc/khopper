@@ -20,9 +20,7 @@ HEADERS +=	\
 	./include/codec/defaultwriter.hpp	\
 	./include/plugin/abstractplugin.hpp	\
 	./include/plugin/abstractpanel.hpp	\
-	./include/plugin/abstractcreator.hpp	\
 	./include/plugin/abstractreadercreator.hpp	\
-	./include/plugin/abstractwritercreator.hpp	\
 	./include/plugin/pluginmanager.hpp	\
 	./include/util/error.hpp	\
 	./include/util/text.hpp	\
@@ -34,7 +32,6 @@ SOURCES +=	\
 	./src/codec/defaultwriter.cpp	\
 	./src/plugin/abstractpanel.cpp	\
 	./src/plugin/abstractreadercreator.cpp	\
-	./src/plugin/abstractwritercreator.cpp	\
 	./src/plugin/pluginmanager.cpp	\
 	./src/util/error.cpp	\
 	./src/util/text.cpp

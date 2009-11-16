@@ -22,8 +22,6 @@
 #include "mp3panel.hpp"
 #include "mp3writer.hpp"
 
-#include "plugin/abstractwritercreator.hpp"
-
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QGroupBox>
@@ -114,7 +112,6 @@ namespace khopper {
 
 		codec::WriterSP MP3Panel::getWriter() const {
 			codec::Mp3Writer * encoder = new codec::Mp3Writer;
-//			codec::WriterSP encoder( plugin::createWriter( "mp3" ) );
 
 			switch( this->brChoise_->checkedId() ) {
 			case 0:

@@ -22,7 +22,7 @@
 #ifndef KHOPPER_PLUGIN_ABSTRACTREADERCREATOR_HPP
 #define KHOPPER_PLUGIN_ABSTRACTREADERCREATOR_HPP
 
-#include "abstractcreator.hpp"
+#include "plugin/abstractplugin.hpp"
 #include "codec/abstractreader.hpp"
 
 #include <QtPlugin>
@@ -33,10 +33,30 @@ namespace khopper {
 
 		/**
 		 * @ingroup Plugins
-		 * @brief Reader creator interface
-		 * @sa private_::AbstractCreator
+		 * @brief Common creator factory
+		 * @tparam Product The product type of return
+		 * @sa khopper::plugin::AbstractReaderCreator khopper::plugin::AbstractWriterCreator
+		 *
+		 * You will not use this class directly.
+		 * Use khopper::plugin::AbstractReaderCreator or
+		 * khopper::plugin::AbstractWriterCreator instead.
 		 */
-		typedef private_::AbstractCreator< codec::AbstractReader > AbstractReaderCreator;
+		class KHOPPER_EXPORT AbstractReaderCreator : public AbstractPlugin {
+		public:
+			AbstractReaderCreator();
+			virtual ~AbstractReaderCreator();
+			/**
+			 * @brief Create the product
+			 * @note never null
+			 */
+			codec::ReaderSP create() const;
+
+		private:
+			virtual codec::ReaderSP doCreate() const = 0;
+			// no copy
+			AbstractReaderCreator( const AbstractReaderCreator & );
+			AbstractReaderCreator & operator =( const AbstractReaderCreator & );
+		};
 
 		/**
 		 * @ingroup Plugins
@@ -50,6 +70,8 @@ namespace khopper {
 		 * @ingroup Plugins
 		 * @brief Create reader
 		 * @param key format key
+		 * @return Smart pointer of Product
+		 * @throws RunTimeError Can not load any plugin
 		 */
 		KHOPPER_EXPORT codec::ReaderSP createReader( const std::string & key );
 

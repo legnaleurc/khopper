@@ -34,6 +34,25 @@ namespace khopper {
 
 	namespace plugin {
 
+		AbstractReaderCreator::AbstractReaderCreator() {
+		}
+
+		AbstractReaderCreator::~AbstractReaderCreator() {
+		}
+
+		codec::ReaderSP AbstractReaderCreator::create() const {
+			codec::ReaderSP pointer;
+			try {
+				pointer = this->doCreate();
+			} catch( ... ) {
+				// FIXME: compile error, don't know why
+				// assert( !"memory allocation failed" );
+				pointer.reset();
+			}
+			assert( pointer || typeid( *pointer ) == typeid( codec::AbstractReader ) || !"got null pointer" );
+			return pointer;
+		}
+
 		/**
 		 * @brief The audio reader factory
 		 * @ingroup Plugins
@@ -48,13 +67,44 @@ namespace khopper {
 			Loki::ClassLevelLockable
 		> ReaderFactory;
 
+		/**
+		 * @ingroup Plugins
+		 * @brief From creator functor
+		 * @tparam ProductCreator creator type
+		 */
+		class CreatorLoader {
+		public:
+			/**
+			 * @brief Constructor
+			 * @param plugin The name of plugin
+			 */
+			CreatorLoader( const std::string & plugin ) : plugin_( plugin ) {}
+			/**
+			 * @brief Plugin loader
+			 * @return The product creator
+			 * @throws Error<RunTime> Can't open plugin or load error
+			 *
+			 * The returned resource is managed by Qt Plugin System,
+			 * so don't worry about it's life time.
+			 */
+			AbstractReaderCreator * operator()() {
+				AbstractReaderCreator * c = dynamic_cast< AbstractReaderCreator * >( PluginManager::Instance().getPluginInstance( this->plugin_.c_str() ) );
+				if( !c ) {
+					throw error::RunTimeError( "Invalid plugin!" );
+				}
+				return c;
+			}
+		private:
+			std::string plugin_;
+		};
+
 		bool registerReader( const std::string & key, const std::string & name ) {
-			return private_::registerProduct< codec::AbstractReader, ReaderFactory >( key, name );
+			return ReaderFactory::Instance().Register( key, CreatorLoader( name ) );
 		}
 
 		codec::ReaderSP createReader( const std::string & key ) {
 			try {
-				return private_::createProduct< codec::AbstractReader, ReaderFactory >( key );
+				return ReaderFactory::Instance().CreateObject( key )->create();
 			} catch( std::exception & ) {
 				return codec::ReaderSP( new codec::DefaultReader );
 			}

@@ -21,7 +21,7 @@
  */
 #include "wavpanel.hpp"
 
-#include "plugin/abstractwritercreator.hpp"
+#include "codec/defaultwriter.hpp"
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -69,7 +69,7 @@ namespace khopper {
 		}
 
 		codec::WriterSP WAVPanel::getWriter() const {
-			codec::WriterSP encoder( plugin::createWriter( "wav" ) );
+			codec::WriterSP encoder( new codec::DefaultWriter );
 
 			encoder->setSampleRate( this->sampleRate_->itemData( this->sampleRate_->currentIndex() ).toInt() );
 			encoder->setChannels( this->channels_->itemData( this->channels_->currentIndex() ).toInt() );
