@@ -1,5 +1,5 @@
 /**
- * @file oggwriter.cpp
+ * @file mp3writer.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,36 +19,46 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "oggwriter.hpp"
-#include "util/error.hpp"
-#include "util/text.hpp"
+#ifndef KHOPPER_CODEC_MP3WRITER_HPP
+#define KHOPPER_CODEC_MP3WRITER_HPP
 
-extern "C" {
-#include <libavformat/avformat.h>
-}
+#include "codec/abstractwriter.hpp"
+
+#include <lame/lame.h>
 
 namespace khopper {
 
 	namespace codec {
 
-		OGGWriter::OGGWriter() {
-		}
+		class Mp3Writer : public AbstractWriter {
+		public:
+			Mp3Writer();
+			virtual ~Mp3Writer();
 
-		void OGGWriter::setupMuxer() {
-			this->DefaultWriter::setupMuxer();
-			if( this->isVariable() ) {
-				this->formatContext()->oformat->audio_codec = CODEC_ID_VORBIS;
+			void setVBRQuality( int quality ) {
+				this->quality_ = quality;
 			}
-		}
 
-		QString OGGWriter::getID() const {
-			return "";
-		}
+			virtual QString getID() const;
+			virtual QString getVersion() const;
 
-		QString OGGWriter::getVersion() const {
-			return "";
-		}
+		protected:
+			virtual void openResource();
+			virtual void closeResource();
+			virtual void setupMuxer();
+			virtual void setupEncoder();
+			virtual void writeHeader();
+			virtual void writeFrame( const char * samples, std::size_t nSamples );
+
+		private:
+			std::tr1::shared_ptr< FILE > fout_;
+			std::tr1::shared_ptr< lame_global_flags > gfp_;
+			int quality_;
+			long id3v2Offset_;
+		};
 
 	}
 
 }
+
+#endif

@@ -48,7 +48,7 @@ namespace khopper {
 }
 
 namespace {
-	FILE * fileHelper( const QUrl & uri ) {
+	static inline FILE * fileHelper( const QUrl & uri ) {
 		// FIXME: not always local file
 #ifdef Q_OS_WIN32
 		FILE * fin = NULL;
@@ -177,6 +177,7 @@ namespace khopper {
 			FlacReader * self = static_cast< FlacReader * >( client_data );
 			switch( metadata->type ) {
 			case FLAC__METADATA_TYPE_STREAMINFO:
+				qDebug( "FLAC__METADATA_TYPE_STREAMINFO" );
 				self->setSampleRate( metadata->data.stream_info.sample_rate );
 				self->setChannels( metadata->data.stream_info.channels );
 				self->setDuration( metadata->data.stream_info.total_samples * 1000 / metadata->data.stream_info.sample_rate );
@@ -184,12 +185,19 @@ namespace khopper {
 				break;
 			case FLAC__METADATA_TYPE_PADDING:
 				qDebug( "FLAC__METADATA_TYPE_PADDING" );
+				qDebug() << metadata->length;
 				break;
 			case FLAC__METADATA_TYPE_APPLICATION:
 				qDebug( "FLAC__METADATA_TYPE_APPLICATION" );
 				break;
 			case FLAC__METADATA_TYPE_SEEKTABLE:
 				qDebug( "FLAC__METADATA_TYPE_SEEKTABLE" );
+//#ifndef QT_NO_DEBUG_OUTPUT
+//				for( uint64_t i = 0; i < metadata->data.seek_table.num_points; ++i ) {
+//					FLAC__StreamMetadata_SeekPoint * sp = metadata->data.seek_table.points + i;
+//					qDebug() << sp->sample_number << sp->stream_offset << sp->frame_samples;
+//				}
+//#endif
 				break;
 			case FLAC__METADATA_TYPE_VORBIS_COMMENT:
 				self->parseVorbisComments_( metadata->data.vorbis_comment );

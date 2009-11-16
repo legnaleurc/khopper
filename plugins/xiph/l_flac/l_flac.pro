@@ -1,4 +1,4 @@
-include(../../configure.pri)
+include(../../../configure.pri)
 
 # Path setting
 INC_DIRS = .	\
@@ -8,25 +8,25 @@ SRC_DIRS = .
 INCLUDEPATH += $${INC_DIRS} $${SRC_DIRS}
 DEPANDPATH  += $${INC_DIRS}
 
-HEADERS = flacreader.hpp flacreadercreator.hpp
-SOURCES = flacreader.cpp
+HEADERS = flacwriter.hpp
+SOURCES = flacwriter.cpp
 
 MOC_DIR = $${ROOT_PATH}/tmp/moc
 
 # Config
-CONFIG  += plugin debug_and_release
-TARGET   = $$qtLibraryTarget(kpr_flac)
+CONFIG  += debug_and_release
+TARGET   = kl_flac
 VERSION  = $${KHOPPER_VERSION}
 TEMPLATE = lib
 
 CONFIG( debug, debug|release ) {
-	DESTDIR     = $${ROOT_PATH}/build/debug/plugins
+	DESTDIR     = $${ROOT_PATH}/build/debug
 	OBJECTS_DIR = $${ROOT_PATH}/tmp/obj/debug
 
 	unix:LIBS  += -L$${ROOT_PATH}/build/debug -lk_core
 	win32:LIBS += -L$${ROOT_PATH}/build/debug -lk_core0 -lFLAC_D
 } else {
-	DESTDIR     = $${ROOT_PATH}/build/release/plugins
+	DESTDIR     = $${ROOT_PATH}/build/release
 	OBJECTS_DIR = $${ROOT_PATH}/tmp/obj/release
 	DEFINES    += QT_NO_DEBUG_OUTPUT
 

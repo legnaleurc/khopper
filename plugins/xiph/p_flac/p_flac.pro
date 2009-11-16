@@ -1,8 +1,9 @@
-include(../../configure.pri)
+include(../../../configure.pri)
 
 # Path setting
 INC_DIRS = .	\
-	$${CORE_PATH}/include
+	$${CORE_PATH}/include	\
+	../l_flac
 SRC_DIRS = .
 
 INCLUDEPATH += $${INC_DIRS} $${SRC_DIRS}
