@@ -36,7 +36,7 @@ Q_EXPORT_PLUGIN2( kpp_ogg, khopper::plugin::OGGPanel )
 #ifdef Q_OS_WIN32
 static const char * LIBFLAC = "kl_flac0";
 #else
-static const char * LIBFLAC = "libkl_flac";
+static const char * LIBFLAC = "kl_flac.so.0";
 #endif
 
 namespace khopper {
