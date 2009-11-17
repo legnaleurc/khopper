@@ -44,13 +44,15 @@ namespace khopper {
 			 */
 			DefaultWriter();
 
+			void setQuality( double quality ) {
+				this->quality_ = quality;
+			}
+
 		protected:
 			/// Get format context
 			std::tr1::shared_ptr< AVFormatContext > formatContext() {
 				return this->pFormatContext_;
 			}
-			/// if is VBR
-			bool isVariable() const;
 
 			/**
 			 * @brief setup muxer
@@ -74,6 +76,7 @@ namespace khopper {
 
 			std::tr1::shared_ptr< AVFormatContext > pFormatContext_;
 			AVStream * pStream_;
+			double quality_;
 		};
 
 	}

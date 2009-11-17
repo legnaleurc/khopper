@@ -74,8 +74,8 @@ namespace khopper {
 
 		DefaultWriter::DefaultWriter():
 		pFormatContext_(),
-		pStream_( NULL ) {
-			this->setQuality( QSCALE_NONE );
+		pStream_( NULL ),
+		quality_( QSCALE_NONE ) {
 		}
 
 		void DefaultWriter::doOpen() {
@@ -87,10 +87,6 @@ namespace khopper {
 
 		void DefaultWriter::doClose() {
 			this->closeResource();
-		}
-
-		bool DefaultWriter::isVariable() const {
-			return this->getQuality() != QSCALE_NONE;
 		}
 
 		void DefaultWriter::setupMuxer() {
@@ -129,9 +125,9 @@ namespace khopper {
 			pCC->bit_rate = this->getBitRate();
 			pCC->sample_rate = this->getSampleRate();
 			pCC->channels = this->getChannels();
-			if( this->getQuality() != QSCALE_NONE ) {
+			if( this->quality_ != QSCALE_NONE ) {
 				pCC->flags |= CODEC_FLAG_QSCALE;
-				this->pStream_->quality = static_cast< float >( FF_QP2LAMBDA * this->getQuality() );
+				this->pStream_->quality = static_cast< float >( FF_QP2LAMBDA * this->quality_ );
 				pCC->global_quality = static_cast< int >( this->pStream_->quality );
 			}
 			if( av_set_parameters( this->pFormatContext_.get(), NULL ) < 0 ) {
