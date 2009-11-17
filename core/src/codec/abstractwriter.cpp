@@ -51,10 +51,7 @@ namespace khopper {
 				this->close();
 			}
 
-			this->setupMuxer();
-			this->setupEncoder();
-			this->openResource();
-			this->writeHeader();
+			this->doOpen();
 
 			this->opening_ = true;
 		}
@@ -62,7 +59,7 @@ namespace khopper {
 		void AbstractWriter::close() {
 			try {
 				this->flush();
-				this->closeResource();
+				this->doClose();
 			} catch( ... ) {
 				// TODO: log an error
 				assert( !"a plugin can not clean up its own mess ..." );
@@ -71,7 +68,6 @@ namespace khopper {
 		}
 
 		void AbstractWriter::write( const ByteArray & data ) {
-//			qDebug() << "Received" << data.size();
 			this->sampleQueue_.insert( this->sampleQueue_.end(), data.begin(), data.end() );
 
 			while( this->sampleQueue_.size() >= this->sampleBuffer_.size() ) {

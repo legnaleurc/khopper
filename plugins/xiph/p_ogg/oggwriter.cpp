@@ -81,13 +81,13 @@ namespace khopper {
 		OggWriter::~OggWriter() {
 		}
 
-		void OggWriter::setupMuxer() {
+		void OggWriter::doOpen() {
+			// setup ogg stream
 			ogg_stream_state * os = static_cast< ogg_stream_state * >( std::malloc( sizeof( ogg_stream_state ) ) );
 			ogg_stream_init( os, 0xcafebabe );
 			this->muxer_.reset( os, ogg_stream_destroy );
-		}
 
-		void OggWriter::setupEncoder() {
+			// setup vorbis info
 			vorbis_info * vi = static_cast< vorbis_info * >( std::malloc( sizeof( vorbis_info ) ) );
 			this->encoder_.reset( vi, vorbisInfoHelper );
 			vorbis_info_init( vi );
@@ -96,23 +96,20 @@ namespace khopper {
 				throw error::CodecError( "Vorbis initialization error" );
 			}
 
+			// setup vorbis dsp state
 			vorbis_dsp_state * vd = static_cast< vorbis_dsp_state * >( std::malloc( sizeof( vorbis_dsp_state ) ) );
 			this->dsp_.reset( vd, vorbisDSPHelper );
 			vorbis_analysis_init( vd, vi );
 
+			// setup vorbis block
 			vorbis_block * vb = static_cast< vorbis_block * >( std::malloc( sizeof( vorbis_block ) ) );
 			this->block_.reset( vb, vorbisBlockHelper );
 			vorbis_block_init( vd, vb );
 
+			// setup sample buffer size
 			this->getSampleBuffer().resize( 1024 * 4 * this->getChannels() );
-		}
 
-		void OggWriter::openResource() {
-			FILE * fout = fileHelper( this->getURI() );
-			this->fout_.reset( fout, std::fclose );
-		}
-
-		void OggWriter::writeHeader() {
+			// write vorbis comment
 			vorbis_comment * vc = static_cast< vorbis_comment * >( std::malloc( sizeof( vorbis_comment ) ) );
 			this->comments_.reset( vc, vorbisCommentHelper );
 			vorbis_comment_init( vc );
@@ -130,6 +127,11 @@ namespace khopper {
 			ogg_stream_packetin( this->muxer_.get(), &header_common );
 			ogg_stream_packetin( this->muxer_.get(), &header_code );
 
+			// open file
+			FILE * fout = fileHelper( this->getURI() );
+			this->fout_.reset( fout, std::fclose );
+
+			// write header
 			ogg_page og;
 			for(;;) {
 				int ret = ogg_stream_flush( this->muxer_.get(), &og );
@@ -179,7 +181,7 @@ namespace khopper {
 			}
 		}
 
-		void OggWriter::closeResource() {
+		void OggWriter::doClose() {
 			vorbis_analysis_wrote( this->dsp_.get(), 0 );
 
 			while( vorbis_analysis_blockout( this->dsp_.get(), this->block_.get() ) == 1 ) {

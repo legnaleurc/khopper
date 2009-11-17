@@ -57,15 +57,12 @@ namespace khopper {
 		Mp3Writer::~Mp3Writer() {
 		}
 
-		void Mp3Writer::setupMuxer() {
-			this->gfp_.reset( lame_init(), lame_close );
-		}
-
-		void Mp3Writer::openResource() {
+		void Mp3Writer::doOpen() {
+			// open file
 			this->fout_.reset( fileHelper( this->getURI() ), fclose );
-		}
 
-		void Mp3Writer::setupEncoder() {
+			// lame encoder setting
+			this->gfp_.reset( lame_init(), lame_close );
 			lame_set_num_channels( this->gfp_.get(), this->getChannels() );
 			lame_set_in_samplerate( this->gfp_.get(), this->getSampleRate() );
 			if( this->quality_ < 0 ) {
@@ -78,9 +75,8 @@ namespace khopper {
 			}
 			lame_set_mode( this->gfp_.get(), JOINT_STEREO );
 			lame_set_quality( this->gfp_.get(), 2 );
-		}
 
-		void Mp3Writer::writeHeader() {
+			// ID3v2 tag setting
 			lame_set_write_id3tag_automatic( this->gfp_.get(), 0 );
 
 			TagLib::ID3v2::Tag tag;
@@ -93,10 +89,13 @@ namespace khopper {
 			this->id3v2Offset_ = id3v2.size();
 			fwrite( id3v2.data(), sizeof( id3v2[0] ), id3v2.size(), this->fout_.get() );
 
+			// initialize all parameters
 			int ret = lame_init_params( this->gfp_.get() );
 			if( ret < 0 ) {
 				qDebug( "lame param error" );
 			}
+
+			// setup buffer size
 			this->getSampleBuffer().resize( lame_get_framesize( this->gfp_.get() ) * 4 );
 		}
 
@@ -131,7 +130,7 @@ namespace khopper {
 			fwrite( &buffer[0], sizeof( char ), ret, this->fout_.get() );
 		}
 
-		void Mp3Writer::closeResource() {
+		void Mp3Writer::doClose() {
 			std::vector< unsigned char > buffer( 7200 );
 			int ret = lame_encode_flush(
 				this->gfp_.get(),

@@ -191,19 +191,6 @@ namespace khopper {
 				return this->title_;
 			}
 
-			/// Setup muxer
-			virtual void setupMuxer() = 0;
-			/// Setup encoder
-			virtual void setupEncoder() = 0;
-			/// Open resource
-			virtual void openResource() = 0;
-			/**
-			 * @brief Close resource
-			 * @note If an exception was thrown, program will terminate immediately
-			 */
-			virtual void closeResource() = 0;
-			/// Write header
-			virtual void writeHeader() = 0;
 			/**
 			 * @brief Write a frame
 			 * @param sample sample data
@@ -215,6 +202,9 @@ namespace khopper {
 			// prevent copying
 			AbstractWriter( const AbstractWriter & );
 			AbstractWriter & operator =( const AbstractWriter & );
+
+			virtual void doOpen() = 0;
+			virtual void doClose() = 0;
 
 			std::string album_;
 			std::string artist_;

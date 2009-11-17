@@ -65,28 +65,11 @@ namespace khopper {
 		FlacWriter::~FlacWriter() {
 		}
 
-		void FlacWriter::setupEncoder() {
-			FLAC__bool ok = true;
-			ok &= FLAC__stream_encoder_set_channels( this->pFE_.get(), this->getChannels() );
-			// TODO: forcing sample format S16LE, but may cause other problems.
-			ok &= FLAC__stream_encoder_set_bits_per_sample( this->pFE_.get(), 16 );
-			ok &= FLAC__stream_encoder_set_sample_rate( this->pFE_.get(), this->getSampleRate() );
-			if( this->ogg_ ) {
-				ok &= FLAC__stream_encoder_set_ogg_serial_number( this->pFE_.get(), 0xcafebabeL );
-			}
-			ok &= FLAC__stream_encoder_set_compression_level( this->pFE_.get(), 5 );
-			ok &= FLAC__stream_encoder_set_verify( this->pFE_.get(), true );
-			// FLAC__stream_encoder_set_total_samples_estimate()
-			if( !ok ) {
-				throw error::CodecError( "encoder parameter error" );
-			}
-			this->getSampleBuffer().resize( 1024 * 16 * this->getChannels() );
-		}
-
-		void FlacWriter::setupMuxer() {
+		void FlacWriter::doOpen() {
 			FLAC__bool ok = true;
 			std::vector< FLAC__StreamMetadata * > metadata;
 
+			// setup metadata
 			FLAC__StreamMetadata * tmp = FLAC__metadata_object_new( FLAC__METADATA_TYPE_VORBIS_COMMENT );
 			if( tmp == NULL ) {
 				throw error::SystemError( "memory allocation error" );
@@ -108,7 +91,7 @@ namespace khopper {
 			if( tmp == NULL ) {
 				throw error::SystemError( "memory allocation error" );
 			}
-			// FIXME: dirty hack
+			// FIXME: dirty hack, I don't know how to rescale seek table size
 			FLAC__metadata_object_seektable_template_append_spaced_points_by_samples( tmp, this->getSampleRate(), this->getSampleRate() * 7200 );
 			this->metadataOwner_.push_back( std::tr1::shared_ptr< FLAC__StreamMetadata >( tmp, FLAC__metadata_object_delete ) );
 			metadata.push_back( tmp );
@@ -126,9 +109,27 @@ namespace khopper {
 			if( !ok ) {
 				throw error::CodecError( "encoder metadata error" );
 			}
-		}
 
-		void FlacWriter::openResource() {
+			// setup encoder setting
+			ok &= FLAC__stream_encoder_set_channels( this->pFE_.get(), this->getChannels() );
+			// TODO: forcing sample format S16LE, but may cause other problems.
+			ok &= FLAC__stream_encoder_set_bits_per_sample( this->pFE_.get(), 16 );
+			ok &= FLAC__stream_encoder_set_sample_rate( this->pFE_.get(), this->getSampleRate() );
+			// if ogg mode is set
+			if( this->ogg_ ) {
+				ok &= FLAC__stream_encoder_set_ogg_serial_number( this->pFE_.get(), 0xcafebabeL );
+			}
+			ok &= FLAC__stream_encoder_set_compression_level( this->pFE_.get(), 5 );
+			ok &= FLAC__stream_encoder_set_verify( this->pFE_.get(), true );
+			// FLAC__stream_encoder_set_total_samples_estimate()
+			if( !ok ) {
+				throw error::CodecError( "encoder parameter error" );
+			}
+
+			// setup sample buffer size
+			this->getSampleBuffer().resize( 1024 * 16 * this->getChannels() );
+
+			// open files
 			FLAC__StreamEncoderInitStatus init_status;
 			if( this->ogg_ ) {
 				init_status = FLAC__stream_encoder_init_ogg_FILE(
@@ -150,9 +151,6 @@ namespace khopper {
 			}
 		}
 
-		void FlacWriter::writeHeader() {
-		}
-
 		void FlacWriter::writeFrame( const char * sample, std::size_t nSample ) {
 			// TODO: assumed that sample format is S16LE, please fix the interface later
 			const int32_t buf_size = nSample * sizeof( char ) / sizeof( int16_t );
@@ -169,7 +167,7 @@ namespace khopper {
 			}
 		}
 
-		void FlacWriter::closeResource() {
+		void FlacWriter::doClose() {
 			FLAC__bool ok = FLAC__stream_encoder_finish( this->pFE_.get() );
 			if( !ok ) {
 				// nothrow

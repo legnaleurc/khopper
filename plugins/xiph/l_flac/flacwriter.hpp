@@ -41,14 +41,12 @@ namespace khopper {
 			}
 
 		protected:
-			virtual void openResource();
-			virtual void closeResource();
-			virtual void setupMuxer();
-			virtual void setupEncoder();
-			virtual void writeHeader();
 			virtual void writeFrame( const char *, std::size_t );
 
 		private:
+			virtual void doOpen();
+			virtual void doClose();
+
 			std::tr1::shared_ptr< FLAC__StreamEncoder > pFE_;
 			std::vector< std::tr1::shared_ptr< FLAC__StreamMetadata > > metadataOwner_;
 			bool ogg_;

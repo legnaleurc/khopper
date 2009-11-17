@@ -48,14 +48,12 @@ namespace khopper {
 			}
 
 		protected:
-			virtual void openResource();
-			virtual void closeResource();
-			virtual void setupMuxer();
-			virtual void setupEncoder();
-			virtual void writeHeader();
 			virtual void writeFrame( const char *, std::size_t );
 
 		private:
+			virtual void doOpen();
+			virtual void doClose();
+
 			std::tr1::shared_ptr< FILE > fout_;
 			std::tr1::shared_ptr< vorbis_info > encoder_;
 			std::tr1::shared_ptr< ogg_stream_state > muxer_;

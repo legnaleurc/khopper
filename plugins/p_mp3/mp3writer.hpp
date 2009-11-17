@@ -40,14 +40,12 @@ namespace khopper {
 			}
 
 		protected:
-			virtual void openResource();
-			virtual void closeResource();
-			virtual void setupMuxer();
-			virtual void setupEncoder();
-			virtual void writeHeader();
 			virtual void writeFrame( const char * samples, std::size_t nSamples );
 
 		private:
+			virtual void doOpen();
+			virtual void doClose();
+
 			std::tr1::shared_ptr< FILE > fout_;
 			std::tr1::shared_ptr< lame_global_flags > gfp_;
 			int quality_;

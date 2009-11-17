@@ -69,6 +69,9 @@ namespace khopper {
 			virtual void writeFrame( const char *, std::size_t );
 
 		private:
+			virtual void doOpen();
+			virtual void doClose();
+
 			std::tr1::shared_ptr< AVFormatContext > pFormatContext_;
 			AVStream * pStream_;
 		};
