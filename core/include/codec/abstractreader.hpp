@@ -273,19 +273,6 @@ namespace khopper {
 				this->year_ = year;
 			}
 
-			/// Open resource
-			virtual void openResource() = 0;
-			/**
-			 * @brief Close opened resource
-			 * @note If an exception was thrown, program will terminate immediately
-			 */
-			virtual void closeResource() = 0;
-			/// Setup demuxer
-			virtual void setupDemuxer() = 0;
-			/// Setup decoder
-			virtual void setupDecoder() = 0;
-			/// Read header
-			virtual void readHeader() = 0;
 			/// Read one frame
 			virtual ByteArray readFrame( int64_t &, bool & ) = 0;
 			/// Seek frame
@@ -295,6 +282,9 @@ namespace khopper {
 			// prevent copying
 			AbstractReader( const AbstractReader & );
 			AbstractReader & operator =( const AbstractReader & );
+
+			virtual void doOpen() = 0;
+			virtual void doClose() = 0;
 
 			std::string album_;
 			std::string artist_;

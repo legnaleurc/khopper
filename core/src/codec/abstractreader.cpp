@@ -57,10 +57,7 @@ namespace khopper {
 			}
 			this->uri_ = uri;
 
-			this->openResource();
-			this->setupDemuxer();
-			this->setupDecoder();
-			this->readHeader();
+			this->doOpen();
 
 			this->opening_ = true;
 			this->hasNext_ = true;
@@ -84,7 +81,7 @@ namespace khopper {
 			this->year_ = -1;
 
 			try {
-				this->closeResource();
+				this->doClose();
 			} catch( ... ) {
 				// TODO: log an error
 				assert( !"a plugin can not clean up its own mess ..." );
@@ -109,7 +106,6 @@ namespace khopper {
 				this->hasNext_ = false;
 			}
 
-//			qDebug() << "Sended" << data.size() << this->hasNext_;
 			return data;
 		}
 

@@ -73,6 +73,17 @@ namespace khopper {
 			av_init_packet( this->pPacket_.get() );
 		}
 
+		void DefaultReader::doOpen() {
+			this->openResource();
+			this->setupDemuxer();
+			this->setupDecoder();
+			this->readHeader();
+		}
+
+		void DefaultReader::doClose() {
+			this->closeResource();
+		}
+
 		void DefaultReader::openResource() {
 			AVFormatContext * pFC = NULL;
 			int ret = av_open_input_file( &pFC, wHelper( this->getURI() ).c_str(), NULL, 0, NULL );

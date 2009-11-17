@@ -79,12 +79,9 @@ namespace khopper {
 		}
 
 		FlacReader::~FlacReader() {
-			if( this->isOpen() ) {
-				this->close();
-			}
 		}
 
-		void FlacReader::openResource() {
+		void FlacReader::doOpen() {
 			if( !FLAC__stream_decoder_set_md5_checking( this->pFD_.get(), true ) ) {
 				throw error::CodecError( "Can\'t check md5! (from khopper::codec::FlacReader)" );
 			}
@@ -103,26 +100,18 @@ namespace khopper {
 			if( initStatus != FLAC__STREAM_DECODER_INIT_STATUS_OK ) {
 				throw error::CodecError( std::string( FLAC__StreamDecoderInitStatusString[initStatus] ) + " (from khopper::codec::FlacReader)" );
 			}
-		}
 
-		void FlacReader::closeResource() {
-			FLAC__stream_decoder_finish( this->pFD_.get() );
-			this->buffer_.clear();
-			this->offset_ = 0;
-			this->decodedTime_ = 0.0;
-		}
-
-		void FlacReader::setupDemuxer() {
-		}
-
-		void FlacReader::setupDecoder() {
-		}
-
-		void FlacReader::readHeader() {
 			FLAC__bool ok = FLAC__stream_decoder_process_until_end_of_metadata( this->pFD_.get() );
 			if( !ok ) {
 				throw error::CodecError( "Can\'t read metadata (from khopper::codec::FlacReader)" );
 			}
+		}
+
+		void FlacReader::doClose() {
+			FLAC__stream_decoder_finish( this->pFD_.get() );
+			this->buffer_.clear();
+			this->offset_ = 0;
+			this->decodedTime_ = 0.0;
 		}
 
 		bool FlacReader::seekFrame( int64_t ms ) {

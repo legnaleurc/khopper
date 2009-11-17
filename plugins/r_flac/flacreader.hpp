@@ -36,15 +36,13 @@ namespace khopper {
 			virtual ~FlacReader();
 
 		protected:
-			virtual void openResource();
-			virtual void closeResource();
-			virtual void setupDemuxer();
-			virtual void setupDecoder();
-			virtual void readHeader();
 			virtual ByteArray readFrame( int64_t &, bool & );
 			virtual bool seekFrame( int64_t );
 
 		private:
+			virtual void doOpen();
+			virtual void doClose();
+
 			static void metadataCallback_( const FLAC__StreamDecoder *, const FLAC__StreamMetadata *, void * );
 			static FLAC__StreamDecoderWriteStatus writeCallback_( const FLAC__StreamDecoder *, const FLAC__Frame *, const FLAC__int32 * const [], void * );
 			static void errorCallback_( const FLAC__StreamDecoder *, FLAC__StreamDecoderErrorStatus, void * );

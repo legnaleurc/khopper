@@ -68,11 +68,15 @@ namespace khopper {
 			 * @throws CodecError Can not find decoder.
 			 */
 			virtual void setupDecoder();
+			/// Read header
 			virtual void readHeader();
 			virtual ByteArray readFrame( int64_t &, bool & );
 			virtual bool seekFrame( int64_t );
 
 		private:
+			virtual void doOpen();
+			virtual void doClose();
+
 			std::tr1::shared_ptr< AVFormatContext > pFormatContext_;
 			std::tr1::shared_ptr< AVCodecContext > pCodecContext_;
 			std::tr1::shared_ptr< AVPacket > pPacket_;
