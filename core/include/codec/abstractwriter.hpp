@@ -105,6 +105,9 @@ namespace khopper {
 			void setChannels( int channels ) {
 				this->channels_ = channels;
 			}
+			void setSampleFormat( SampleFormats sampleFormat ) {
+				this->sampleFormat_ = sampleFormat;
+			}
 			/**
 			 * @brief Set sample rate
 			 * @sa getSampleRate
@@ -162,6 +165,9 @@ namespace khopper {
 			std::vector< char > & getSampleBuffer() {
 				return this->sampleBuffer_;
 			}
+			SampleFormats getSampleFormat() const {
+				return this->sampleFormat_;
+			}
 			/**
 			 * @brief Get sample rate
 			 * @sa setSampleRate
@@ -199,6 +205,7 @@ namespace khopper {
 			QUrl uri_;
 			bool opening_;
 			std::vector< char > sampleBuffer_;
+			SampleFormats sampleFormat_;
 			ByteArray sampleQueue_;
 			int sampleRate_;
 			std::string title_;

@@ -154,6 +154,9 @@ namespace khopper {
 			int getIndex() const {
 				return this->index_;
 			}
+			SampleFormats getSampleFormat() const {
+				return this->sampleFormat_;
+			}
 			/**
 			 * @brief Get sample rate
 			 * @sa setSampleRate
@@ -251,6 +254,9 @@ namespace khopper {
 			void setIndex( int index ) {
 				this->index_ = index;
 			}
+			void setSampleFormat( SampleFormats sampleFormat ) {
+				this->sampleFormat_ = sampleFormat;
+			}
 			/**
 			 * @brief Set sample rate
 			 * @sa getSampleRate
@@ -300,6 +306,7 @@ namespace khopper {
 			bool hasNext_;
 			int index_;
 			bool opening_;
+			SampleFormats sampleFormat_;
 			int sampleRate_;
 			std::string title_;
 			int year_;

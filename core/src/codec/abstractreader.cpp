@@ -43,6 +43,7 @@ namespace khopper {
 		hasNext_( false ),
 		index_( -1 ),
 		opening_( false ),
+		sampleFormat_( NONE ),
 		sampleRate_( -1 ),
 		title_(),
 		year_( -1 ) {
@@ -76,6 +77,7 @@ namespace khopper {
 			this->uri_.clear();
 			this->genre_.clear();
 			this->index_ = -1;
+			this->sampleFormat_ = NONE;
 			this->sampleRate_ = -1;
 			this->title_.clear();
 			this->year_ = -1;

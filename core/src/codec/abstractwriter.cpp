@@ -36,6 +36,7 @@ namespace khopper {
 		uri_(),
 		opening_( false ),
 		sampleBuffer_(),
+		sampleFormat_( NONE ),
 		sampleQueue_(),
 		sampleRate_( -1 ),
 		title_() {

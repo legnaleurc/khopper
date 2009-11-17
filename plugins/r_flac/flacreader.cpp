@@ -105,6 +105,8 @@ namespace khopper {
 			if( !ok ) {
 				throw error::CodecError( "Can\'t read metadata (from khopper::codec::FlacReader)" );
 			}
+
+			this->setSampleFormat( S16LE );
 		}
 
 		void FlacReader::doClose() {

@@ -40,6 +40,23 @@ namespace khopper {
 	 */
 	namespace codec {
 
+		enum SampleFormat {
+			S8 = 0x0,
+			U8 = 0x1,
+			S16LE = 0x2,
+			S16BE = 0x3,
+			U16LE = 0x4,
+			U16BE = 0x5,
+			S32LE = 0x6,
+			S32BE = 0x7,
+			U32LE = 0x8,
+			U32BE = 0x9,
+			FLOAT = 0xA,
+			DOUBLE = 0xB,
+			NONE = 0xFFFFFFFF
+		};
+		Q_DECLARE_FLAGS( SampleFormats, SampleFormat )
+
 		/**
 		 * @ingroup Codecs
 		 * @brief Used for storing raw binary data
