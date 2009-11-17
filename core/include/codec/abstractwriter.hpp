@@ -106,13 +106,6 @@ namespace khopper {
 				this->channels_ = channels;
 			}
 			/**
-			 * @brief Set quality
-			 * @sa getQuality
-			 */
-			void setQuality( double quality ) {
-				this->quality_ = quality;
-			}
-			/**
 			 * @brief Set sample rate
 			 * @sa getSampleRate
 			 */
@@ -164,13 +157,6 @@ namespace khopper {
 				return this->uri_;
 			}
 			/**
-			 * @brief Get quality
-			 * @sa setQuality
-			 */
-			double getQuality() const {
-				return this->quality_;
-			}
-			/**
 			 * @brief Get sampling buffer
 			 */
 			std::vector< char > & getSampleBuffer() {
@@ -212,7 +198,6 @@ namespace khopper {
 			int channels_;
 			QUrl uri_;
 			bool opening_;
-			double quality_;
 			std::vector< char > sampleBuffer_;
 			ByteArray sampleQueue_;
 			int sampleRate_;

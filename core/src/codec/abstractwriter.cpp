@@ -35,7 +35,6 @@ namespace khopper {
 		channels_( -1 ),
 		uri_(),
 		opening_( false ),
-		quality_( 0.0 ),
 		sampleBuffer_(),
 		sampleQueue_(),
 		sampleRate_( -1 ),
