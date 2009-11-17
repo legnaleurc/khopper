@@ -155,14 +155,6 @@ namespace khopper {
 			this->fout_.reset();
 		}
 
-		QString Mp3Writer::getID() const {
-			return "";
-		}
-
-		QString Mp3Writer::getVersion() const {
-			return "0.2.3";
-		}
-
 	}
 
 }

@@ -39,9 +39,6 @@ namespace khopper {
 				this->quality_ = quality;
 			}
 
-			virtual QString getID() const;
-			virtual QString getVersion() const;
-
 		protected:
 			virtual void openResource();
 			virtual void closeResource();
