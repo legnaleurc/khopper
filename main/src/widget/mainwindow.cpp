@@ -194,6 +194,11 @@ namespace khopper {
 			// get option widget
 			if( this->optionWindow_->exec() ) {
 				plugin::AbstractPanel * option = this->optionWindow_->getCurrent();
+				codec::WriterSP encoder( option->getWriter() );
+				if( encoder == NULL ) {
+					this->showErrorMessage_( tr( "Run-time error!" ), "Can't get encoder." );
+					return;
+				}
 
 				try {
 					// generate output paths
@@ -205,7 +210,7 @@ namespace khopper {
 					// set progress bar
 					this->progress_->setTotal( tracks.size() );
 					// set output information
-					this->cvt_->setOutput( option->getWriter(), outputPaths );
+					this->cvt_->setOutput( encoder, outputPaths );
 					this->cvt_->setTracks( tracks );
 					this->cvt_->start();
 					this->progress_->exec();

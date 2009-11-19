@@ -80,7 +80,7 @@ namespace khopper {
 		codec::WriterSP FlacPanel::getWriter() const {
 			FlacWriterCreator loader = reinterpret_cast< FlacWriterCreator >( QLibrary::resolve( LIBFLAC, "createFlacWriter" ) );
 			if( loader == NULL ) {
-				qDebug( "dll error !!!" );
+				return codec::WriterSP();
 			}
 			std::tr1::shared_ptr< codec::FlacWriter > encoder( loader() );
 
