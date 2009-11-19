@@ -106,9 +106,6 @@ namespace khopper {
 			this->block_.reset( vb, vorbisBlockHelper );
 			vorbis_block_init( vd, vb );
 
-			// setup sample buffer size
-			this->getSampleBuffer().resize( 1024 * 4 * this->getChannels() );
-
 			// write vorbis comment
 			vorbis_comment * vc = static_cast< vorbis_comment * >( std::malloc( sizeof( vorbis_comment ) ) );
 			this->comments_.reset( vc, vorbisCommentHelper );
@@ -143,22 +140,24 @@ namespace khopper {
 			}
 		}
 
-		void OggWriter::writeFrame( const char * sample, std::size_t nSamples ) {
-			const int SAMPLES = nSamples / sizeof( short int ) / this->getChannels();
-			const short int * audio = static_cast< const short int * >( static_cast< const void * >( sample ) );
-			float * * buffer = vorbis_analysis_buffer( this->dsp_.get(), SAMPLES );
+		void OggWriter::writeFrame( const ByteArray & sample ) {
+			if( !sample.empty() ) {
+				const int nSamples = sample.size() / sizeof( short int ) / this->getChannels();
+				const short int * audio = static_cast< const short int * >( static_cast< const void * >( &sample[0] ) );
+				float * * buffer = vorbis_analysis_buffer( this->dsp_.get(), nSamples );
 
-			if( this->getChannels() == 1 ) {
-				for( int l = 0; l < SAMPLES; ++l ) {
-					buffer[0][l] = audio[l] / 32768.f;
+				if( this->getChannels() == 1 ) {
+					for( int l = 0; l < nSamples; ++l ) {
+						buffer[0][l] = audio[l] / 32768.f;
+					}
+				} else {
+					for( int l = 0; l < nSamples; ++l ) {
+						buffer[0][l] = audio[l*2] / 32768.f;
+						buffer[1][l] = audio[l*2+1] / 32768.f;
+					}
 				}
-			} else {
-				for( int l = 0; l < SAMPLES; ++l ) {
-					buffer[0][l] = audio[l*2] / 32768.f;
-					buffer[1][l] = audio[l*2+1] / 32768.f;
-				}
+				vorbis_analysis_wrote( this->dsp_.get(), nSamples );
 			}
-			vorbis_analysis_wrote( this->dsp_.get(), SAMPLES );
 
 			while( vorbis_analysis_blockout( this->dsp_.get(), this->block_.get() ) == 1 ) {
 				vorbis_analysis( this->block_.get(), NULL );

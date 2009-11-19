@@ -40,12 +40,10 @@ namespace khopper {
 				this->ogg_ = ogg;
 			}
 
-		protected:
-			virtual void writeFrame( const char *, std::size_t );
-
 		private:
 			virtual void doOpen();
 			virtual void doClose();
+			virtual void writeFrame( const ByteArray & );
 
 			std::tr1::shared_ptr< FLAC__StreamEncoder > pFE_;
 			std::vector< std::tr1::shared_ptr< FLAC__StreamMetadata > > metadataOwner_;

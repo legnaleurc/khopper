@@ -94,40 +94,48 @@ namespace khopper {
 			if( ret < 0 ) {
 				qDebug( "lame param error" );
 			}
-
-			// setup buffer size
-			this->getSampleBuffer().resize( lame_get_framesize( this->gfp_.get() ) * 4 );
 		}
 
-		void Mp3Writer::writeFrame( const char * samples, std::size_t nSamples ) {
-			int ret = 0;
-			short int * audio = static_cast< short int * >( const_cast< void * >( static_cast< const void * >( samples ) ) );
-			int nsamples = nSamples / sizeof( short int ) / this->getChannels();
-			std::vector< unsigned char > buffer( 1.25 * nsamples + 7200 );
+		void Mp3Writer::writeFrame( const ByteArray & sample ) {
+			if( !sample.empty() ) {
+				short int * audio = static_cast< short int * >( const_cast< void * >( static_cast< const void * >( &sample[0] ) ) );
+				// FIXME: watch out! should check sample format;
+				const int nSamples = sample.size() / sizeof( short int ) / this->getChannels();
+				std::vector< unsigned char > buffer( 1.25 * nSamples + 7200 );
 
-			if( this->getChannels() == 1 ) {
-				ret = lame_encode_buffer(
-					this->gfp_.get(),
-					audio,
-					audio,
-					nsamples,
-					&buffer[0],
-					buffer.size()
-				);
+				int ret = 0;
+				if( this->getChannels() == 1 ) {
+					ret = lame_encode_buffer(
+						this->gfp_.get(),
+						audio,
+						audio,
+						nSamples,
+						&buffer[0],
+						buffer.size()
+					);
+				} else {
+					ret = lame_encode_buffer_interleaved(
+						this->gfp_.get(),
+						audio,
+						nSamples,
+						&buffer[0],
+						buffer.size()
+					);
+				}
+
+				if( ret < 0 ) {
+					qDebug( "lame encode error: %d", ret );
+				}
+				fwrite( &buffer[0], sizeof( buffer[0] ), ret, this->fout_.get() );
 			} else {
-				ret = lame_encode_buffer_interleaved(
+				unsigned char buffer[7200];
+				int ret = lame_encode_flush_nogap(
 					this->gfp_.get(),
-					audio,
-					nsamples,
-					&buffer[0],
-					buffer.size()
+					buffer,
+					7200
 				);
+				fwrite( buffer, sizeof( buffer[0] ), ret, this->fout_.get() );
 			}
-
-			if( ret < 0 ) {
-				qDebug( "lame encode error: %d", ret );
-			}
-			fwrite( &buffer[0], sizeof( char ), ret, this->fout_.get() );
 		}
 
 		void Mp3Writer::doClose() {

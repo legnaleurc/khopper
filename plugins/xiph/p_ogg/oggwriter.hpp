@@ -47,12 +47,10 @@ namespace khopper {
 				this->quality_ = quality;
 			}
 
-		protected:
-			virtual void writeFrame( const char *, std::size_t );
-
 		private:
 			virtual void doOpen();
 			virtual void doClose();
+			virtual void writeFrame( const ByteArray & );
 
 			std::tr1::shared_ptr< FILE > fout_;
 			std::tr1::shared_ptr< vorbis_info > encoder_;

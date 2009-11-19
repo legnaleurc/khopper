@@ -32,7 +32,7 @@ extern "C" {
 
 namespace {
 
-	inline std::string wHelper( const QUrl & uri ) {
+	static inline std::string wHelper( const QUrl & uri ) {
 		QString tmp( uri.toLocalFile() );
 #ifdef Q_OS_WIN32
 		tmp.prepend( "wfile://" );
@@ -40,7 +40,7 @@ namespace {
 		return tmp.toStdString();
 	}
 
-	inline void fc_helper( AVFormatContext * oc ) {
+	static inline void fc_helper( AVFormatContext * oc ) {
 		for( std::size_t i = 0; i < oc->nb_streams; ++i ) {
 			if( oc->streams[i] && oc->streams[i]->codec->codec ) {
 				avcodec_close( oc->streams[i]->codec );
@@ -57,14 +57,14 @@ namespace {
 		av_freep( &oc );
 	}
 
-	inline bool initFFmpeg() {
+	static inline bool initFFmpeg() {
 		av_register_all();
 		return true;
 	}
 
-	const bool INITIALIZED = initFFmpeg();
-	const double QSCALE_NONE = -99999.;
-	const int OUTPUT_BUFFER_SIZE = FF_MIN_BUFFER_SIZE * 4;
+	static const bool INITIALIZED = initFFmpeg();
+	static const double QSCALE_NONE = -99999.;
+	static const int OUTPUT_BUFFER_SIZE = FF_MIN_BUFFER_SIZE * 4;
 
 }
 
@@ -75,7 +75,9 @@ namespace khopper {
 		DefaultWriter::DefaultWriter():
 		pFormatContext_(),
 		pStream_( NULL ),
-		quality_( QSCALE_NONE ) {
+		queue_(),
+		quality_( QSCALE_NONE ),
+		frameSize_( -1 ) {
 		}
 
 		void DefaultWriter::doOpen() {
@@ -144,7 +146,6 @@ namespace khopper {
 				throw error::CodecError( "Can not open encoder" );
 			}
 
-			int bufferSize = 0;
 			switch( pCC->codec_id ) {
 			case CODEC_ID_PCM_S16LE:
 			case CODEC_ID_PCM_S16BE:
@@ -170,14 +171,11 @@ namespace khopper {
 			case CODEC_ID_PCM_F32LE:
 			case CODEC_ID_PCM_F64BE:
 			case CODEC_ID_PCM_F64LE:
-				bufferSize = OUTPUT_BUFFER_SIZE;
+				this->frameSize_ = OUTPUT_BUFFER_SIZE;
 				break;
 			default:
-				bufferSize = pCC->frame_size * sizeof( short ) * pCC->channels;
-				break;
+				this->frameSize_ = pCC->frame_size * sizeof( short ) * pCC->channels;
 			}
-
-			this->getSampleBuffer().resize( bufferSize );
 		}
 
 		void DefaultWriter::openResource() {
@@ -190,8 +188,9 @@ namespace khopper {
 		}
 
 		void DefaultWriter::closeResource() {
-			this->writeFrame( NULL, 0 );
+			this->writeFrame( NULL );
 			av_write_trailer( this->pFormatContext_.get() );
+			this->queue_.clear();
 			this->pFormatContext_.reset();
 		}
 
@@ -205,7 +204,28 @@ namespace khopper {
 			}
 		}
 
-		void DefaultWriter::writeFrame( const char * sample, std::size_t /*nSamples*/ ) {
+		void DefaultWriter::writeFrame( const ByteArray & sample ) {
+			if( !sample.empty() ) {
+				// put samples into queue
+				this->queue_.insert( this->queue_.end(), sample.begin(), sample.end() );
+				// encode if possible
+				while( this->queue_.size() >= this->frameSize_ ) {
+					ByteQueue::iterator copyEnd = this->queue_.begin();
+					std::advance( copyEnd, this->frameSize_ );
+					ByteArray data( this->queue_.begin(), copyEnd );
+					this->writeFrame( static_cast< const short * >( static_cast< const void * >( &data[0] ) ) );
+					this->queue_.erase( this->queue_.begin(), copyEnd );
+				}
+			} else {
+				if( !this->queue_.empty() ) {
+					ByteArray data( this->queue_.begin(), this->queue_.end() );
+					this->writeFrame( static_cast< const short * >( static_cast< const void * >( &data[0] ) ) );
+					this->queue_.clear();
+				}
+			}
+		}
+
+		void DefaultWriter::writeFrame( const short * sample ) {
 			AVCodecContext * pCC = this->pStream_->codec;
 
 			static uint8_t audio_outbuf[OUTPUT_BUFFER_SIZE];
@@ -213,7 +233,7 @@ namespace khopper {
 			AVPacket pkt;
 			av_init_packet( &pkt );
 
-			pkt.size = avcodec_encode_audio( pCC, audio_outbuf, sizeof( audio_outbuf ), static_cast< const short * >( static_cast< const void * >( sample ) ) );
+			pkt.size = avcodec_encode_audio( pCC, audio_outbuf, sizeof( audio_outbuf ), sample );
 
 			pkt.data = audio_outbuf;
 			pkt.stream_index = this->pStream_->index;

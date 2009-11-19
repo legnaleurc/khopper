@@ -126,9 +126,6 @@ namespace khopper {
 				throw error::CodecError( "encoder parameter error" );
 			}
 
-			// setup sample buffer size
-			this->getSampleBuffer().resize( 1024 * 16 * this->getChannels() );
-
 			// open files
 			FLAC__StreamEncoderInitStatus init_status;
 			if( this->ogg_ ) {
@@ -151,17 +148,20 @@ namespace khopper {
 			}
 		}
 
-		void FlacWriter::writeFrame( const char * sample, std::size_t nSample ) {
+		void FlacWriter::writeFrame( const ByteArray & sample ) {
+			if( sample.empty() ) {
+				return;
+			}
 			// TODO: assumed that sample format is S16LE, please fix the interface later
-			const int32_t buf_size = nSample * sizeof( char ) / sizeof( int16_t );
+			const int32_t bufSize = sample.size() / sizeof( int16_t );
 			// TODO: big or little endian
-			const int16_t * buffer_ = static_cast< const int16_t * >( static_cast< const void * >( sample ) );
-			std::vector< int32_t > buffer( buf_size );
-			for( int i = 0; i < buf_size; ++i ) {
-				buffer[i] = buffer_[i];
+			const int16_t * audio = static_cast< const int16_t * >( static_cast< const void * >( &sample[0] ) );
+			std::vector< int32_t > buffer( bufSize );
+			for( int i = 0; i < bufSize; ++i ) {
+				buffer[i] = audio[i];
 			}
 
-			FLAC__bool ok = FLAC__stream_encoder_process_interleaved( this->pFE_.get(), &buffer[0], buf_size / this->getChannels() );
+			FLAC__bool ok = FLAC__stream_encoder_process_interleaved( this->pFE_.get(), &buffer[0], bufSize / this->getChannels() );
 			if( !ok ) {
 				throw error::CodecError( FLAC__StreamEncoderStateString[FLAC__stream_encoder_get_state( this->pFE_.get() )] );
 			}

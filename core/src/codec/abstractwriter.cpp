@@ -35,9 +35,7 @@ namespace khopper {
 		channels_( -1 ),
 		uri_(),
 		opening_( false ),
-		sampleBuffer_(),
 		sampleFormat_( NONE ),
-		sampleQueue_(),
 		sampleRate_( -1 ),
 		title_() {
 		}
@@ -68,23 +66,14 @@ namespace khopper {
 		}
 
 		void AbstractWriter::write( const ByteArray & data ) {
-			this->sampleQueue_.insert( this->sampleQueue_.end(), data.begin(), data.end() );
-
-			while( this->sampleQueue_.size() >= this->sampleBuffer_.size() ) {
-				ByteArray::iterator copyEnd = this->sampleQueue_.begin() + this->sampleBuffer_.size();
-				std::copy( this->sampleQueue_.begin(), copyEnd, this->sampleBuffer_.begin() );
-				this->sampleQueue_.erase( this->sampleQueue_.begin(), copyEnd );
-
-				this->writeFrame( &this->sampleBuffer_[0], this->sampleBuffer_.size() );
+			if( !this->isOpen() ) {
+				return;
 			}
+			this->writeFrame( data );
 		}
 
 		void AbstractWriter::flush() {
-			if( this->opening_ && !this->sampleQueue_.empty() ) {
-				std::copy( this->sampleQueue_.begin(), this->sampleQueue_.end(), this->sampleBuffer_.begin() );
-				this->writeFrame( &this->sampleBuffer_[0], this->sampleBuffer_.size() );
-				this->sampleQueue_.clear();
-			}
+			this->write();
 		}
 
 	}

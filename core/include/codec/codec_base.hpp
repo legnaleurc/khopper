@@ -30,7 +30,7 @@
 #include "util/tr1.hpp"
 #include "util/error.hpp"
 
-#include <deque>
+#include <vector>
 
 namespace khopper {
 
@@ -61,7 +61,7 @@ namespace khopper {
 		 * @ingroup Codecs
 		 * @brief Used for storing raw binary data
 		 */
-		typedef std::deque< char > ByteArray;
+		typedef std::vector< int8_t > ByteArray;
 
 	}
 

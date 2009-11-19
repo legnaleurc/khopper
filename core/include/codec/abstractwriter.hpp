@@ -71,7 +71,7 @@ namespace khopper {
 			 * @brief Write @p data to encoder
 			 * @param [in] data Raw binary data
 			 */
-			void write( const ByteArray & data );
+			void write( const ByteArray & data = ByteArray() );
 			/**
 			 * @brief Write unwrited data in buffer.
 			 */
@@ -159,12 +159,6 @@ namespace khopper {
 			const QUrl & getURI() const {
 				return this->uri_;
 			}
-			/**
-			 * @brief Get sampling buffer
-			 */
-			std::vector< char > & getSampleBuffer() {
-				return this->sampleBuffer_;
-			}
 			SampleFormats getSampleFormat() const {
 				return this->sampleFormat_;
 			}
@@ -183,13 +177,6 @@ namespace khopper {
 				return this->title_;
 			}
 
-			/**
-			 * @brief Write a frame
-			 * @param sample sample data
-			 * @param nSample sample size
-			 */
-			virtual void writeFrame( const char * sample, std::size_t nSample ) = 0;
-
 		private:
 			// prevent copying
 			AbstractWriter( const AbstractWriter & );
@@ -197,6 +184,7 @@ namespace khopper {
 
 			virtual void doOpen() = 0;
 			virtual void doClose() = 0;
+			virtual void writeFrame( const ByteArray & sample ) = 0;
 
 			std::string album_;
 			std::string artist_;
@@ -204,9 +192,7 @@ namespace khopper {
 			int channels_;
 			QUrl uri_;
 			bool opening_;
-			std::vector< char > sampleBuffer_;
 			SampleFormats sampleFormat_;
-			ByteArray sampleQueue_;
 			int sampleRate_;
 			std::string title_;
 		};

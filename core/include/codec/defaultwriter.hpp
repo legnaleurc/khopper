@@ -24,6 +24,8 @@
 
 #include "codec/abstractwriter.hpp"
 
+#include <deque>
+
 struct AVFormatContext;
 struct AVStream;
 
@@ -68,15 +70,20 @@ namespace khopper {
 			virtual void openResource();
 			virtual void closeResource();
 			virtual void writeHeader();
-			virtual void writeFrame( const char *, std::size_t );
+			virtual void writeFrame( const short * );
 
 		private:
 			virtual void doOpen();
 			virtual void doClose();
+			virtual void writeFrame( const ByteArray & );
+
+			typedef std::deque< ByteArray::value_type > ByteQueue;
 
 			std::tr1::shared_ptr< AVFormatContext > pFormatContext_;
 			AVStream * pStream_;
+			ByteQueue queue_;
 			double quality_;
+			std::size_t frameSize_;
 		};
 
 	}
