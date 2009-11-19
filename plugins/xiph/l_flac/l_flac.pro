@@ -16,7 +16,6 @@ MOC_DIR = $${ROOT_PATH}/tmp/moc
 # Config
 CONFIG  += debug_and_release
 TARGET   = kl_flac
-VERSION  = $${KHOPPER_VERSION}
 TEMPLATE = lib
 
 CONFIG( debug, debug|release ) {
