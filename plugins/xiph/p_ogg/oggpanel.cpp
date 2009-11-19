@@ -105,7 +105,7 @@ namespace khopper {
 			if( id == 0 ) {
 				FlacWriterCreator loader = reinterpret_cast< FlacWriterCreator >( QLibrary::resolve( LIBFLAC, "createFlacWriter" ) );
 				if( loader == NULL ) {
-					qDebug( "dll error !!!" );
+					return codec::WriterSP();
 				}
 				std::tr1::shared_ptr< codec::FlacWriter > flac( loader() );
 				flac->setOggMode( true );
