@@ -61,7 +61,7 @@ namespace khopper {
 		 * @ingroup Codecs
 		 * @brief Used for storing raw binary data
 		 */
-		typedef std::vector< int8_t > ByteArray;
+		typedef std::vector< uint8_t > ByteArray;
 
 	}
 
