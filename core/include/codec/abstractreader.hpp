@@ -22,7 +22,7 @@
 #ifndef KHOPPER_CODEC_ABSTRACTREADER_HPP
 #define KHOPPER_CODEC_ABSTRACTREADER_HPP
 
-#include "codec_base.hpp"
+#include "codecutil.hpp"
 
 #include <QUrl>
 

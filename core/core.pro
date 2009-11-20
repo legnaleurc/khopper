@@ -15,7 +15,7 @@ MOC_DIR      = $${ROOT_PATH}/tmp/moc
 HEADERS +=	\
 	./include/codec/abstractreader.hpp	\
 	./include/codec/abstractwriter.hpp	\
-	./include/codec/codec_base.hpp	\
+	./include/codec/codecutil.hpp	\
 	./include/codec/defaultreader.hpp	\
 	./include/codec/defaultwriter.hpp	\
 	./include/plugin/abstractplugin.hpp	\
