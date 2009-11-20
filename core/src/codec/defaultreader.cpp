@@ -31,7 +31,7 @@ extern "C" {
 
 namespace {
 
-	inline std::string wHelper( const QUrl & uri ) {
+	static inline std::string wHelper( const QUrl & uri ) {
 		// FIXME: not always local file
 		QString tmp( uri.toLocalFile() );
 #ifdef Q_OS_WIN32
@@ -40,24 +40,24 @@ namespace {
 		return tmp.toStdString();
 	}
 
-	inline void p_helper( AVPacket * p ) {
+	static inline void p_helper( AVPacket * p ) {
 		av_freep( &p );
 	}
 
-	inline int64_t toNative( int64_t ms ) {
+	static inline int64_t toNative( int64_t ms ) {
 		return av_rescale( ms, AV_TIME_BASE, 1000 );
 	}
 
-	inline int toMS( int64_t timestamp ) {
+	static inline int toMS( int64_t timestamp ) {
 		return av_rescale( timestamp, 1000, AV_TIME_BASE );
 	}
 
-	inline bool initFFmpeg() {
+	static inline bool initFFmpeg() {
 		av_register_all();
 		return true;
 	}
 
-	const bool INITIALIZED = initFFmpeg();
+	static const bool INITIALIZED = initFFmpeg();
 
 }
 
@@ -270,7 +270,8 @@ namespace khopper {
 				if( data_size <= 0 ) {
 					continue;
 				}
-				int64_t ptsDiff = ( static_cast< int64_t >( AV_TIME_BASE ) / 2 * data_size ) / ( this->pCodecContext_->sample_rate * this->pCodecContext_->channels );
+				// decoded time: decoded size in byte / sizeof short int * AV_TIME_BASE / ( sample rate * channels )
+				int64_t ptsDiff = ( static_cast< int64_t >( AV_TIME_BASE ) * ( data_size / sizeof( short ) ) ) / ( this->getSampleRate() * this->getChannels() );
 				if( this->afterBegin( toMS( curPts ) ) ) {
 					data.insert( data.end(), audio_buf, audio_buf + data_size );
 					decoded += ptsDiff;
