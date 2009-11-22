@@ -54,6 +54,7 @@ namespace khopper {
 			}
 
 			encoder->setSampleFormat( decoder->getSampleFormat() );
+			encoder->setChannelLayout( decoder->getChannelLayout() );
 
 			int64_t decoded;
 			while( decoder->hasNext() ) {
