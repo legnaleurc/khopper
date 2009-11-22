@@ -112,6 +112,9 @@ namespace khopper {
 			int getBitRate() const {
 				return this->bitRate_;
 			}
+			ChannelLayout getChannelLayout() const {
+				return this->channelLayout_;
+			}
 			/**
 			 * @brief Get channels
 			 * @sa setChannels
@@ -206,6 +209,9 @@ namespace khopper {
 			void setBitRate( int bitRate ) {
 				this->bitRate_ = bitRate;
 			}
+			void setChannelLayout( ChannelLayout channelLayout ) {
+				this->channelLayout_ = channelLayout;
+			}
 			/**
 			 * @brief Set channels
 			 * @sa getChannels
@@ -296,6 +302,7 @@ namespace khopper {
 			std::string artist_;
 			int64_t msBegin_;
 			int bitRate_;
+			ChannelLayout channelLayout_;
 			int channels_;
 			std::string comment_;
 			std::string copyright_;

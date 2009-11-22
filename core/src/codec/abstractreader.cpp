@@ -33,6 +33,7 @@ namespace khopper {
 		artist_(),
 		msBegin_( -1 ),
 		bitRate_( -1 ),
+		channelLayout_( LayoutNative ),
 		channels_( -1 ),
 		comment_(),
 		copyright_(),
@@ -69,6 +70,7 @@ namespace khopper {
 			this->artist_.clear();
 			this->msBegin_ = -1;
 			this->bitRate_ = -1;
+			this->channelLayout_ = LayoutNative;
 			this->channels_ = -1;
 			this->comment_.clear();
 			this->copyright_.clear();

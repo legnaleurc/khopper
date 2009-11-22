@@ -32,6 +32,7 @@ namespace khopper {
 		album_(),
 		artist_(),
 		bitRate_( -1 ),
+		channelLayout_( LayoutNative ),
 		channels_( -1 ),
 		uri_(),
 		opening_( false ),
