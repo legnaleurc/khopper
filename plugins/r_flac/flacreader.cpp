@@ -241,10 +241,33 @@ namespace khopper {
 						return FLAC__STREAM_DECODER_WRITE_STATUS_ABORT;
 					}
 					for( unsigned int c = 0; c < frame->header.channels; ++c ) {
-						FLAC__int16 d = static_cast< FLAC__int16 >( buffer[c][i] );
-						// little endian
-						self->buffer_.push_back( d );
-						self->buffer_.push_back( d >> 8 );
+						const uint8_t * tmp = static_cast< const uint8_t * >( static_cast< const void * >( &buffer[c][i] ) );
+						switch( frame->header.bits_per_sample ) {
+						case 8:
+#if Q_BYTE_ORDER == Q_LITTLE_ENDIAN
+							self->buffer_.push_back( tmp[0] );
+#else
+							self->buffer_.push_back( tmp[3] );
+#endif
+							break;
+						case 16:
+#if Q_BYTE_ORDER == Q_LITTLE_ENDIAN
+							self->buffer_.push_back( tmp[0] );
+							self->buffer_.push_back( tmp[1] );
+#else
+							self->buffer_.push_back( tmp[2] );
+							self->buffer_.push_back( tmp[3] );
+#endif
+							break;
+						case 32:
+							self->buffer_.push_back( tmp[0] );
+							self->buffer_.push_back( tmp[1] );
+							self->buffer_.push_back( tmp[2] );
+							self->buffer_.push_back( tmp[3] );
+							break;
+						default:
+							throw error::CodecError( "Unsupported sample resolution (from khopper::codec::FlacReader)" );
+						}
 					}
 					++decoded;
 				}
