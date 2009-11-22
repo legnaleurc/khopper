@@ -37,6 +37,8 @@ namespace khopper {
 		player_( new Phonon::MediaObject( this ) ),
 		seeker_( new SeekSlider( this->player_, this ) ),
 		volume_( new Phonon::VolumeSlider( this ) ),
+		passedTime_( new QLabel( "0:00", this ) ),
+		remainTime_( new QLabel( "0:00", this ) ),
 		ppb_( new QPushButton( tr( "Play" ), this ) ),
 		songList_( new SongList( this ) ),
 		currentTrack_(),
@@ -64,7 +66,9 @@ namespace khopper {
 			connect( stop, SIGNAL( clicked() ), this, SLOT( stop_() ) );
 			playerBox->addWidget( stop );
 
+			playerBox->addWidget( this->passedTime_ );
 			playerBox->addWidget( this->seeker_ );
+			playerBox->addWidget( this->remainTime_ );
 			playerBox->addWidget( this->volume_ );
 
 			connect( this->songList_, SIGNAL( fileDropped( const QList< QUrl > & ) ), this, SIGNAL( fileDropped( const QList< QUrl > & ) ) );

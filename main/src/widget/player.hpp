@@ -24,8 +24,8 @@
 
 #include "track.hpp"
 
-#include <QWidget>
 #include <QPushButton>
+#include <QLabel>
 #include <Phonon/MediaObject>
 #include <Phonon/VolumeSlider>
 
@@ -80,6 +80,8 @@ namespace khopper {
 			Phonon::MediaObject * player_;
 			SeekSlider * seeker_;
 			Phonon::VolumeSlider * volume_;
+			QLabel * passedTime_;
+			QLabel * remainTime_;
 			QPushButton * ppb_;
 			SongList * songList_;
 			album::TrackSP currentTrack_;
