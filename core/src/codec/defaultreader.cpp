@@ -244,7 +244,7 @@ namespace khopper {
 				}
 				int sampleByteLength = sizeof( sampleBuffer );
 #if LIBAVCODEC_VERSION_MAJOR < 53
-				int dp_len = avcodec_decode_audio2(
+				int decodedPacketSize = avcodec_decode_audio2(
 					this->pCodecContext_.get(),
 					sampleBuffer,
 					&sampleByteLength,
@@ -252,25 +252,25 @@ namespace khopper {
 					audio_pkt_size
 				);
 #else
-				int dp_len = avcodec_decode_audio3(
+				int decodedPacketSize = avcodec_decode_audio3(
 					this->pCodecContext_.get(),
 					sampleBuffer,
 					&sampleByteLength,
 					this->pPacket_.get()
 				);
 #endif
-				if( dp_len < 0 ) {
+				if( decodedPacketSize < 0 ) {
 #if LIBAVCODEC_VERSION_MAJOR < 53
 					audio_pkt_size = 0;
 #endif
 					break;
 				}
 #if LIBAVCODEC_VERSION_MAJOR < 53
-				audio_pkt_data += dp_len;
-				audio_pkt_size -= dp_len;
+				audio_pkt_data += decodedPacketSize;
+				audio_pkt_size -= decodedPacketSize;
 #else
-				this->pPacket_->data += dp_len;
-				this->pPacket_->size -= dp_len;
+				this->pPacket_->data += decodedPacketSize;
+				this->pPacket_->size -= decodedPacketSize;
 #endif
 				if( sampleByteLength <= 0 ) {
 					continue;
