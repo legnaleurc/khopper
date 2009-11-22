@@ -105,8 +105,6 @@ namespace khopper {
 			if( !ok ) {
 				throw error::CodecError( "Can\'t read metadata (from khopper::codec::FlacReader)" );
 			}
-
-			this->setSampleFormat( S16LE );
 		}
 
 		void FlacReader::doClose() {
@@ -173,6 +171,26 @@ namespace khopper {
 				self->setChannels( metadata->data.stream_info.channels );
 				self->setDuration( metadata->data.stream_info.total_samples * 1000 / metadata->data.stream_info.sample_rate );
 				self->setBitRate( 0 );
+				switch( metadata->data.stream_info.bits_per_sample ) {
+				case 8:
+					self->setSampleFormat( SF_U8 );
+					break;
+				case 16:
+#if Q_BYTE_ORDER == Q_LITTLE_ENDIAN
+					self->setSampleFormat( SF_S16LE );
+#else
+					self->setSampleFormat( SF_S16BE );
+#endif
+				case 32:
+#if Q_BYTE_ORDER == Q_LITTLE_ENDIAN
+					self->setSampleFormat( SF_S32LE );
+#else
+					self->setSampleFormat( SF_S32BE );
+#endif
+					break;
+				default:
+					self->setSampleFormat( SF_NONE );
+				}
 				break;
 			case FLAC__METADATA_TYPE_PADDING:
 				qDebug( "FLAC__METADATA_TYPE_PADDING" );
