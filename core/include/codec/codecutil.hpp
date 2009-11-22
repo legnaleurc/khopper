@@ -99,7 +99,7 @@ namespace khopper {
 			Layout7Point1Wide   = Layout5Point1Back | FrontLeftOfCenter | FrontRightOfCenter,
 			LayoutStereoDownmix = StereoLeft | StereoRight,
 
-			LayoutNative        = 0xFFFFFFFF
+			LayoutNative        = 0x00000000
 		};
 
 		/**
