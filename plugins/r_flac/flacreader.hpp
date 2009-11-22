@@ -52,7 +52,7 @@ namespace khopper {
 			std::tr1::shared_ptr< FLAC__StreamDecoder > pFD_;
 			ByteArray buffer_;
 			uint64_t offset_;
-			double decodedTime_;
+			uint64_t msDecoded_;
 		};
 
 	}

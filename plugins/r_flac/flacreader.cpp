@@ -72,7 +72,7 @@ namespace khopper {
 			pFD_( FLAC__stream_decoder_new(), FLAC__stream_decoder_delete ),
 			buffer_(),
 			offset_( 0 ),
-			decodedTime_( 0.0 ) {
+			msDecoded_( 0 ) {
 				if( !this->pFD_ ) {
 					throw error::CodecError( "Not enough memory! (from khopper::codec::FlacReader)" );
 				}
@@ -111,7 +111,7 @@ namespace khopper {
 			FLAC__stream_decoder_finish( this->pFD_.get() );
 			this->buffer_.clear();
 			this->offset_ = 0;
-			this->decodedTime_ = 0.0;
+			this->msDecoded_ = 0;
 		}
 
 		bool FlacReader::seekFrame( int64_t ms ) {
@@ -130,7 +130,7 @@ namespace khopper {
 				stop = true;
 				return ByteArray();
 			} else {
-				msDecoded = this->decodedTime_ * 1000;
+				msDecoded = this->msDecoded_;
 				return this->buffer_;
 			}
 		}
@@ -235,9 +235,9 @@ namespace khopper {
 
 			unsigned int decoded = 0;
 			for( unsigned int i = 0; i < frame->header.blocksize; ++i ) {
-				double ts = ( self->offset_ + i ) / ( double )frame->header.sample_rate;
-				if( self->afterBegin( ts * 1000 ) ) {
-					if( self->afterEnd( ts * 1000 ) ) {
+				uint64_t ts = static_cast< uint64_t >( self->offset_ + i ) * 1000 / frame->header.sample_rate;
+				if( self->afterBegin( ts ) ) {
+					if( self->afterEnd( ts ) ) {
 						return FLAC__STREAM_DECODER_WRITE_STATUS_ABORT;
 					}
 					for( unsigned int c = 0; c < frame->header.channels; ++c ) {
@@ -274,7 +274,7 @@ namespace khopper {
 			}
 
 			self->offset_ += decoded;
-			self->decodedTime_ = decoded / ( double )frame->header.sample_rate;
+			self->msDecoded_ = decoded * 1000LL / frame->header.sample_rate;
 
 			return FLAC__STREAM_DECODER_WRITE_STATUS_CONTINUE;
 		}
