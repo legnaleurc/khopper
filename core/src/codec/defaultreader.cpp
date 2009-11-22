@@ -208,12 +208,11 @@ namespace khopper {
 		ByteArray DefaultReader::readFrame( int64_t & duration, bool & stop ) {
 			stop = false;
 			int16_t sampleBuffer[AVCODEC_MAX_AUDIO_FRAME_SIZE*3/2];
-			int ret = 0;
 
 			ByteArray data;
 
 			// read a frame
-			ret = av_read_frame( this->pFormatContext_.get(), this->pPacket_.get() );
+			int ret = av_read_frame( this->pFormatContext_.get(), this->pPacket_.get() );
 			if( ret < 0 ) {
 				stop = true;
 				return data;
