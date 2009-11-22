@@ -127,6 +127,16 @@ namespace khopper {
 			this->setBitRate( pCC->bit_rate );
 			this->setSampleRate( pCC->sample_rate );
 			this->setChannels( pCC->channels );
+			switch( this->getChannels() ) {
+			case 1:
+				this->setChannelLayout( LayoutMono );
+				break;
+			case 2:
+				this->setChannelLayout( LayoutStereo );
+				break;
+			default:
+				this->setChannelLayout( LayoutNative );
+			}
 			switch( pCC->sample_fmt ) {
 				case SAMPLE_FMT_U8:
 					this->setSampleFormat( SF_U8 );
