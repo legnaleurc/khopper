@@ -132,10 +132,18 @@ namespace khopper {
 					this->setSampleFormat( SF_U8 );
 					break;
 				case SAMPLE_FMT_S16:
+#if Q_BYTE_ORDER == Q_LITTLE_ENDIAN
 					this->setSampleFormat( SF_S16LE );
+#else
+					this->setSampleFormat( SF_S16BE );
+#endif
 					break;
 				case SAMPLE_FMT_S32:
+#if Q_BYTE_ORDER == Q_LITTLE_ENDIAN
 					this->setSampleFormat( SF_S32LE );
+#else
+					this->setSampleFormat( SF_S32BE );
+#endif
 					break;
 				case SAMPLE_FMT_FLT:
 					this->setSampleFormat( SF_FLOAT );
