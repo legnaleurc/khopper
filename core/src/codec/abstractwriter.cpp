@@ -63,6 +63,15 @@ namespace khopper {
 				// TODO: log an error
 				assert( !"a plugin can not clean up its own mess ..." );
 			}
+			this->album_.clear();
+			this->artist_.clear();
+			this->bitRate_ = -1;
+			this->channelLayout_ = LayoutNative;
+			this->channels_ = -1;
+			this->uri_.clear();
+			this->sampleFormat_ = SF_NONE;
+			this->sampleRate_ = -1;
+			this->title_.clear();
 			this->opening_ = false;
 		}
 
