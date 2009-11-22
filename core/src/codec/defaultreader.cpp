@@ -210,8 +210,6 @@ namespace khopper {
 			int16_t sampleBuffer[AVCODEC_MAX_AUDIO_FRAME_SIZE*3/2];
 			int ret = 0;
 
-			int dp_len;
-
 			ByteArray data;
 
 			// read a frame
@@ -247,7 +245,7 @@ namespace khopper {
 				}
 				int sampleByteLength = sizeof( sampleBuffer );
 #if LIBAVCODEC_VERSION_MAJOR < 53
-				dp_len = avcodec_decode_audio2(
+				int dp_len = avcodec_decode_audio2(
 					this->pCodecContext_.get(),
 					sampleBuffer,
 					&sampleByteLength,
@@ -255,7 +253,7 @@ namespace khopper {
 					audio_pkt_size
 				);
 #else
-				dp_len = avcodec_decode_audio3(
+				int dp_len = avcodec_decode_audio3(
 					this->pCodecContext_.get(),
 					sampleBuffer,
 					&sampleByteLength,
