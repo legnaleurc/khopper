@@ -207,10 +207,10 @@ namespace khopper {
 
 		ByteArray DefaultReader::readFrame( int64_t & duration, bool & stop ) {
 			stop = false;
-			int16_t audio_buf[AVCODEC_MAX_AUDIO_FRAME_SIZE*3/2];
+			int16_t sampleBuffer[AVCODEC_MAX_AUDIO_FRAME_SIZE*3/2];
 			int ret = 0;
 
-			int dp_len, data_size;
+			int dp_len;
 
 			ByteArray data;
 
@@ -245,20 +245,20 @@ namespace khopper {
 					stop = true;
 					break;
 				}
-				data_size = sizeof( audio_buf );
+				int sampleByteLength = sizeof( sampleBuffer );
 #if LIBAVCODEC_VERSION_MAJOR < 53
 				dp_len = avcodec_decode_audio2(
 					this->pCodecContext_.get(),
-					audio_buf,
-					&data_size,
+					sampleBuffer,
+					&sampleByteLength,
 					audio_pkt_data,
 					audio_pkt_size
 				);
 #else
 				dp_len = avcodec_decode_audio3(
 					this->pCodecContext_.get(),
-					audio_buf,
-					&data_size,
+					sampleBuffer,
+					&sampleByteLength,
 					this->pPacket_.get()
 				);
 #endif
@@ -275,14 +275,14 @@ namespace khopper {
 				this->pPacket_->data += dp_len;
 				this->pPacket_->size -= dp_len;
 #endif
-				if( data_size <= 0 ) {
+				if( sampleByteLength <= 0 ) {
 					continue;
 				}
 				// decoded time: decoded size in byte / sizeof int16_t * AV_TIME_BASE / ( sample rate * channels )
-				int64_t ptsDiff = ( static_cast< int64_t >( AV_TIME_BASE ) * ( data_size / sizeof( int16_t ) ) ) / ( this->getSampleRate() * this->getChannels() );
+				int64_t ptsDiff = ( static_cast< int64_t >( AV_TIME_BASE ) * ( sampleByteLength / sizeof( int16_t ) ) ) / ( this->getSampleRate() * this->getChannels() );
 				if( this->afterBegin( toMS( curPts ) ) ) {
-					const uint8_t * tmp = static_cast< uint8_t * >( static_cast< void * >( audio_buf ) );
-					data.insert( data.end(), tmp, tmp + data_size );
+					const uint8_t * tmp = static_cast< uint8_t * >( static_cast< void * >( sampleBuffer ) );
+					data.insert( data.end(), tmp, tmp + sampleByteLength );
 					decoded += ptsDiff;
 				}
 				curPts += ptsDiff;
