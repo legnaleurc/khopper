@@ -35,7 +35,7 @@ namespace khopper {
 		channels_( -1 ),
 		uri_(),
 		opening_( false ),
-		sampleFormat_( NONE ),
+		sampleFormat_( SF_NONE ),
 		sampleRate_( -1 ),
 		title_() {
 		}

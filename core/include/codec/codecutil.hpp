@@ -41,21 +41,21 @@ namespace khopper {
 	namespace codec {
 
 		enum SampleFormat {
-			S8 = 0x0,
-			U8 = 0x1,
-			S16LE = 0x2,
-			S16BE = 0x3,
-			U16LE = 0x4,
-			U16BE = 0x5,
-			S32LE = 0x6,
-			S32BE = 0x7,
-			U32LE = 0x8,
-			U32BE = 0x9,
-			FLOAT = 0xA,
-			DOUBLE = 0xB,
-			NONE = 0xFFFFFFFF
+			SF_S8 = 0x1,
+			SF_U8,
+			SF_S16LE,
+			SF_S16BE,
+			SF_U16LE,
+			SF_U16BE,
+			SF_S32LE,
+			SF_S32BE,
+			SF_U32LE,
+			SF_U32BE,
+			SF_FLOAT,
+			SF_DOUBLE,
+
+			SF_NONE = 0x00000000
 		};
-		Q_DECLARE_FLAGS( SampleFormats, SampleFormat )
 
 		enum Channel {
 			FrontLeft          = 0x00000001,

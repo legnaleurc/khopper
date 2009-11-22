@@ -129,22 +129,22 @@ namespace khopper {
 			this->setChannels( pCC->channels );
 			switch( pCC->sample_fmt ) {
 				case SAMPLE_FMT_U8:
-					this->setSampleFormat( U8 );
+					this->setSampleFormat( SF_U8 );
 					break;
 				case SAMPLE_FMT_S16:
-					this->setSampleFormat( S16LE );
+					this->setSampleFormat( SF_S16LE );
 					break;
 				case SAMPLE_FMT_S32:
-					this->setSampleFormat( S32LE );
+					this->setSampleFormat( SF_S32LE );
 					break;
 				case SAMPLE_FMT_FLT:
-					this->setSampleFormat( FLOAT );
+					this->setSampleFormat( SF_FLOAT );
 					break;
 				case SAMPLE_FMT_DBL:
-					this->setSampleFormat( DOUBLE );
+					this->setSampleFormat( SF_DOUBLE );
 					break;
 				default:
-					this->setSampleFormat( NONE );
+					this->setSampleFormat( SF_NONE );
 			}
 
 			AVCodec * pC = avcodec_find_decoder( pCC->codec_id );

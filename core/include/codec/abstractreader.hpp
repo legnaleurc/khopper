@@ -154,7 +154,7 @@ namespace khopper {
 			int getIndex() const {
 				return this->index_;
 			}
-			SampleFormats getSampleFormat() const {
+			SampleFormat getSampleFormat() const {
 				return this->sampleFormat_;
 			}
 			/**
@@ -254,7 +254,7 @@ namespace khopper {
 			void setIndex( int index ) {
 				this->index_ = index;
 			}
-			void setSampleFormat( SampleFormats sampleFormat ) {
+			void setSampleFormat( SampleFormat sampleFormat ) {
 				this->sampleFormat_ = sampleFormat;
 			}
 			/**
@@ -306,7 +306,7 @@ namespace khopper {
 			bool hasNext_;
 			int index_;
 			bool opening_;
-			SampleFormats sampleFormat_;
+			SampleFormat sampleFormat_;
 			int sampleRate_;
 			std::string title_;
 			int year_;

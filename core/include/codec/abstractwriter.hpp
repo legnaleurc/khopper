@@ -105,7 +105,7 @@ namespace khopper {
 			void setChannels( int channels ) {
 				this->channels_ = channels;
 			}
-			void setSampleFormat( SampleFormats sampleFormat ) {
+			void setSampleFormat( SampleFormat sampleFormat ) {
 				this->sampleFormat_ = sampleFormat;
 			}
 			/**
@@ -159,7 +159,7 @@ namespace khopper {
 			const QUrl & getURI() const {
 				return this->uri_;
 			}
-			SampleFormats getSampleFormat() const {
+			SampleFormat getSampleFormat() const {
 				return this->sampleFormat_;
 			}
 			/**
@@ -192,7 +192,7 @@ namespace khopper {
 			int channels_;
 			QUrl uri_;
 			bool opening_;
-			SampleFormats sampleFormat_;
+			SampleFormat sampleFormat_;
 			int sampleRate_;
 			std::string title_;
 		};
