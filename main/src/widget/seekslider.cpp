@@ -105,7 +105,7 @@ namespace khopper {
 		}
 
 		void SeekSlider::tick_( qint64 time ) {
-			qDebug() << time - this->begin_;
+//			qDebug() << time - this->begin_;
 			this->ticking_ = true;
 			this->slider_->setValue( time - this->begin_ );
 			this->ticking_ = false;
