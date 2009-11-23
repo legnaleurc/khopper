@@ -179,12 +179,12 @@ namespace khopper {
 
 		void FlacWriter::progressCallback_(
 			const FLAC__StreamEncoder * /*encoder*/,
-			FLAC__uint64 bytes_written,
-			FLAC__uint64 samples_written,
-			unsigned frames_written,
-			unsigned total_frames_estimate,
+			FLAC__uint64 /*bytes_written*/,
+			FLAC__uint64 /*samples_written*/,
+			unsigned /*frames_written*/,
+			unsigned /*total_frames_estimate*/,
 			void * /*client_data*/ ) {
-			qDebug() << bytes_written << samples_written << frames_written << total_frames_estimate;
+//			qDebug() << bytes_written << samples_written << frames_written << total_frames_estimate;
 		}
 
 	}
