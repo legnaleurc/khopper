@@ -46,6 +46,22 @@ namespace khopper {
 			return ( this->minute == 0 ) && ( this->second == 0 ) && ( this->millisecond == 0 );
 		}
 
+		Index & Index::operator +=( const Index & that ) {
+			this->millisecond += that.millisecond;
+			if( this->millisecond >= 1000 ) {
+				this->millisecond -= 1000;
+				this->second += 1;
+			}
+			this->second += that.second;
+			if( this->second >= 60 ) {
+				this->second -= 60;
+				this->minute += 1;
+			}
+			this->minute += that.minute;
+
+			return *this;
+		}
+
 		Index & Index::operator -=( const Index & that ) {
 			if( this->millisecond < that.millisecond ) {
 				--this->second;

@@ -62,6 +62,7 @@ namespace khopper {
 			/// if equals to zero
 			bool isZero() const;
 
+			Index & operator +=( const Index & that );
 			/**
 			 * @brief Subtract assign operator
 			 * @param that Subtrahend
