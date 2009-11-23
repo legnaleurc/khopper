@@ -75,6 +75,8 @@ namespace khopper {
 			connect( stop, SIGNAL( clicked() ), this, SLOT( stop_() ) );
 			playerBox->addWidget( stop );
 
+			connect( this->seeker_, SIGNAL( dragged( int ) ), this, SLOT( updateTimestamp_( int ) ) );
+
 			playerBox->addWidget( this->passedTime_ );
 			playerBox->addWidget( this->seeker_ );
 			playerBox->addWidget( this->remainTime_ );
@@ -132,6 +134,8 @@ namespace khopper {
 		void Player::stop_() {
 			if( this->player_->state() != Phonon::StoppedState ) {
 				this->ppb_->setText( tr( "Play" ) );
+				this->passedTime_->setText( "0:00" );
+				this->remainTime_->setText( "0:00" );
 				this->player_->stop();
 			}
 		}
@@ -173,6 +177,12 @@ namespace khopper {
 			if( time >= this->currentEndTime_ ) {
 				this->stop_();
 			}
+		}
+
+		void Player::updateTimestamp_( int ms ) {
+			this->currentTimeStamp_ = album::Timestamp::fromMillisecond( this->currentBeginTime_ + ms );
+			this->passedTime_->setText( fromTimestamp( this->currentTimeStamp_ ) );
+			this->remainTime_->setText( fromTimestamp( this->duration_ - this->currentTimeStamp_ ) );
 		}
 
 	}

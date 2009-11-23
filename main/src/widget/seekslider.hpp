@@ -57,6 +57,9 @@ namespace khopper {
 			 */
 			void setRange( int begin, int end );
 
+		signals:
+			void dragged( int ms );
+
 		private slots:
 			void changeState_( Phonon::State );
 			void seek_( int );

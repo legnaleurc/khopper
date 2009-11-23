@@ -42,7 +42,9 @@ namespace khopper {
 			this->slider_->setDisabled( true );
 			this->slider_->setPageStep( 5000 );
 			this->slider_->setSingleStep( 500 );
+			this->slider_->setTracking( true );
 			connect( this->slider_, SIGNAL( valueChanged( int ) ), this, SLOT( seek_( int ) ) );
+			connect( this->slider_, SIGNAL( sliderMoved( int ) ), this, SIGNAL( dragged( int ) ) );
 
 			setMediaObject( media );
 		}

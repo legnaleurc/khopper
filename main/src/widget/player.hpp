@@ -73,6 +73,7 @@ namespace khopper {
 			void stop_();
 			void handleState_( Phonon::State, Phonon::State );
 			void tick_( qint64 );
+			void updateTimestamp_( int ms );
 
 		private:
 			void play_();
