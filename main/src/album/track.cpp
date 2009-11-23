@@ -77,7 +77,7 @@ namespace khopper {
 				this->set( "artist", decoder->getArtist() );
 				this->set( "bit_rate", decoder->getBitRate() );
 				this->set( "channels", decoder->getChannels() );
-				this->set( "duration", QVariant::fromValue( Index::fromMillisecond( decoder->getDuration() ) ) );
+				this->set( "duration", QVariant::fromValue( Timestamp::fromMillisecond( decoder->getDuration() ) ) );
 				this->set( "sample_rate", decoder->getSampleRate() );
 				this->set( "title", decoder->getTitle() );
 

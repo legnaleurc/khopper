@@ -15,7 +15,7 @@ RCC_DIR      = $${ROOT_PATH}/tmp/rcc
 HEADERS +=	\
 	./src/album/album.hpp	\
 	./src/album/cuesheet.hpp	\
-	./src/album/index.hpp	\
+	./src/album/timestamp.hpp	\
 	./src/album/track.hpp	\
 	./src/widget/converter.hpp	\
 	./src/widget/mainwindow.hpp	\
@@ -30,7 +30,7 @@ HEADERS +=	\
 SOURCES +=	\
 	./src/album/album.cpp	\
 	./src/album/cuesheet.cpp	\
-	./src/album/index.cpp	\
+	./src/album/timestamp.cpp	\
 	./src/album/track.cpp	\
 	./src/main.cpp	\
 	./src/widget/converter.cpp	\

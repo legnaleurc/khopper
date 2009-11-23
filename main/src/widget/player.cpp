@@ -106,16 +106,16 @@ namespace khopper {
 				}
 
 				this->player_->setCurrentSource( this->currentTrack_->getURI() );
-				album::Index startTime = this->currentTrack_->get( "start_time" ).value< album::Index >();
-				album::Index duration = this->currentTrack_->get( "duration" ).value< album::Index >();
+				album::Timestamp startTime = this->currentTrack_->get( "start_time" ).value< album::Timestamp >();
+				album::Timestamp duration = this->currentTrack_->get( "duration" ).value< album::Timestamp >();
 				this->currentBeginTime_ = startTime.toMillisecond();
 				this->currentEndTime_ = this->currentBeginTime_ + duration.toMillisecond();
 				this->seeker_->setRange( this->currentBeginTime_, this->currentEndTime_ );
 				qDebug() << this->currentBeginTime_ << this->currentEndTime_;
 				// set time display
-				this->currentTimeStamp_ = album::Index::fromMillisecond( 0 );
-				this->passedTime_->setText( QString( "0:00" ) );
-				this->remainTime_->setText( QString( "%1:%2" ).arg( duration.minute ).arg( duration.second, 2, 10, '0' ) );
+				this->currentTimeStamp_ = album::Timestamp::fromMillisecond( 0 );
+				this->passedTime_->setText( this->currentTimeStamp_.toString() );
+				this->remainTime_->setText( duration.toString() );
 				this->starting_ = true;
 				this->player_->play();
 			}
@@ -158,8 +158,8 @@ namespace khopper {
 		}
 
 		void Player::tick_( qint64 time ) {
-			this->currentTimeStamp_ += album::Index::fromMillisecond( this->player_->tickInterval() );
-			this->passedTime_->setText( QString( "%1:%2" ).arg( this->currentTimeStamp_.minute ).arg( this->currentTimeStamp_.second, 2, 10, '0' ) );
+			this->currentTimeStamp_ += album::Timestamp::fromMillisecond( this->player_->tickInterval() );
+			this->passedTime_->setText( this->currentTimeStamp_.toString() );
 //			qDebug() << time;
 			if( time >= this->currentEndTime_ ) {
 				this->stop_();

@@ -23,7 +23,7 @@
 #define KHOPPER_ALBUM_TRACK_HPP
 
 #include "util/tr1.hpp"
-#include "index.hpp"
+#include "timestamp.hpp"
 
 #include <QByteArray>
 #include <QTextCodec>

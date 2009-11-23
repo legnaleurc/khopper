@@ -82,7 +82,7 @@ namespace khopper {
 			Phonon::VolumeSlider * volume_;
 			QLabel * passedTime_;
 			QLabel * remainTime_;
-			album::Index currentTimeStamp_;
+			album::Timestamp currentTimeStamp_;
 			QPushButton * ppb_;
 			SongList * songList_;
 			album::TrackSP currentTrack_;

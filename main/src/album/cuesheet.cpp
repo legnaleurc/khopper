@@ -100,7 +100,7 @@ namespace khopper {
 				std::for_each( this->trackBegin(), this->trackEnd(), setBCS( decoder ) );
 
 				TrackSP last( this->trackBack() );
-				last->set( "duration", QVariant::fromValue( Index::fromMillisecond( decoder->getDuration() ) - last->get( "start_time" ).value< Index >() ) );
+				last->set( "duration", QVariant::fromValue( Timestamp::fromMillisecond( decoder->getDuration() ) - last->get( "start_time" ).value< Timestamp >() ) );
 
 				decoder->close();
 			}
@@ -192,7 +192,7 @@ namespace khopper {
 		}
 
 		void CUESheet::parseIndex_( const QString & type, const QString & num, const QString & m, const QString & s, const QString & f, int trackNO ) {
-			Index tmp( m.toShort(), s.toShort(), f.toShort() * 10 );
+			Timestamp tmp( m.toInt(), s.toShort(), f.toShort() * 10 );
 
 			if( type == "INDEX" ) {
 				short int n = num.toShort();
@@ -200,14 +200,14 @@ namespace khopper {
 				case 1:
 					// track start time
 					(*this)[trackNO]->set( "start_time", QVariant::fromValue( tmp ) );
-					if( trackNO > 0 && (*this)[trackNO-1]->get( "duration" ).value< Index >().isZero() ) {
-						(*this)[trackNO-1]->set( "duration", QVariant::fromValue( (*this)[trackNO]->get( "start_time" ).value< Index >() - (*this)[trackNO-1]->get( "start_time" ).value< Index >() ) );
+					if( trackNO > 0 && (*this)[trackNO-1]->get( "duration" ).value< Timestamp >().isZero() ) {
+						(*this)[trackNO-1]->set( "duration", QVariant::fromValue( (*this)[trackNO]->get( "start_time" ).value< Timestamp >() - (*this)[trackNO-1]->get( "start_time" ).value< Timestamp >() ) );
 					}
 					break;
 				case 0:
 					// prevous track end time
 					if( trackNO > 0 ) {
-						(*this)[trackNO-1]->set( "duration", QVariant::fromValue( tmp - (*this)[trackNO-1]->get( "start_time" ).value< Index >() ) );
+						(*this)[trackNO-1]->set( "duration", QVariant::fromValue( tmp - (*this)[trackNO-1]->get( "start_time" ).value< Timestamp >() ) );
 					}
 					break;
 				default:

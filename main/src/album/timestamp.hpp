@@ -1,5 +1,5 @@
 /**
- * @file index.hpp
+ * @file timestamp.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,8 +19,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_ALBUM_INDEX_HPP
-#define KHOPPER_ALBUM_INDEX_HPP
+#ifndef KHOPPER_ALBUM_TIMESTAMP_HPP
+#define KHOPPER_ALBUM_TIMESTAMP_HPP
 
 #include "util/tr1.hpp"
 
@@ -35,20 +35,14 @@ namespace khopper {
 		/**
 		 * @brief Track index information
 		 */
-		struct Index {
-			/// minite
-			short int minute;
-			/// second
-			short int second;
-			/// millisecond
-			short int millisecond;
-
+		class Timestamp {
+		public:
 			/**
 			 * @brief Default constructor
 			 *
 			 * Initialize to 0:0.0.
 			 */
-			Index();
+			Timestamp();
 			/**
 			 * @brief Custom constructor
 			 * @param [in] m minute
@@ -57,24 +51,33 @@ namespace khopper {
 			 *
 			 * Initialize to m:s.ms.
 			 */
-			Index( short int m, short int s, short int ms );
+			Timestamp( int m, short int s, short int ms );
 
 			/// if equals to zero
 			bool isZero() const;
+			int getMinute() const {
+				return this->minute_;
+			}
+			short getSecond() const {
+				return this->second_;
+			}
+			short getMillisecond() const {
+				return this->millisecond_;
+			}
 
-			Index & operator +=( const Index & that );
+			Timestamp & operator +=( const Timestamp & that );
 			/**
 			 * @brief Subtract assign operator
 			 * @param that Subtrahend
 			 * @return self
 			 */
-			Index & operator -=( const Index & that );
+			Timestamp & operator -=( const Timestamp & that );
 			/**
 			 * @brief Subtract operator
 			 * @param that Subtrahend
 			 * @return result
 			 */
-			Index operator -( const Index & that ) const;
+			Timestamp operator -( const Timestamp & that ) const;
 
 			/**
 			 * @brief Convert to millisecond
@@ -95,18 +98,23 @@ namespace khopper {
 			 * @brief Convert from int
 			 * @param [in] millisecond Time stamp in millisecond
 			 */
-			static Index fromMillisecond( int64_t millisecond );
+			static Timestamp fromMillisecond( int64_t millisecond );
 			/**
 			 * @brief Convert from double
 			 * @param [in] second Time stamp in second
 			 */
-			static Index fromSecond( double second );
+			static Timestamp fromSecond( double second );
+
+		private:
+			int minute_;
+			short int second_;
+			short int millisecond_;
 		};
 
 	}
 
 }
 
-Q_DECLARE_METATYPE(khopper::album::Index)
+Q_DECLARE_METATYPE(khopper::album::Timestamp)
 
 #endif

@@ -73,8 +73,8 @@ namespace {
 			return v.toString();
 		} else if( v.canConvert( QVariant::Int ) ) {
 			return QString::number( v.toInt() );
-		} else if( v.canConvert< khopper::album::Index >() ) {
-			return v.value< khopper::album::Index >().toString();
+		} else if( v.canConvert< khopper::album::Timestamp >() ) {
+			return v.value< khopper::album::Timestamp >().toString();
 		} else if( !v.isValid() ) {
 			qDebug() << v;
 			return "!!!";

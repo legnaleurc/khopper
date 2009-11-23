@@ -59,7 +59,7 @@ namespace khopper {
 					this->encoder_->setArtist( this->tracks_[i]->get( "artist" ).toString().toUtf8().constData() );
 					this->encoder_->setAlbum( this->tracks_[i]->get( "album" ).toString().toUtf8().constData() );
 					emit taskName( this->tracks_[i]->get( "title" ).toString() );
-					emit taskGoal( this->tracks_[i]->get( "duration" ).value< album::Index >().toMillisecond() );
+					emit taskGoal( this->tracks_[i]->get( "duration" ).value< album::Timestamp >().toMillisecond() );
 					emit currentTask( i + 1 );
 
 					this->converter_.convert( this->tracks_[i], this->paths_[i], this->encoder_ );
