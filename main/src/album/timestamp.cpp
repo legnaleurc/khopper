@@ -21,8 +21,6 @@
  */
 #include "timestamp.hpp"
 
-#include <boost/format.hpp>
-
 #include <sstream>
 #include <cmath>
 
@@ -93,13 +91,8 @@ namespace khopper {
 			return 60 * this->minute_ + this->second_ + this->millisecond_ / 1000.0;
 		}
 
-		std::wstring Timestamp::toStdWString() const {
-			boost::wformat tpl( L"%1%:%|2$02|.%|3$03|" );
-			return ( tpl % this->minute_ % this->second_ % this->millisecond_ ).str();
-		}
-
 		QString Timestamp::toString() const {
-			return QString::fromStdWString( this->toStdWString() );
+			return QString( "%1:%2.%3" ).arg( this->minute_ ).arg( this->second_, 2L, 10L, QChar( '0' ) ).arg( this->millisecond_, 3L, 10L, QChar( '0' ) );
 		}
 
 		Timestamp Timestamp::fromMillisecond( int64_t millisecond ) {

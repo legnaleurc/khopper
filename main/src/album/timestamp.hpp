@@ -87,11 +87,6 @@ namespace khopper {
 			 * @brief Convert to second
 			 */
 			double toSecond() const;
-			/**
-			 * @brief Convert to std::wstring
-			 * @return mm:ss.ff
-			 */
-			std::wstring toStdWString() const;
 			QString toString() const;
 
 			/**
