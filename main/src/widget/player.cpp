@@ -166,7 +166,7 @@ namespace khopper {
 		}
 
 		void Player::tick_( qint64 time ) {
-			this->currentTimeStamp_ += album::Timestamp::fromMillisecond( this->player_->tickInterval() );
+			this->currentTimeStamp_ = album::Timestamp::fromMillisecond( time - this->currentBeginTime_ );
 			this->passedTime_->setText( fromTimestamp( this->currentTimeStamp_ ) );
 			this->remainTime_->setText( fromTimestamp( this->duration_ - this->currentTimeStamp_ ) );
 //			qDebug() << time;
