@@ -80,9 +80,10 @@ namespace khopper {
 			Phonon::MediaObject * player_;
 			SeekSlider * seeker_;
 			Phonon::VolumeSlider * volume_;
+			album::Timestamp currentTimeStamp_;
+			album::Timestamp duration_;
 			QLabel * passedTime_;
 			QLabel * remainTime_;
-			album::Timestamp currentTimeStamp_;
 			QPushButton * ppb_;
 			SongList * songList_;
 			album::TrackSP currentTrack_;

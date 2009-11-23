@@ -44,9 +44,10 @@ namespace khopper {
 		player_( new Phonon::MediaObject( this ) ),
 		seeker_( new SeekSlider( this->player_, this ) ),
 		volume_( new Phonon::VolumeSlider( this ) ),
+		currentTimeStamp_(),
+		duration_(),
 		passedTime_( new QLabel( "0:00", this ) ),
 		remainTime_( new QLabel( "0:00", this ) ),
-		currentTimeStamp_(),
 		ppb_( new QPushButton( tr( "Play" ), this ) ),
 		songList_( new SongList( this ) ),
 		currentTrack_(),
@@ -114,15 +115,15 @@ namespace khopper {
 
 				this->player_->setCurrentSource( this->currentTrack_->getURI() );
 				album::Timestamp startTime = this->currentTrack_->get( "start_time" ).value< album::Timestamp >();
-				album::Timestamp duration = this->currentTrack_->get( "duration" ).value< album::Timestamp >();
+				this->duration_ = this->currentTrack_->get( "duration" ).value< album::Timestamp >();
 				this->currentBeginTime_ = startTime.toMillisecond();
-				this->currentEndTime_ = this->currentBeginTime_ + duration.toMillisecond();
+				this->currentEndTime_ = this->currentBeginTime_ + this->duration_.toMillisecond();
 				this->seeker_->setRange( this->currentBeginTime_, this->currentEndTime_ );
 				qDebug() << this->currentBeginTime_ << this->currentEndTime_;
 				// set time display
 				this->currentTimeStamp_ = album::Timestamp::fromMillisecond( 0 );
 				this->passedTime_->setText( fromTimestamp( this->currentTimeStamp_ ) );
-				this->remainTime_->setText( fromTimestamp( duration ) );
+				this->remainTime_->setText( fromTimestamp( this->duration_ ) );
 				this->starting_ = true;
 				this->player_->play();
 			}
@@ -167,6 +168,7 @@ namespace khopper {
 		void Player::tick_( qint64 time ) {
 			this->currentTimeStamp_ += album::Timestamp::fromMillisecond( this->player_->tickInterval() );
 			this->passedTime_->setText( fromTimestamp( this->currentTimeStamp_ ) );
+			this->remainTime_->setText( fromTimestamp( this->duration_ - this->currentTimeStamp_ ) );
 //			qDebug() << time;
 			if( time >= this->currentEndTime_ ) {
 				this->stop_();
