@@ -26,7 +26,14 @@
 #include <QHBoxLayout>
 #include <Phonon/AudioOutput>
 #include <QtDebug>
-#include <Phonon/AudioOutput>
+
+namespace {
+
+	static inline QString fromTimestamp( const khopper::album::Timestamp & ts ) {
+		return QString( "%1:%2" ).arg( ts.getMinute() ).arg( ts.getSecond(), 2L, 10L, QChar( '0' ) );
+	}
+
+}
 
 namespace khopper {
 
@@ -114,8 +121,8 @@ namespace khopper {
 				qDebug() << this->currentBeginTime_ << this->currentEndTime_;
 				// set time display
 				this->currentTimeStamp_ = album::Timestamp::fromMillisecond( 0 );
-				this->passedTime_->setText( this->currentTimeStamp_.toString() );
-				this->remainTime_->setText( duration.toString() );
+				this->passedTime_->setText( fromTimestamp( this->currentTimeStamp_ ) );
+				this->remainTime_->setText( fromTimestamp( duration ) );
 				this->starting_ = true;
 				this->player_->play();
 			}
@@ -159,7 +166,7 @@ namespace khopper {
 
 		void Player::tick_( qint64 time ) {
 			this->currentTimeStamp_ += album::Timestamp::fromMillisecond( this->player_->tickInterval() );
-			this->passedTime_->setText( this->currentTimeStamp_.toString() );
+			this->passedTime_->setText( fromTimestamp( this->currentTimeStamp_ ) );
 //			qDebug() << time;
 			if( time >= this->currentEndTime_ ) {
 				this->stop_();
