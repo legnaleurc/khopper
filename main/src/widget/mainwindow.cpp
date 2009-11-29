@@ -224,6 +224,11 @@ namespace khopper {
 
 		void MainWindow::showOpenFilesDialog() {
 			QStringList filePaths = QFileDialog::getOpenFileNames( this, tr( "Open audio" ), this->lastOpenedDir_ );
+			if( filePaths.isEmpty() ) {
+				return;
+			}
+			this->lastOpenedDir_ = QFileInfo( filePaths[0] ).absolutePath();
+
 			QList< QUrl > tmp;
 			foreach( QString path, filePaths ) {
 				tmp.push_back( QUrl::fromLocalFile( path ) );
@@ -232,9 +237,8 @@ namespace khopper {
 		}
 
 		void MainWindow::open( const QList< QUrl > & uris ) {
-			if( !uris.isEmpty() ) {
-				// FIXME: not always local file
-				this->lastOpenedDir_ = QFileInfo( uris[0].toLocalFile() ).absolutePath();
+			if( uris.isEmpty() ) {
+				return;
 			}
 
 			std::vector< album::TrackSP > tracks;
