@@ -127,18 +127,22 @@ namespace khopper {
 			}
 
 			// open files
+			FILE * fout = fileHelper( this->getURI() );
+			if( fout == NULL ) {
+				throw error::IOError( QString( "Can not open: %1" ).arg( this->getURI().toString() ) );
+			}
 			FLAC__StreamEncoderInitStatus init_status;
 			if( this->ogg_ ) {
 				init_status = FLAC__stream_encoder_init_ogg_FILE(
 					this->pFE_.get(),
-					fileHelper( this->getURI() ),
+					fout,
 					progressCallback_,
 					this
 				);
 			} else {
 				init_status = FLAC__stream_encoder_init_FILE(
 					this->pFE_.get(),
-					fileHelper( this->getURI() ),
+					fout,
 					progressCallback_,
 					this
 				);
