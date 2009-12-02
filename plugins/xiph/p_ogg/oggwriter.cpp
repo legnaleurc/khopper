@@ -126,6 +126,9 @@ namespace khopper {
 
 			// open file
 			FILE * fout = fileHelper( this->getURI() );
+			if( fout == NULL ) {
+				throw error::IOError( QString( "Can not open: %1" ).arg( this->getURI().toString() ) );
+			}
 			this->fout_.reset( fout, std::fclose );
 
 			// write header
