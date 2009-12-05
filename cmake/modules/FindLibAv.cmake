@@ -1,0 +1,22 @@
+# - Find libav*
+# This module can be used to find libav*
+#
+# Below is a detailed list of variables that FindLibAv.cmake sets.
+# LIBAV_FOUND       If false, don't try to use libav*
+# LIBAV_INCLUDE_DIR Path to "include" of libav*
+# LIBAV_LIBRARIES   The libav* libraries
+
+# include(CheckLibraryExists)
+
+find_path(LIBAV_INCLUDE_DIR NAMES libavformat/avformat.h libavcodec/avcodec.h)
+find_library(LIBAV_FORMAT_LIBRARY NAMES avformat)
+find_library(LIBAV_CODEC_LIBRARY NAMES avcodec)
+find_library(LIBAV_UTIL_LIBRARY NAMES avutil)
+
+if(LIBAV_INCLUDE_DIR AND LIBAV_FORMAT_LIBRARY AND LIBAV_CODEC_LIBRARY AND LIBAV_UTIL_LIBRARY)
+    message(STATUS "Found libav*")
+    set(LIBAV_FOUND TRUE)
+    set(LIBAV_LIBRARIES ${LIBAV_FORMAT_LIBRARY} ${LIBAV_CODEC_LIBRARY} ${LIBAV_UTIL_LIBRARY})
+else()
+    message(STATUS "Find no libav*")
+endif()
