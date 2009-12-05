@@ -1,5 +1,4 @@
 set(QT_USE_PHONON TRUE)
-#include(${QT_USE_FILE})
 
 file(GLOB_RECURSE KHOPPER_MAIN_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} src/*.cpp)
 include_directories(
