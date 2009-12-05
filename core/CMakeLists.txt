@@ -8,4 +8,4 @@ endif()
 include_directories(include ${LIBAV_INCLUDE_DIR} ${LIBLOKI_INCLUDE_DIR})
 
 add_library(k_core SHARED ${KHOPPER_CORE_SOURCES})
-target_link_libraries(k_core ${LIBAV_LIBRARIES} ${LIBLOKI_LIBRARIES})
+target_link_libraries(k_core ${LIBAV_LIBRARIES} ${LIBLOKI_LIBRARIES} ${QT_LIBRARIES})

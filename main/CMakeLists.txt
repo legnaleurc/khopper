@@ -1,4 +1,5 @@
 set(QT_USE_PHONON TRUE)
+#include(${QT_USE_FILE})
 
 file(GLOB_RECURSE KHOPPER_MAIN_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} src/*.cpp)
 include_directories(
@@ -6,7 +7,19 @@ include_directories(
     src/widget
     "${CMAKE_SOURCE_DIR}/core/include"
     ${QT_PHONON_INCLUDE_DIR})
+set(KHOPPER_MAIN_MOC_HEADERS
+    src/widget/converter.hpp
+    src/widget/converterthread.hpp
+    src/widget/mainwindow.hpp
+    src/widget/player.hpp
+    src/widget/preference.hpp
+    src/widget/progress.hpp
+    src/widget/seekslider.hpp
+    src/widget/songlist.hpp
+    src/widget/textcodec.hpp)
 link_directories("${CMAKE_SOURCE_DIR}/core")
 
-add_executable(khopper ${KHOPPER_MAIN_SOURCES})
-target_link_libraries(khopper k_core ${QT_LIBRARIES})
+qt4_wrap_cpp(KHOPPER_MAIN_MOC_SOURCES ${KHOPPER_MAIN_MOC_HEADERS})
+
+add_executable(khopper ${KHOPPER_MAIN_SOURCES} ${KHOPPER_MAIN_MOC_SOURCES})
+target_link_libraries(khopper k_core ${QT_LIBRARIES} ${QT_PHONON_LIBRARY})

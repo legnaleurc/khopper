@@ -9,6 +9,8 @@ include(${QT_USE_FILE})
 
 if(CMAKE_COMPILER_IS_GNUCXX)
     add_definitions(-std=c++0x)
+elseif(MSVC)
+    add_definitions(/Zc:wchar_t-)
 endif()
 
 add_subdirectory(core)
