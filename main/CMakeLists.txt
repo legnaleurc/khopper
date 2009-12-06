@@ -21,5 +21,6 @@ qt4_wrap_cpp(KHOPPER_MAIN_MOC_SOURCES ${KHOPPER_MAIN_MOC_HEADERS})
 qt4_add_resources(KHOPPER_MAIN_RCC_SOURCES main.qrc)
 
 add_executable(khopper ${KHOPPER_MAIN_SOURCES} ${KHOPPER_MAIN_MOC_SOURCES} ${KHOPPER_MAIN_RCC_SOURCES})
+add_dependencies(khopper khopper_core)
 target_link_libraries(khopper khopper_core ${QT_LIBRARIES} ${QT_PHONON_LIBRARY})
 set_target_properties(khopper PROPERTIES VERSION ${KHOPPER_VERSION})
