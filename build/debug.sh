@@ -1,5 +1,5 @@
 #! /bin/sh
 
-export LD_LIBRARY_PATH=build/debug
+export LD_LIBRARY_PATH=.
 
-gdb ./build/debug/khopper
+gdb ./khopper

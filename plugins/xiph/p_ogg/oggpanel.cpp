@@ -31,12 +31,12 @@
 #include <QRadioButton>
 #include <QLibrary>
 
-Q_EXPORT_PLUGIN2( kpp_ogg, khopper::plugin::OGGPanel )
+Q_EXPORT_PLUGIN2( khopper_panel_ogg, khopper::plugin::OGGPanel )
 
 #ifdef Q_OS_WIN32
-static const char * LIBFLAC = "kl_flac0";
+static const char * LIBFLAC = "khopper_writer_flac0";
 #else
-static const char * LIBFLAC = "kl_flac.so.0";
+static const char * LIBFLAC = "khopper_writer_flac.so.0.2.60";
 #endif
 
 namespace khopper {

@@ -1,3 +1,5 @@
+set(LIBRARY_OUTPUT_PATH "${CMAKE_BINARY_DIR}/plugins")
+
 add_subdirectory(p_mp3)
 add_subdirectory(p_wav)
 add_subdirectory(r_flac)

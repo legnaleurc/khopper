@@ -29,7 +29,7 @@
 #include <QLabel>
 #include <QtPlugin>
 
-Q_EXPORT_PLUGIN2( kpp_wav, khopper::plugin::WAVPanel )
+Q_EXPORT_PLUGIN2( khopper_panel_wav, khopper::plugin::WAVPanel )
 
 namespace khopper {
 

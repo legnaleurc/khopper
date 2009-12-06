@@ -113,6 +113,8 @@ namespace khopper {
 								qDebug() << "unload deprecated plugin:" << unloaded;
 							}
 						}
+					} else {
+						qDebug() << loader.errorString();
 					}
 				}
 			}

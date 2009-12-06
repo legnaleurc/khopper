@@ -31,7 +31,7 @@
 #include <QtDebug>
 #include <QtPlugin>
 
-Q_EXPORT_PLUGIN2( kpp_mp3, khopper::plugin::MP3Panel )
+Q_EXPORT_PLUGIN2( khopper_panel_mp3, khopper::plugin::MP3Panel )
 
 namespace khopper {
 

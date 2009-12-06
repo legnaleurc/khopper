@@ -32,12 +32,12 @@
 #include <QLibrary>
 #include <QtDebug>
 
-Q_EXPORT_PLUGIN2( kpp_flac, khopper::plugin::FlacPanel )
+Q_EXPORT_PLUGIN2( khopper_panel_flac, khopper::plugin::FlacPanel )
 
 #ifdef Q_OS_WIN32
-static const char * LIBFLAC = "kl_flac0";
+static const char * LIBFLAC = "khopper_writer_flac0";
 #else
-static const char * LIBFLAC = "kl_flac.so.0";
+static const char * LIBFLAC = "khopper_writer_flac.so.0.2.60";
 #endif
 
 namespace khopper {

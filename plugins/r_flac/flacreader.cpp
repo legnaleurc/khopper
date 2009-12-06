@@ -28,9 +28,9 @@
 
 /* register plugin */
 namespace {
-	static const bool registered = khopper::plugin::registerReader( "flac", "kpr_flac" );
+	static const bool registered = khopper::plugin::registerReader( "flac", "khopper_reader_flac" );
 }
-Q_EXPORT_PLUGIN2( kpr_flac, khopper::plugin::FlacReaderCreator )
+Q_EXPORT_PLUGIN2( khopper_reader_flac, khopper::plugin::FlacReaderCreator )
 
 /* define plugin */
 namespace khopper {
