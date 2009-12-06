@@ -16,10 +16,10 @@ set(KHOPPER_MAIN_MOC_HEADERS
     src/widget/seekslider.hpp
     src/widget/songlist.hpp
     src/widget/textcodec.hpp)
-link_directories("${CMAKE_BINARY_DIR}/lib")
 
 qt4_wrap_cpp(KHOPPER_MAIN_MOC_SOURCES ${KHOPPER_MAIN_MOC_HEADERS})
 qt4_add_resources(KHOPPER_MAIN_RCC_SOURCES main.qrc)
 
 add_executable(khopper ${KHOPPER_MAIN_SOURCES} ${KHOPPER_MAIN_MOC_SOURCES} ${KHOPPER_MAIN_RCC_SOURCES})
 target_link_libraries(khopper khopper_core ${QT_LIBRARIES} ${QT_PHONON_LIBRARY})
+set_target_properties(khopper PROPERTIES VERSION ${KHOPPER_VERSION})

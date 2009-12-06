@@ -9,3 +9,4 @@ include_directories(include ${FFMPEG_INCLUDE_DIR} ${LOKI_INCLUDE_DIR})
 
 add_library(khopper_core SHARED ${KHOPPER_CORE_SOURCES})
 target_link_libraries(khopper_core ${FFMPEG_LIBRARIES} ${LOKI_LIBRARIES} ${QT_LIBRARIES})
+set_target_properties(khopper_core PROPERTIES VERSION ${KHOPPER_VERSION} SOVERSION ${KHOPPER_VERSION})
