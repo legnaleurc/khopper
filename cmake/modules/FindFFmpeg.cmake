@@ -34,7 +34,7 @@ else()
         HINTS
             ${PC_FFMPEG_libavcodec_LIBDIR}
             ${PC_FFMPEG_libavcodec_LIBRARY_DIRS})
-    find_library(FFMPEG_FORMAT_LIBRARY avutil
+    find_library(FFMPEG_UTIL_LIBRARY avutil
         HINTS
             ${PC_FFMPEG_libavutil_LIBDIR}
             ${PC_FFMPEG_libavutil_LIBRARY_DIRS})
