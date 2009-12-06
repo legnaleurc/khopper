@@ -27,8 +27,9 @@ extern "C" {
 #include <libavformat/avformat.h>
 }
 
-#include <cstring>
 #include <QtDebug>
+
+#include <cstring>
 
 namespace {
 

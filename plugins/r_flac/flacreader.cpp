@@ -22,8 +22,8 @@
 #include "flacreader.hpp"
 #include "flacreadercreator.hpp"
 
-#include <QStringList>
-#include <QMultiMap>
+#include <QtCore/QMultiMap>
+#include <QtCore/QStringList>
 #include <QtDebug>
 
 /* register plugin */

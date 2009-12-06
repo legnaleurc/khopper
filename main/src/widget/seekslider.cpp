@@ -21,7 +21,7 @@
  */
 #include "seekslider.hpp"
 
-#include <QHBoxLayout>
+#include <QtGui/QHBoxLayout>
 
 namespace khopper {
 

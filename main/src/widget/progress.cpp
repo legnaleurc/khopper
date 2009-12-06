@@ -21,9 +21,9 @@
  */
 #include "progress.hpp"
 
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QPushButton>
+#include <QtGui/QHBoxLayout>
+#include <QtGui/QVBoxLayout>
+#include <QtGui/QPushButton>
 
 namespace khopper {
 

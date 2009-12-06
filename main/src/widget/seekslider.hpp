@@ -22,8 +22,8 @@
 #ifndef KHOPPER_WIDGET_SEEKSLIDER_HPP
 #define KHOPPER_WIDGET_SEEKSLIDER_HPP
 
-#include <QSlider>
 #include <Phonon/MediaObject>
+#include <QtGui/QSlider>
 
 namespace khopper {
 

@@ -24,8 +24,8 @@
 
 #include "plugin/abstractpanel.hpp"
 
-#include <QButtonGroup>
-#include <QComboBox>
+#include <QtGui/QButtonGroup>
+#include <QtGui/QComboBox>
 
 namespace khopper {
 

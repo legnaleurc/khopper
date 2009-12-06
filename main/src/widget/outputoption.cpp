@@ -23,9 +23,9 @@
 
 #include "plugin/pluginmanager.hpp"
 
-#include <QVBoxLayout>
-#include <QDialogButtonBox>
-#include <QPluginLoader>
+#include <QtCore/QPluginLoader>
+#include <QtGui/QDialogButtonBox>
+#include <QtGui/QVBoxLayout>
 #include <QtDebug>
 
 namespace khopper {

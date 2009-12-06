@@ -25,7 +25,7 @@
 #include "track.hpp"
 #include "codec/abstractwriter.hpp"
 
-#include <QObject>
+#include <QtCore/QObject>
 
 namespace khopper {
 

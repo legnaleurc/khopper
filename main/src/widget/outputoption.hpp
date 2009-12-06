@@ -24,8 +24,8 @@
 
 #include "plugin/abstractpanel.hpp"
 
-#include <QDialog>
-#include <QTabWidget>
+#include <QtGui/QDialog>
+#include <QtGui/QTabWidget>
 
 #include <map>
 

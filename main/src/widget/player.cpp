@@ -23,9 +23,9 @@
 #include "seekslider.hpp"
 #include "songlist.hpp"
 
-#include <QHBoxLayout>
 #include <Phonon/AudioOutput>
 #include <QtDebug>
+#include <QtGui/QHBoxLayout>
 
 namespace {
 

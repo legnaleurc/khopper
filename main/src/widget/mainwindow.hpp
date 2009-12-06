@@ -24,12 +24,12 @@
 
 #include "track.hpp"
 
-#include <QMainWindow>
-#include <QComboBox>
-#include <QLineEdit>
-#include <QCheckBox>
-#include <QList>
-#include <QUrl>
+#include <QtCore/QList>
+#include <QtCore/QUrl>
+#include <QtGui/QCheckBox>
+#include <QtGui/QComboBox>
+#include <QtGui/QLineEdit>
+#include <QtGui/QMainWindow>
 
 namespace khopper {
 

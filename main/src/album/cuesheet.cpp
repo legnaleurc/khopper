@@ -25,10 +25,10 @@
 #include "util/error.hpp"
 #include "util/text.hpp"
 
-#include <QTextStream>
-#include <QRegExp>
-#include <QStringList>
 #include <QtDebug>
+#include <QtCore/QRegExp>
+#include <QtCore/QStringList>
+#include <QtCore/QTextStream>
 
 #include <algorithm>
 

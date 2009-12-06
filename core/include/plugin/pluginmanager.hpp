@@ -24,8 +24,8 @@
 
 #include "util/error.hpp"
 
-#include <QPluginLoader>
-#include <QDir>
+#include <QtCore/QDir>
+#include <QtCore/QPluginLoader>
 
 #ifndef LOKI_CLASS_LEVEL_THREADING
 # define LOKI_CLASS_LEVEL_THREADING

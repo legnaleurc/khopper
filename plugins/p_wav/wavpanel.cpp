@@ -23,10 +23,10 @@
 
 #include "codec/defaultwriter.hpp"
 
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QVariant>
-#include <QLabel>
+#include <QtCore/QVariant>
+#include <QtGui/QHBoxLayout>
+#include <QtGui/QLabel>
+#include <QtGui/QVBoxLayout>
 #include <QtPlugin>
 
 Q_EXPORT_PLUGIN2( kpp_wav, khopper::plugin::WAVPanel )

@@ -21,13 +21,13 @@
  */
 #include "preference.hpp"
 
-#include <QRegExp>
-#include <QSettings>
-#include <QGroupBox>
-#include <QVBoxLayout>
-#include <QApplication>
-#include <QFontDialog>
-#include <QPushButton>
+#include <QtCore/QRegExp>
+#include <QtCore/QSettings>
+#include <QtGui/QApplication>
+#include <QtGui/QFontDialog>
+#include <QtGui/QGroupBox>
+#include <QtGui/QPushButton>
+#include <QtGui/QVBoxLayout>
 
 namespace {
 

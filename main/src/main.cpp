@@ -25,9 +25,9 @@
  */
 #include "mainwindow.hpp"
 
-#include <QApplication>
-#include <QSettings>
-#include <QTextCodec>
+#include <QtCore/QSettings>
+#include <QtCore/QTextCodec>
+#include <QtGui/QApplication>
 
 #define X(x) XX(x)
 #define XX(x) #x

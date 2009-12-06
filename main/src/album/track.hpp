@@ -25,14 +25,14 @@
 #include "util/tr1.hpp"
 #include "timestamp.hpp"
 
-#include <QByteArray>
-#include <QTextCodec>
-#include <QMap>
-#include <QVariant>
-#include <QUrl>
+#include <QtCore/QByteArray>
+#include <QtCore/QMap>
+#include <QtCore/QTextCodec>
+#include <QtCore/QUrl>
+#include <QtCore/QVariant>
 
-#include <vector>
 #include <map>
+#include <vector>
 
 namespace khopper {
 

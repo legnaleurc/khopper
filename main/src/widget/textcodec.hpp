@@ -22,9 +22,9 @@
 #ifndef KHOPPER_WIDGET_TEXTCODEC_HPP
 #define KHOPPER_WIDGET_TEXTCODEC_HPP
 
-#include <QDialog>
-#include <QComboBox>
-#include <QLabel>
+#include <QtGui/QComboBox>
+#include <QtGui/QDialog>
+#include <QtGui/QLabel>
 
 namespace khopper {
 

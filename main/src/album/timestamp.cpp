@@ -21,8 +21,8 @@
  */
 #include "timestamp.hpp"
 
-#include <sstream>
 #include <cmath>
+#include <sstream>
 
 namespace khopper {
 

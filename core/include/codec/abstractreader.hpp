@@ -24,7 +24,7 @@
 
 #include "codecutil.hpp"
 
-#include <QUrl>
+#include <QtCore/QUrl>
 
 #include <string>
 

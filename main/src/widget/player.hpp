@@ -24,10 +24,10 @@
 
 #include "track.hpp"
 
-#include <QPushButton>
-#include <QLabel>
 #include <Phonon/MediaObject>
 #include <Phonon/VolumeSlider>
+#include <QtGui/QLabel>
+#include <QtGui/QPushButton>
 
 namespace khopper {
 

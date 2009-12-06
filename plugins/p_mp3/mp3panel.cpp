@@ -22,13 +22,13 @@
 #include "mp3panel.hpp"
 #include "mp3writer.hpp"
 
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QGroupBox>
-#include <QRadioButton>
-#include <QVariant>
-#include <QLabel>
+#include <QtCore/QVariant>
 #include <QtDebug>
+#include <QtGui/QGroupBox>
+#include <QtGui/QHBoxLayout>
+#include <QtGui/QLabel>
+#include <QtGui/QRadioButton>
+#include <QtGui/QVBoxLayout>
 #include <QtPlugin>
 
 Q_EXPORT_PLUGIN2( kpp_mp3, khopper::plugin::MP3Panel )

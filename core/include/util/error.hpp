@@ -24,7 +24,7 @@
 
 #include "util/tr1.hpp"
 
-#include <QString>
+#include <QtCore/QString>
 
 #include <exception>
 #include <string>

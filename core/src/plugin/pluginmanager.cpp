@@ -23,9 +23,9 @@
 #include "plugin/abstractplugin.hpp"
 #include "plugin/abstractpanel.hpp"
 
-#include <QApplication>
-#include <QtGlobal>
 #include <QtDebug>
+#include <QtGlobal>
+#include <QtGui/QApplication>
 
 namespace {
 
