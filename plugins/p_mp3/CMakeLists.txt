@@ -6,5 +6,6 @@ file(GLOB_RECURSE KHOPPER_PLUGIN_PANEL_MP3_SOURCES RELATIVE ${CMAKE_CURRENT_SOUR
 include_directories("${CMAKE_SOURCE_DIR}/core/include" ${LAME_INCLUDE_DIR} ${TAGLIB_INCLUDE_DIR})
 add_definitions(${QT_DEFINITIONS} -DQT_PLUGIN -DQT_SHARED)
 
-add_library(p_mp3 SHARED ${KHOPPER_PLUGIN_PANEL_MP3_SOURCES})
-target_link_libraries(p_mp3 ${LAME_LIBRARIES} ${TAGLIB_LIBRARIES})
+add_library(khopper_panel_mp3 SHARED ${KHOPPER_PLUGIN_PANEL_MP3_SOURCES})
+add_dependencies(khopper_panel_mp3 khopper_core)
+target_link_libraries(khopper_panel_mp3 khopper_core ${LAME_LIBRARIES} ${TAGLIB_LIBRARIES})

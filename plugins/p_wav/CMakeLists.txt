@@ -3,4 +3,6 @@ file(GLOB_RECURSE KHOPPER_PLUGIN_PANEL_WAV_SOURCES RELATIVE ${CMAKE_CURRENT_SOUR
 include_directories("${CMAKE_SOURCE_DIR}/core/include")
 add_definitions(${QT_DEFINITIONS} -DQT_PLUGIN -DQT_SHARED)
 
-add_library(p_wav SHARED ${KHOPPER_PLUGIN_PANEL_WAV_SOURCES})
+add_library(khopper_panel_wav SHARED ${KHOPPER_PLUGIN_PANEL_WAV_SOURCES})
+add_dependencies(khopper_panel_wav khopper_core)
+target_link_libraries(khopper_panel_wav khopper_core)

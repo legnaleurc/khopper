@@ -19,3 +19,5 @@ set(LIBRARY_OUTPUT_PATH "${CMAKE_BINARY_DIR}/lib")
 add_subdirectory(core)
 add_subdirectory(main)
 add_subdirectory(plugins)
+
+add_dependencies(khopper khopper_core)

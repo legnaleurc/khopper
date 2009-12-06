@@ -7,5 +7,5 @@ if(NOT WIN32)
 endif()
 include_directories(include ${FFMPEG_INCLUDE_DIR} ${LOKI_INCLUDE_DIR})
 
-add_library(k_core SHARED ${KHOPPER_CORE_SOURCES})
-target_link_libraries(k_core ${FFMPEG_LIBRARIES} ${LOKI_LIBRARIES} ${QT_LIBRARIES})
+add_library(khopper_core SHARED ${KHOPPER_CORE_SOURCES})
+target_link_libraries(khopper_core ${FFMPEG_LIBRARIES} ${LOKI_LIBRARIES} ${QT_LIBRARIES})
