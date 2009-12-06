@@ -1,5 +1,5 @@
 #! /bin/sh
 
-export LD_LIBRARY_PATH=build/release
+export LD_LIBRARY_PATH=lib
 
-./build/release/khopper "$@"
+./bin/khopper "$@"
