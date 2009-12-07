@@ -70,7 +70,7 @@ namespace khopper {
 		}
 
 		QString FlacPanel::getID() const {
-			return "kpp_flac";
+			return "khopper_panel_flac";
 		}
 
 		QString FlacPanel::getVersion() const {

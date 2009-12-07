@@ -103,7 +103,7 @@ namespace khopper {
 		}
 
 		QString MP3Panel::getID() const {
-			return "kpp_mp3";
+			return "khopper_panel_mp3";
 		}
 
 		QString MP3Panel::getVersion() const {

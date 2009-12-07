@@ -39,7 +39,7 @@ namespace khopper {
 			return codec::ReaderSP( new codec::FlacReader );
 		}
 		QString FlacReaderCreator::getID() const {
-			return "kpr_flac";
+			return "khopper_reader_flac";
 		}
 		QString FlacReaderCreator::getVersion() const {
 			return "0.2.60";

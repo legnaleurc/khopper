@@ -91,7 +91,7 @@ namespace khopper {
 		}
 
 		QString OGGPanel::getID() const {
-			return "kpp_ogg";
+			return "khopper_panel_ogg";
 		}
 
 		QString OGGPanel::getVersion() const {

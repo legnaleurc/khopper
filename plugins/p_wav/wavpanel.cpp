@@ -61,7 +61,7 @@ namespace khopper {
 		}
 
 		QString WAVPanel::getID() const {
-			return "kpp_wav";
+			return "khopper_panel_wav";
 		}
 
 		QString WAVPanel::getVersion() const {
