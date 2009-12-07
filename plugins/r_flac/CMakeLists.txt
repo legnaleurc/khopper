@@ -4,6 +4,7 @@ file(GLOB_RECURSE KHOPPER_PLUGIN_READER_FLAC_SOURCES RELATIVE ${CMAKE_CURRENT_SO
 
 include_directories("${CMAKE_SOURCE_DIR}/core/include" ${FLAC_INCLUDE_DIR})
 add_definitions(${QT_DEFINITIONS} -DQT_PLUGIN -DQT_SHARED)
+add_definitions(-DKHOPPER_PLUGIN_ID=khopper_reader_flac)
 
 add_library(khopper_reader_flac SHARED ${KHOPPER_PLUGIN_READER_FLAC_SOURCES})
 add_dependencies(khopper_reader_flac khopper_core)

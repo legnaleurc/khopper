@@ -2,6 +2,7 @@ file(GLOB_RECURSE KHOPPER_PLUGIN_PANEL_WAV_SOURCES RELATIVE ${CMAKE_CURRENT_SOUR
 
 include_directories("${CMAKE_SOURCE_DIR}/core/include")
 add_definitions(${QT_DEFINITIONS} -DQT_PLUGIN -DQT_SHARED)
+add_definitions(-DKHOPPER_PLUGIN_ID=khopper_panel_wav)
 
 qt4_wrap_cpp(KHOPPER_PLUGIN_PANEL_WAV_MOC_SOURCES wavpanel.hpp)
 

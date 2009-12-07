@@ -21,6 +21,7 @@
  */
 #include "mp3panel.hpp"
 #include "mp3writer.hpp"
+#include "util/text.hpp"
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -31,7 +32,7 @@
 #include <QtDebug>
 #include <QtPlugin>
 
-Q_EXPORT_PLUGIN2( khopper_panel_mp3, khopper::plugin::MP3Panel )
+Q_EXPORT_PLUGIN2( KHOPPER_PLUGIN_ID, khopper::plugin::MP3Panel )
 
 namespace khopper {
 
@@ -103,11 +104,11 @@ namespace khopper {
 		}
 
 		QString MP3Panel::getID() const {
-			return "khopper_panel_mp3";
+			return KHOPPER_STRINGIZE(KHOPPER_PLUGIN_ID);
 		}
 
 		QString MP3Panel::getVersion() const {
-			return "";
+			return KHOPPER_STRINGIZE(KHOPPER_VERSION);
 		}
 
 		codec::WriterSP MP3Panel::getWriter() const {
