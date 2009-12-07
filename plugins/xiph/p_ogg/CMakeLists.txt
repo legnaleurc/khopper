@@ -5,6 +5,7 @@ file(GLOB_RECURSE KHOPPER_PLUGIN_PANEL_OGG_SOURCES RELATIVE ${CMAKE_CURRENT_SOUR
 include_directories("${KHOPPER_XIPH_DIR}/l_flac" "${CMAKE_SOURCE_DIR}/core/include" ${OGGVORBIS_INCLUDE_DIR})
 add_definitions(${QT_DEFINITIONS} -DQT_PLUGIN -DQT_SHARED)
 add_definitions(-DKHOPPER_PLUGIN_ID=khopper_panel_ogg)
+add_definitions(-DKHOPPER_XIPH_LIB=${KHOPPER_XIPH_LIB})
 
 qt4_wrap_cpp(KHOPPER_PLUGIN_PANEL_OGG_MOC_SOURCES oggpanel.hpp)
 

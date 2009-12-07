@@ -34,9 +34,9 @@
 Q_EXPORT_PLUGIN2( KHOPPER_PLUGIN_ID, khopper::plugin::OGGPanel )
 
 #ifdef Q_OS_WIN32
-static const char * LIBFLAC = "khopper_writer_flac0";
+static const char * LIBFLAC = KHOPPER_STRINGIZE(KHOPPER_XIPH_LIB) "0";
 #else
-static const char * LIBFLAC = "khopper_writer_flac.so.0.2.60";
+static const char * LIBFLAC = KHOPPER_STRINGIZE(KHOPPER_XIPH_LIB) ".so.0.2.60";
 #endif
 
 namespace khopper {
