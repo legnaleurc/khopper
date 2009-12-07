@@ -1,4 +1,4 @@
-set(LIBRARY_OUTPUT_PATH "${CMAKE_BINARY_DIR}/plugins")
+set(LIBRARY_OUTPUT_PATH "${CMAKE_BINARY_DIR}/lib/plugins")
 
 add_subdirectory(p_mp3)
 add_subdirectory(p_wav)
