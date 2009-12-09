@@ -1,5 +1,13 @@
+# main
+
+# use phonon
 set(QT_USE_PHONON TRUE)
-set(EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}/bin")
+# hack MSVC path
+if(MSVC)
+    set(EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}")
+else()
+    set(EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}/bin")
+endif()
 
 file(GLOB_RECURSE KHOPPER_MAIN_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} src/*.cpp)
 include_directories(

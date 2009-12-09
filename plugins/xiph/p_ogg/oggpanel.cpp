@@ -34,7 +34,7 @@
 Q_EXPORT_PLUGIN2( KHOPPER_PLUGIN_ID, khopper::plugin::OGGPanel )
 
 #ifdef Q_OS_WIN32
-static const char * LIBFLAC = KHOPPER_STRINGIZE(KHOPPER_XIPH_LIB) "0";
+static const char * LIBFLAC = KHOPPER_STRINGIZE(KHOPPER_XIPH_LIB);
 #else
 static const char * LIBFLAC = KHOPPER_STRINGIZE(KHOPPER_XIPH_LIB) ".so.0.2.60";
 #endif

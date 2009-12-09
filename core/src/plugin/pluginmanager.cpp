@@ -54,10 +54,26 @@ namespace khopper {
 			loadedPlugins_(),
 			loadedPanels_() {
 				// initialize search paths
+
+				// first search binary related paths, for build time testing
 				QDir tmp( qApp->applicationDirPath() );
+#ifdef _MSC_VER
+				// hack for MSVC
+# ifdef _DEBUG
+				if( tmp.cd( "../plugins/Debug" ) ) {
+					this->searchPaths_.push_back( tmp );
+				}
+# else
+				if( tmp.cd( "../plugins/Release" ) ) {
+					this->searchPaths_.push_back( tmp );
+				}
+# endif
+#else
 				if( tmp.cd( "../lib/plugins" ) ) {
 					this->searchPaths_.push_back( tmp );
 				}
+#endif
+				// second search personal settings
 				tmp = QDir::home();
 				if( tmp.cd( ".khopper/plugins" ) ) {
 					this->searchPaths_.push_back( tmp );

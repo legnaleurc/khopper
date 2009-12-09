@@ -1,7 +1,14 @@
+# core
+
 find_package(FFmpeg REQUIRED)
 find_package(Loki REQUIRED)
 
-set(LIBRARY_OUTPUT_PATH "${CMAKE_BINARY_DIR}/lib")
+# hack MSCV path
+if(MSVC)
+    set(LIBRARY_OUTPUT_PATH "${CMAKE_BINARY_DIR}")
+else()
+    set(LIBRARY_OUTPUT_PATH "${CMAKE_BINARY_DIR}/lib")
+endif()
 
 file(GLOB_RECURSE KHOPPER_CORE_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} src/*.cpp)
 if(NOT WIN32)
