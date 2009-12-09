@@ -22,7 +22,7 @@
 #ifndef KHOPPER_PLUGIN_ABSTRACTPLUGIN_HPP
 #define KHOPPER_PLUGIN_ABSTRACTPLUGIN_HPP
 
-#include <QString>
+#include <QtCore/QString>
 
 namespace khopper {
 

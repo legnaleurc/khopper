@@ -25,7 +25,7 @@
 #include "plugin/abstractplugin.hpp"
 #include "codec/abstractwriter.hpp"
 
-#include <QWidget>
+#include <QtGui/QWidget>
 
 namespace khopper {
 

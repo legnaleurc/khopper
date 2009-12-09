@@ -21,12 +21,12 @@
  */
 #include "textcodec.hpp"
 
-#include <QComboBox>
-#include <QDialogButtonBox>
-#include <QTextCodec>
-#include <QTextStream>
-#include <QVBoxLayout>
-#include <QLabel>
+#include <QtCore/QTextCodec>
+#include <QtCore/QTextStream>
+#include <QtGui/QComboBox>
+#include <QtGui/QDialogButtonBox>
+#include <QtGui/QLabel>
+#include <QtGui/QVBoxLayout>
 
 namespace khopper {
 

@@ -24,12 +24,12 @@
 #include "oggwriter.hpp"
 #include "flacwriter.hpp"
 
+#include <QtCore/QLibrary>
+#include <QtCore/QVariant>
+#include <QtGui/QHBoxLayout>
+#include <QtGui/QRadioButton>
+#include <QtGui/QVBoxLayout>
 #include <QtPlugin>
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QVariant>
-#include <QRadioButton>
-#include <QLibrary>
 
 Q_EXPORT_PLUGIN2( kpp_ogg, khopper::plugin::OGGPanel )
 

@@ -24,10 +24,10 @@
 
 #include "track.hpp"
 
-#include <QTableView>
-#include <QStandardItemModel>
-#include <QList>
-#include <QUrl>
+#include <QtCore/QList>
+#include <QtCore/QUrl>
+#include <QtGui/QStandardItemModel>
+#include <QtGui/QTableView>
 
 namespace khopper {
 

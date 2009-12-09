@@ -21,7 +21,7 @@
  */
 #include "converterthread.hpp"
 
-#include <QFileInfo>
+#include <QtCore/QFileInfo>
 
 namespace khopper {
 

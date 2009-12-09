@@ -33,21 +33,21 @@
 
 #include <boost/format.hpp>
 
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QMenuBar>
-#include <QMenu>
-#include <QAction>
-#include <QApplication>
-#include <QFileDialog>
-#include <QDir>
-#include <QMessageBox>
-#include <QFileInfo>
-#include <QFile>
-#include <QLabel>
-#include <QTabWidget>
-#include <QPushButton>
+#include <QtCore/QDir>
+#include <QtCore/QFile>
+#include <QtCore/QFileInfo>
 #include <QtDebug>
+#include <QtGui/QAction>
+#include <QtGui/QApplication>
+#include <QtGui/QFileDialog>
+#include <QtGui/QHBoxLayout>
+#include <QtGui/QLabel>
+#include <QtGui/QMenu>
+#include <QtGui/QMenuBar>
+#include <QtGui/QMessageBox>
+#include <QtGui/QPushButton>
+#include <QtGui/QTabWidget>
+#include <QtGui/QVBoxLayout>
 
 namespace {
 

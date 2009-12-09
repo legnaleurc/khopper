@@ -21,8 +21,8 @@
  */
 #include "util/text.hpp"
 
-#include <QFileInfo>
-#include <QRegExp>
+#include <QtCore/QFileInfo>
+#include <QtCore/QRegExp>
 
 namespace khopper {
 

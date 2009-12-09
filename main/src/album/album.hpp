@@ -24,8 +24,8 @@
 
 #include "track.hpp"
 
-#include <QVariant>
-#include <QVector>
+#include <QtCore/QVariant>
+#include <QtCore/QVector>
 
 namespace khopper {
 

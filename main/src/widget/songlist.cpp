@@ -21,17 +21,17 @@
  */
 #include "songlist.hpp"
 
-#include <QDragEnterEvent>
-#include <QDragMoveEvent>
-#include <QDropEvent>
-#include <QUrl>
-#include <QFileInfo>
-#include <QMenu>
-#include <QAction>
-#include <QSignalMapper>
-#include <QTextCodec>
-#include <QTimer>
+#include <QtCore/QFileInfo>
+#include <QtCore/QSignalMapper>
+#include <QtCore/QTextCodec>
+#include <QtCore/QTimer>
+#include <QtCore/QUrl>
 #include <QtDebug>
+#include <QtGui/QAction>
+#include <QtGui/QDragEnterEvent>
+#include <QtGui/QDragMoveEvent>
+#include <QtGui/QDropEvent>
+#include <QtGui/QMenu>
 
 #include <algorithm>
 

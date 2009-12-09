@@ -24,11 +24,11 @@
 
 #include <boost/format.hpp>
 
-#include <QDialog>
-#include <QLineEdit>
-#include <QDialogButtonBox>
-#include <QLabel>
-#include <QFont>
+#include <QtGui/QDialog>
+#include <QtGui/QDialogButtonBox>
+#include <QtGui/QFont>
+#include <QtGui/QLabel>
+#include <QtGui/QLineEdit>
 
 namespace khopper {
 

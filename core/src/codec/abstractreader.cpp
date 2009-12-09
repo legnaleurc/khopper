@@ -21,8 +21,9 @@
  */
 #include "codec/abstractreader.hpp"
 
-#include <cassert>
 #include <QtDebug>
+
+#include <cassert>
 
 namespace khopper {
 

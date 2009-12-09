@@ -22,15 +22,15 @@
 #include "flacpanel.hpp"
 #include "flacwriter.hpp"
 
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QGroupBox>
-#include <QRadioButton>
-#include <QVariant>
-#include <QLabel>
-#include <QtPlugin>
-#include <QLibrary>
+#include <QtCore/QLibrary>
+#include <QtCore/QVariant>
 #include <QtDebug>
+#include <QtGui/QGroupBox>
+#include <QtGui/QHBoxLayout>
+#include <QtGui/QLabel>
+#include <QtGui/QRadioButton>
+#include <QtGui/QVBoxLayout>
+#include <QtPlugin>
 
 Q_EXPORT_PLUGIN2( kpp_flac, khopper::plugin::FlacPanel )
 

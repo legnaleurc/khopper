@@ -59,7 +59,11 @@ namespace khopper {
 
 		void Mp3Writer::doOpen() {
 			// open file
-			this->fout_.reset( fileHelper( this->getURI() ), fclose );
+			FILE * fout = fileHelper( this->getURI() );
+			if( fout == NULL ) {
+				throw error::IOError( QString( "Can not open: %1" ).arg( this->getURI().toString() ) );
+			}
+			this->fout_.reset( fout, fclose );
 
 			// lame encoder setting
 			this->gfp_.reset( lame_init(), lame_close );

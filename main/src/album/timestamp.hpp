@@ -24,9 +24,9 @@
 
 #include "util/tr1.hpp"
 
-#include <string>
+#include <QtCore/QMetaType>
 
-#include <QMetaType>
+#include <string>
 
 namespace khopper {
 

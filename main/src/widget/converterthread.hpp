@@ -26,8 +26,8 @@
 #include "converter.hpp"
 #include "codec/abstractwriter.hpp"
 
-#include <QThread>
-#include <QStringList>
+#include <QtCore/QStringList>
+#include <QtCore/QThread>
 
 namespace khopper {
 

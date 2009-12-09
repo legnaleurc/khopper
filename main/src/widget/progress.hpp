@@ -22,9 +22,9 @@
 #ifndef KHOPPER_WIDGET_PROGRESS_HPP
 #define KHOPPER_WIDGET_PROGRESS_HPP
 
-#include <QDialog>
-#include <QLabel>
-#include <QProgressBar>
+#include <QtGui/QDialog>
+#include <QtGui/QLabel>
+#include <QtGui/QProgressBar>
 
 namespace khopper {
 

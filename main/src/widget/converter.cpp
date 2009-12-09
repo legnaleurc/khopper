@@ -23,6 +23,7 @@
 #include "plugin/abstractreadercreator.hpp"
 #include "util/error.hpp"
 #include "util/text.hpp"
+
 #include <QtDebug>
 
 namespace khopper {
