@@ -11,7 +11,10 @@ set(KHOPPER_VERSION "${KHOPPER_VERSION_MAJOR}.${KHOPPER_VERSION_MINOR}.${KHOPPER
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 
 find_package(Qt4 REQUIRED)
+find_package(Boost REQUIRED)
+
 include(${QT_USE_FILE})
+include_directories(${Boost_INCLUDE_DIRS})
 
 add_definitions(-DKHOPPER_VERSION=${KHOPPER_VERSION})
 if(CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "MinSizeRel")
