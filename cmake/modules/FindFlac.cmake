@@ -20,10 +20,19 @@ else()
         HINTS
             ${PC_FLAC_INCLUDEDIR}
             ${PC_FLAC_INCLUDE_DIRS})
-    find_library(FLAC_LIBRARIES FLAC
+    find_library(FLAC_LIBRARIES_RELEASE FLAC
         HINTS
             ${PC_FLAC_LIBDIR}
             ${PC_FLAC_LIBRARY_DIRS})
+    find_library(FLAC_LIBRARIES_DEBUG FLAC_D
+        HINTS
+            ${PC_FLAC_LIBDIR}
+            ${PC_FLAC_LIBRARY_DIRS})
+    if(FLAC_LIBRARIES_RELEASE AND FLAC_LIBRARIES_DEBUG)
+        set(FLAC_LIBRARIES optimized ${FLAC_LIBRARIES_RELEASE} debug ${FLAC_LIBRARIES_DEBUG})
+    elseif(FLAC_LIBRARIES_RELEASE)
+        set(FLAC_LIBRARIES ${FLAC_LIBRARIES_RELEASE})
+    endif()
 
     if(FLAC_INCLUDE_DIR AND FLAC_LIBRARIES)
         set(FLAC_FOUND TRUE)

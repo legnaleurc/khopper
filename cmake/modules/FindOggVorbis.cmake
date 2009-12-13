@@ -19,10 +19,19 @@ else()
         HINTS
             ${PC_OGGVORBIS_vorbis_INCLUDEDIR}
             ${PC_OGGVORBIS_vorbis_INCLUDE_DIRS})
-    find_library(VORBIS_LIBRARY vorbis
+    find_library(VORBIS_LIBRARY_RELEASE vorbis
         HINTS
             ${PC_OGGVORBIS_vorbis_LIBDIR}
             ${PC_OGGVORBIS_vorbis_LIBRARY_DIRS})
+    find_library(VORBIS_LIBRARY_DEBUG vorbis_D
+        HINTS
+            ${PC_OGGVORBIS_vorbis_LIBDIR}
+            ${PC_OGGVORBIS_vorbis_LIBRARY_DIRS})
+    if(VORBIS_LIBRARY_RELEASE AND VORBIS_LIBRARY_DEBUG)
+        set(VORBIS_LIBRARY optimized ${VORBIS_LIBRARY_RELEASE} debug ${VORBIS_LIBRARY_DEBUG})
+    elseif(VORBIS_LIBRARY_RELEASE)
+        set(VORBIS_LIBRARY ${VORBIS_LIBRARY_RELEASE})
+    endif()
 
     set(OGGVORBIS_INCLUDE_DIR)
     if(VORBIS_INCLUDE_DIR)
