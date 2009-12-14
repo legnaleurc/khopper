@@ -39,6 +39,7 @@ else()
     endif()
 
     if(FLAC_FOUND)
+        set(FLAC_LIBRARIES ${FLAC_LIBRARIES} CACHE STRING "libFLAC libraries" FORCE)
         if(NOT Flac_FIND_QUIETLY)
             message(STATUS "Found Flac: ${FLAC_LIBRARIES}")
         endif()

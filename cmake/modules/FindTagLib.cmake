@@ -38,6 +38,7 @@ else()
     endif()
 
     if(TAGLIB_FOUND)
+        set(TAGLIB_LIBRARIES ${TAGLIB_LIBRARIES} CACHE STRING "TabLib libraries" FORCE)
         if(NOT TagLib_FIND_QUIETLY)
             message(STATUS "Found TagLib: ${TAGLIB_LIBRARIES} ${TAGLIB_INCLUDE_DIR}")
         endif()

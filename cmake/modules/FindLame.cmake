@@ -24,6 +24,7 @@ else()
     endif()
 
     if(LAME_FOUND)
+        set(LAME_LIBRARIES ${LAME_LIBRARIES} CACHE STRING "Lame libraries" FORCE)
         if(NOT Lame_FIND_QUIETLY)
             message(STATUS "Found Lame: ${LAME_LIBRARIES}")
         endif()

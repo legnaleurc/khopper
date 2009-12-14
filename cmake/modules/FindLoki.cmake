@@ -25,6 +25,7 @@ else()
     endif()
 
     if(LOKI_FOUND)
+        set(LOKI_LIBRARIES ${LOKI_LIBRARIES} CACHE STRING "Loki libraries" FORCE)
         if(NOT Loki_FIND_QUIETLY)
             message(STATUS "Found Loki: ${LOKI_LIBRARIES}")
         endif()

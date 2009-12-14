@@ -55,6 +55,7 @@ else()
     endif()
 
     if(FFMPEG_FOUND)
+        set(FFMPEG_LIBRARIES ${FFMPEG_LIBRARIES} CACHE STRING "FFmpeg libraries" FORCE)
         if(NOT FFmpeg_FIND_QUIETLY)
             message(STATUS "Found FFmpeg: ${FFMPEG_LIBRARIES} ${FFMPEG_INCLUDE_DIR}")
         endif()
