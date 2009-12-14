@@ -309,8 +309,8 @@ namespace khopper {
 		}
 
 		bool DefaultReader::seekFrame( int64_t ms ) {
-			ms = av_rescale( ms, pStream_->time_base.den, pStream_->time_base.num );
-			int succeed = av_seek_frame( this->pFormatContext_.get(), pStream_->index, toNative( ms ), AVSEEK_FLAG_ANY | AVSEEK_FLAG_BACKWARD );
+			ms = av_rescale( ms, this->pStream_->time_base.den, this->pStream_->time_base.num * 1000 );
+			int succeed = av_seek_frame( this->pFormatContext_.get(), this->pStream_->index, ms, AVSEEK_FLAG_ANY | AVSEEK_FLAG_BACKWARD );
 			if( succeed >= 0 ) {
 				avcodec_flush_buffers( this->pCodecContext_.get() );
 			}

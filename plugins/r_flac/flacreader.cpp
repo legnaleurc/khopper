@@ -21,6 +21,7 @@
  */
 #include "flacreader.hpp"
 #include "flacreadercreator.hpp"
+#include "util/text.hpp"
 
 #include <QtCore/QMultiMap>
 #include <QtCore/QStringList>
@@ -28,9 +29,9 @@
 
 /* register plugin */
 namespace {
-	static const bool registered = khopper::plugin::registerReader( "flac", "kpr_flac" );
+	static const bool registered = khopper::plugin::registerReader( "flac", KHOPPER_STRINGIZE(KHOPPER_PLUGIN_ID) );
 }
-Q_EXPORT_PLUGIN2( kpr_flac, khopper::plugin::FlacReaderCreator )
+Q_EXPORT_PLUGIN2( KHOPPER_PLUGIN_ID, khopper::plugin::FlacReaderCreator )
 
 /* define plugin */
 namespace khopper {
@@ -39,10 +40,10 @@ namespace khopper {
 			return codec::ReaderSP( new codec::FlacReader );
 		}
 		QString FlacReaderCreator::getID() const {
-			return "kpr_flac";
+			return KHOPPER_STRINGIZE(KHOPPER_PLUGIN_ID);
 		}
 		QString FlacReaderCreator::getVersion() const {
-			return "0.2.60";
+			return KHOPPER_STRINGIZE(KHOPPER_VERSION);
 		}
 	}
 }

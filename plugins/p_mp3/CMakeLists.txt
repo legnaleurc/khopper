@@ -1,0 +1,12 @@
+find_package(Lame REQUIRED)
+find_package(TagLib REQUIRED)
+
+file(GLOB_RECURSE KHOPPER_PLUGIN_PANEL_MP3_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp)
+
+include_directories(${LAME_INCLUDE_DIR} ${TAGLIB_INCLUDE_DIR})
+
+qt4_wrap_cpp(KHOPPER_PLUGIN_PANEL_MP3_MOC_SOURCES mp3panel.hpp)
+
+add_library(khopper_panel_mp3 SHARED ${KHOPPER_PLUGIN_PANEL_MP3_SOURCES} ${KHOPPER_PLUGIN_PANEL_MP3_MOC_SOURCES})
+khopper_add_plugin(khopper_panel_mp3)
+target_link_libraries(khopper_panel_mp3 ${LAME_LIBRARIES} ${TAGLIB_LIBRARIES})

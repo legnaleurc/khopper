@@ -8,6 +8,8 @@ License:
 		GPLv3 or later
 
 Build dependency：
+	CMake:
+		http://www.cmake.org/
 	Loki:
 		http://loki-lib.sourceforge.net/
 	Qt >= 4.4 (with Phonon module):
@@ -25,14 +27,18 @@ Build dependency：
 	TagLib:
 		http://developer.kde.org/~wheeler/taglib.html
 On Debian-based system:
-	# apt-get install libloki-dev libqt4-dev libphonon-dev libboost-dev libavcodec-dev libavformat-dev libflac-dev pkg-config libvorbis-dev libmp3lame-dev libtag1-dev
+	# apt-get install cmake libloki-dev libqt4-dev libphonon-dev \
+		libboost-dev libavcodec-dev libavformat-dev libflac-dev pkg-config \
+		libvorbis-dev libmp3lame-dev libtag1-dev
 
 Build step:
 	Linux:
-		$ qmake -r
+		$ mkdir build
+		$ cd build
+		$ cmake -DCMAKE_BUILD_TYPE=Release ..
 		$ make
 	Windows:
-		> qmake -r -tp vc
+		Please use CMake GUI to generate building system.
 
 Supported formats:
 	Converting:

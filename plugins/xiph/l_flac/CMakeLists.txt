@@ -1,0 +1,15 @@
+find_package(Flac REQUIRED)
+
+if(MSVC)
+    set(LIBRARY_OUTPUT_PATH "${CMAKE_BINARY_DIR}")
+else()
+    set(LIBRARY_OUTPUT_PATH "${CMAKE_BINARY_DIR}/lib")
+endif()
+
+file(GLOB_RECURSE KHOPPER_LIBRARY_FLAC_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp)
+include_directories(${FLAC_INCLUDE_DIR})
+
+add_library(${KHOPPER_XIPH_LIB} SHARED ${KHOPPER_LIBRARY_FLAC_SOURCES})
+add_dependencies(${KHOPPER_XIPH_LIB} khopper_core)
+target_link_libraries(${KHOPPER_XIPH_LIB} khopper_core ${FLAC_LIBRARIES})
+set_target_properties(${KHOPPER_XIPH_LIB} PROPERTIES VERSION ${KHOPPER_VERSION} SOVERSION ${KHOPPER_VERSION})

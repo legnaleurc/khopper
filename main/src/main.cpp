@@ -24,13 +24,11 @@
  * @brief All componets in this program
  */
 #include "mainwindow.hpp"
+#include "util/text.hpp"
 
 #include <QtCore/QSettings>
 #include <QtCore/QTextCodec>
 #include <QtGui/QApplication>
-
-#define X(x) XX(x)
-#define XX(x) #x
 
 /// Main program
 int main( int argc, char * argv[] ) {
@@ -39,7 +37,7 @@ int main( int argc, char * argv[] ) {
 	QApplication::setWindowIcon( QIcon( ":/image/logo.svg" ) );
 	QApplication::setOrganizationName( "FoolproofProject" );
 	QApplication::setApplicationName( "Khopper" );
-	QApplication::setApplicationVersion( X(KHOPPER_VERSION) );
+	QApplication::setApplicationVersion( KHOPPER_STRINGIZE(KHOPPER_VERSION) );
 	QSettings::setDefaultFormat( QSettings::IniFormat );
 	QTextCodec::setCodecForCStrings( QTextCodec::codecForName( "UTF-8" ) );
 	QTextCodec::setCodecForTr( QTextCodec::codecForName( "UTF-8" ) );
