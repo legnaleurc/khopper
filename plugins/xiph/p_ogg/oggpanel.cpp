@@ -20,9 +20,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "oggpanel.hpp"
-
 #include "oggwriter.hpp"
 #include "flacwriter.hpp"
+#include "util/text.hpp"
 
 #include <QtCore/QLibrary>
 #include <QtCore/QVariant>
@@ -31,12 +31,12 @@
 #include <QtGui/QVBoxLayout>
 #include <QtPlugin>
 
-Q_EXPORT_PLUGIN2( kpp_ogg, khopper::plugin::OGGPanel )
+Q_EXPORT_PLUGIN2( KHOPPER_PLUGIN_ID, khopper::plugin::OGGPanel )
 
 #ifdef Q_OS_WIN32
-static const char * LIBFLAC = "kl_flac0";
+static const char * LIBFLAC = KHOPPER_STRINGIZE(KHOPPER_XIPH_LIB);
 #else
-static const char * LIBFLAC = "kl_flac.so.0";
+static const char * LIBFLAC = KHOPPER_STRINGIZE(KHOPPER_XIPH_LIB) ".so.0.2.60";
 #endif
 
 namespace khopper {
@@ -91,11 +91,11 @@ namespace khopper {
 		}
 
 		QString OGGPanel::getID() const {
-			return "kpp_ogg";
+			return KHOPPER_STRINGIZE(KHOPPER_PLUGIN_ID);
 		}
 
 		QString OGGPanel::getVersion() const {
-			return "";
+			return KHOPPER_STRINGIZE(KHOPPER_VERSION);
 		}
 
 		codec::WriterSP OGGPanel::getWriter() const {

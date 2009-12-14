@@ -28,6 +28,9 @@
 
 #include <string>
 
+#define KHOPPER_STRINGIZE(token) _KHOPPER_STRINGIZE(token)
+#define _KHOPPER_STRINGIZE(token) #token
+
 namespace khopper {
 
 	/**

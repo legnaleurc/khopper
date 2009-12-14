@@ -22,6 +22,7 @@
 #include "wavpanel.hpp"
 
 #include "codec/defaultwriter.hpp"
+#include "util/text.hpp"
 
 #include <QtCore/QVariant>
 #include <QtGui/QHBoxLayout>
@@ -29,7 +30,7 @@
 #include <QtGui/QVBoxLayout>
 #include <QtPlugin>
 
-Q_EXPORT_PLUGIN2( kpp_wav, khopper::plugin::WAVPanel )
+Q_EXPORT_PLUGIN2( KHOPPER_PLUGIN_ID, khopper::plugin::WAVPanel )
 
 namespace khopper {
 
@@ -61,11 +62,11 @@ namespace khopper {
 		}
 
 		QString WAVPanel::getID() const {
-			return "kpp_wav";
+			return KHOPPER_STRINGIZE(KHOPPER_PLUGIN_ID);
 		}
 
 		QString WAVPanel::getVersion() const {
-			return "";
+			return KHOPPER_STRINGIZE(KHOPPER_VERSION);
 		}
 
 		codec::WriterSP WAVPanel::getWriter() const {

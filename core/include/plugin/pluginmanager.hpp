@@ -25,7 +25,6 @@
 #include "util/error.hpp"
 
 #include <QtCore/QDir>
-#include <QtCore/QPluginLoader>
 
 #ifndef LOKI_CLASS_LEVEL_THREADING
 # define LOKI_CLASS_LEVEL_THREADING
@@ -53,12 +52,17 @@ namespace khopper {
 			public:
 				/// default constructor
 				PluginManager();
+
 				/**
 				 * @brief reload all plugins
 				 *
 				 * Will discard duplicated plugins.
 				 */
 				void reloadPlugins();
+
+				const std::list< QDir > & getSearchPaths() const {
+					return this->searchPaths_;
+				}
 				/// get plugin instance by name
 				QObject * getPluginInstance( const QString & name ) const;
 				/// get panel plugins
@@ -67,6 +71,9 @@ namespace khopper {
 				}
 
 			private:
+				QStringList getPluginFiles_() const;
+
+				std::list< QDir > searchPaths_;
 				std::map< std::string, QObject * > loadedPlugins_;
 				std::list< AbstractPanel * > loadedPanels_;
 			};

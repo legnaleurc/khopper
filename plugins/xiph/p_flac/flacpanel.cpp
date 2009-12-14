@@ -21,6 +21,7 @@
  */
 #include "flacpanel.hpp"
 #include "flacwriter.hpp"
+#include "util/text.hpp"
 
 #include <QtCore/QLibrary>
 #include <QtCore/QVariant>
@@ -32,12 +33,12 @@
 #include <QtGui/QVBoxLayout>
 #include <QtPlugin>
 
-Q_EXPORT_PLUGIN2( kpp_flac, khopper::plugin::FlacPanel )
+Q_EXPORT_PLUGIN2( KHOPPER_PLUGIN_ID, khopper::plugin::FlacPanel )
 
 #ifdef Q_OS_WIN32
-static const char * LIBFLAC = "kl_flac0";
+static const char * LIBFLAC = KHOPPER_STRINGIZE(KHOPPER_XIPH_LIB);
 #else
-static const char * LIBFLAC = "kl_flac.so.0";
+static const char * LIBFLAC = KHOPPER_STRINGIZE(KHOPPER_XIPH_LIB) ".so.0.2.60";
 #endif
 
 namespace khopper {
@@ -70,11 +71,11 @@ namespace khopper {
 		}
 
 		QString FlacPanel::getID() const {
-			return "kpp_flac";
+			return KHOPPER_STRINGIZE(KHOPPER_PLUGIN_ID);
 		}
 
 		QString FlacPanel::getVersion() const {
-			return "";
+			return KHOPPER_STRINGIZE(KHOPPER_VERSION);
 		}
 
 		codec::WriterSP FlacPanel::getWriter() const {
