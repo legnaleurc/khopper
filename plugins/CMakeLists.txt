@@ -4,6 +4,16 @@ else()
     set(LIBRARY_OUTPUT_PATH "${CMAKE_BINARY_DIR}/lib/plugins")
 endif()
 
+include_directories("${CMAKE_SOURCE_DIR}/core/include")
+
+macro(KHOPPER_ADD_PLUGIN target)
+    add_definitions(${QT_DEFINITIONS} -DQT_PLUGIN -DQT_SHARED)
+    add_definitions(-DKHOPPER_PLUGIN_ID=${target})
+    add_dependencies(${target} khopper_core)
+    target_link_libraries(${target} khopper_core)
+    set_target_properties(${target} PROPERTIES VERSION ${KHOPPER_VERSION} SOVERSION ${KHOPPER_VERSION})
+endmacro()
+
 add_subdirectory(p_mp3)
 add_subdirectory(p_wav)
 add_subdirectory(r_flac)

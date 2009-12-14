@@ -7,7 +7,7 @@ else()
 endif()
 
 file(GLOB_RECURSE KHOPPER_LIBRARY_FLAC_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp)
-include_directories("${CMAKE_SOURCE_DIR}/core/include" ${FLAC_INCLUDE_DIR})
+include_directories(${FLAC_INCLUDE_DIR})
 
 add_library(${KHOPPER_XIPH_LIB} SHARED ${KHOPPER_LIBRARY_FLAC_SOURCES})
 add_dependencies(${KHOPPER_XIPH_LIB} khopper_core)
