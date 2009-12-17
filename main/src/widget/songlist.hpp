@@ -30,8 +30,9 @@
 #include <QtGui/QTableView>
 
 namespace khopper {
-
 	namespace widget {
+
+		class PropertiesWidget;
 
 		/**
 		 * @brief The song list view in the center widget
@@ -98,12 +99,12 @@ namespace khopper {
 		private:
 			QStandardItemModel * model_;
 			QMenu * contextMenu_;
+			PropertiesWidget * propWidget_;
 			std::vector< album::TrackSP > tracks_;
 			QList< QUrl > droppingFiles_;
 		};
 
 	}
-
 }
 
 #endif

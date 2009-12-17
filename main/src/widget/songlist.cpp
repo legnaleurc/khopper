@@ -20,6 +20,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "songlist.hpp"
+#include "propertieswidget.hpp"
 
 #include <QtCore/QFileInfo>
 #include <QtCore/QSignalMapper>
@@ -85,13 +86,13 @@ namespace {
 }
 
 namespace khopper {
-
 	namespace widget {
 
 		SongList::SongList( QWidget * parent ):
 		QTableView( parent ),
 		model_( new QStandardItemModel( this ) ),
 		contextMenu_( new QMenu( this ) ),
+		propWidget_( new PropertiesWidget( this ) ),
 		tracks_(),
 		droppingFiles_() {
 			// Set drag and drop
@@ -134,6 +135,13 @@ namespace khopper {
 			connect( sm, SIGNAL( mapped( int ) ), this, SLOT( changeTextCodec_( int ) ) );
 
 			this->contextMenu_->addMenu( codecs );
+
+			this->contextMenu_->addSeparator();
+
+			QAction * properties = new QAction( tr( "Properties" ), this );
+			connect( properties, SIGNAL( triggered() ), this->propWidget_, SLOT( exec() ) );
+			this->contextMenu_->addAction( properties );
+
 			this->contextMenu_->addSeparator();
 
 			QAction * convert = new QAction( tr( "Convert" ), this );
@@ -224,5 +232,4 @@ namespace khopper {
 		}
 
 	}
-
 }
