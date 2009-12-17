@@ -21,11 +21,35 @@
  */
 #include "propertieswidget.hpp"
 
+#include <QtGui/QVBoxLayout>
+
 namespace khopper {
 	namespace widget {
 
-		PropertiesWidget::PropertiesWidget( QWidget * parent ) : QDialog( parent ) {
-			this->resize( 320, 240 );
+		PropertiesWidget::PropertiesWidget( QWidget * parent ):
+		QDialog( parent ),
+		buttonBox_( new QDialogButtonBox( QDialogButtonBox::Ok | QDialogButtonBox::Apply | QDialogButtonBox::Cancel, Qt::Horizontal, this ) ) {
+			QVBoxLayout * mainLayout = new QVBoxLayout( this );
+			this->setLayout( mainLayout );
+
+			// setup dialog button box
+			QObject::connect( this->buttonBox_, SIGNAL( clicked( QAbstractButton * ) ), this, SLOT( perform_( QAbstractButton * ) ) );
+			mainLayout->addWidget( this->buttonBox_ );
+		}
+
+		void PropertiesWidget::perform_( QAbstractButton * button ) {
+			switch( this->buttonBox_->buttonRole( button ) ) {
+				case QDialogButtonBox::AcceptRole:
+					this->accept();
+					break;
+				case QDialogButtonBox::ApplyRole:
+					break;
+				case QDialogButtonBox::RejectRole:
+					this->reject();
+					break;
+				default:
+					;
+			}
 		}
 
 	}

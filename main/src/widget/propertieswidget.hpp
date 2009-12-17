@@ -22,13 +22,22 @@
 #ifndef KHOPPER_WIDGET_PROPERTIESWIDGET_HPP
 #define KHOPPER_WIDGET_PROPERTIESWIDGET_HPP
 
-#include <QDialog>
+#include <QtGui/QDialog>
+#include <QtGui/QDialogButtonBox>
 
 namespace khopper {
 	namespace widget {
 		class PropertiesWidget : public QDialog {
+			Q_OBJECT
+
 		public:
 			PropertiesWidget( QWidget * parent );
+
+		private slots:
+			void perform_( QAbstractButton * );
+
+		private:
+			QDialogButtonBox * buttonBox_;
 		};
 	}
 }
