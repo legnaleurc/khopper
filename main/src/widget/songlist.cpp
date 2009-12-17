@@ -42,24 +42,23 @@ namespace {
 	}
 
 	struct HeaderData {
-		HeaderData( const QByteArray & i, const QString & h, bool e ):
-		id( i ), header( h ), editable( e ) {}
+		HeaderData( const QByteArray & i, const QString & h ):
+		id( i ), header( h ) {}
 		QByteArray id;
 		QString header;
-		bool editable;
 	};
 
 	typedef QList< HeaderData > HeaderDataList;
 
 	inline HeaderDataList initHeaderList() {
 		return HeaderDataList()
-		<< HeaderData( "title", QObject::tr( "Title" ), true )
-		<< HeaderData( "artist", QObject::tr( "Artist" ), true )
-		<< HeaderData( "album", QObject::tr( "Album" ), true )
-		<< HeaderData( "duration", QObject::tr( "Duration" ), false )
-		<< HeaderData( "bit_rate", QObject::tr( "Bit Rate" ), false )
-		<< HeaderData( "sample_rate", QObject::tr( "Sample Rate" ), false )
-		<< HeaderData( "channels", QObject::tr( "Channels" ), false )
+		<< HeaderData( "title", QObject::tr( "Title" ) )
+		<< HeaderData( "artist", QObject::tr( "Artist" ) )
+		<< HeaderData( "album", QObject::tr( "Album" ) )
+		<< HeaderData( "duration", QObject::tr( "Duration" ) )
+		<< HeaderData( "bit_rate", QObject::tr( "Bit Rate" ) )
+		<< HeaderData( "sample_rate", QObject::tr( "Sample Rate" ) )
+		<< HeaderData( "channels", QObject::tr( "Channels" ) )
 		;
 	}
 
@@ -100,7 +99,7 @@ namespace khopper {
 
 			// Set selection behavior
 			this->setSelectionBehavior( SelectRows );
-			this->setEditTriggers( DoubleClicked );
+			this->setEditTriggers( NoEditTriggers );
 
 			this->setWordWrap( false );
 			this->setShowGrid( false );
@@ -154,7 +153,6 @@ namespace khopper {
 				const std::size_t currentRow = row + offset;
 				for( int col = 0; col < getHeaderList().size(); ++col ) {
 					this->model_->setItem( currentRow, col, new QStandardItem( displayHelper( tracks[row]->get( getHeaderList()[col].id ) ) ) );
-					this->model_->item( currentRow, col )->setEditable( getHeaderList()[col].editable );
 				}
 
 				this->resizeRowToContents( currentRow );
