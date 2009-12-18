@@ -146,9 +146,26 @@ namespace khopper {
 
 			QAction * convert = new QAction( tr( "Convert" ), this );
 			convert->setShortcut( Qt::CTRL + Qt::Key_Return );
-			connect( convert, SIGNAL( triggered() ), this, SIGNAL( requireConvert() ) );
+			connect( convert, SIGNAL( triggered() ), this, SLOT( convertHelper_() ) );
 			this->addAction( convert );
 			this->contextMenu_->addAction( convert );
+		}
+
+		void SongList::convertHelper_() {
+			QModelIndexList selected = this->selectionModel()->selectedRows();
+			if( selected.isEmpty() ) {
+				emit this->error( tr( "No track selected!" ), tr( "Please select at least one track." ) );
+				return;
+			}
+
+			std::sort( selected.begin(), selected.end(), ::indexRowCompD );
+			std::vector< album::TrackSP > result( selected.size() );
+
+			for( std::size_t i = 0; i < result.size(); ++i ) {
+				result[i] = this->tracks_.at( selected[i].row() );
+			}
+
+			emit requireConvert( result );
 		}
 
 		void SongList::appendTracks( const std::vector< album::TrackSP > & tracks ) {

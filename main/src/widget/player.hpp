@@ -60,7 +60,7 @@ namespace khopper {
 			/**
 			 * @brief Emmited when convert action is required.
 			 */
-			void requireConvert();
+			void requireConvert( const std::vector< album::TrackSP > & );
 			/**
 			 * @brief Error message
 			 * @param title Error title
