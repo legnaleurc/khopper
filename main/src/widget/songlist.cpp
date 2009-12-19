@@ -155,6 +155,7 @@ namespace khopper {
 			QModelIndexList selected = this->selectionModel()->selectedRows();
 			if( selected.isEmpty() ) {
 				// no track selected
+				emit this->error( tr( "No track selected!" ), tr( "Please select at least one track." ) );
 				return;
 			}
 			this->propWidget_->exec( this->getSelectedTracks() );
@@ -174,7 +175,7 @@ namespace khopper {
 				result[i] = this->tracks_.at( selected[i].row() );
 			}
 
-			emit requireConvert( result );
+			emit this->requireConvert( result );
 		}
 
 		void SongList::appendTracks( const album::TrackList & tracks ) {
@@ -254,7 +255,7 @@ namespace khopper {
 		}
 
 		void SongList::dropFiles_() {
-			emit fileDropped( this->droppingFiles_ );
+			emit this->fileDropped( this->droppingFiles_ );
 		}
 
 	}

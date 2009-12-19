@@ -25,7 +25,11 @@
 #include "track.hpp"
 
 #include <QtGui/QDialog>
-#include <QtGui/QDialogButtonBox>
+
+class QAbstractButton;
+class QDialogButtonBox;
+class QGridLayout;
+class QLineEdit;
 
 namespace khopper {
 	namespace widget {
@@ -42,7 +46,13 @@ namespace khopper {
 			void perform_( QAbstractButton * );
 
 		private:
+			void initFieldLayout_( QGridLayout * );
+			void write_();
+
+			QLineEdit * albumInput_;
+			QLineEdit * artistInput_;
 			QDialogButtonBox * buttonBox_;
+			QLineEdit * titleInput_;
 		};
 	}
 }

@@ -21,6 +21,10 @@
  */
 #include "propertieswidget.hpp"
 
+#include <QtGui/QDialogButtonBox>
+#include <QtGui/QGridLayout>
+#include <QtGui/QLabel>
+#include <QtGui/QLineEdit>
 #include <QtGui/QVBoxLayout>
 
 namespace khopper {
@@ -28,9 +32,18 @@ namespace khopper {
 
 		PropertiesWidget::PropertiesWidget( QWidget * parent ):
 		QDialog( parent ),
-		buttonBox_( new QDialogButtonBox( QDialogButtonBox::Ok | QDialogButtonBox::Apply | QDialogButtonBox::Cancel, Qt::Horizontal, this ) ) {
+		albumInput_( new QLineEdit( this ) ),
+		artistInput_( new QLineEdit( this ) ),
+		buttonBox_( new QDialogButtonBox( QDialogButtonBox::Ok | QDialogButtonBox::Apply | QDialogButtonBox::Cancel, Qt::Horizontal, this ) ),
+		titleInput_( new QLineEdit( this ) ) {
 			QVBoxLayout * mainLayout = new QVBoxLayout( this );
 			this->setLayout( mainLayout );
+
+			QGridLayout * contentLayout = new QGridLayout;
+			mainLayout->addLayout( contentLayout );
+
+			// properties layout
+			this->initFieldLayout_( contentLayout );
 
 			// setup dialog button box
 			QObject::connect( this->buttonBox_, SIGNAL( clicked( QAbstractButton * ) ), this, SLOT( perform_( QAbstractButton * ) ) );
@@ -40,8 +53,36 @@ namespace khopper {
 		int PropertiesWidget::exec( const album::TrackList & tracks ) {
 			if( tracks.size() == 1 ) {
 				// exactally one track
+				album::TrackSP track = tracks[0];
+				this->titleInput_->setText( track->get( "title" ).toString() );
+				this->artistInput_->setText( track->get( "artist" ).toString() );
+				this->albumInput_->setText( track->get( "album" ).toString() );
 			} else {
-				// multiple editing
+				// no need to edit title
+				this->titleInput_->setText( "" );
+				this->titleInput_->setEnabled( false );
+
+				// find common string
+				album::TrackSP track = tracks[0];
+				bool allGreen = true;
+				QString tmp = track->get( "artist" ).toString();
+				for( std::size_t i = 1; i < tracks.size(); ++i ) {
+					if( tmp != tracks[i]->get( "artist" ).toString() ) {
+						allGreen = false;
+						break;
+					}
+				}
+				this->artistInput_->setText( allGreen ? tmp : "" );
+
+				allGreen = true;
+				tmp = track->get( "album" ).toString();
+				for( std::size_t i = 1; i < tracks.size(); ++i ) {
+					if( tmp != tracks[i]->get( "album" ).toString() ) {
+						allGreen = false;
+						break;
+					}
+				}
+				this->albumInput_->setText( allGreen ? tmp : "" );
 			}
 			return this->exec();
 		}
@@ -49,9 +90,11 @@ namespace khopper {
 		void PropertiesWidget::perform_( QAbstractButton * button ) {
 			switch( this->buttonBox_->buttonRole( button ) ) {
 				case QDialogButtonBox::AcceptRole:
+					this->write_();
 					this->accept();
 					break;
 				case QDialogButtonBox::ApplyRole:
+					this->write_();
 					break;
 				case QDialogButtonBox::RejectRole:
 					this->reject();
@@ -59,6 +102,26 @@ namespace khopper {
 				default:
 					;
 			}
+			if( !this->titleInput_->isEnabled() ) {
+				this->titleInput_->setEnabled( true );
+			}
+		}
+
+		void PropertiesWidget::write_() {
+		}
+
+		void PropertiesWidget::initFieldLayout_( QGridLayout * layout ) {
+			QLabel * titleLabel = new QLabel( tr( "Title" ), this );
+			layout->addWidget( titleLabel, 0, 0 );
+			layout->addWidget( this->titleInput_, 0, 1 );
+
+			QLabel * artistLabel = new QLabel( tr( "Artist" ), this );
+			layout->addWidget( artistLabel, 1, 0 );
+			layout->addWidget( this->artistInput_, 1, 1 );
+
+			QLabel * albumLabel = new QLabel( tr( "Album" ), this );
+			layout->addWidget( albumLabel, 2, 0 );
+			layout->addWidget( this->albumInput_, 2, 1 );
 		}
 
 	}
