@@ -43,7 +43,7 @@ namespace khopper {
 			this->paths_ = paths;
 		}
 
-		void ConverterThread::setTracks( const std::vector< album::TrackSP > & tracks ) {
+		void ConverterThread::setTracks( const album::TrackList & tracks ) {
 			this->tracks_ = tracks;
 		}
 

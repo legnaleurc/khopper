@@ -57,7 +57,7 @@ namespace khopper {
 			 * @brief Set tracks to convert
 			 * @param [in] tracks Tracks information
 			 */
-			void setTracks( const std::vector< album::TrackSP > & tracks );
+			void setTracks( const album::TrackList & tracks );
 
 		public slots:
 			/**
@@ -103,7 +103,7 @@ namespace khopper {
 
 		private:
 			codec::WriterSP encoder_;
-			std::vector< album::TrackSP > tracks_;
+			album::TrackList tracks_;
 			QList< QUrl > paths_;
 			bool canceled_;
 			Converter converter_;

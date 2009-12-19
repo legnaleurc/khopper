@@ -87,7 +87,7 @@ namespace khopper {
 			// Add song list
 			mainBox->addWidget( this->player_ );
 			connect( this->player_, SIGNAL( fileDropped( const QList< QUrl > & ) ), this, SLOT( open( const QList< QUrl > & ) ) );
-			connect( this->player_, SIGNAL( requireConvert( const std::vector< album::TrackSP > & ) ), this, SLOT( fire_( const std::vector< album::TrackSP > & ) ) );
+			connect( this->player_, SIGNAL( requireConvert( const album::TrackList & ) ), this, SLOT( fire_( const album::TrackList & ) ) );
 			connect( this->player_, SIGNAL( error( const QString &, const QString & ) ), this, SLOT( showErrorMessage_( const QString &, const QString & ) ) );
 
 			QHBoxLayout * pathBox = new QHBoxLayout;
@@ -183,7 +183,7 @@ namespace khopper {
 			}
 		}
 
-		void MainWindow::fire_( const std::vector< album::TrackSP > & tracks ) {
+		void MainWindow::fire_( const album::TrackList & tracks ) {
 			if( tracks.empty() ) {
 				this->showErrorMessage_( tr( "Run-time error!" ), tr( "No track selected." ) );
 				return;
@@ -239,7 +239,7 @@ namespace khopper {
 				return;
 			}
 
-			std::vector< album::TrackSP > tracks;
+			album::TrackList tracks;
 
 			foreach( QUrl uri, uris ) {
 				// TODO: handle remote resource

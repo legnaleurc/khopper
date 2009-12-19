@@ -168,7 +168,7 @@ namespace khopper {
 			}
 
 			std::sort( selected.begin(), selected.end(), ::indexRowCompD );
-			std::vector< album::TrackSP > result( selected.size() );
+			album::TrackList result( selected.size() );
 
 			for( std::size_t i = 0; i < result.size(); ++i ) {
 				result[i] = this->tracks_.at( selected[i].row() );
@@ -177,7 +177,7 @@ namespace khopper {
 			emit requireConvert( result );
 		}
 
-		void SongList::appendTracks( const std::vector< album::TrackSP > & tracks ) {
+		void SongList::appendTracks( const album::TrackList & tracks ) {
 			this->tracks_.insert( this->tracks_.end(), tracks.begin(), tracks.end() );
 
 			// get last row number
@@ -193,10 +193,10 @@ namespace khopper {
 			}
 		}
 
-		std::vector< album::TrackSP > SongList::getSelectedTracks() const {
+		album::TrackList SongList::getSelectedTracks() const {
 			QModelIndexList selected = this->selectionModel()->selectedRows( 0 );
 			std::sort( selected.begin(), selected.end(), ::indexRowCompD );
-			std::vector< album::TrackSP > result( selected.size() );
+			album::TrackList result( selected.size() );
 
 			for( std::size_t i = 0; i < result.size(); ++i ) {
 				result[i] = this->tracks_.at( selected[i].row() );

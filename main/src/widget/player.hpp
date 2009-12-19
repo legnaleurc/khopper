@@ -45,11 +45,11 @@ namespace khopper {
 			Player( QWidget * parent = 0, Qt::WindowFlags f = 0 );
 
 			/// Get selected tracks
-			std::vector< album::TrackSP > getSelectedTracks() const;
+			album::TrackList getSelectedTracks() const;
 			/// Get all tracks
-			const std::vector< album::TrackSP > & getTracks() const;
+			const album::TrackList & getTracks() const;
 			/// Append tracks
-			void appendTracks( const std::vector< album::TrackSP > & tracks );
+			void appendTracks( const album::TrackList & tracks );
 
 		signals:
 			/**
@@ -60,7 +60,7 @@ namespace khopper {
 			/**
 			 * @brief Emmited when convert action is required.
 			 */
-			void requireConvert( const std::vector< album::TrackSP > & );
+			void requireConvert( const album::TrackList & );
 			/**
 			 * @brief Error message
 			 * @param title Error title

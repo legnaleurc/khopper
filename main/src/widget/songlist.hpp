@@ -51,11 +51,11 @@ namespace khopper {
 			 * @brief Append tracks to the song list
 			 * @param [in] tracks Tracks
 			 */
-			void appendTracks( const std::vector< album::TrackSP > & tracks );
+			void appendTracks( const album::TrackList & tracks );
 			/**
 			 * @brief Get all tracks
 			 */
-			const std::vector< album::TrackSP > & getTracks() const {
+			const album::TrackList & getTracks() const {
 				return this->tracks_;
 			}
 			/**
@@ -63,7 +63,7 @@ namespace khopper {
 			 *
 			 * The cost may be expansive.
 			 */
-			std::vector< album::TrackSP > getSelectedTracks() const;
+			album::TrackList getSelectedTracks() const;
 
 			/// Test if no track
 			bool isEmpty() const {
@@ -79,7 +79,7 @@ namespace khopper {
 			/**
 			 * @brief Emmited when convert action is required.
 			 */
-			void requireConvert( const std::vector< album::TrackSP > & tracks );
+			void requireConvert( const album::TrackList & tracks );
 			void error( const QString & title, const QString & message );
 
 		protected:
@@ -103,7 +103,7 @@ namespace khopper {
 			QStandardItemModel * model_;
 			QMenu * contextMenu_;
 			PropertiesWidget * propWidget_;
-			std::vector< album::TrackSP > tracks_;
+			album::TrackList tracks_;
 			QList< QUrl > droppingFiles_;
 		};
 
