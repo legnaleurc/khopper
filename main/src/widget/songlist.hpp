@@ -79,7 +79,8 @@ namespace khopper {
 			/**
 			 * @brief Emmited when convert action is required.
 			 */
-			void requireConvert();
+			void requireConvert( const std::vector< album::TrackSP > & tracks );
+			void error( const QString & title, const QString & message );
 
 		protected:
 			/// See the documention of Qt toolkit
@@ -93,6 +94,7 @@ namespace khopper {
 
 		private slots:
 			void changeTextCodec_( int );
+			void convertHelper_();
 			void dropFiles_();
 			void propertiesHelper_();
 			void removeSelected_();

@@ -83,7 +83,8 @@ namespace khopper {
 			playerBox->addWidget( this->volume_ );
 
 			connect( this->songList_, SIGNAL( fileDropped( const QList< QUrl > & ) ), this, SIGNAL( fileDropped( const QList< QUrl > & ) ) );
-			connect( this->songList_, SIGNAL( requireConvert() ), this, SIGNAL( requireConvert() ) );
+			connect( this->songList_, SIGNAL( requireConvert( const std::vector< album::TrackSP > & ) ), this, SIGNAL( requireConvert( const std::vector< album::TrackSP > & ) ) );
+			connect( this->songList_, SIGNAL( error( const QString &, const QString & ) ), this, SIGNAL( error( const QString &, const QString & ) ) );
 			mainBox->addWidget( this->songList_ );
 		}
 
