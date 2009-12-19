@@ -92,9 +92,10 @@ namespace khopper {
 			virtual void dropEvent( QDropEvent * event );
 
 		private slots:
-			void removeSelected_();
 			void changeTextCodec_( int );
 			void dropFiles_();
+			void propertiesHelper_();
+			void removeSelected_();
 
 		private:
 			QStandardItemModel * model_;

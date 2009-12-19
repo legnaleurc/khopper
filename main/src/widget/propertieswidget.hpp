@@ -22,6 +22,8 @@
 #ifndef KHOPPER_WIDGET_PROPERTIESWIDGET_HPP
 #define KHOPPER_WIDGET_PROPERTIESWIDGET_HPP
 
+#include "track.hpp"
+
 #include <QtGui/QDialog>
 #include <QtGui/QDialogButtonBox>
 
@@ -32,6 +34,9 @@ namespace khopper {
 
 		public:
 			PropertiesWidget( QWidget * parent );
+
+			using QDialog::exec;
+			int exec( const album::TrackList & tracks );
 
 		private slots:
 			void perform_( QAbstractButton * );

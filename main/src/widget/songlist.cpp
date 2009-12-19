@@ -139,7 +139,7 @@ namespace khopper {
 			this->contextMenu_->addSeparator();
 
 			QAction * properties = new QAction( tr( "Properties" ), this );
-			connect( properties, SIGNAL( triggered() ), this->propWidget_, SLOT( exec() ) );
+			connect( properties, SIGNAL( triggered() ), this, SLOT( propertiesHelper_() ) );
 			this->contextMenu_->addAction( properties );
 
 			this->contextMenu_->addSeparator();
@@ -149,6 +149,15 @@ namespace khopper {
 			connect( convert, SIGNAL( triggered() ), this, SIGNAL( requireConvert() ) );
 			this->addAction( convert );
 			this->contextMenu_->addAction( convert );
+		}
+
+		void SongList::propertiesHelper_() {
+			QModelIndexList selected = this->selectionModel()->selectedRows();
+			if( selected.isEmpty() ) {
+				// no track selected
+				return;
+			}
+			this->propWidget_->exec( this->getSelectedTracks() );
 		}
 
 		void SongList::appendTracks( const std::vector< album::TrackSP > & tracks ) {

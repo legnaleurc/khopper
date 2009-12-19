@@ -37,6 +37,15 @@ namespace khopper {
 			mainLayout->addWidget( this->buttonBox_ );
 		}
 
+		int PropertiesWidget::exec( const album::TrackList & tracks ) {
+			if( tracks.size() == 1 ) {
+				// exactally one track
+			} else {
+				// multiple editing
+			}
+			return this->exec();
+		}
+
 		void PropertiesWidget::perform_( QAbstractButton * button ) {
 			switch( this->buttonBox_->buttonRole( button ) ) {
 				case QDialogButtonBox::AcceptRole:
