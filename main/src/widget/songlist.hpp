@@ -30,8 +30,9 @@
 #include <QtGui/QTableView>
 
 namespace khopper {
-
 	namespace widget {
+
+		class PropertiesWidget;
 
 		/**
 		 * @brief The song list view in the center widget
@@ -50,11 +51,11 @@ namespace khopper {
 			 * @brief Append tracks to the song list
 			 * @param [in] tracks Tracks
 			 */
-			void appendTracks( const std::vector< album::TrackSP > & tracks );
+			void appendTracks( const album::TrackList & tracks );
 			/**
 			 * @brief Get all tracks
 			 */
-			const std::vector< album::TrackSP > & getTracks() const {
+			const album::TrackList & getTracks() const {
 				return this->tracks_;
 			}
 			/**
@@ -62,7 +63,7 @@ namespace khopper {
 			 *
 			 * The cost may be expansive.
 			 */
-			std::vector< album::TrackSP > getSelectedTracks() const;
+			album::TrackList getSelectedTracks() const;
 
 			/// Test if no track
 			bool isEmpty() const {
@@ -78,7 +79,8 @@ namespace khopper {
 			/**
 			 * @brief Emmited when convert action is required.
 			 */
-			void requireConvert();
+			void requireConvert( const album::TrackList & tracks );
+			void error( const QString & title, const QString & message );
 
 		protected:
 			/// See the documention of Qt toolkit
@@ -91,19 +93,21 @@ namespace khopper {
 			virtual void dropEvent( QDropEvent * event );
 
 		private slots:
-			void removeSelected_();
 			void changeTextCodec_( int );
+			void convertHelper_();
 			void dropFiles_();
+			void propertiesHelper_();
+			void removeSelected_();
 
 		private:
 			QStandardItemModel * model_;
 			QMenu * contextMenu_;
-			std::vector< album::TrackSP > tracks_;
+			PropertiesWidget * propWidget_;
+			album::TrackList tracks_;
 			QList< QUrl > droppingFiles_;
 		};
 
 	}
-
 }
 
 #endif

@@ -83,19 +83,20 @@ namespace khopper {
 			playerBox->addWidget( this->volume_ );
 
 			connect( this->songList_, SIGNAL( fileDropped( const QList< QUrl > & ) ), this, SIGNAL( fileDropped( const QList< QUrl > & ) ) );
-			connect( this->songList_, SIGNAL( requireConvert() ), this, SIGNAL( requireConvert() ) );
+			connect( this->songList_, SIGNAL( requireConvert( const album::TrackList & ) ), this, SIGNAL( requireConvert( const album::TrackList & ) ) );
+			connect( this->songList_, SIGNAL( error( const QString &, const QString & ) ), this, SIGNAL( error( const QString &, const QString & ) ) );
 			mainBox->addWidget( this->songList_ );
 		}
 
-		std::vector< album::TrackSP > Player::getSelectedTracks() const {
+		album::TrackList Player::getSelectedTracks() const {
 			return this->songList_->getSelectedTracks();
 		}
 
-		const std::vector< album::TrackSP > & Player::getTracks() const {
+		const album::TrackList & Player::getTracks() const {
 			return this->songList_->getTracks();
 		}
 
-		void Player::appendTracks( const std::vector< album::TrackSP > & tracks ) {
+		void Player::appendTracks( const album::TrackList & tracks ) {
 			this->songList_->appendTracks( tracks );
 		}
 
@@ -105,10 +106,10 @@ namespace khopper {
 				return;
 			}
 
-			const std::vector< album::TrackSP > & tracks( this->songList_->getTracks() );
+			const album::TrackList & tracks( this->songList_->getTracks() );
 
 			if( !tracks.empty() ) {
-				const std::vector< album::TrackSP > selected( this->songList_->getSelectedTracks() );
+				const album::TrackList selected( this->songList_->getSelectedTracks() );
 				if( selected.empty() ) {
 					this->currentTrack_ = tracks[0];
 				} else {

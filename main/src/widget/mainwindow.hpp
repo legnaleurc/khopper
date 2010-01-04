@@ -85,7 +85,7 @@ namespace khopper {
 			void initAbout_();
 
 		private slots:
-			void fire_();
+			void fire_( const album::TrackList & );
 			void showErrorMessage_( const QString &, const QString & );
 			void incProgress_( qint64 );
 			void changeOutputPath_();

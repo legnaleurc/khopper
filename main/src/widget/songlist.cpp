@@ -20,6 +20,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "songlist.hpp"
+#include "propertieswidget.hpp"
 
 #include <QtCore/QFileInfo>
 #include <QtCore/QSignalMapper>
@@ -42,24 +43,23 @@ namespace {
 	}
 
 	struct HeaderData {
-		HeaderData( const QByteArray & i, const QString & h, bool e ):
-		id( i ), header( h ), editable( e ) {}
+		HeaderData( const QByteArray & i, const QString & h ):
+		id( i ), header( h ) {}
 		QByteArray id;
 		QString header;
-		bool editable;
 	};
 
 	typedef QList< HeaderData > HeaderDataList;
 
 	inline HeaderDataList initHeaderList() {
 		return HeaderDataList()
-		<< HeaderData( "title", QObject::tr( "Title" ), true )
-		<< HeaderData( "artist", QObject::tr( "Artist" ), true )
-		<< HeaderData( "album", QObject::tr( "Album" ), true )
-		<< HeaderData( "duration", QObject::tr( "Duration" ), false )
-		<< HeaderData( "bit_rate", QObject::tr( "Bit Rate" ), false )
-		<< HeaderData( "sample_rate", QObject::tr( "Sample Rate" ), false )
-		<< HeaderData( "channels", QObject::tr( "Channels" ), false )
+		<< HeaderData( "title", QObject::tr( "Title" ) )
+		<< HeaderData( "artist", QObject::tr( "Artist" ) )
+		<< HeaderData( "album", QObject::tr( "Album" ) )
+		<< HeaderData( "duration", QObject::tr( "Duration" ) )
+		<< HeaderData( "bit_rate", QObject::tr( "Bit Rate" ) )
+		<< HeaderData( "sample_rate", QObject::tr( "Sample Rate" ) )
+		<< HeaderData( "channels", QObject::tr( "Channels" ) )
 		;
 	}
 
@@ -86,13 +86,13 @@ namespace {
 }
 
 namespace khopper {
-
 	namespace widget {
 
 		SongList::SongList( QWidget * parent ):
 		QTableView( parent ),
 		model_( new QStandardItemModel( this ) ),
 		contextMenu_( new QMenu( this ) ),
+		propWidget_( new PropertiesWidget( this ) ),
 		tracks_(),
 		droppingFiles_() {
 			// Set drag and drop
@@ -100,7 +100,7 @@ namespace khopper {
 
 			// Set selection behavior
 			this->setSelectionBehavior( SelectRows );
-			this->setEditTriggers( DoubleClicked );
+			this->setEditTriggers( NoEditTriggers );
 
 			this->setWordWrap( false );
 			this->setShowGrid( false );
@@ -135,16 +135,50 @@ namespace khopper {
 			connect( sm, SIGNAL( mapped( int ) ), this, SLOT( changeTextCodec_( int ) ) );
 
 			this->contextMenu_->addMenu( codecs );
+
+			this->contextMenu_->addSeparator();
+
+			QAction * properties = new QAction( tr( "Properties" ), this );
+			connect( properties, SIGNAL( triggered() ), this, SLOT( propertiesHelper_() ) );
+			this->contextMenu_->addAction( properties );
+
 			this->contextMenu_->addSeparator();
 
 			QAction * convert = new QAction( tr( "Convert" ), this );
 			convert->setShortcut( Qt::CTRL + Qt::Key_Return );
-			connect( convert, SIGNAL( triggered() ), this, SIGNAL( requireConvert() ) );
+			connect( convert, SIGNAL( triggered() ), this, SLOT( convertHelper_() ) );
 			this->addAction( convert );
 			this->contextMenu_->addAction( convert );
 		}
 
-		void SongList::appendTracks( const std::vector< album::TrackSP > & tracks ) {
+		void SongList::propertiesHelper_() {
+			QModelIndexList selected = this->selectionModel()->selectedRows();
+			if( selected.isEmpty() ) {
+				// no track selected
+				emit this->error( tr( "No track selected!" ), tr( "Please select at least one track." ) );
+				return;
+			}
+			this->propWidget_->exec( this->getSelectedTracks() );
+		}
+
+		void SongList::convertHelper_() {
+			QModelIndexList selected = this->selectionModel()->selectedRows();
+			if( selected.isEmpty() ) {
+				emit this->error( tr( "No track selected!" ), tr( "Please select at least one track." ) );
+				return;
+			}
+
+			std::sort( selected.begin(), selected.end(), ::indexRowCompD );
+			album::TrackList result( selected.size() );
+
+			for( std::size_t i = 0; i < result.size(); ++i ) {
+				result[i] = this->tracks_.at( selected[i].row() );
+			}
+
+			emit this->requireConvert( result );
+		}
+
+		void SongList::appendTracks( const album::TrackList & tracks ) {
 			this->tracks_.insert( this->tracks_.end(), tracks.begin(), tracks.end() );
 
 			// get last row number
@@ -154,17 +188,16 @@ namespace khopper {
 				const std::size_t currentRow = row + offset;
 				for( int col = 0; col < getHeaderList().size(); ++col ) {
 					this->model_->setItem( currentRow, col, new QStandardItem( displayHelper( tracks[row]->get( getHeaderList()[col].id ) ) ) );
-					this->model_->item( currentRow, col )->setEditable( getHeaderList()[col].editable );
 				}
 
 				this->resizeRowToContents( currentRow );
 			}
 		}
 
-		std::vector< album::TrackSP > SongList::getSelectedTracks() const {
+		album::TrackList SongList::getSelectedTracks() const {
 			QModelIndexList selected = this->selectionModel()->selectedRows( 0 );
 			std::sort( selected.begin(), selected.end(), ::indexRowCompD );
-			std::vector< album::TrackSP > result( selected.size() );
+			album::TrackList result( selected.size() );
 
 			for( std::size_t i = 0; i < result.size(); ++i ) {
 				result[i] = this->tracks_.at( selected[i].row() );
@@ -222,9 +255,8 @@ namespace khopper {
 		}
 
 		void SongList::dropFiles_() {
-			emit fileDropped( this->droppingFiles_ );
+			emit this->fileDropped( this->droppingFiles_ );
 		}
 
 	}
-
 }

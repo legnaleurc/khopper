@@ -48,33 +48,32 @@ namespace khopper {
 		class Track {
 		public:
 			/**
-			 * @brief Default constructor
+			 * @brief Default constructor.
 			 */
 			Track();
 
 			/**
-			 * @brief Load track from @p filePath
+			 * @brief Load track from a url.
+			 * @param uri URL
 			 */
 			void load( const QUrl & uri );
 
 			/**
-			 * @brief Get file path
+			 * @brief Get url.
 			 * @sa setFilePath(const QString &) setFilePath(const QByteArray &)
-			 *
-			 * Encoded string in locale.
 			 */
 			const QUrl & getURI() const {
 				return this->uri_;
 			}
 			/**
-			 * @brief Set file path
+			 * @brief Set url.
 			 * @sa getFilePath() setFilePath(const QByteArray &)
 			 */
 			void setURI( const QUrl & uri ) {
 				this->uri_ = uri;
 			}
 			/**
-			 * @brief Set text codec
+			 * @brief Set metadata text codec.
 			 */
 			void setTextCodec( QTextCodec * textCodec ) {
 				if( textCodec ) {
@@ -95,13 +94,17 @@ namespace khopper {
 		};
 
 		/**
-		 * @brief Smart pointer of Track
+		 * @brief Smart pointer of Track.
 		 */
 		typedef std::tr1::shared_ptr< Track > TrackSP;
 		/**
-		 * @brief Smart pointer of const Track
+		 * @brief Smart pointer of const Track.
 		 */
 		typedef std::tr1::shared_ptr< const Track > TrackCSP;
+		/**
+		 * @brief Track list.
+		 */
+		typedef std::vector< TrackSP > TrackList;
 
 	}
 
