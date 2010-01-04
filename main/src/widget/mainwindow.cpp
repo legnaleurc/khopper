@@ -334,7 +334,7 @@ namespace khopper {
 			mainBox->addLayout( topBox );
 
 			QLabel * logo = new QLabel( this->about_ );
-			logo->setPixmap( QPixmap( ":/image/logo.svg" ).scaled( 60, 60 ) );
+			logo->setPixmap( QPixmap( ":/image/logo.png" ).scaled( 60, 60 ) );
 			topBox->addWidget( logo );
 
 			QLabel * version = new QLabel( this->about_ );
