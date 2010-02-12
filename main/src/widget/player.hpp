@@ -69,6 +69,7 @@ namespace khopper {
 			void error( const QString & title, const QString & errMsg );
 
 		private slots:
+			void play_();
 			void playOrPause_();
 			void stop_();
 			void handleState_( Phonon::State, Phonon::State );
@@ -76,8 +77,6 @@ namespace khopper {
 			void updateTimestamp_( int ms );
 
 		private:
-			void play_();
-
 			Phonon::MediaObject * player_;
 			SeekSlider * seeker_;
 			Phonon::VolumeSlider * volume_;

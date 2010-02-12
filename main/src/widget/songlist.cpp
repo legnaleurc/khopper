@@ -43,23 +43,24 @@ namespace {
 	}
 
 	struct HeaderData {
-		HeaderData( const QByteArray & i, const QString & h ):
-		id( i ), header( h ) {}
+		HeaderData( const QByteArray & i, const QString & h, bool e ):
+		id( i ), header( h ), editable( e ) {}
 		QByteArray id;
 		QString header;
+		bool editable;
 	};
 
 	typedef QList< HeaderData > HeaderDataList;
 
 	inline HeaderDataList initHeaderList() {
 		return HeaderDataList()
-		<< HeaderData( "title", QObject::tr( "Title" ) )
-		<< HeaderData( "artist", QObject::tr( "Artist" ) )
-		<< HeaderData( "album", QObject::tr( "Album" ) )
-		<< HeaderData( "duration", QObject::tr( "Duration" ) )
-		<< HeaderData( "bit_rate", QObject::tr( "Bit Rate" ) )
-		<< HeaderData( "sample_rate", QObject::tr( "Sample Rate" ) )
-		<< HeaderData( "channels", QObject::tr( "Channels" ) )
+		<< HeaderData( "title", QObject::tr( "Title" ), true )
+		<< HeaderData( "artist", QObject::tr( "Artist" ), true )
+		<< HeaderData( "album", QObject::tr( "Album" ), true )
+		<< HeaderData( "duration", QObject::tr( "Duration" ), false )
+		<< HeaderData( "bit_rate", QObject::tr( "Bit Rate" ), false )
+		<< HeaderData( "sample_rate", QObject::tr( "Sample Rate" ), false )
+		<< HeaderData( "channels", QObject::tr( "Channels" ), false )
 		;
 	}
 
@@ -253,6 +254,25 @@ namespace khopper {
 			}
 			event->acceptProposedAction();
 		}
+
+		void SongList::mouseDoubleClickEvent( QMouseEvent * event ) {
+// 			this->QTableView::mouseDoubleClickEvent( event );
+			emit this->requirePlay();
+			qDebug() << "Double Clicked Item:" << this->rowAt( event->y() );
+			event->accept();
+		}
+
+// 		void SongList::mousePressEvent( QMouseEvent * event ) {
+// 			this->QTableView::mousePressEvent( event );
+// 			qDebug() << "press";
+// 			event->accept();
+// 		}
+// 
+// 		void SongList::mouseReleaseEvent( QMouseEvent * event ) {
+// 			this->QTableView::mouseReleaseEvent( event );
+// 			qDebug() << "release";
+// 			event->accept();
+// 		}
 
 		void SongList::dropFiles_() {
 			emit this->fileDropped( this->droppingFiles_ );

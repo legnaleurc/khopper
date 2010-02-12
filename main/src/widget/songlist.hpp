@@ -71,16 +71,21 @@ namespace khopper {
 			}
 
 		signals:
+			void error( const QString & title, const QString & message );
 			/**
 			 * @brief Emitted when drop an openable file
 			 * @param paths File path
 			 */
 			void fileDropped( const QList< QUrl > & uris );
 			/**
-			 * @brief Emmited when convert action is required.
+			 * @brief Emitted when convert action is required.
 			 */
 			void requireConvert( const album::TrackList & tracks );
-			void error( const QString & title, const QString & message );
+			/**
+			 * @brief Emitted when play is required.
+			 * @todo Add parameter.
+			 */
+			void requirePlay();
 
 		protected:
 			/// See the documention of Qt toolkit
@@ -91,6 +96,10 @@ namespace khopper {
 			virtual void dragMoveEvent( QDragMoveEvent * event );
 			/// See the documention of Qt toolkit
 			virtual void dropEvent( QDropEvent * event );
+			/// See the documention of Qt toolkit
+			virtual void mouseDoubleClickEvent( QMouseEvent * event );
+// 			virtual void mousePressEvent( QMouseEvent * event );
+// 			virtual void mouseReleaseEvent( QMouseEvent * event );
 
 		private slots:
 			void changeTextCodec_( int );
