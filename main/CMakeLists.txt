@@ -19,6 +19,7 @@ include_directories(
     "${CMAKE_SOURCE_DIR}/core/include"
     ${QT_PHONON_INCLUDE_DIR})
 set(KHOPPER_MAIN_MOC_HEADERS
+    src/widget/conversiondialog.hpp
     src/widget/converter.hpp
     src/widget/converterthread.hpp
     src/widget/mainwindow.hpp

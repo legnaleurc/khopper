@@ -33,8 +33,6 @@
 
 #include "ui_mainwindow.h"
 
-#include <boost/format.hpp>
-
 #include <QtCore/QDir>
 #include <QtCore/QFile>
 #include <QtCore/QFileInfo>
@@ -51,14 +49,6 @@
 #include <QtGui/QTabWidget>
 #include <QtGui/QVBoxLayout>
 
-namespace {
-
-	inline QString applyFormat( boost::format tpl, khopper::album::TrackCSP track ) {
-		return QString::fromUtf8( ( tpl % track->get( "title" ).toString().toUtf8().constData() % track->get( "artist" ).toString().toUtf8().constData() % track->get( "index" ).toInt() ).str().c_str() );
-	}
-
-}
-
 namespace khopper {
 
 	namespace widget {
@@ -68,10 +58,6 @@ namespace khopper {
 		ui_( new Ui::MainWindow ),
 		codec_( new TextCodec( this ) ),
 		conversion_( new ConversionDialog( this ) ),
-// 		outputPath_( new QLineEdit( QDir::homePath(), this ) ),
-// 		useSourcePath_( new QCheckBox( tr( "Same as source directories" ), this ) ),
-		progress_( new Progress( this ) ),
-		cvt_( new ConverterThread( this ) ),
 		preference_( new Preference( this ) ),
 		about_( new QWidget( this, Qt::Dialog ) ),
 		lastOpenedDir_( QDir::homePath() ) {
@@ -85,51 +71,10 @@ namespace khopper {
 			connect( this->ui_->player, SIGNAL( fileDropped( const QList< QUrl > & ) ), this, SLOT( open( const QList< QUrl > & ) ) );
 			connect( this->ui_->player, SIGNAL( requireConvert( const album::TrackList & ) ), this, SLOT( fire_( const album::TrackList & ) ) );
 			connect( this->ui_->player, SIGNAL( error( const QString &, const QString & ) ), this, SLOT( showErrorMessage_( const QString &, const QString & ) ) );
-
-// 			QHBoxLayout * pathBox = new QHBoxLayout;
-// 			mainBox->addLayout( pathBox );
-
-			// Output path setting
-// 			QLabel * outputLabel = new QLabel( tr( "Output to:" ), this );
-// 			pathBox->addWidget( outputLabel );
-// 			pathBox->addWidget( this->outputPath_ );
-// 			QPushButton * changePath = new QPushButton( tr( "..." ), this );
-// 			pathBox->addWidget( changePath );
-// 			connect( changePath, SIGNAL( clicked() ), this, SLOT( changeOutputPath_() ) );
-// 			pathBox->addWidget( this->useSourcePath_ );
-
-// 			this->useSourcePath_->setChecked( true );
-// 			this->outputPath_->setEnabled( false );
-// 			connect( this->useSourcePath_, SIGNAL( toggled( bool ) ), this->outputPath_, SLOT( setDisabled( bool ) ) );
-// 			connect( changePath, SIGNAL( clicked( bool ) ), this->useSourcePath_, SLOT( setChecked( bool ) ) );
-
-			// Progress dialog
-			progress_->setWindowModality( Qt::WindowModal );
-
-			// Converter thread
-			connect( this->cvt_, SIGNAL( taskName( const QString & ) ), this->progress_, SLOT( setItemName( const QString & ) ) );
-			connect( this->cvt_, SIGNAL( taskGoal( qint64 ) ), this->progress_, SLOT( setMaximum( qint64 ) ) );
-			connect( this->cvt_, SIGNAL( currentTask( int ) ), this->progress_, SLOT( setCurrent( int ) ) );
-			connect( this->cvt_, SIGNAL( step( qint64 ) ), this, SLOT( incProgress_( qint64 ) ) );
-			connect( this->cvt_, SIGNAL( finished() ), this->progress_, SLOT( accept() ) );
-			connect( this->cvt_, SIGNAL( error( const QString &, const QString & ) ), this, SLOT( showErrorMessage_( const QString &, const QString & ) ) );
-			// NOTE: works, but danger
-			connect( this->progress_, SIGNAL( rejected() ), this->cvt_, SLOT( cancel() ) );
 		}
 
 		MainWindow::~MainWindow() {
 			delete this->ui_;
-		}
-
-// 		void MainWindow::changeOutputPath_() {
-// 			QString outDir = QFileDialog::getExistingDirectory( this, tr( "Target Directory" ), QDir::homePath() );
-// 			if( !outDir.isEmpty() ) {
-// 				this->outputPath_->setText( outDir );
-// 			}
-// 		}
-
-		void MainWindow::incProgress_( qint64 diff ) {
-			this->progress_->setValue( this->progress_->getValue() + diff );
 		}
 
 		void MainWindow::initMenuBar_() {
@@ -139,15 +84,6 @@ namespace khopper {
 			connect( this->ui_->actionAbout_Qt, SIGNAL( triggered() ), qApp, SLOT( aboutQt() ) );
 		}
 
-// 		QString MainWindow::getOutDir_( album::TrackSP track ) const {
-// 			// FIXME: not always local file
-// 			if( this->useSourcePath_->isChecked() ) {
-// 				return QFileInfo( track->getURI().toLocalFile() ).absolutePath();
-// 			} else {
-// 				return this->outputPath_->text();
-// 			}
-// 		}
-
 		void MainWindow::fire_( const album::TrackList & tracks ) {
 			if( tracks.empty() ) {
 				this->showErrorMessage_( tr( "Run-time error!" ), tr( "No track selected." ) );
@@ -155,34 +91,7 @@ namespace khopper {
 			}
 
 			// get option widget
-			if( this->conversion_->exec() ) {
-				plugin::AbstractPanel * option = this->conversion_->getCurrent();
-				codec::WriterSP encoder( option->getWriter() );
-				if( encoder == NULL ) {
-					this->showErrorMessage_( tr( "Run-time error!" ), "Can't get encoder." );
-					return;
-				}
-
-				try {
-					// generate output paths
-					QList< QUrl > outputPaths;
-					for( std::size_t i = 0; i < tracks.size(); ++i ) {
-// 						outputPaths.push_back( QUrl::fromLocalFile( this->getOutDir_( tracks[i] ) + "/" + applyFormat( this->preference_->getTemplate(), tracks[i] ) + "." + option->getSuffix() ) );
-					}
-
-					// set progress bar
-					this->progress_->setTotal( tracks.size() );
-					// set output information
-					this->cvt_->setOutput( encoder, outputPaths );
-					this->cvt_->setTracks( tracks );
-					this->cvt_->start();
-					this->progress_->exec();
-				} catch( error::RunTimeError & e ) {
-					this->showErrorMessage_( tr( "Run-time error!" ), e.getMessage() );
-				} catch( std::exception & e ) {
-					this->showErrorMessage_( tr( "Unknown error!" ), trUtf8( e.what() ) );
-				}
-			}
+			this->conversion_->convert( tracks, this->preference_->getTemplate() );
 		}
 
 		void MainWindow::showOpenFilesDialog() {

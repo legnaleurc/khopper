@@ -20,6 +20,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "progress.hpp"
+#include "ui_progress.h"
 
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QVBoxLayout>
@@ -29,60 +30,45 @@ namespace khopper {
 
 	namespace widget {
 
-		Progress::Progress( QWidget * parent, Qt::WindowFlags f ):
-		QDialog( parent, f ),
-		itemName_( new QLabel( this ) ),
-		current_( new QLabel( this ) ),
-		total_( new QLabel( this ) ),
-		prog_( new QProgressBar( this ) ) {
-			this->setWindowTitle( tr( "Converting ..." ) );
+		Progress::Progress( QWidget * parent ):
+		QWidget( parent, Qt::Dialog ),
+		ui_( new Ui::Progress ),
+		current_( 0 ),
+		total_( 0 ) {
+			this->ui_->setupUi( this );
 
-			QVBoxLayout * mainBox = new QVBoxLayout( this );
-			this->setLayout( mainBox );
-			mainBox->setAlignment( Qt::AlignCenter );
-
-			mainBox->addWidget( this->itemName_ );
-			this->itemName_->setAlignment( Qt::AlignCenter );
-
-			QHBoxLayout * midBox = new QHBoxLayout;
-			mainBox->addLayout( midBox );
-			midBox->setAlignment( Qt::AlignCenter );
-
-			midBox->addWidget( this->current_ );
-			midBox->addWidget( new QLabel( "/", this ) );
-			midBox->addWidget( this->total_ );
-
-			mainBox->addWidget( this->prog_ );
-			this->prog_->setRange( 0, 0 );
-
-			QPushButton * cancel = new QPushButton( tr( "&Cancel" ), this );
-			mainBox->addWidget( cancel );
-			connect( cancel, SIGNAL( clicked() ), this, SLOT( reject() ) );
+			connect( this->ui_->cancel, SIGNAL( clicked() ), this, SIGNAL( canceled() ) );
 		}
 
-		int Progress::getValue() const {
-			return this->prog_->value();
+		Progress::~Progress() {
+			delete this->ui_;
+		}
+
+		void Progress::increase( qint64 value ) {
+			this->ui_->progressBar->setValue( value + this->ui_->progressBar->value() );
 		}
 
 		void Progress::setMaximum( qint64 maximum ) {
-			this->prog_->setMaximum( maximum );
-			this->prog_->setValue( 0 );
-		}
-
-		void Progress::setValue( qint64 value ) {
-			this->prog_->setValue( value );
+			this->ui_->progressBar->setMaximum( maximum );
+			this->ui_->progressBar->setValue( 0 );
 		}
 
 		void Progress::setItemName( const QString & name ) {
-			this->itemName_->setText( name );
+			this->ui_->name->setText( name );
 		}
 
 		void Progress::setCurrent( int current ) {
-			this->current_->setNum( current );
+			this->current_ = current;
+			this->updateIndex_();
 		}
 
 		void Progress::setTotal( int total ) {
-			this->total_->setNum( total );
+			this->total_ = total;
+			this->updateIndex_();
+		}
+
+		void Progress::updateIndex_() {
+			this->ui_->index->setText( QString( "%1/%2" ).arg( this->current_ ).arg( this->total_ ) );
 		}
 
 	}

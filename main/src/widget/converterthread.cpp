@@ -38,7 +38,7 @@ namespace khopper {
 			connect( this, SIGNAL( canceled() ), &this->converter_, SLOT( cancel() ) );
 		}
 
-		void ConverterThread::setOutput( codec::WriterSP output, const QList< QUrl > & paths ) {
+		void ConverterThread::setOutput( codec::WriterSP output, const QList< QString > & paths ) {
 			this->encoder_ = output;
 			this->paths_ = paths;
 		}
@@ -69,9 +69,9 @@ namespace khopper {
 					}
 				}
 			} catch( error::BaseError & e ) {
-				emit error( tr( "Error on converting!" ), e.getMessage() );
+				emit errorOccured( tr( "Error on converting!" ), e.getMessage() );
 			} catch( std::exception & e ) {
-				emit error( tr( "Error on converting!" ), trUtf8( e.what() ) );
+				emit errorOccured( tr( "Error on converting!" ), e.what() );
 			}
 		}
 

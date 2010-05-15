@@ -75,10 +75,6 @@ namespace khopper {
 			Ui::MainWindow * ui_;
 			TextCodec * codec_;
 			ConversionDialog * conversion_;
-// 			QLineEdit * outputPath_;
-// 			QCheckBox * useSourcePath_;
-			Progress * progress_;
-			ConverterThread * cvt_;
 			Preference * preference_;
 			QWidget * about_;
 			QString lastOpenedDir_;
@@ -90,9 +86,6 @@ namespace khopper {
 		private slots:
 			void fire_( const album::TrackList & );
 			void showErrorMessage_( const QString &, const QString & );
-			void incProgress_( qint64 );
-// 			void changeOutputPath_();
-// 			QString getOutDir_( album::TrackSP ) const;
 		};
 
 	}

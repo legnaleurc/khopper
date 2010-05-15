@@ -26,6 +26,10 @@
 #include <QtGui/QLabel>
 #include <QtGui/QProgressBar>
 
+namespace Ui {
+	class Progress;
+}
+
 namespace khopper {
 
 	namespace widget {
@@ -33,31 +37,22 @@ namespace khopper {
 		/**
 		 * @brief Show the progress
 		 */
-		class Progress : public QDialog {
+		class Progress : public QWidget {
 			Q_OBJECT
 
 		public:
 			/**
 			 * @brief Pass arguments to QDialog
 			 */
-			Progress( QWidget * parent = 0, Qt::WindowFlags f = 0 );
-
-			/**
-			 * @brief Get current progress
-			 * @sa setValue
-			 */
-			int getValue() const;
+			explicit Progress( QWidget * parent );
+			virtual ~Progress();
 
 		public slots:
+			void increase( qint64 value );
 			/**
 			 * @brief Set maximum progress
 			 */
 			void setMaximum( qint64 maximum );
-			/**
-			 * @brief Set current progress
-			 * @sa getValue
-			 */
-			void setValue( qint64 value );
 			/**
 			 * @brief Set current item name
 			 */
@@ -71,11 +66,15 @@ namespace khopper {
 			 */
 			void setTotal( int total );
 
+		signals:
+			void canceled();
+
 		private:
-			QLabel * itemName_;
-			QLabel * current_;
-			QLabel * total_;
-			QProgressBar * prog_;
+			void updateIndex_();
+
+			Ui::Progress * ui_;
+			int current_;
+			int total_;
 		};
 
 	}

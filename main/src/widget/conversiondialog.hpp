@@ -23,6 +23,9 @@
 #define KHOPPER_WIDGET_CONVERSIONDIALOG_HPP
 
 #include "plugin/abstractpanel.hpp"
+#include "track.hpp"
+
+#include <boost/format.hpp>
 
 #include <QtGui/QDialog>
 #include <QtGui/QTabWidget>
@@ -37,8 +40,12 @@ namespace khopper {
 
 	namespace widget {
 
+		class Progress;
+		class ConverterThread;
+
 		/// Output format option widget
 		class ConversionDialog : public QDialog {
+			Q_OBJECT
 		public:
 			/// Default constructor
 			explicit ConversionDialog( QWidget * parent );
@@ -47,8 +54,20 @@ namespace khopper {
 			/// Get current panel
 			plugin::AbstractPanel * getCurrent() const;
 
+			void convert( const album::TrackList & tracks, const boost::format & tpl );
+
+		signals:
+			void errorOccured( const QString & title, const QString & message );
+
+		private slots:
+			void changeOutputPath_();
+
 		private:
+			QString getOutputPath_( album::TrackSP );
+
 			Ui::ConversionDialog * ui_;
+			Progress * progress_;
+			ConverterThread * thread_;
 			std::map< int ,plugin::AbstractPanel * > table_;
 		};
 
