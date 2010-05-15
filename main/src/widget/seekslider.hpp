@@ -43,7 +43,7 @@ namespace khopper {
 			 * @param media media to be tracking
 			 * @param parent parent widget
 			 */
-			SeekSlider( Phonon::MediaObject * media, QWidget * parent );
+			explicit SeekSlider( QWidget * parent );
 
 			/**
 			 * @brief Set media object

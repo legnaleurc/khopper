@@ -1,5 +1,5 @@
 /**
- * @file outputoption.hpp
+ * @file conversiondialog.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,8 +19,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_WIDGET_OUTPUTOPTION_HPP
-#define KHOPPER_WIDGET_OUTPUTOPTION_HPP
+#ifndef KHOPPER_WIDGET_CONVERSIONDIALOG_HPP
+#define KHOPPER_WIDGET_CONVERSIONDIALOG_HPP
 
 #include "plugin/abstractpanel.hpp"
 
@@ -29,21 +29,26 @@
 
 #include <map>
 
+namespace Ui {
+	class ConversionDialog;
+}
+
 namespace khopper {
 
 	namespace widget {
 
 		/// Output format option widget
-		class OutputOption : public QDialog {
+		class ConversionDialog : public QDialog {
 		public:
 			/// Default constructor
-			OutputOption( QWidget * parent = 0 );
+			explicit ConversionDialog( QWidget * parent );
+			virtual ~ConversionDialog();
 
 			/// Get current panel
 			plugin::AbstractPanel * getCurrent() const;
 
 		private:
-			QTabWidget * optionTabs_;
+			Ui::ConversionDialog * ui_;
 			std::map< int ,plugin::AbstractPanel * > table_;
 		};
 

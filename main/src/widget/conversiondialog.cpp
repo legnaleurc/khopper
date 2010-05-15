@@ -1,5 +1,5 @@
 /**
- * @file outputoption.cpp
+ * @file conversiondialog.cpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,9 +19,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "outputoption.hpp"
+#include "conversiondialog.hpp"
 
 #include "plugin/pluginmanager.hpp"
+
+#include "ui_conversiondialog.h"
 
 #include <QtCore/QPluginLoader>
 #include <QtGui/QDialogButtonBox>
@@ -32,31 +34,24 @@ namespace khopper {
 
 	namespace widget {
 
-		OutputOption::OutputOption( QWidget * parent ):
+		ConversionDialog::ConversionDialog( QWidget * parent ):
 		QDialog( parent ),
-		optionTabs_( new QTabWidget( this ) ),
+		ui_( new Ui::ConversionDialog ),
 		table_() {
-			this->setWindowTitle( tr( "Output format setting" ) );
-			this->resize( 320, 240 );
-
-			QVBoxLayout * mainBox = new QVBoxLayout( this );
-			this->setLayout( mainBox );
-
-			mainBox->addWidget( this->optionTabs_ );
+			this->ui_->setupUi( this );
 
 			foreach( plugin::AbstractPanel * panel, plugin::PluginManager::Instance().getPanels() ) {
 				qDebug() << panel;
-				this->table_.insert( std::make_pair( this->optionTabs_->addTab( panel, panel->getTitle() ), panel ) );
+				this->table_.insert( std::make_pair( this->ui_->tabWidget->addTab( panel, panel->getTitle() ), panel ) );
 			}
-
-			QDialogButtonBox * buttons = new QDialogButtonBox( QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, this );
-			mainBox->addWidget( buttons );
-			connect( buttons, SIGNAL( accepted() ), this, SLOT( accept() ) );
-			connect( buttons, SIGNAL( rejected() ), this, SLOT( reject() ) );
 		}
 
-		plugin::AbstractPanel * OutputOption::getCurrent() const {
-			return this->table_.find( this->optionTabs_->currentIndex() )->second;
+		ConversionDialog::~ConversionDialog() {
+			delete this->ui_;
+		}
+
+		plugin::AbstractPanel * ConversionDialog::getCurrent() const {
+			return this->table_.find( this->ui_->tabWidget->currentIndex() )->second;
 		}
 
 	}

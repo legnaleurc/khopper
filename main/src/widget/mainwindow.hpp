@@ -31,6 +31,10 @@
 #include <QtGui/QLineEdit>
 #include <QtGui/QMainWindow>
 
+namespace Ui {
+	class MainWindow;
+}
+
 namespace khopper {
 
 	namespace widget {
@@ -40,7 +44,7 @@ namespace khopper {
 		class Player;
 		class TextCodec;
 		class Preference;
-		class OutputOption;
+		class ConversionDialog;
 
 		/**
 		 * @class MainWindow
@@ -52,10 +56,9 @@ namespace khopper {
 		public:
 			/**
 			 * @brief Default constructor
-			 * @param [in] parent Parent widget
-			 * @param [in] flags Widget flag
 			 */
-			MainWindow( QWidget * parent = 0, Qt::WindowFlags flags = 0 );
+			MainWindow();
+			virtual ~MainWindow();
 
 		public slots:
 			/**
@@ -69,11 +72,11 @@ namespace khopper {
 			void open( const QList< QUrl > & uris );
 
 		private:
+			Ui::MainWindow * ui_;
 			TextCodec * codec_;
-			Player * player_;
-			OutputOption * optionWindow_;
-			QLineEdit * outputPath_;
-			QCheckBox * useSourcePath_;
+			ConversionDialog * conversion_;
+// 			QLineEdit * outputPath_;
+// 			QCheckBox * useSourcePath_;
 			Progress * progress_;
 			ConverterThread * cvt_;
 			Preference * preference_;
@@ -88,8 +91,8 @@ namespace khopper {
 			void fire_( const album::TrackList & );
 			void showErrorMessage_( const QString &, const QString & );
 			void incProgress_( qint64 );
-			void changeOutputPath_();
-			QString getOutDir_( album::TrackSP ) const;
+// 			void changeOutputPath_();
+// 			QString getOutDir_( album::TrackSP ) const;
 		};
 
 	}

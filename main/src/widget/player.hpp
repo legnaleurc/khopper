@@ -29,6 +29,10 @@
 #include <QtGui/QLabel>
 #include <QtGui/QPushButton>
 
+namespace Ui {
+	class Player;
+}
+
 namespace khopper {
 
 	namespace widget {
@@ -42,7 +46,8 @@ namespace khopper {
 
 		public:
 			/// Default constructor
-			Player( QWidget * parent = 0, Qt::WindowFlags f = 0 );
+			explicit Player( QWidget * parent );
+			virtual ~Player();
 
 			/// Get selected tracks
 			album::TrackList getSelectedTracks() const;
@@ -77,15 +82,10 @@ namespace khopper {
 			void updateTimestamp_( int ms );
 
 		private:
+			Ui::Player * ui_;
 			Phonon::MediaObject * player_;
-			SeekSlider * seeker_;
-			Phonon::VolumeSlider * volume_;
 			album::Timestamp currentTimeStamp_;
 			album::Timestamp duration_;
-			QLabel * passedTime_;
-			QLabel * remainTime_;
-			QPushButton * ppb_;
-			SongList * songList_;
 			album::TrackSP currentTrack_;
 			qint64 currentBeginTime_;
 			qint64 currentEndTime_;

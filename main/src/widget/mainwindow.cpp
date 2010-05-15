@@ -26,10 +26,12 @@
 #include "progress.hpp"
 #include "cuesheet.hpp"
 #include "preference.hpp"
-#include "outputoption.hpp"
+#include "conversiondialog.hpp"
 
 #include "util/error.hpp"
 #include "plugin/abstractpanel.hpp"
+
+#include "ui_mainwindow.h"
 
 #include <boost/format.hpp>
 
@@ -61,51 +63,45 @@ namespace khopper {
 
 	namespace widget {
 
-		MainWindow::MainWindow( QWidget * parent, Qt::WindowFlags flags ):
-		QMainWindow( parent, flags ),
+		MainWindow::MainWindow():
+		QMainWindow( 0, 0 ),
+		ui_( new Ui::MainWindow ),
 		codec_( new TextCodec( this ) ),
-		player_( new Player( this ) ),
-		optionWindow_( new OutputOption( this ) ),
-		outputPath_( new QLineEdit( QDir::homePath(), this ) ),
-		useSourcePath_( new QCheckBox( tr( "Same as source directories" ), this ) ),
+		conversion_( new ConversionDialog( this ) ),
+// 		outputPath_( new QLineEdit( QDir::homePath(), this ) ),
+// 		useSourcePath_( new QCheckBox( tr( "Same as source directories" ), this ) ),
 		progress_( new Progress( this ) ),
 		cvt_( new ConverterThread( this ) ),
 		preference_( new Preference( this ) ),
 		about_( new QWidget( this, Qt::Dialog ) ),
 		lastOpenedDir_( QDir::homePath() ) {
+			this->ui_->setupUi( this );
 			// Setting menu bar
 			this->initMenuBar_();
 			// Setting about widget
 			this->initAbout_();
 
-			// Setting central widget
-			QWidget * central = new QWidget( this );
-			QVBoxLayout * mainBox = new QVBoxLayout( central );
-			central->setLayout( mainBox );
-			this->setCentralWidget( central );
-
 			// Add song list
-			mainBox->addWidget( this->player_ );
-			connect( this->player_, SIGNAL( fileDropped( const QList< QUrl > & ) ), this, SLOT( open( const QList< QUrl > & ) ) );
-			connect( this->player_, SIGNAL( requireConvert( const album::TrackList & ) ), this, SLOT( fire_( const album::TrackList & ) ) );
-			connect( this->player_, SIGNAL( error( const QString &, const QString & ) ), this, SLOT( showErrorMessage_( const QString &, const QString & ) ) );
+			connect( this->ui_->player, SIGNAL( fileDropped( const QList< QUrl > & ) ), this, SLOT( open( const QList< QUrl > & ) ) );
+			connect( this->ui_->player, SIGNAL( requireConvert( const album::TrackList & ) ), this, SLOT( fire_( const album::TrackList & ) ) );
+			connect( this->ui_->player, SIGNAL( error( const QString &, const QString & ) ), this, SLOT( showErrorMessage_( const QString &, const QString & ) ) );
 
-			QHBoxLayout * pathBox = new QHBoxLayout;
-			mainBox->addLayout( pathBox );
+// 			QHBoxLayout * pathBox = new QHBoxLayout;
+// 			mainBox->addLayout( pathBox );
 
 			// Output path setting
-			QLabel * outputLabel = new QLabel( tr( "Output to:" ), this );
-			pathBox->addWidget( outputLabel );
-			pathBox->addWidget( this->outputPath_ );
-			QPushButton * changePath = new QPushButton( tr( "..." ), this );
-			pathBox->addWidget( changePath );
-			connect( changePath, SIGNAL( clicked() ), this, SLOT( changeOutputPath_() ) );
-			pathBox->addWidget( this->useSourcePath_ );
+// 			QLabel * outputLabel = new QLabel( tr( "Output to:" ), this );
+// 			pathBox->addWidget( outputLabel );
+// 			pathBox->addWidget( this->outputPath_ );
+// 			QPushButton * changePath = new QPushButton( tr( "..." ), this );
+// 			pathBox->addWidget( changePath );
+// 			connect( changePath, SIGNAL( clicked() ), this, SLOT( changeOutputPath_() ) );
+// 			pathBox->addWidget( this->useSourcePath_ );
 
-			this->useSourcePath_->setChecked( true );
-			this->outputPath_->setEnabled( false );
-			connect( this->useSourcePath_, SIGNAL( toggled( bool ) ), this->outputPath_, SLOT( setDisabled( bool ) ) );
-			connect( changePath, SIGNAL( clicked( bool ) ), this->useSourcePath_, SLOT( setChecked( bool ) ) );
+// 			this->useSourcePath_->setChecked( true );
+// 			this->outputPath_->setEnabled( false );
+// 			connect( this->useSourcePath_, SIGNAL( toggled( bool ) ), this->outputPath_, SLOT( setDisabled( bool ) ) );
+// 			connect( changePath, SIGNAL( clicked( bool ) ), this->useSourcePath_, SLOT( setChecked( bool ) ) );
 
 			// Progress dialog
 			progress_->setWindowModality( Qt::WindowModal );
@@ -121,67 +117,36 @@ namespace khopper {
 			connect( this->progress_, SIGNAL( rejected() ), this->cvt_, SLOT( cancel() ) );
 		}
 
-		void MainWindow::changeOutputPath_() {
-			QString outDir = QFileDialog::getExistingDirectory( this, tr( "Target Directory" ), QDir::homePath() );
-			if( !outDir.isEmpty() ) {
-				this->outputPath_->setText( outDir );
-			}
+		MainWindow::~MainWindow() {
+			delete this->ui_;
 		}
+
+// 		void MainWindow::changeOutputPath_() {
+// 			QString outDir = QFileDialog::getExistingDirectory( this, tr( "Target Directory" ), QDir::homePath() );
+// 			if( !outDir.isEmpty() ) {
+// 				this->outputPath_->setText( outDir );
+// 			}
+// 		}
 
 		void MainWindow::incProgress_( qint64 diff ) {
 			this->progress_->setValue( this->progress_->getValue() + diff );
 		}
 
 		void MainWindow::initMenuBar_() {
-			QMenuBar * menuBar = new QMenuBar( this );
-
-			// setting file menu
-			QMenu * file = new QMenu( tr( "&File" ), menuBar );
-
-			QAction * open = new QAction( tr( "&Open files" ), this );
-			open->setShortcut( tr( "Ctrl+O" ) );
-			connect( open, SIGNAL( triggered() ), this, SLOT( showOpenFilesDialog() ) );
-			file->addAction( open );
-
-			// add file menu to menu bar
-			menuBar->addMenu( file );
-			// file menu done
-
-			// setting tool menu
-			QMenu * tool = new QMenu( tr( "&Tools" ), menuBar );
-			menuBar->addMenu( tool );
-
-			QAction * preference = new QAction( tr( "&Preference" ), this );
-			tool->addAction( preference );
-			connect( preference, SIGNAL( triggered() ), this->preference_, SLOT( exec() ) );
-			// tool menu done
-
-			// setting help menu
-			QMenu * help = new QMenu( tr( "&Help" ), menuBar );
-
-			QAction * about = new QAction( tr( "&About Khopper" ), this );
-			connect( about, SIGNAL( triggered() ), this->about_, SLOT( show() ) );
-			help->addAction( about );
-
-			QAction * aboutQt = new QAction( tr( "About &Qt" ), this );
-			connect( aboutQt, SIGNAL( triggered() ), qApp, SLOT( aboutQt() ) );
-			help->addAction( aboutQt );
-
-			// add help menu to menu bar
-			menuBar->addMenu( help );
-			// help menu done
-
-			setMenuBar( menuBar );
+			connect( this->ui_->action_Open, SIGNAL( triggered() ), this, SLOT( showOpenFilesDialog() ) );
+			connect( this->ui_->action_Preference, SIGNAL( triggered() ), this->preference_, SLOT( exec() ) );
+			connect( this->ui_->actionAbout_Khopper, SIGNAL( triggered() ), this->about_, SLOT( show() ) );
+			connect( this->ui_->actionAbout_Qt, SIGNAL( triggered() ), qApp, SLOT( aboutQt() ) );
 		}
 
-		QString MainWindow::getOutDir_( album::TrackSP track ) const {
-			// FIXME: not always local file
-			if( this->useSourcePath_->isChecked() ) {
-				return QFileInfo( track->getURI().toLocalFile() ).absolutePath();
-			} else {
-				return this->outputPath_->text();
-			}
-		}
+// 		QString MainWindow::getOutDir_( album::TrackSP track ) const {
+// 			// FIXME: not always local file
+// 			if( this->useSourcePath_->isChecked() ) {
+// 				return QFileInfo( track->getURI().toLocalFile() ).absolutePath();
+// 			} else {
+// 				return this->outputPath_->text();
+// 			}
+// 		}
 
 		void MainWindow::fire_( const album::TrackList & tracks ) {
 			if( tracks.empty() ) {
@@ -190,8 +155,8 @@ namespace khopper {
 			}
 
 			// get option widget
-			if( this->optionWindow_->exec() ) {
-				plugin::AbstractPanel * option = this->optionWindow_->getCurrent();
+			if( this->conversion_->exec() ) {
+				plugin::AbstractPanel * option = this->conversion_->getCurrent();
 				codec::WriterSP encoder( option->getWriter() );
 				if( encoder == NULL ) {
 					this->showErrorMessage_( tr( "Run-time error!" ), "Can't get encoder." );
@@ -202,7 +167,7 @@ namespace khopper {
 					// generate output paths
 					QList< QUrl > outputPaths;
 					for( std::size_t i = 0; i < tracks.size(); ++i ) {
-						outputPaths.push_back( QUrl::fromLocalFile( this->getOutDir_( tracks[i] ) + "/" + applyFormat( this->preference_->getTemplate(), tracks[i] ) + "." + option->getSuffix() ) );
+// 						outputPaths.push_back( QUrl::fromLocalFile( this->getOutDir_( tracks[i] ) + "/" + applyFormat( this->preference_->getTemplate(), tracks[i] ) + "." + option->getSuffix() ) );
 					}
 
 					// set progress bar
@@ -321,7 +286,7 @@ namespace khopper {
 				}
 			}
 
-			this->player_->appendTracks( tracks );
+			this->ui_->player->appendTracks( tracks );
 		}
 
 		void MainWindow::initAbout_() {

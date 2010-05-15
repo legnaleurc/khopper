@@ -27,8 +27,8 @@ namespace khopper {
 
 	namespace widget {
 
-		SeekSlider::SeekSlider( Phonon::MediaObject * media, QWidget * parent ):
-		QWidget( parent ),
+		SeekSlider::SeekSlider( QWidget * parent ):
+		QWidget( parent, 0 ),
 		media_( NULL ),
 		slider_( new QSlider( Qt::Horizontal, parent ) ),
 		tracking_( true ),
@@ -45,8 +45,6 @@ namespace khopper {
 			this->slider_->setTracking( true );
 			connect( this->slider_, SIGNAL( valueChanged( int ) ), this, SLOT( seek_( int ) ) );
 			connect( this->slider_, SIGNAL( sliderMoved( int ) ), this, SIGNAL( dragged( int ) ) );
-
-			setMediaObject( media );
 		}
 
 		void SeekSlider::setMediaObject( Phonon::MediaObject * media ) {

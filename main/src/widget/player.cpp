@@ -23,6 +23,8 @@
 #include "seekslider.hpp"
 #include "songlist.hpp"
 
+#include "ui_player.h"
+
 #include <Phonon/AudioOutput>
 #include <QtDebug>
 #include <QtGui/QHBoxLayout>
@@ -39,66 +41,51 @@ namespace khopper {
 
 	namespace widget {
 
-		Player::Player( QWidget * parent, Qt::WindowFlags f ):
-		QWidget( parent, f ),
+		Player::Player( QWidget * parent ):
+		QWidget( parent, 0 ),
+		ui_( new Ui::Player ),
 		player_( new Phonon::MediaObject( this ) ),
-		seeker_( new SeekSlider( this->player_, this ) ),
-		volume_( new Phonon::VolumeSlider( this ) ),
 		currentTimeStamp_(),
 		duration_(),
-		passedTime_( new QLabel( "0:00", this ) ),
-		remainTime_( new QLabel( "0:00", this ) ),
-		ppb_( new QPushButton( tr( "Play" ), this ) ),
-		songList_( new SongList( this ) ),
 		currentTrack_(),
 		currentBeginTime_( -1 ),
 		currentEndTime_( -1 ),
 		starting_( false ) {
-			// Set main layout
-			QVBoxLayout * mainBox = new QVBoxLayout( this );
-			this->setLayout( mainBox );
+			this->ui_->setupUi( this );
 
 			// Set player
 			Phonon::AudioOutput * ao = new Phonon::AudioOutput( Phonon::MusicCategory, this );
 			Phonon::createPath( this->player_, ao );
-			this->volume_->setAudioOutput( ao );
+			this->ui_->seeker->setMediaObject( this->player_ );
+			this->ui_->volume->setAudioOutput( ao );
 			connect( this->player_, SIGNAL( stateChanged( Phonon::State, Phonon::State ) ), this, SLOT( handleState_( Phonon::State, Phonon::State ) ) );
 			connect( this->player_, SIGNAL( tick( qint64 ) ), this, SLOT( tick_( qint64 ) ) );
 
-			// Setting player panel
-			QHBoxLayout * playerBox = new QHBoxLayout;
-			mainBox->addLayout( playerBox );
+			connect( this->ui_->playOrPause, SIGNAL( clicked() ), this, SLOT( playOrPause_() ) );
+			connect( this->ui_->stop, SIGNAL( clicked() ), this, SLOT( stop_() ) );
 
-			connect( this->ppb_, SIGNAL( clicked() ), this, SLOT( playOrPause_() ) );
-			playerBox->addWidget( ppb_ );
-			QPushButton * stop = new QPushButton( tr( "Stop" ), this );
-			connect( stop, SIGNAL( clicked() ), this, SLOT( stop_() ) );
-			playerBox->addWidget( stop );
+			connect( this->ui_->seeker, SIGNAL( dragged( int ) ), this, SLOT( updateTimestamp_( int ) ) );
 
-			connect( this->seeker_, SIGNAL( dragged( int ) ), this, SLOT( updateTimestamp_( int ) ) );
+			connect( this->ui_->songList, SIGNAL( fileDropped( const QList< QUrl > & ) ), this, SIGNAL( fileDropped( const QList< QUrl > & ) ) );
+			connect( this->ui_->songList, SIGNAL( requireConvert( const album::TrackList & ) ), this, SIGNAL( requireConvert( const album::TrackList & ) ) );
+			connect( this->ui_->songList, SIGNAL( requirePlay() ), this, SLOT( play_() ) );
+			connect( this->ui_->songList, SIGNAL( error( const QString &, const QString & ) ), this, SIGNAL( error( const QString &, const QString & ) ) );
+		}
 
-			playerBox->addWidget( this->passedTime_ );
-			playerBox->addWidget( this->seeker_ );
-			playerBox->addWidget( this->remainTime_ );
-			playerBox->addWidget( this->volume_ );
-
-			connect( this->songList_, SIGNAL( fileDropped( const QList< QUrl > & ) ), this, SIGNAL( fileDropped( const QList< QUrl > & ) ) );
-			connect( this->songList_, SIGNAL( requireConvert( const album::TrackList & ) ), this, SIGNAL( requireConvert( const album::TrackList & ) ) );
-			connect( this->songList_, SIGNAL( requirePlay() ), this, SLOT( play_() ) );
-			connect( this->songList_, SIGNAL( error( const QString &, const QString & ) ), this, SIGNAL( error( const QString &, const QString & ) ) );
-			mainBox->addWidget( this->songList_ );
+		Player::~Player() {
+			delete this->ui_;
 		}
 
 		album::TrackList Player::getSelectedTracks() const {
-			return this->songList_->getSelectedTracks();
+			return this->ui_->songList->getSelectedTracks();
 		}
 
 		const album::TrackList & Player::getTracks() const {
-			return this->songList_->getTracks();
+			return this->ui_->songList->getTracks();
 		}
 
 		void Player::appendTracks( const album::TrackList & tracks ) {
-			this->songList_->appendTracks( tracks );
+			this->ui_->songList->appendTracks( tracks );
 		}
 
 		void Player::play_() {
@@ -107,10 +94,10 @@ namespace khopper {
 				return;
 			}
 
-			const album::TrackList & tracks( this->songList_->getTracks() );
+			const album::TrackList & tracks( this->ui_->songList->getTracks() );
 
 			if( !tracks.empty() ) {
-				const album::TrackList selected( this->songList_->getSelectedTracks() );
+				const album::TrackList selected( this->ui_->songList->getSelectedTracks() );
 				if( selected.empty() ) {
 					this->currentTrack_ = tracks[0];
 				} else {
@@ -122,12 +109,12 @@ namespace khopper {
 				this->duration_ = this->currentTrack_->get( "duration" ).value< album::Timestamp >();
 				this->currentBeginTime_ = startTime.toMillisecond();
 				this->currentEndTime_ = this->currentBeginTime_ + this->duration_.toMillisecond();
-				this->seeker_->setRange( this->currentBeginTime_, this->currentEndTime_ );
+				this->ui_->seeker->setRange( this->currentBeginTime_, this->currentEndTime_ );
 				qDebug() << this->currentBeginTime_ << this->currentEndTime_;
 				// set time display
 				this->currentTimeStamp_ = album::Timestamp::fromMillisecond( 0 );
-				this->passedTime_->setText( fromTimestamp( this->currentTimeStamp_ ) );
-				this->remainTime_->setText( fromTimestamp( this->duration_ ) );
+				this->ui_->passedTime->setText( fromTimestamp( this->currentTimeStamp_ ) );
+				this->ui_->remainTime->setText( fromTimestamp( this->duration_ ) );
 				this->starting_ = true;
 				this->player_->play();
 			}
@@ -135,9 +122,9 @@ namespace khopper {
 
 		void Player::stop_() {
 			if( this->player_->state() != Phonon::StoppedState ) {
-				this->ppb_->setText( tr( "Play" ) );
-				this->passedTime_->setText( "0:00" );
-				this->remainTime_->setText( "0:00" );
+				this->ui_->playOrPause->setText( tr( "Play" ) );
+				this->ui_->passedTime->setText( "00:00" );
+				this->ui_->remainTime->setText( "00:00" );
 				this->player_->stop();
 			}
 		}
@@ -146,7 +133,7 @@ namespace khopper {
 			if( this->player_->state() != Phonon::PlayingState ) {
 				this->play_();
 			} else {
-				this->ppb_->setText( tr( "Play" ) );
+				this->ui_->playOrPause->setText( tr( "Play" ) );
 				this->player_->pause();
 			}
 		}
@@ -158,10 +145,10 @@ namespace khopper {
 					this->player_->seek( this->currentBeginTime_ );
 					this->starting_ = false;
 				}
-				this->ppb_->setText( tr( "Pause" ) );
+				this->ui_->playOrPause->setText( tr( "Pause" ) );
 				break;
 			case Phonon::StoppedState:
-				this->ppb_->setText( tr( "Play" ) );
+				this->ui_->playOrPause->setText( tr( "Play" ) );
 				break;
 			case Phonon::ErrorState:
 				emit this->error( tr( "Player error" ), this->player_->errorString() );
@@ -173,8 +160,8 @@ namespace khopper {
 
 		void Player::tick_( qint64 time ) {
 			this->currentTimeStamp_ = album::Timestamp::fromMillisecond( time - this->currentBeginTime_ );
-			this->passedTime_->setText( fromTimestamp( this->currentTimeStamp_ ) );
-			this->remainTime_->setText( fromTimestamp( this->duration_ - this->currentTimeStamp_ ) );
+			this->ui_->passedTime->setText( fromTimestamp( this->currentTimeStamp_ ) );
+			this->ui_->remainTime->setText( fromTimestamp( this->duration_ - this->currentTimeStamp_ ) );
 //			qDebug() << time;
 			if( time >= this->currentEndTime_ ) {
 				this->stop_();
@@ -183,8 +170,8 @@ namespace khopper {
 
 		void Player::updateTimestamp_( int ms ) {
 			this->currentTimeStamp_ = album::Timestamp::fromMillisecond( this->currentBeginTime_ + ms );
-			this->passedTime_->setText( fromTimestamp( this->currentTimeStamp_ ) );
-			this->remainTime_->setText( fromTimestamp( this->duration_ - this->currentTimeStamp_ ) );
+			this->ui_->passedTime->setText( fromTimestamp( this->currentTimeStamp_ ) );
+			this->ui_->remainTime->setText( fromTimestamp( this->duration_ - this->currentTimeStamp_ ) );
 		}
 
 	}
