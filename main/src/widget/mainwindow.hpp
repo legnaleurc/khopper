@@ -39,6 +39,7 @@ namespace khopper {
 
 	namespace widget {
 
+		class AboutWidget;
 		class ConverterThread;
 		class Progress;
 		class Player;
@@ -76,12 +77,11 @@ namespace khopper {
 			TextCodec * codec_;
 			ConversionDialog * conversion_;
 			Preference * preference_;
-			QWidget * about_;
+			AboutWidget * about_;
 			QString lastOpenedDir_;
 
 			void initMenuBar_();
 			void initOptionWindow_();
-			void initAbout_();
 
 		private slots:
 			void fire_( const album::TrackList & );

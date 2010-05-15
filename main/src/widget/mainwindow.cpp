@@ -20,34 +20,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "mainwindow.hpp"
-#include "player.hpp"
-#include "converterthread.hpp"
-#include "textcodec.hpp"
-#include "progress.hpp"
-#include "cuesheet.hpp"
-#include "preference.hpp"
+#include "ui_mainwindow.h"
+#include "aboutwidget.hpp"
 #include "conversiondialog.hpp"
+#include "cuesheet.hpp"
+#include "player.hpp"
+#include "preference.hpp"
+#include "textcodec.hpp"
 
 #include "util/error.hpp"
 #include "plugin/abstractpanel.hpp"
-
-#include "ui_mainwindow.h"
 
 #include <QtCore/QDir>
 #include <QtCore/QFile>
 #include <QtCore/QFileInfo>
 #include <QtDebug>
-#include <QtGui/QAction>
-#include <QtGui/QApplication>
 #include <QtGui/QFileDialog>
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QLabel>
-#include <QtGui/QMenu>
-#include <QtGui/QMenuBar>
 #include <QtGui/QMessageBox>
-#include <QtGui/QPushButton>
-#include <QtGui/QTabWidget>
-#include <QtGui/QVBoxLayout>
 
 namespace khopper {
 
@@ -59,13 +48,11 @@ namespace khopper {
 		codec_( new TextCodec( this ) ),
 		conversion_( new ConversionDialog( this ) ),
 		preference_( new Preference( this ) ),
-		about_( new QWidget( this, Qt::Dialog ) ),
+		about_( new AboutWidget( this ) ),
 		lastOpenedDir_( QDir::homePath() ) {
 			this->ui_->setupUi( this );
 			// Setting menu bar
 			this->initMenuBar_();
-			// Setting about widget
-			this->initAbout_();
 
 			// Add song list
 			connect( this->ui_->player, SIGNAL( fileDropped( const QList< QUrl > & ) ), this, SLOT( open( const QList< QUrl > & ) ) );
@@ -196,65 +183,6 @@ namespace khopper {
 			}
 
 			this->ui_->player->appendTracks( tracks );
-		}
-
-		void MainWindow::initAbout_() {
-			this->about_->setWindowTitle( tr( "About Khopper" ) );
-
-			QVBoxLayout * mainBox = new QVBoxLayout( this->about_ );
-			this->about_->setLayout( mainBox );
-
-			QHBoxLayout * topBox = new QHBoxLayout;
-			mainBox->addLayout( topBox );
-
-			QLabel * logo = new QLabel( this->about_ );
-			logo->setPixmap( QPixmap( ":/image/logo.png" ).scaled( 60, 60 ) );
-			topBox->addWidget( logo );
-
-			QLabel * version = new QLabel( this->about_ );
-			version->setText( tr(
-				"<h1>%1</h1>"
-				"Version %2<br/>"
-				"Part of %3<br/>"
-			).arg( qApp->applicationName() ).arg( qApp->applicationVersion() ).arg( qApp->organizationName() ) );
-			topBox->addWidget( version );
-
-			QTabWidget * tw = new QTabWidget( this->about_ );
-			mainBox->addWidget( tw );
-
-			QLabel * about = new QLabel( tr(
-				"An audio converter<br/>"
-				"<br/>"
-				"(C) 2008<br/>"
-				"<br/>"
-				"Present by Wei-Cheng Pan<br/>"
-				"<a href=\"http://legnaleurc.blogspot.com/search/label/Khopper\">Home Page</a><br/>"
-			), tw );
-			about->setTextFormat( Qt::RichText );
-			tw->addTab( about, tr( "&About" ) );
-
-			QLabel * authors = new QLabel( this->about_ );
-			authors->setText( tr(
-				"Wei-Cheng Pan<br/>"
-				"&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"http://legnaleurc.blogspot.com\">http://legnaleurc.blogspot.com</a><br/>"
-				"&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"mailto:legnaleurc@gmail.com\">legnaleurc@gmail.com</a><br/>"
-				"<br/>"
-				"Meng-Lin Jhuang<br/>"
-				"<br/>"
-				"Jheng-Syuan Lin<br/>"
-				"<br/>"
-				"Zih-Jie Jhou<br/>"
-				"<br/>"
-				"Wei-Ru Zeng<br/>"
-				"<br/>"
-			) );
-			authors->setTextFormat( Qt::RichText );
-			tw->addTab( authors, tr( "A&uthors" ) );
-
-			QLabel * womm = new QLabel( this->about_ );
-			womm->setPixmap( QPixmap( ":/image/womm.png" ) );
-			womm->setAlignment( Qt::AlignCenter );
-			tw->addTab( womm, tr( "&Certification" ) );
 		}
 
 		void MainWindow::showErrorMessage_( const QString & title, const QString & msg ) {
