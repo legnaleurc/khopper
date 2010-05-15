@@ -64,6 +64,10 @@ namespace khopper {
 			 */
 			virtual QString getTitle() const;
 
+		protected:
+			virtual void doInstall( const QFileInfo & fileInfo );
+			virtual void doUninstall();
+
 		private:
 			QButtonGroup * brChoise_;
 			QComboBox * bitRate_;

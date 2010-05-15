@@ -35,12 +35,17 @@ namespace khopper {
 
 		/// Output format option widget
 		class OutputOption : public QDialog {
+			Q_OBJECT
 		public:
 			/// Default constructor
 			OutputOption( QWidget * parent = 0 );
 
 			/// Get current panel
 			plugin::AbstractPanel * getCurrent() const;
+
+		public slots:
+			void addPanel( khopper::plugin::AbstractPanel * panel );
+			void removePanel( khopper::plugin::AbstractPanel * panel );
 
 		private:
 			QTabWidget * optionTabs_;

@@ -21,6 +21,7 @@
  */
 #include "flacpanel.hpp"
 #include "flacwriter.hpp"
+#include "plugin/pluginmanager.hpp"
 #include "util/text.hpp"
 
 #include <QtCore/QLibrary>
@@ -97,6 +98,14 @@ namespace khopper {
 
 		QString FlacPanel::getTitle() const {
 			return "flac";
+		}
+
+		void FlacPanel::doInstall(const QFileInfo& fileInfo) {
+			PluginManager::Instance().addPanel( this );
+		}
+
+		void FlacPanel::doUninstall() {
+			PluginManager::Instance().removePanel( this );
 		}
 
 	}

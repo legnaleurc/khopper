@@ -44,11 +44,6 @@ namespace khopper {
 
 			mainBox->addWidget( this->optionTabs_ );
 
-			foreach( plugin::AbstractPanel * panel, plugin::PluginManager::Instance().getPanels() ) {
-				qDebug() << panel;
-				this->table_.insert( std::make_pair( this->optionTabs_->addTab( panel, panel->getTitle() ), panel ) );
-			}
-
 			QDialogButtonBox * buttons = new QDialogButtonBox( QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, this );
 			mainBox->addWidget( buttons );
 			connect( buttons, SIGNAL( accepted() ), this, SLOT( accept() ) );
@@ -57,6 +52,16 @@ namespace khopper {
 
 		plugin::AbstractPanel * OutputOption::getCurrent() const {
 			return this->table_.find( this->optionTabs_->currentIndex() )->second;
+		}
+
+		void OutputOption::addPanel( plugin::AbstractPanel * panel ) {
+			this->table_.insert( std::make_pair( this->optionTabs_->addTab( panel, panel->getTitle() ), panel ) );
+		}
+
+		void OutputOption::removePanel( plugin::AbstractPanel * panel ) {
+			int index = this->optionTabs_->indexOf( panel );
+			this->table_.erase( index );
+			this->optionTabs_->removeTab( index );
 		}
 
 	}

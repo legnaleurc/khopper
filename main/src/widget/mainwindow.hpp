@@ -67,6 +67,7 @@ namespace khopper {
 			 * @param [in] filePaths file path
 			 */
 			void open( const QList< QUrl > & uris );
+			void reloadPlugins();
 
 		private:
 			TextCodec * codec_;

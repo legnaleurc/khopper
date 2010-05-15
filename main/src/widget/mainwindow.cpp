@@ -30,6 +30,7 @@
 
 #include "util/error.hpp"
 #include "plugin/abstractpanel.hpp"
+#include "plugin/pluginmanager.hpp"
 
 #include <boost/format.hpp>
 
@@ -119,6 +120,14 @@ namespace khopper {
 			connect( this->cvt_, SIGNAL( error( const QString &, const QString & ) ), this, SLOT( showErrorMessage_( const QString &, const QString & ) ) );
 			// NOTE: works, but danger
 			connect( this->progress_, SIGNAL( rejected() ), this->cvt_, SLOT( cancel() ) );
+
+			// Plugin manager
+			connect( &plugin::PluginManager::Instance(), SIGNAL( panelAdded( khopper::plugin::AbstractPanel * ) ), this->optionWindow_, SLOT( addPanel( khopper::plugin::AbstractPanel * ) ) );
+			connect( &plugin::PluginManager::Instance(), SIGNAL( panelRemoved( khopper::plugin::AbstractPanel * ) ), this->optionWindow_, SLOT( removePanel( khopper::plugin::AbstractPanel * ) ) );
+		}
+
+		void MainWindow::reloadPlugins() {
+			plugin::PluginManager::Instance().reloadPlugins();
 		}
 
 		void MainWindow::changeOutputPath_() {

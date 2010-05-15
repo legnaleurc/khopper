@@ -22,6 +22,7 @@
 #include "wavpanel.hpp"
 
 #include "codec/defaultwriter.hpp"
+#include "plugin/pluginmanager.hpp"
 #include "util/text.hpp"
 
 #include <QtCore/QVariant>
@@ -84,6 +85,14 @@ namespace khopper {
 
 		QString WAVPanel::getTitle() const {
 			return "wav";
+		}
+
+		void WAVPanel::doInstall( const QFileInfo& fileInfo ) {
+			PluginManager::Instance().addPanel( this );
+		}
+
+		void WAVPanel::doUninstall() {
+			PluginManager::Instance().removePanel( this );
 		}
 
 	}

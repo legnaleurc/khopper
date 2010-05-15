@@ -20,6 +20,7 @@ set(KHOPPER_MAIN_MOC_HEADERS
     src/widget/converter.hpp
     src/widget/converterthread.hpp
     src/widget/mainwindow.hpp
+    src/widget/outputoption.hpp
     src/widget/player.hpp
     src/widget/preference.hpp
     src/widget/progress.hpp

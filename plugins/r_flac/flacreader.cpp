@@ -27,10 +27,6 @@
 #include <QtCore/QStringList>
 #include <QtDebug>
 
-/* register plugin */
-namespace {
-	static const bool registered = khopper::plugin::registerReader( "flac", KHOPPER_STRINGIZE(KHOPPER_PLUGIN_ID) );
-}
 Q_EXPORT_PLUGIN2( KHOPPER_PLUGIN_ID, khopper::plugin::FlacReaderCreator )
 
 /* define plugin */
@@ -44,6 +40,13 @@ namespace khopper {
 		}
 		QString FlacReaderCreator::getVersion() const {
 			return KHOPPER_STRINGIZE(KHOPPER_VERSION);
+		}
+		void FlacReaderCreator::doInstall( const QFileInfo & /*fileInfo*/ ) {
+			/* register plugin */
+			khopper::plugin::registerReader( "flac", KHOPPER_STRINGIZE(KHOPPER_PLUGIN_ID) );
+		}
+		void FlacReaderCreator::doUninstall() {
+			/* TODO */
 		}
 	}
 }
