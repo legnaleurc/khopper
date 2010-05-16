@@ -22,6 +22,7 @@
 #include "oggpanel.hpp"
 #include "oggwriter.hpp"
 #include "flacwriter.hpp"
+#include "plugin/pluginmanager.hpp"
 #include "util/text.hpp"
 
 #include <QtCore/QLibrary>
@@ -130,6 +131,14 @@ namespace khopper {
 
 		QString OGGPanel::getTitle() const {
 			return "ogg";
+		}
+
+		void OGGPanel::doInstall(const QFileInfo& fileInfo) {
+			PluginManager::Instance().addPanel( this );
+		}
+
+		void OGGPanel::doUninstall() {
+			PluginManager::Instance().removePanel( this );
 		}
 
 	}

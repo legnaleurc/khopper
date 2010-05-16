@@ -49,6 +49,10 @@ namespace khopper {
 			/// Get widget title
 			virtual QString getTitle() const;
 
+			protected:
+				void doInstall( const QFileInfo & fileInfo );
+				void doUninstall();
+
 		private:
 			QComboBox * channels_;
 			QButtonGroup * brGroup_;

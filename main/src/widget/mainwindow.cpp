@@ -30,6 +30,7 @@
 
 #include "util/error.hpp"
 #include "plugin/abstractpanel.hpp"
+#include "plugin/pluginmanager.hpp"
 
 #include <QtCore/QDir>
 #include <QtCore/QFile>
@@ -54,14 +55,20 @@ namespace khopper {
 			// Setting menu bar
 			this->initMenuBar_();
 
-			// Add song list
 			connect( this->ui_->player, SIGNAL( fileDropped( const QList< QUrl > & ) ), this, SLOT( open( const QList< QUrl > & ) ) );
 			connect( this->ui_->player, SIGNAL( requireConvert( const album::TrackList & ) ), this, SLOT( fire_( const album::TrackList & ) ) );
 			connect( this->ui_->player, SIGNAL( error( const QString &, const QString & ) ), this, SLOT( showErrorMessage_( const QString &, const QString & ) ) );
+
+			connect( &plugin::PluginManager::Instance(), SIGNAL( panelAdded( khopper::plugin::AbstractPanel * ) ), this->conversion_, SLOT( addPanel( khopper::plugin::AbstractPanel * ) ) );
+			connect( &plugin::PluginManager::Instance(), SIGNAL( panelRemoved( khopper::plugin::AbstractPanel * ) ), this->conversion_, SLOT( removePanel( khopper::plugin::AbstractPanel * ) ) );
 		}
 
 		MainWindow::~MainWindow() {
 			delete this->ui_;
+		}
+
+		void MainWindow::reloadPlugins() {
+			plugin::PluginManager::Instance().reloadPlugins();
 		}
 
 		void MainWindow::initMenuBar_() {

@@ -58,11 +58,6 @@ namespace khopper {
 			connect( this->thread_, SIGNAL( errorOccured( const QString &, const QString & ) ), this, SIGNAL( errorOccured( const QString &, const QString & ) ) );
 			// NOTE: works, but danger
 			connect( this->progress_, SIGNAL( canceled() ), this->thread_, SLOT( cancel() ) );
-
-			foreach( plugin::AbstractPanel * panel, plugin::PluginManager::Instance().getPanels() ) {
-				qDebug() << panel;
-				this->table_.insert( std::make_pair( this->ui_->tabWidget->addTab( panel, panel->getTitle() ), panel ) );
-			}
 		}
 
 		ConversionDialog::~ConversionDialog() {
@@ -98,6 +93,16 @@ namespace khopper {
 
 		plugin::AbstractPanel * ConversionDialog::getCurrent() const {
 			return this->table_.find( this->ui_->tabWidget->currentIndex() )->second;
+		}
+
+		void ConversionDialog::addPanel( plugin::AbstractPanel * panel ) {
+			this->table_.insert( std::make_pair( this->ui_->tabWidget->addTab( panel, panel->getTitle() ), panel ) );
+		}
+
+		void ConversionDialog::removePanel( plugin::AbstractPanel * panel ) {
+			int index = this->ui_->tabWidget->indexOf( panel );
+			this->table_.erase( index );
+			this->ui_->tabWidget->removeTab( index );
 		}
 
 		QString ConversionDialog::getOutputPath_( album::TrackSP track ) {

@@ -43,6 +43,7 @@ int main( int argc, char * argv[] ) {
 	QTextCodec::setCodecForTr( QTextCodec::codecForName( "UTF-8" ) );
 
 	khopper::widget::MainWindow window;
+	window.reloadPlugins();
 	window.setWindowTitle( "Khopper" );
 	window.resize( 640, 480 );
 	window.show();

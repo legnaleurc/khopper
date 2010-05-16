@@ -22,6 +22,7 @@
 #ifndef KHOPPER_PLUGIN_ABSTRACTPLUGIN_HPP
 #define KHOPPER_PLUGIN_ABSTRACTPLUGIN_HPP
 
+#include <QtCore/QFileInfo>
 #include <QtCore/QString>
 
 namespace khopper {
@@ -38,13 +39,25 @@ namespace khopper {
 		 */
 		class AbstractPlugin {
 		public:
+			AbstractPlugin();
 			/// virtual destructor
-			virtual ~AbstractPlugin() {}
+			virtual ~AbstractPlugin();
+
+			void install( const QFileInfo & fileInfo );
+			void uninstall();
+			bool isInstalled() const;
 
 			/// get the id of the plugin, must be unique
 			virtual QString getID() const = 0;
 			/// get version string of the plugin
 			virtual QString getVersion() const = 0;
+
+		protected:
+			virtual void doInstall( const QFileInfo & fileInfo ) = 0;
+			virtual void doUninstall() = 0;
+
+		private:
+			bool installed_;
 		};
 
 	}

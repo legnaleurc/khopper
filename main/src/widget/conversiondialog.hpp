@@ -53,8 +53,11 @@ namespace khopper {
 
 			/// Get current panel
 			plugin::AbstractPanel * getCurrent() const;
-
 			void convert( const album::TrackList & tracks, const boost::format & tpl );
+
+		public slots:
+			void addPanel( khopper::plugin::AbstractPanel * panel );
+			void removePanel( khopper::plugin::AbstractPanel * panel );
 
 		signals:
 			void errorOccured( const QString & title, const QString & message );

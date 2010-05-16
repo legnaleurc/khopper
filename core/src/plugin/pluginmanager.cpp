@@ -50,9 +50,9 @@ namespace khopper {
 		namespace private_ {
 
 			PluginManager::PluginManager():
+			QObject( 0 ),
 			searchPaths_(),
-			loadedPlugins_(),
-			loadedPanels_() {
+			loadedPlugins_() {
 				// initialize search paths
 
 				// first search binary related paths, for build time testing
@@ -86,13 +86,10 @@ namespace khopper {
 				if( tmp.exists() ) {
 					this->searchPaths_.push_back( tmp );
 				}
-
-				this->reloadPlugins();
 			}
 
 			void PluginManager::reloadPlugins() {
 				this->loadedPlugins_.clear();
-				this->loadedPanels_.clear();
 
 				foreach( QString filePath, this->getPluginFiles_() ) {
 					qDebug() << filePath;
@@ -102,13 +99,15 @@ namespace khopper {
 						AbstractPlugin * pPlugin = dynamic_cast< AbstractPlugin * >( pInstance );
 						if( pPlugin ) {
 							std::string id = pPlugin->getID().toStdString();
-							std::map< std::string, QObject * >::const_iterator it = this->loadedPlugins_.find( id );
+							std::map< std::string, AbstractPlugin * >::const_iterator it = this->loadedPlugins_.find( id );
 							if( it == this->loadedPlugins_.end() ) {
-								this->loadedPlugins_.insert( std::make_pair( id, pInstance ) );
-								AbstractPanel * panel = qobject_cast< AbstractPanel * >( pInstance );
-								if( panel ) {
-									this->loadedPanels_.push_back( panel );
+								try {
+									pPlugin->install( QFileInfo( filePath ) );
+								} catch( error::BaseError & e ) {
+									qDebug() << "install error:" << e.what();
+									continue;
 								}
+								this->loadedPlugins_.insert( std::make_pair( id, pPlugin ) );
 							} else {
 								bool unloaded = loader.unload();
 								qDebug() << "unload deprecated plugin:" << unloaded;
@@ -120,8 +119,16 @@ namespace khopper {
 				}
 			}
 
-			QObject * PluginManager::getPluginInstance( const QString & name ) const {
-				std::map< std::string, QObject * >::const_iterator it = this->loadedPlugins_.find( name.toStdString() );
+			void PluginManager::addPanel( AbstractPanel * panel ) {
+				emit this->panelAdded( panel );
+			}
+
+			void PluginManager::removePanel( AbstractPanel * panel ) {
+				emit this->panelRemoved( panel );
+			}
+
+			AbstractPlugin * PluginManager::getPluginInstance( const QString & name ) const {
+				std::map< std::string, AbstractPlugin * >::const_iterator it = this->loadedPlugins_.find( name.toStdString() );
 				if( it != this->loadedPlugins_.end() ) {
 					return it->second;
 				} else {

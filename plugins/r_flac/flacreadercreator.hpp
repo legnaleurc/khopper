@@ -30,6 +30,10 @@ namespace khopper {
 
 		class FlacReaderCreator : public QObject, public AbstractReaderCreator {
 			virtual codec::ReaderSP doCreate() const;
+
+		protected:
+			virtual void doInstall( const QFileInfo & fileInfo );
+			virtual void doUninstall();
 		public:
 			virtual QString getID() const;
 			virtual QString getVersion() const;
