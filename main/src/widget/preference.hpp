@@ -30,6 +30,10 @@
 #include <QtGui/QLabel>
 #include <QtGui/QLineEdit>
 
+namespace Ui {
+	class Preference;
+}
+
 namespace khopper {
 
 	namespace widget {
@@ -42,7 +46,8 @@ namespace khopper {
 
 		public:
 			/// Default constructor
-			Preference( QWidget * parent = 0 );
+			explicit Preference( QWidget * parent );
+			virtual ~Preference();
 
 			/**
 			 * @brief Get file name template
@@ -55,10 +60,8 @@ namespace khopper {
 			void perform_( QAbstractButton * );
 
 		private:
+			Ui::Preference * ui_;
 			QFont currentFont_;
-			QLabel * cfLabel_;
-			QLineEdit * fnTpl_;
-			QDialogButtonBox * buttons_;
 
 			void apply_();
 			void revert_();

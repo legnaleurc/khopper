@@ -20,6 +20,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "preference.hpp"
+#include "ui_preference.h"
 
 #include <QtCore/QRegExp>
 #include <QtCore/QSettings>
@@ -44,23 +45,10 @@ namespace khopper {
 
 		Preference::Preference( QWidget * parent ):
 		QDialog( parent ),
-		currentFont_(),
-		cfLabel_( new QLabel( this ) ),
-		fnTpl_( new QLineEdit( this ) ),
-		buttons_( new QDialogButtonBox( QDialogButtonBox::Ok | QDialogButtonBox::Apply | QDialogButtonBox::Cancel, Qt::Horizontal, this ) ) {
+		ui_( new Ui::Preference ),
+		currentFont_() {
+			this->ui_->setupUi( this );
 			QSettings setting;
-
-			this->setWindowTitle( tr( "Preference" ) );
-
-			QVBoxLayout * mainBox = new QVBoxLayout( this );
-			this->setLayout( mainBox );
-
-			// set font
-			QGroupBox * fGroup = new QGroupBox( tr( "Font" ), this );
-			mainBox->addWidget( fGroup );
-
-			QHBoxLayout * fBox = new QHBoxLayout( fGroup );
-			fGroup->setLayout( fBox );
 
 			setting.beginGroup( "preference" );
 			if( setting.contains( "font" ) && this->currentFont_.fromString( setting.value( "font" ).toString() ) ) {
@@ -70,40 +58,24 @@ namespace khopper {
 			}
 			setting.endGroup();
 
-			this->cfLabel_->setText( ::fontTemplate( this->currentFont_ ) );
-			fBox->addWidget( this->cfLabel_ );
+			this->ui_->fontName->setText( fontTemplate( this->currentFont_ ) );
 
-			QPushButton * change = new QPushButton( "...", this );
-			fBox->addWidget( change );
-			connect( change, SIGNAL( clicked() ), this, SLOT( changeFont_() ) );
-
-			// set name template
-			QGroupBox * fnGroup = new QGroupBox( tr( "File name template" ), this );
-			mainBox->addWidget( fnGroup );
-
-			QVBoxLayout * fnBox = new QVBoxLayout( fnGroup );
-			fnGroup->setLayout( fnBox );
+			connect( this->ui_->browse, SIGNAL( clicked() ), this, SLOT( changeFont_() ) );
 
 			// Output name template
 			setting.beginGroup( "preference" );
-			this->fnTpl_->setText( setting.value( "filename", "%2i_%t" ).toString() );
+			this->ui_->tpl->setText( setting.value( "filename", "%2i_%t" ).toString() );
 			setting.endGroup();
-			this->fnTpl_->setToolTip( tr(
-				"Keywords:\n"
-				"%t: title\n"
-				"%a: artist\n"
-				"%Ni: index of track, N means width\n"
-				"%%: \'%\' literal\n"
-				"Extensions will automaticaly append."
-			) );
-			fnBox->addWidget( this->fnTpl_ );
 
-			mainBox->addWidget( this->buttons_ );
-			connect( this->buttons_, SIGNAL( clicked( QAbstractButton * ) ), this, SLOT( perform_( QAbstractButton * ) ) );
+			connect( this->ui_->buttonBox, SIGNAL( clicked( QAbstractButton * ) ), this, SLOT( perform_( QAbstractButton * ) ) );
+		}
+
+		Preference::~Preference() {
+			delete this->ui_;
 		}
 
 		boost::format Preference::getTemplate() const {
-			QString tmp = this->fnTpl_->text();
+			QString tmp = this->ui_->tpl->text();
 			tmp.replace( "%t", "%1%" );
 			tmp.replace( "%a", "%2%" );
 			tmp.replace( QRegExp( "%(\\d*)i" ), "%|3$0\\1|" );
@@ -117,11 +89,11 @@ namespace khopper {
 			if( ok ) {
 				this->currentFont_ = font;
 			}
-			this->cfLabel_->setText( ::fontTemplate( this->currentFont_ ) );
+			this->ui_->fontName->setText( fontTemplate( this->currentFont_ ) );
 		}
 
 		void Preference::perform_( QAbstractButton * button ) {
-			switch( this->buttons_->buttonRole( button ) ) {
+			switch( this->ui_->buttonBox->buttonRole( button ) ) {
 			case QDialogButtonBox::AcceptRole:
 				this->apply_();
 				this->accept();
@@ -145,7 +117,7 @@ namespace khopper {
 			setting.setValue( "font", this->currentFont_.toString() );
 			qApp->setFont( this->currentFont_ );
 
-			setting.setValue( "filename", this->fnTpl_->text() );
+			setting.setValue( "filename", this->ui_->tpl->text() );
 
 			setting.endGroup();
 		}
@@ -155,9 +127,9 @@ namespace khopper {
 			setting.beginGroup( "preference" );
 
 			this->currentFont_.fromString( setting.value( "font", qApp->font().toString() ).toString() );
-			this->cfLabel_->setText( ::fontTemplate( this->currentFont_ ) );
+			this->ui_->fontName->setText( fontTemplate( this->currentFont_ ) );
 
-			this->fnTpl_->setText( setting.value( "filename", "%2i_%t" ).toString() );
+			this->ui_->tpl->setText( setting.value( "filename", "%2i_%t" ).toString() );
 
 			setting.endGroup();
 		}
