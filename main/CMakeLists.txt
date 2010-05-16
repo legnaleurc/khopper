@@ -19,6 +19,7 @@ include_directories(
     "${CMAKE_SOURCE_DIR}/core/include"
     ${QT_PHONON_INCLUDE_DIR})
 set(KHOPPER_MAIN_MOC_HEADERS
+    src/widget/codecselector.hpp
     src/widget/conversiondialog.hpp
     src/widget/converter.hpp
     src/widget/converterthread.hpp
@@ -28,8 +29,7 @@ set(KHOPPER_MAIN_MOC_HEADERS
     src/widget/progress.hpp
     src/widget/propertieswidget.hpp
     src/widget/seekslider.hpp
-    src/widget/songlist.hpp
-    src/widget/textcodec.hpp)
+    src/widget/songlist.hpp)
 
 qt4_wrap_cpp(KHOPPER_MAIN_MOC_SOURCES ${KHOPPER_MAIN_MOC_HEADERS})
 qt4_wrap_ui(KHOPPER_MAIN_UIC_HEADERS ${KHOPPER_MAIN_FORMS})

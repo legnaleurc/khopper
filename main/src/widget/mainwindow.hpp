@@ -43,7 +43,7 @@ namespace khopper {
 		class ConverterThread;
 		class Progress;
 		class Player;
-		class TextCodec;
+		class CodecSelector;
 		class Preference;
 		class ConversionDialog;
 
@@ -74,7 +74,7 @@ namespace khopper {
 
 		private:
 			Ui::MainWindow * ui_;
-			TextCodec * codec_;
+			CodecSelector * codec_;
 			ConversionDialog * conversion_;
 			Preference * preference_;
 			AboutWidget * about_;

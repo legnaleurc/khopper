@@ -1,5 +1,5 @@
 /**
- * @file textcodec.hpp
+ * @file codecselector.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,12 +19,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_WIDGET_TEXTCODEC_HPP
-#define KHOPPER_WIDGET_TEXTCODEC_HPP
+#ifndef KHOPPER_WIDGET_CODECSELECTOR_HPP
+#define KHOPPER_WIDGET_CODECSELECTOR_HPP
 
-#include <QtGui/QComboBox>
 #include <QtGui/QDialog>
-#include <QtGui/QLabel>
+
+namespace Ui {
+	class CodecSelector;
+}
 
 namespace khopper {
 
@@ -33,7 +35,7 @@ namespace khopper {
 		/**
 		 * @brief Decode string dialog
 		 */
-		class TextCodec : public QDialog {
+		class CodecSelector : public QDialog {
 			Q_OBJECT
 
 		public:
@@ -42,7 +44,8 @@ namespace khopper {
 			 * @param parent Parent widget
 			 * @param f Window flags
 			 */
-			TextCodec( QWidget * parent = 0, Qt::WindowFlags f = 0 );
+			explicit CodecSelector( QWidget * parent );
+			virtual ~CodecSelector();
 			/**
 			 * @brief Set encoded string
 			 * @param [in] encoded Encoded string
@@ -55,14 +58,12 @@ namespace khopper {
 			QString getDecoded() const;
 
 		private slots:
-			void update( int );
+			void update_( int );
 
 		private:
+			Ui::CodecSelector * ui_;
 			QByteArray encoded_;
 			QString decoded_;
-
-			QComboBox * codecs_;
-			QLabel * contents_;
 		};
 
 	}

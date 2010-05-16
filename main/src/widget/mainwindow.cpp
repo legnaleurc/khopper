@@ -22,11 +22,11 @@
 #include "mainwindow.hpp"
 #include "ui_mainwindow.h"
 #include "aboutwidget.hpp"
+#include "codecselector.hpp"
 #include "conversiondialog.hpp"
 #include "cuesheet.hpp"
 #include "player.hpp"
 #include "preference.hpp"
-#include "textcodec.hpp"
 
 #include "util/error.hpp"
 #include "plugin/abstractpanel.hpp"
@@ -45,7 +45,7 @@ namespace khopper {
 		MainWindow::MainWindow():
 		QMainWindow( 0, 0 ),
 		ui_( new Ui::MainWindow ),
-		codec_( new TextCodec( this ) ),
+		codec_( new CodecSelector( this ) ),
 		conversion_( new ConversionDialog( this ) ),
 		preference_( new Preference( this ) ),
 		about_( new AboutWidget( this ) ),
