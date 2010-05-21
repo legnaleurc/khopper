@@ -1,7 +1,6 @@
 /**
- * @file tr1.hpp
+ * @file applicationprivate.hpp
  * @author Wei-Cheng Pan
- * @attention If you need me, include me FIRST!
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
  *
@@ -20,34 +19,14 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_UTIL_TR1_HPP
-#define KHOPPER_UTIL_TR1_HPP
+#ifndef KHOPPER_APPLICATIONPRIVATE_HPP
+#define KHOPPER_APPLICATIONPRIVATE_HPP
 
-// for stdint.h in C99
-#define __STDC_CONSTANT_MACROS
+namespace khopper {
 
-#ifdef _MSC_VER
-# ifdef KHOPPER_LIBRARY
-#  define KHOPPER_DLL __declspec(dllexport)
-# else
-#  define KHOPPER_DLL __declspec(dllimport)
-# endif
-# if _MSC_FULL_VER >= 150030729
-#  include <memory>
-#  include <stdint.h>
-# else
-// reserved for older msvc
-# endif
-# elif defined( __GNUC__ )
-# define KHOPPER_EXPORT
-# if __GNUC__ >= 4
-# include <tr1/memory>
-# include <cstdint>
-# else
-// reserved for older gcc
-# endif
-#else
-// reserved for other compilers
-#endif
+	struct ApplicationPrivate {
+		void reloadPlugins();
+	};
+}
 
 #endif

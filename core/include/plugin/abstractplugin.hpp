@@ -22,6 +22,8 @@
 #ifndef KHOPPER_PLUGIN_ABSTRACTPLUGIN_HPP
 #define KHOPPER_PLUGIN_ABSTRACTPLUGIN_HPP
 
+#include "util/tr1.hpp"
+
 #include <QtCore/QFileInfo>
 #include <QtCore/QString>
 
@@ -37,7 +39,7 @@ namespace khopper {
 		 * AbstractPanel, AbstractReaderCreator and AbstractWriterCreator do so.
 		 * Use them instead of this interface.
 		 */
-		class AbstractPlugin {
+		class KHOPPER_DLL AbstractPlugin {
 		public:
 			AbstractPlugin();
 			/// virtual destructor

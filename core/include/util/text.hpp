@@ -41,19 +41,19 @@ namespace khopper {
 		/**
 		 * @brief Encode unicode string to UTF-8
 		 */
-		KHOPPER_EXPORT std::string toUtf8( const std::wstring & unicode );
+		KHOPPER_DLL std::string toUtf8( const std::wstring & unicode );
 		/**
 		 * @brief Convert narrow string to wide string
 		 */
-		KHOPPER_EXPORT std::wstring toStdWString( const char * str );
+		KHOPPER_DLL std::wstring toStdWString( const char * str );
 
 		/// @brief Get suffix of a file name
-		KHOPPER_EXPORT std::string getSuffix( const QString & filePath );
+		KHOPPER_DLL std::string getSuffix( const QString & filePath );
 		/**
 		 * @brief Overloaded version for convenience
 		 * @sa getSuffix(const QString &)
 		 */
-		KHOPPER_EXPORT std::string getSuffix( const QByteArray & filePath );
+		KHOPPER_DLL std::string getSuffix( const QByteArray & filePath );
 
 		/**
 		 * @brief Join paths to one path
@@ -61,7 +61,7 @@ namespace khopper {
 		 * @param [in] back back part
 		 * @return Complete path
 		 */
-		KHOPPER_EXPORT QString joinPath( const QString & front, const QString & back );
+		KHOPPER_DLL QString joinPath( const QString & front, const QString & back );
 
 	}
 

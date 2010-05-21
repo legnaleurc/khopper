@@ -50,7 +50,6 @@ namespace khopper {
 		namespace private_ {
 
 			PluginManager::PluginManager():
-			QObject( 0 ),
 			searchPaths_(),
 			loadedPlugins_() {
 				// initialize search paths
@@ -117,14 +116,6 @@ namespace khopper {
 						qDebug() << loader.errorString();
 					}
 				}
-			}
-
-			void PluginManager::addPanel( AbstractPanel * panel ) {
-				emit this->panelAdded( panel );
-			}
-
-			void PluginManager::removePanel( AbstractPanel * panel ) {
-				emit this->panelRemoved( panel );
 			}
 
 			AbstractPlugin * PluginManager::getPluginInstance( const QString & name ) const {

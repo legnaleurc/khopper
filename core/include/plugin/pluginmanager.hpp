@@ -49,8 +49,7 @@ namespace khopper {
 			 * @ingroup Plugins
 			 * @brief Private plugin manager
 			 */
-			class KHOPPER_EXPORT PluginManager : public QObject {
-				Q_OBJECT
+			class Q_DECL_EXPORT PluginManager {
 			public:
 				/// default constructor
 				PluginManager();
@@ -67,12 +66,6 @@ namespace khopper {
 				}
 				/// get plugin instance by name
 				AbstractPlugin * getPluginInstance( const QString & name ) const;
-				void addPanel( AbstractPanel * panel );
-				void removePanel( AbstractPanel * panel );
-
-			signals:
-				void panelAdded( khopper::plugin::AbstractPanel * panel );
-				void panelRemoved( khopper::plugin::AbstractPanel * panel );
 
 			private:
 				QStringList getPluginFiles_() const;

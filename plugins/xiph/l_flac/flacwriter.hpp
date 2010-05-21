@@ -57,6 +57,6 @@ namespace khopper {
 }
 
 typedef khopper::codec::FlacWriter * ( * FlacWriterCreator )();
-extern "C" KHOPPER_EXPORT khopper::codec::FlacWriter * createFlacWriter();
+extern "C" KHOPPER_DLL khopper::codec::FlacWriter * createFlacWriter();
 
 #endif

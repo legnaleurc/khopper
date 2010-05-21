@@ -22,7 +22,7 @@
 #include "mp3panel.hpp"
 #include "mp3writer.hpp"
 #include "util/text.hpp"
-#include "plugin/pluginmanager.hpp"
+#include "application.hpp"
 
 #include <QtCore/QVariant>
 #include <QtDebug>
@@ -140,11 +140,11 @@ namespace khopper {
 		}
 
 		void MP3Panel::doInstall( const QFileInfo & /*fileInfo*/ ) {
-			PluginManager::Instance().addPanel( this );
+			KHOPPER_APPLICATION->addPanel( this );
 		}
 
 		void MP3Panel::doUninstall() {
-			PluginManager::Instance().removePanel( this );
+			KHOPPER_APPLICATION->removePanel( this );
 		}
 
 	}

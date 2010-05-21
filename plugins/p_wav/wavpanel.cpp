@@ -22,7 +22,7 @@
 #include "wavpanel.hpp"
 
 #include "codec/defaultwriter.hpp"
-#include "plugin/pluginmanager.hpp"
+#include "application.hpp"
 #include "util/text.hpp"
 
 #include <QtCore/QVariant>
@@ -88,11 +88,11 @@ namespace khopper {
 		}
 
 		void WAVPanel::doInstall( const QFileInfo& fileInfo ) {
-			PluginManager::Instance().addPanel( this );
+			KHOPPER_APPLICATION->addPanel( this );
 		}
 
 		void WAVPanel::doUninstall() {
-			PluginManager::Instance().removePanel( this );
+			KHOPPER_APPLICATION->removePanel( this );
 		}
 
 	}

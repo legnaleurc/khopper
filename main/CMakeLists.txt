@@ -35,6 +35,10 @@ qt4_wrap_cpp(KHOPPER_MAIN_MOC_SOURCES ${KHOPPER_MAIN_MOC_HEADERS})
 qt4_wrap_ui(KHOPPER_MAIN_UIC_HEADERS ${KHOPPER_MAIN_FORMS})
 qt4_add_resources(KHOPPER_MAIN_RCC_SOURCES main.qrc)
 
+source_group("Generated Files" FILES ${KHOPPER_MAIN_MOC_SOURCES} ${KHOPPER_MAIN_RCC_SOURCES} ${KHOPPER_MAIN_UIC_HEADERS})
+source_group("Resource Files" REGULAR_EXPRESSION .*\\.rc)
+source_group("Form Files" REGULAR_EXPRESSION .*\\.ui)
+
 if(MSVC)
     add_executable(khopper WIN32 main.rc ${KHOPPER_MAIN_HEADERS} ${KHOPPER_MAIN_SOURCES} ${KHOPPER_MAIN_MOC_SOURCES} ${KHOPPER_MAIN_UIC_HEADERS} ${KHOPPER_MAIN_RCC_SOURCES})
     target_link_libraries(khopper khopper_core ${QT_LIBRARIES} ${QT_PHONON_LIBRARY} ${QT_QTMAIN_LIBRARY})

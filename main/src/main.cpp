@@ -23,16 +23,17 @@
  * @namespace khopper
  * @brief All componets in this program
  */
+#include "application.hpp"
 #include "mainwindow.hpp"
 #include "util/text.hpp"
 
 #include <QtCore/QSettings>
 #include <QtCore/QTextCodec>
-#include <QtGui/QApplication>
+//#include <QtGui/QApplication>
 
 /// Main program
 int main( int argc, char * argv[] ) {
-	QApplication app( argc, argv );
+	khopper::Application app( argc, argv );
 
 	QApplication::setWindowIcon( QIcon( ":/image/logo.png" ) );
 	QApplication::setOrganizationName( "FoolproofProject" );
@@ -43,10 +44,11 @@ int main( int argc, char * argv[] ) {
 	QTextCodec::setCodecForTr( QTextCodec::codecForName( "UTF-8" ) );
 
 	khopper::widget::MainWindow window;
-	window.reloadPlugins();
 	window.setWindowTitle( "Khopper" );
 	window.resize( 640, 480 );
 	window.show();
+
+	app.reloadPlugins();
 
 	QList< QUrl > tmp;
 	foreach( QString path, QApplication::arguments().mid( 1 ) ) {

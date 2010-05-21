@@ -39,7 +39,7 @@ namespace khopper {
 		 *
 		 * This class provides a default audio writer implementation.
 		 */
-		class KHOPPER_EXPORT DefaultWriter : public AbstractWriter {
+		class KHOPPER_DLL DefaultWriter : public AbstractWriter {
 		public:
 			/**
 			 * @brief Default constructor

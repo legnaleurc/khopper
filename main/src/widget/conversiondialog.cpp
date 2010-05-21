@@ -21,7 +21,7 @@
  */
 #include "conversiondialog.hpp"
 #include "ui_conversiondialog.h"
-#include "plugin/pluginmanager.hpp"
+#include "application.hpp"
 #include "progress.hpp"
 #include "converterthread.hpp"
 
@@ -48,6 +48,9 @@ namespace khopper {
 			this->ui_->outputPath->setText( QDir::homePath() );
 
 			connect( this->ui_->browse, SIGNAL( clicked() ), this, SLOT( changeOutputPath_() ) );
+
+			connect( KHOPPER_APPLICATION, SIGNAL( panelAdded( khopper::plugin::AbstractPanel * ) ), this, SLOT( addPanel( khopper::plugin::AbstractPanel * ) ) );
+			connect( KHOPPER_APPLICATION, SIGNAL( panelRemoved( khopper::plugin::AbstractPanel * ) ), this, SLOT( removePanel( khopper::plugin::AbstractPanel * ) ) );
 
 			// Converter thread
 			connect( this->thread_, SIGNAL( taskName( const QString & ) ), this->progress_, SLOT( setItemName( const QString & ) ) );

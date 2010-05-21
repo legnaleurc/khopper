@@ -116,7 +116,7 @@ namespace khopper {
 		 * @ingroup Codecs
 		 * @brief Codec error
 		 */
-		class KHOPPER_EXPORT Codec {};
+		class Codec {};
 		/// Error on encoding or decoding
 		typedef Error< Codec > CodecError;
 
