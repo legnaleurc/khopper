@@ -43,46 +43,34 @@ namespace khopper {
 		class AbstractPanel;
 		class AbstractPlugin;
 
-		namespace private_ {
+		/**
+		 * @ingroup Plugins
+		 * @brief Private plugin manager
+		 */
+		class PluginManager {
+		public:
+			/// default constructor
+			PluginManager();
 
 			/**
-			 * @ingroup Plugins
-			 * @brief Private plugin manager
+			 * @brief reload all plugins
+			 *
+			 * Will discard duplicated plugins.
 			 */
-			class Q_DECL_EXPORT PluginManager {
-			public:
-				/// default constructor
-				PluginManager();
+			void reloadPlugins();
 
-				/**
-				 * @brief reload all plugins
-				 *
-				 * Will discard duplicated plugins.
-				 */
-				void reloadPlugins();
+			const std::list< QDir > & getSearchPaths() const {
+				return this->searchPaths_;
+			}
+			/// get plugin instance by name
+			AbstractPlugin * getPluginInstance( const QString & name ) const;
 
-				const std::list< QDir > & getSearchPaths() const {
-					return this->searchPaths_;
-				}
-				/// get plugin instance by name
-				AbstractPlugin * getPluginInstance( const QString & name ) const;
+		private:
+			QStringList getPluginFiles_() const;
 
-			private:
-				QStringList getPluginFiles_() const;
-
-				std::list< QDir > searchPaths_;
-				std::map< std::string, AbstractPlugin * > loadedPlugins_;
-			};
-
-		}
-
-		/// PluginManager singleton
-		typedef Loki::SingletonHolder<
-			private_::PluginManager,
-			Loki::CreateUsingNew,
-			Loki::DefaultLifetime,
-			Loki::ClassLevelLockable
-		> PluginManager;
+			std::list< QDir > searchPaths_;
+			std::map< std::string, AbstractPlugin * > loadedPlugins_;
+		};
 
 	}
 

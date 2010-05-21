@@ -19,7 +19,7 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
-#include "plugin/pluginmanager.hpp"
+#include "pluginmanager.hpp"
 #include "plugin/abstractplugin.hpp"
 #include "plugin/abstractpanel.hpp"
 
@@ -43,102 +43,92 @@ namespace {
 
 }
 
-namespace khopper {
+using namespace khopper::plugin;
 
-	namespace plugin {
+PluginManager::PluginManager():
+searchPaths_(),
+loadedPlugins_() {
+	// initialize search paths
 
-		namespace private_ {
-
-			PluginManager::PluginManager():
-			searchPaths_(),
-			loadedPlugins_() {
-				// initialize search paths
-
-				// first search binary related paths, for build time testing
-				QDir tmp( qApp->applicationDirPath() );
+	// first search binary related paths, for build time testing
+	QDir tmp( qApp->applicationDirPath() );
 #ifdef _MSC_VER
-				// hack for MSVC
+	// hack for MSVC
 # ifdef _DEBUG
-				if( tmp.cd( "../plugins/Debug" ) ) {
-					this->searchPaths_.push_back( tmp );
-				}
+	if( tmp.cd( "../plugins/Debug" ) ) {
+		this->searchPaths_.push_back( tmp );
+	}
 # else
-				if( tmp.cd( "../plugins/Release" ) ) {
-					this->searchPaths_.push_back( tmp );
-				}
+	if( tmp.cd( "../plugins/Release" ) ) {
+		this->searchPaths_.push_back( tmp );
+	}
 # endif
 #else
-				if( tmp.cd( "../lib/plugins" ) ) {
-					this->searchPaths_.push_back( tmp );
-				}
-#endif
-				// second search personal settings
-				tmp = QDir::home();
-				if( tmp.cd( ".khopper/plugins" ) ) {
-					this->searchPaths_.push_back( tmp );
-				}
-				tmp = QDir( "/usr/local/lib/khopper/plugins" );
-				if( tmp.exists() ) {
-					this->searchPaths_.push_back( tmp );
-				}
-				tmp = QDir( "/usr/lib/khopper/plugins" );
-				if( tmp.exists() ) {
-					this->searchPaths_.push_back( tmp );
-				}
-			}
-
-			void PluginManager::reloadPlugins() {
-				this->loadedPlugins_.clear();
-
-				foreach( QString filePath, this->getPluginFiles_() ) {
-					qDebug() << filePath;
-					QPluginLoader loader( filePath );
-					QObject * pInstance = loader.instance();
-					if( pInstance ) {
-						AbstractPlugin * pPlugin = dynamic_cast< AbstractPlugin * >( pInstance );
-						if( pPlugin ) {
-							std::string id = pPlugin->getID().toStdString();
-							std::map< std::string, AbstractPlugin * >::const_iterator it = this->loadedPlugins_.find( id );
-							if( it == this->loadedPlugins_.end() ) {
-								try {
-									pPlugin->install( QFileInfo( filePath ) );
-								} catch( error::BaseError & e ) {
-									qDebug() << "install error:" << e.what();
-									continue;
-								}
-								this->loadedPlugins_.insert( std::make_pair( id, pPlugin ) );
-							} else {
-								bool unloaded = loader.unload();
-								qDebug() << "unload deprecated plugin:" << unloaded;
-							}
-						}
-					} else {
-						qDebug() << loader.errorString();
-					}
-				}
-			}
-
-			AbstractPlugin * PluginManager::getPluginInstance( const QString & name ) const {
-				std::map< std::string, AbstractPlugin * >::const_iterator it = this->loadedPlugins_.find( name.toStdString() );
-				if( it != this->loadedPlugins_.end() ) {
-					return it->second;
-				} else {
-					return NULL;
-				}
-			}
-
-			QStringList PluginManager::getPluginFiles_() const {
-				QStringList list;
-				foreach( QDir d, this->searchPaths_ ) {
-					foreach( QString fileName, d.entryList( getPluginNameFilter(), QDir::Files ) ) {
-						list << d.absoluteFilePath( fileName );
-					}
-				}
-				return list;
-			}
-
-		}
-
+	if( tmp.cd( "../lib/plugins" ) ) {
+		this->searchPaths_.push_back( tmp );
 	}
+#endif
+	// second search personal settings
+	tmp = QDir::home();
+	if( tmp.cd( ".khopper/plugins" ) ) {
+		this->searchPaths_.push_back( tmp );
+	}
+	tmp = QDir( "/usr/local/lib/khopper/plugins" );
+	if( tmp.exists() ) {
+		this->searchPaths_.push_back( tmp );
+	}
+	tmp = QDir( "/usr/lib/khopper/plugins" );
+	if( tmp.exists() ) {
+		this->searchPaths_.push_back( tmp );
+	}
+}
 
+void PluginManager::reloadPlugins() {
+	this->loadedPlugins_.clear();
+
+	foreach( QString filePath, this->getPluginFiles_() ) {
+		qDebug() << filePath;
+		QPluginLoader loader( filePath );
+		QObject * pInstance = loader.instance();
+		if( pInstance ) {
+			AbstractPlugin * pPlugin = dynamic_cast< AbstractPlugin * >( pInstance );
+			if( pPlugin ) {
+				std::string id = pPlugin->getID().toStdString();
+				std::map< std::string, AbstractPlugin * >::const_iterator it = this->loadedPlugins_.find( id );
+				if( it == this->loadedPlugins_.end() ) {
+					try {
+						pPlugin->install( QFileInfo( filePath ) );
+					} catch( error::BaseError & e ) {
+						qDebug() << "install error:" << e.what();
+						continue;
+					}
+					this->loadedPlugins_.insert( std::make_pair( id, pPlugin ) );
+				} else {
+					bool unloaded = loader.unload();
+					qDebug() << "unload deprecated plugin:" << unloaded;
+				}
+			}
+		} else {
+			qDebug() << loader.errorString();
+		}
+	}
+}
+
+AbstractPlugin * PluginManager::getPluginInstance( const QString & name ) const {
+	std::map< std::string, AbstractPlugin * >::const_iterator it = this->loadedPlugins_.find( name.toStdString() );
+	if( it != this->loadedPlugins_.end() ) {
+		return it->second;
+	} else {
+		return NULL;
+	}
+}
+
+QStringList PluginManager::getPluginFiles_() const {
+	QStringList list;
+	foreach( QDir d, this->searchPaths_ ) {
+		foreach( QString fileName, d.entryList( getPluginNameFilter(), QDir::Files ) ) {
+			list << d.absoluteFilePath( fileName );
+		}
+	}
+	return list;
 }

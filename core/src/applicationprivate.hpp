@@ -24,8 +24,14 @@
 
 namespace khopper {
 
+	namespace plugin {
+		class PluginManager;
+	}
+
 	struct ApplicationPrivate {
-		void reloadPlugins();
+		ApplicationPrivate();
+
+		plugin::PluginManager * pm_;
 	};
 }
 

@@ -20,7 +20,7 @@
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 #include "plugin/abstractreadercreator.hpp"
-#include "plugin/pluginmanager.hpp"
+#include "application.hpp"
 #include "codec/defaultreader.hpp"
 
 #ifndef LOKI_CLASS_LEVEL_THREADING
@@ -30,86 +30,84 @@
 #include <loki/Factory.h>
 #include <loki/Singleton.h>
 
-namespace khopper {
+using namespace khopper::plugin;
+using khopper::codec::ReaderSP;
+using khopper::codec::AbstractReader;
+using khopper::codec::DefaultReader;
+using khopper::error::RunTimeError;
 
-	namespace plugin {
+AbstractReaderCreator::AbstractReaderCreator() {
+}
 
-		AbstractReaderCreator::AbstractReaderCreator() {
-		}
+AbstractReaderCreator::~AbstractReaderCreator() {
+}
 
-		AbstractReaderCreator::~AbstractReaderCreator() {
-		}
-
-		codec::ReaderSP AbstractReaderCreator::create() const {
-			codec::ReaderSP pointer;
-			try {
-				pointer = this->doCreate();
-			} catch( ... ) {
-				// FIXME: compile error, don't know why
-				// assert( !"memory allocation failed" );
-				pointer.reset();
-			}
-			assert( pointer || typeid( *pointer ) == typeid( codec::AbstractReader ) || !"got null pointer" );
-			return pointer;
-		}
-
-		/**
-		 * @brief The audio reader factory
-		 * @ingroup Plugins
-		 */
-		typedef Loki::SingletonHolder<
-			Loki::Factory<
-				AbstractReaderCreator,
-				std::string
-			>,
-			Loki::CreateUsingNew,
-			Loki::LongevityLifetime::DieAsSmallObjectChild,
-			Loki::ClassLevelLockable
-		> ReaderFactory;
-
-		/**
-		 * @ingroup Plugins
-		 * @brief From creator functor
-		 * @tparam ProductCreator creator type
-		 */
-		class CreatorLoader {
-		public:
-			/**
-			 * @brief Constructor
-			 * @param plugin The name of plugin
-			 */
-			CreatorLoader( const std::string & plugin ) : plugin_( plugin ) {}
-			/**
-			 * @brief Plugin loader
-			 * @return The product creator
-			 * @throws Error<RunTime> Can't open plugin or load error
-			 *
-			 * The returned resource is managed by Qt Plugin System,
-			 * so don't worry about it's life time.
-			 */
-			AbstractReaderCreator * operator()() {
-				AbstractReaderCreator * c = dynamic_cast< AbstractReaderCreator * >( PluginManager::Instance().getPluginInstance( this->plugin_.c_str() ) );
-				if( !c ) {
-					throw error::RunTimeError( "Invalid plugin!" );
-				}
-				return c;
-			}
-		private:
-			std::string plugin_;
-		};
-
-		bool registerReader( const std::string & key, const std::string & name ) {
-			return ReaderFactory::Instance().Register( key, CreatorLoader( name ) );
-		}
-
-		codec::ReaderSP createReader( const std::string & key ) {
-			try {
-				return ReaderFactory::Instance().CreateObject( key )->create();
-			} catch( std::exception & ) {
-				return codec::ReaderSP( new codec::DefaultReader );
-			}
-		}
-
+ReaderSP AbstractReaderCreator::create() const {
+	ReaderSP pointer;
+	try {
+		pointer = this->doCreate();
+	} catch( ... ) {
+		// FIXME: compile error, don't know why
+		// assert( !"memory allocation failed" );
+		pointer.reset();
 	}
+	assert( pointer || typeid( *pointer ) == typeid( AbstractReader ) || !"got null pointer" );
+	return pointer;
+}
 
+/**
+ * @brief The audio reader factory
+ * @ingroup Plugins
+ */
+typedef Loki::SingletonHolder<
+	Loki::Factory<
+		AbstractReaderCreator,
+		std::string
+	>,
+	Loki::CreateUsingNew,
+	Loki::LongevityLifetime::DieAsSmallObjectChild,
+	Loki::ClassLevelLockable
+> ReaderFactory;
+
+/**
+ * @ingroup Plugins
+ * @brief From creator functor
+ * @tparam ProductCreator creator type
+ */
+class CreatorLoader {
+public:
+	/**
+	 * @brief Constructor
+	 * @param pluginID The ID of plugin
+	 */
+	CreatorLoader( const std::string & pluginID ) : pluginID_( pluginID ) {}
+	/**
+	 * @brief Plugin loader
+	 * @return The product creator
+	 * @throws Error<RunTime> Can't open plugin or load error
+	 *
+	 * The returned resource is managed by Qt Plugin System,
+	 * so don't worry about it's life time.
+	 */
+	AbstractReaderCreator * operator()() {
+		AbstractReaderCreator * c = dynamic_cast< AbstractReaderCreator * >( KHOPPER_APPLICATION->getPluginInstance( this->pluginID_.c_str() ) );
+		if( !c ) {
+			throw RunTimeError( "Invalid plugin!" );
+		}
+		return c;
+	}
+private:
+	std::string pluginID_;
+};
+
+bool khopper::plugin::registerReader( const std::string & key, const std::string & name ) {
+	return ReaderFactory::Instance().Register( key, CreatorLoader( name ) );
+}
+
+ReaderSP khopper::plugin::createReader( const std::string & key ) {
+	try {
+		return ReaderFactory::Instance().CreateObject( key )->create();
+	} catch( std::exception & ) {
+		return ReaderSP( new DefaultReader );
+	}
 }

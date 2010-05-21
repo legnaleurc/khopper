@@ -25,6 +25,7 @@
 
 using namespace khopper;
 using khopper::plugin::AbstractPanel;
+using khopper::plugin::AbstractPlugin;
 using khopper::plugin::PluginManager;
 
 Application::Application( int & argc, char * * argv ):
@@ -45,9 +46,13 @@ void Application::removePanel( AbstractPanel * panel ) {
 }
 
 void Application::reloadPlugins() {
-	this->p_->reloadPlugins();
+	this->p_->pm_->reloadPlugins();
 }
 
-void ApplicationPrivate::reloadPlugins() {
-	PluginManager::Instance().reloadPlugins();
+AbstractPlugin * Application::getPluginInstance( const QString & pluginID ) const {
+	return this->p_->pm_->getPluginInstance( pluginID );
+}
+
+ApplicationPrivate::ApplicationPrivate():
+pm_( new PluginManager ) {
 }
