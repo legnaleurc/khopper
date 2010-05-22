@@ -22,7 +22,7 @@
 #ifndef KHOPPER_CODEC_DEFAULTREADER_HPP
 #define KHOPPER_CODEC_DEFAULTREADER_HPP
 
-#include "codec/abstractreader.hpp"
+#include "abstractreader.hpp"
 
 struct AVFormatContext;
 struct AVCodecContext;

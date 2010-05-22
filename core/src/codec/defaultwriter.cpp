@@ -19,8 +19,8 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
-#include "codec/defaultwriter.hpp"
-#include "util/error.hpp"
+#include "defaultwriter.hpp"
+#include "error.hpp"
 
 extern "C" {
 #include <libavcodec/avcodec.h>
