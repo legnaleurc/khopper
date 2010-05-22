@@ -26,7 +26,7 @@
 
 class QButtonGroup;
 namespace Ui {
-	class MP3Panel;
+	class Mp3Panel;
 }
 
 namespace khopper {
@@ -35,15 +35,15 @@ namespace khopper {
 		/**
 		 * @brief Mp3 option widget
 		 */
-		class MP3Panel : public AbstractPanel {
+		class Mp3Panel : public AbstractPanel {
 		public:
 			/**
 			 * @brief Default constructor
 			 * @param parent Parent widget
 			 * @param f Window flags
 			 */
-			MP3Panel();
-			virtual ~MP3Panel();
+			Mp3Panel();
+			virtual ~Mp3Panel();
 
 			/**
 			 * @brief Get encoder setting object
@@ -52,7 +52,7 @@ namespace khopper {
 			virtual codec::WriterSP getWriter() const;
 
 		private:
-			Ui::MP3Panel * ui_;
+			Ui::Mp3Panel * ui_;
 			QButtonGroup * choise_;
 		};
 

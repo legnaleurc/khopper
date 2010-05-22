@@ -33,6 +33,7 @@ namespace khopper {
 			bool installed;
 			QString id;
 			QString version;
+			QFileInfo info;
 		};
 
 	}

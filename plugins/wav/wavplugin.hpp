@@ -27,7 +27,7 @@
 namespace khopper {
 
 	namespace widget {
-		class WAVPanel;
+		class WavPanel;
 	}
 
 	namespace plugin {
@@ -35,22 +35,22 @@ namespace khopper {
 		/**
 		 * @brief Wav option widget
 		 */
-		class WAVPlugin : public AbstractPlugin {
+		class WavPlugin : public AbstractPlugin {
 		public:
 			/**
 			 * @brief Default constructor
 			 * @param parent Parent widget
 			 * @param f Window flags
 			 */
-			WAVPlugin();
-			virtual ~WAVPlugin();
+			WavPlugin();
+			virtual ~WavPlugin();
 
 		protected:
-			virtual void doInstall( const QFileInfo & fileInfo );
+			virtual void doInstall();
 			virtual void doUninstall();
 
 		private:
-			widget::WAVPanel * panel_;
+			widget::WavPanel * panel_;
 		};
 
 	}

@@ -54,7 +54,7 @@ XiphPlugin::~XiphPlugin() {
 	delete this->oggPanel_;
 }
 
-void XiphPlugin::doInstall( const QFileInfo & fileInfo ) {
+void XiphPlugin::doInstall() {
 	KHOPPER_APPLICATION->addPanel( this->flacPanel_ );
 	KHOPPER_APPLICATION->addPanel( this->oggPanel_ );
 	khopper::plugin::registerReader( "flac", creator );

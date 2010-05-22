@@ -21,44 +21,17 @@
  */
 #include "mp3panel.hpp"
 #include "ui_mp3panel.h"
-#include "mp3plugin.hpp"
 #include "mp3writer.hpp"
 
-#include "khopper/text.hpp"
-#include "khopper/application.hpp"
-
 #include <QtCore/QVariant>
-#include <QtDebug>
-#include <QtPlugin>
 
-Q_EXPORT_PLUGIN2( KHOPPER_PLUGIN_ID, khopper::plugin::MP3Plugin )
-
-using namespace khopper::plugin;
 using namespace khopper::widget;
-using namespace khopper::codec;
+using khopper::codec::WriterSP;
+using khopper::codec::Mp3Writer;
 
-MP3Plugin::MP3Plugin():
-AbstractPlugin(),
-panel_( new MP3Panel ) {
-	this->setID( KHOPPER_STRINGIZE(KHOPPER_PLUGIN_ID) );
-	this->setVersion( KHOPPER_STRINGIZE(KHOPPER_VERSION) );
-}
-
-MP3Plugin::~MP3Plugin() {
-	delete this->panel_;
-}
-
-void MP3Plugin::doInstall( const QFileInfo & /*fileInfo*/ ) {
-	KHOPPER_APPLICATION->addPanel( this->panel_ );
-}
-
-void MP3Plugin::doUninstall() {
-	KHOPPER_APPLICATION->removePanel( this->panel_ );
-}
-
-MP3Panel::MP3Panel():
+Mp3Panel::Mp3Panel():
 AbstractPanel(),
-ui_( new Ui::MP3Panel ),
+ui_( new Ui::Mp3Panel ),
 choise_( new QButtonGroup( this ) ) {
 	this->setTitle( "MPEG Layer 3" );
 	this->setSuffix( "mp3" );
@@ -91,11 +64,11 @@ choise_( new QButtonGroup( this ) ) {
 	this->ui_->channels->setCurrentIndex( 1 );
 }
 
-MP3Panel::~MP3Panel() {
+Mp3Panel::~Mp3Panel() {
 	delete this->ui_;
 }
 
-WriterSP MP3Panel::getWriter() const {
+WriterSP Mp3Panel::getWriter() const {
 	Mp3Writer * encoder = new Mp3Writer;
 
 	switch( this->choise_->checkedId() ) {
@@ -111,5 +84,5 @@ WriterSP MP3Panel::getWriter() const {
 	encoder->setSampleRate( this->ui_->sampleRate->itemData( this->ui_->sampleRate->currentIndex() ).toInt() );
 	encoder->setChannels( this->ui_->channels->itemData( this->ui_->channels->currentIndex() ).toInt() );
 
-	return codec::WriterSP( encoder );
+	return WriterSP( encoder );
 }

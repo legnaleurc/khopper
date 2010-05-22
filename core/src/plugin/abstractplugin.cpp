@@ -51,7 +51,8 @@ void AbstractPlugin::install( const QFileInfo & fileInfo ) {
 	if( this->p_->installed ) {
 		return;
 	}
-	this->doInstall( fileInfo );
+	this->p_->info = fileInfo;
+	this->doInstall();
 	this->p_->installed = true;
 }
 
@@ -70,5 +71,6 @@ bool AbstractPlugin::isInstalled() const {
 AbstractPluginPrivate::AbstractPluginPrivate():
 installed( false ),
 id(),
-version() {
+version(),
+info() {
 }

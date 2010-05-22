@@ -25,7 +25,7 @@
 #include "khopper/abstractpanel.hpp"
 
 namespace Ui {
-	class WAVPanel;
+	class WavPanel;
 }
 
 namespace khopper {
@@ -35,15 +35,15 @@ namespace khopper {
 		/**
 		 * @brief Wav option widget
 		 */
-		class WAVPanel : public AbstractPanel {
+		class WavPanel : public AbstractPanel {
 		public:
 			/**
 			 * @brief Default constructor
 			 * @param parent Parent widget
 			 * @param f Window flags
 			 */
-			WAVPanel();
-			virtual ~WAVPanel();
+			WavPanel();
+			virtual ~WavPanel();
 
 			/**
 			 * @brief Get encoder setting object
@@ -52,7 +52,7 @@ namespace khopper {
 			virtual codec::WriterSP getWriter() const;
 
 		private:
-			Ui::WAVPanel * ui_;
+			Ui::WavPanel * ui_;
 		};
 
 	}

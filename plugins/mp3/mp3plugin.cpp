@@ -1,5 +1,5 @@
 /**
- * @file xiphplugin.hpp
+ * @file mp3plugin.cpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,39 +19,34 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_PLUGIN_XIPHPLUGIN_HPP
-#define KHOPPER_PLUGIN_XIPHPLUGIN_HPP
+#include "mp3plugin.hpp"
+#include "mp3panel.hpp"
 
-#include "khopper/abstractplugin.hpp"
+#include "khopper/text.hpp"
+#include "khopper/application.hpp"
 
-namespace khopper {
+#include <QtPlugin>
 
-	namespace widget {
-		class FlacPanel;
-		class OggPanel;
-	}
+Q_EXPORT_PLUGIN2( KHOPPER_PLUGIN_ID, khopper::plugin::Mp3Plugin )
 
-	namespace plugin {
+using namespace khopper::plugin;
+using khopper::widget::Mp3Panel;
 
-		/**
-		 * @brief flac option widget
-		 */
-		class XiphPlugin : public AbstractPlugin {
-		public:
-			XiphPlugin();
-			virtual ~XiphPlugin();
-
-		protected:
-			virtual void doInstall();
-			virtual void doUninstall();
-
-		private:
-			widget::FlacPanel * flacPanel_;
-			widget::OggPanel * oggPanel_;
-		};
-
-	}
-
+Mp3Plugin::Mp3Plugin():
+AbstractPlugin(),
+panel_( new Mp3Panel ) {
+	this->setID( KHOPPER_STRINGIZE(KHOPPER_PLUGIN_ID) );
+	this->setVersion( KHOPPER_STRINGIZE(KHOPPER_VERSION) );
 }
 
-#endif
+Mp3Plugin::~Mp3Plugin() {
+	delete this->panel_;
+}
+
+void Mp3Plugin::doInstall() {
+	KHOPPER_APPLICATION->addPanel( this->panel_ );
+}
+
+void Mp3Plugin::doUninstall() {
+	KHOPPER_APPLICATION->removePanel( this->panel_ );
+}

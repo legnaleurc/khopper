@@ -21,44 +21,18 @@
  */
 #include "wavpanel.hpp"
 #include "ui_wavpanel.h"
-#include "wavplugin.hpp"
 
 #include "khopper/defaultwriter.hpp"
-#include "khopper/text.hpp"
-#include "khopper/application.hpp"
 
 #include <QtCore/QVariant>
-#include <QtPlugin>
 
-Q_EXPORT_PLUGIN2( KHOPPER_PLUGIN_ID, khopper::plugin::WAVPlugin )
-
-using namespace khopper::plugin;
 using namespace khopper::widget;
 using khopper::codec::WriterSP;
 using khopper::codec::DefaultWriter;
 
-WAVPlugin::WAVPlugin():
-AbstractPlugin(),
-panel_( new WAVPanel ) {
-	this->setID( KHOPPER_STRINGIZE(KHOPPER_PLUGIN_ID) );
-	this->setVersion( KHOPPER_STRINGIZE(KHOPPER_VERSION) );
-}
-
-WAVPlugin::~WAVPlugin() {
-	delete this->panel_;
-}
-
-void WAVPlugin::doInstall( const QFileInfo & fileInfo ) {
-	KHOPPER_APPLICATION->addPanel( this->panel_ );
-}
-
-void WAVPlugin::doUninstall() {
-	KHOPPER_APPLICATION->removePanel( this->panel_ );
-}
-
-WAVPanel::WAVPanel():
+WavPanel::WavPanel():
 AbstractPanel(),
-ui_( new Ui::WAVPanel ) {
+ui_( new Ui::WavPanel ) {
 	this->setTitle( "Wav" );
 	this->setSuffix( "wav" );
 
@@ -72,11 +46,11 @@ ui_( new Ui::WAVPanel ) {
 	this->ui_->channels->setCurrentIndex( 1 );
 }
 
-WAVPanel::~WAVPanel() {
+WavPanel::~WavPanel() {
 	delete this->ui_;
 }
 
-WriterSP WAVPanel::getWriter() const {
+WriterSP WavPanel::getWriter() const {
 	WriterSP encoder( new DefaultWriter );
 
 	encoder->setSampleRate( this->ui_->sampleRate->itemData( this->ui_->sampleRate->currentIndex() ).toInt() );

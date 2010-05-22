@@ -51,6 +51,7 @@ namespace khopper {
 			void uninstall();
 			bool isInstalled() const;
 
+			const QFileInfo & getFileInfo() const;
 			/// get the id of the plugin, must be unique
 			const QString & getID() const;
 			/// get version string of the plugin
@@ -60,7 +61,7 @@ namespace khopper {
 			void setID( const QString & id );
 			void setVersion( const QString & version );
 
-			virtual void doInstall( const QFileInfo & fileInfo ) = 0;
+			virtual void doInstall() = 0;
 			virtual void doUninstall() = 0;
 
 		private:

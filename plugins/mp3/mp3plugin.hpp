@@ -27,7 +27,7 @@
 namespace khopper {
 
 	namespace widget {
-		class MP3Panel;
+		class Mp3Panel;
 	}
 
 	namespace plugin {
@@ -35,22 +35,22 @@ namespace khopper {
 		/**
 		 * @brief Mp3 option widget
 		 */
-		class MP3Plugin : public AbstractPlugin {
+		class Mp3Plugin : public AbstractPlugin {
 		public:
 			/**
 			 * @brief Default constructor
 			 * @param parent Parent widget
 			 * @param f Window flags
 			 */
-			MP3Plugin();
-			virtual ~MP3Plugin();
+			Mp3Plugin();
+			virtual ~Mp3Plugin();
 
 		protected:
-			virtual void doInstall( const QFileInfo & fileInfo );
+			virtual void doInstall();
 			virtual void doUninstall();
 
 		private:
-			widget::MP3Panel * panel_;
+			widget::Mp3Panel * panel_;
 		};
 
 	}

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MP3Panel</class>
- <widget class="QWidget" name="MP3Panel">
+ <class>Mp3Panel</class>
+ <widget class="QWidget" name="Mp3Panel">
   <property name="geometry">
    <rect>
     <x>0</x>

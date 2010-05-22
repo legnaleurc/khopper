@@ -1,5 +1,5 @@
 /**
- * @file xiphplugin.hpp
+ * @file wavplugin.cpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,39 +19,34 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_PLUGIN_XIPHPLUGIN_HPP
-#define KHOPPER_PLUGIN_XIPHPLUGIN_HPP
+#include "wavplugin.hpp"
+#include "wavpanel.hpp"
 
-#include "khopper/abstractplugin.hpp"
+#include "khopper/text.hpp"
+#include "khopper/application.hpp"
 
-namespace khopper {
+#include <QtPlugin>
 
-	namespace widget {
-		class FlacPanel;
-		class OggPanel;
-	}
+Q_EXPORT_PLUGIN2( KHOPPER_PLUGIN_ID, khopper::plugin::WavPlugin )
 
-	namespace plugin {
+using namespace khopper::plugin;
+using khopper::widget::WavPanel;
 
-		/**
-		 * @brief flac option widget
-		 */
-		class XiphPlugin : public AbstractPlugin {
-		public:
-			XiphPlugin();
-			virtual ~XiphPlugin();
-
-		protected:
-			virtual void doInstall();
-			virtual void doUninstall();
-
-		private:
-			widget::FlacPanel * flacPanel_;
-			widget::OggPanel * oggPanel_;
-		};
-
-	}
-
+WavPlugin::WavPlugin():
+AbstractPlugin(),
+panel_( new WavPanel ) {
+	this->setID( KHOPPER_STRINGIZE(KHOPPER_PLUGIN_ID) );
+	this->setVersion( KHOPPER_STRINGIZE(KHOPPER_VERSION) );
 }
 
-#endif
+WavPlugin::~WavPlugin() {
+	delete this->panel_;
+}
+
+void WavPlugin::doInstall() {
+	KHOPPER_APPLICATION->addPanel( this->panel_ );
+}
+
+void WavPlugin::doUninstall() {
+	KHOPPER_APPLICATION->removePanel( this->panel_ );
+}
