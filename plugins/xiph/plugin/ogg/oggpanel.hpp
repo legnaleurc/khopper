@@ -22,42 +22,30 @@
 #ifndef KHOPPER_WIDGET_OGGPANEL_HPP
 #define KHOPPER_WIDGET_OGGPANEL_HPP
 
-#include "plugin/abstractpanel.hpp"
+#include "widget/abstractpanel.hpp"
 
-#include <QtGui/QButtonGroup>
-#include <QtGui/QComboBox>
+class QButtonGroup;
+namespace Ui {
+	class OggPanel;
+}
 
 namespace khopper {
 
-	namespace plugin {
+	namespace widget {
 
 		/// Ogg output option
-		class OGGPanel : public AbstractPanel {
-			Q_OBJECT
-			Q_INTERFACES( khopper::plugin::AbstractPanel )
-
+		class OggPanel : public AbstractPanel {
 		public:
 			/// Default constructor
-			OGGPanel( QWidget * parent = 0, Qt::WindowFlags f = 0 );
+			OggPanel();
+			virtual ~OggPanel();
 
-			virtual QString getID() const;
-			virtual QString getVersion() const;
 			/// Get configured Writer instance
 			virtual codec::WriterSP getWriter() const;
-			/// Get file suffix
-			virtual QString getSuffix() const;
-			/// Get widget title
-			virtual QString getTitle() const;
-
-			protected:
-				void doInstall( const QFileInfo & fileInfo );
-				void doUninstall();
 
 		private:
-			QComboBox * channels_;
-			QButtonGroup * brGroup_;
-			QComboBox * quality_;
-			QComboBox * sampleRate_;
+			Ui::OggPanel * ui_;
+			QButtonGroup * choise_;
 		};
 
 	}

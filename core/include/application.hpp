@@ -31,6 +31,8 @@ namespace khopper {
 	struct ApplicationPrivate;
 	namespace plugin {
 		class AbstractPlugin;
+	}
+	namespace widget {
 		class AbstractPanel;
 	}
 
@@ -40,14 +42,14 @@ namespace khopper {
 		Application( int & argc, char * * argv );
 		virtual ~Application();
 
-		void addPanel( khopper::plugin::AbstractPanel * panel );
-		void removePanel( khopper::plugin::AbstractPanel * panel );
+		void addPanel( khopper::widget::AbstractPanel * panel );
+		void removePanel( khopper::widget::AbstractPanel * panel );
 		void reloadPlugins();
 		plugin::AbstractPlugin * getPluginInstance( const QString & pluginID ) const;
 
 	signals:
-		void panelAdded( khopper::plugin::AbstractPanel * panel );
-		void panelRemoved( khopper::plugin::AbstractPanel * panel );
+		void panelAdded( khopper::widget::AbstractPanel * panel );
+		void panelRemoved( khopper::widget::AbstractPanel * panel );
 
 	private:
 		ApplicationPrivate * p_;

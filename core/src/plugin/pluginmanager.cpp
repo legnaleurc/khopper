@@ -21,7 +21,6 @@
  */
 #include "pluginmanager.hpp"
 #include "plugin/abstractplugin.hpp"
-#include "plugin/abstractpanel.hpp"
 
 #include <QtCore/QPluginLoader>
 #include <QtDebug>

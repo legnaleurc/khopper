@@ -1,5 +1,5 @@
 /**
- * @file abstractpanel.cpp
+ * @file abstractpluginprivate.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,15 +19,23 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
-#include "plugin/abstractpanel.hpp"
+#ifndef KHOPPER_PLUGIN_ABSTRACTPLUGINPRIVATE_HPP
+#define KHOPPER_PLUGIN_ABSTRACTPLUGINPRIVATE_HPP
+
+#include <QtCore/QString>
 
 namespace khopper {
-
 	namespace plugin {
 
-		AbstractPanel::AbstractPanel( QWidget * parent, Qt::WindowFlags f ) : QWidget( parent, f ) {
-		}
+		struct AbstractPluginPrivate {
+			AbstractPluginPrivate();
+
+			bool installed;
+			QString id;
+			QString version;
+		};
 
 	}
-
 }
+
+#endif

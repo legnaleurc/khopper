@@ -1,5 +1,5 @@
 /**
- * @file flacreadercreator.hpp
+ * @file xiphplugin.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,24 +19,35 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_CODEC_FLACREADERCREATOR_HPP
-#define KHOPPER_CODEC_FLACREADERCREATOR_HPP
+#ifndef KHOPPER_PLUGIN_XIPHPLUGIN_HPP
+#define KHOPPER_PLUGIN_XIPHPLUGIN_HPP
 
-#include "plugin/abstractreadercreator.hpp"
+#include "plugin/abstractplugin.hpp"
 
 namespace khopper {
 
+	namespace widget {
+		class FlacPanel;
+		class OggPanel;
+	}
+
 	namespace plugin {
 
-		class FlacReaderCreator : public QObject, public AbstractReaderCreator {
-			virtual codec::ReaderSP doCreate() const;
+		/**
+		 * @brief flac option widget
+		 */
+		class XiphPlugin : public AbstractPlugin {
+		public:
+			XiphPlugin();
+			virtual ~XiphPlugin();
 
 		protected:
 			virtual void doInstall( const QFileInfo & fileInfo );
 			virtual void doUninstall();
-		public:
-			virtual QString getID() const;
-			virtual QString getVersion() const;
+
+		private:
+			widget::FlacPanel * flacPanel_;
+			widget::OggPanel * oggPanel_;
 		};
 
 	}

@@ -20,27 +20,55 @@
 * License along with this library; if not, see <http://www.gnu.org/licenses/>.
 */
 #include "plugin/abstractplugin.hpp"
+#include "abstractpluginprivate.hpp"
 
 using namespace khopper::plugin;
 
-AbstractPlugin::AbstractPlugin() : installed_( false ) {
+AbstractPlugin::AbstractPlugin() : p_( new AbstractPluginPrivate ) {
 }
 
 AbstractPlugin::~AbstractPlugin() {
+	delete this->p_;
+}
+
+void AbstractPlugin::setID( const QString & id ) {
+	this->p_->id = id;
+}
+
+void AbstractPlugin::setVersion( const QString & version ) {
+	this->p_->version = version;
+}
+
+const QString & AbstractPlugin::getID() const {
+	return this->p_->id;
+}
+
+const QString & AbstractPlugin::getVersion() const {
+	return this->p_->version;
 }
 
 void AbstractPlugin::install( const QFileInfo & fileInfo ) {
-	if( this->installed_ ) {
+	if( this->p_->installed ) {
 		return;
 	}
 	this->doInstall( fileInfo );
-	this->installed_ = true;
+	this->p_->installed = true;
 }
 
 void AbstractPlugin::uninstall() {
-	if( !this->installed_ ) {
+	if( !this->p_->installed ) {
 		return;
 	}
 	this->doUninstall();
-	this->installed_ = false;
+	this->p_->installed = false;
+}
+
+bool AbstractPlugin::isInstalled() const {
+	return this->p_->installed;
+}
+
+AbstractPluginPrivate::AbstractPluginPrivate():
+installed( false ),
+id(),
+version() {
 }

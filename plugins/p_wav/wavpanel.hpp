@@ -22,54 +22,37 @@
 #ifndef KHOPPER_WIDGET_WAVPANEL_HPP
 #define KHOPPER_WIDGET_WAVPANEL_HPP
 
-#include "plugin/abstractpanel.hpp"
+#include "widget/abstractpanel.hpp"
 
-#include <QtGui/QComboBox>
+namespace Ui {
+	class WAVPanel;
+}
 
 namespace khopper {
 
-	namespace plugin {
+	namespace widget {
 
 		/**
 		 * @brief Wav option widget
 		 */
 		class WAVPanel : public AbstractPanel {
-			Q_OBJECT
-			Q_INTERFACES( khopper::plugin::AbstractPanel )
-
 		public:
 			/**
 			 * @brief Default constructor
 			 * @param parent Parent widget
 			 * @param f Window flags
 			 */
-			WAVPanel( QWidget * parent = 0, Qt::WindowFlags f = 0 );
+			WAVPanel();
+			virtual ~WAVPanel();
 
-			virtual QString getID() const;
-			virtual QString getVersion() const;
 			/**
 			 * @brief Get encoder setting object
 			 * @return Smart pointer contains AbstractWriter
 			 */
 			virtual codec::WriterSP getWriter() const;
-			/**
-			 * @brief Get file suffix
-			 * @return File extension, without leading '.'
-			 */
-			virtual QString getSuffix() const;
-			/**
-			 * @brief Get tab title
-			 * @return Title use in tab widget
-			 */
-			virtual QString getTitle() const;
-
-		protected:
-			virtual void doInstall( const QFileInfo & fileInfo );
-			virtual void doUninstall();
 
 		private:
-			QComboBox * sampleRate_;
-			QComboBox * channels_;
+			Ui::WAVPanel * ui_;
 		};
 
 	}

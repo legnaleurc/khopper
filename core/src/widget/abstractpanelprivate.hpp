@@ -1,5 +1,5 @@
 /**
- * @file applicationprivate.hpp
+ * @file abstractpanelprivate.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,20 +19,20 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_APPLICATIONPRIVATE_HPP
-#define KHOPPER_APPLICATIONPRIVATE_HPP
+#ifndef KHOPPER_WIDGET_ABSTRACTPANELPRIVATE_HPP
+#define KHOPPER_WIDGET_ABSTRACTPANELPRIVATE_HPP
+
+#include <QtCore/QString>
 
 namespace khopper {
+	namespace widget {
 
-	namespace plugin {
-		class PluginManager;
+		struct AbstractPanelPrivate {
+			QString title;
+			QString suffix;
+		};
+
 	}
-
-	struct ApplicationPrivate {
-		ApplicationPrivate();
-
-		plugin::PluginManager * pm;
-	};
 }
 
 #endif

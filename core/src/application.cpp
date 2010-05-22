@@ -24,7 +24,7 @@
 #include "plugin/pluginmanager.hpp"
 
 using namespace khopper;
-using khopper::plugin::AbstractPanel;
+using khopper::widget::AbstractPanel;
 using khopper::plugin::AbstractPlugin;
 using khopper::plugin::PluginManager;
 
@@ -46,13 +46,13 @@ void Application::removePanel( AbstractPanel * panel ) {
 }
 
 void Application::reloadPlugins() {
-	this->p_->pm_->reloadPlugins();
+	this->p_->pm->reloadPlugins();
 }
 
 AbstractPlugin * Application::getPluginInstance( const QString & pluginID ) const {
-	return this->p_->pm_->getPluginInstance( pluginID );
+	return this->p_->pm->getPluginInstance( pluginID );
 }
 
 ApplicationPrivate::ApplicationPrivate():
-pm_( new PluginManager ) {
+pm( new PluginManager ) {
 }

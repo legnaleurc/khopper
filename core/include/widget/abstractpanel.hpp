@@ -22,30 +22,29 @@
 #ifndef KHOPPER_WIDGET_ABSTRACTPANEL_HPP
 #define KHOPPER_WIDGET_ABSTRACTPANEL_HPP
 
-#include "plugin/abstractplugin.hpp"
 #include "codec/abstractwriter.hpp"
 
 #include <QtGui/QWidget>
 
 namespace khopper {
+	namespace widget {
 
-	namespace plugin {
+		struct AbstractPanelPrivate;
 
 		/**
-		 * @ingroup Plugins
 		 * @brief Abstract panel widget
 		 *
 		 * All output option panel will inherit this class, \n
 		 * and must register to factory. \n
 		 */
-		class KHOPPER_DLL AbstractPanel : public QWidget, public AbstractPlugin {
+		class KHOPPER_DLL AbstractPanel : public QWidget {
 		public:
 			/**
 			 * @brief Default constructor
 			 * @param parent Parent widget
 			 * @param f Window flags
 			 */
-			AbstractPanel( QWidget * parent = 0, Qt::WindowFlags f = 0 );
+			AbstractPanel();
 
 			/**
 			 * @brief Get encoder setting object
@@ -56,18 +55,22 @@ namespace khopper {
 			 * @brief Get file suffix
 			 * @return File extension, without leading '.'
 			 */
-			virtual QString getSuffix() const = 0;
+			const QString & getSuffix() const;
 			/**
 			 * @brief Get tab title
 			 * @return Title use in tab widget
 			 */
-			virtual QString getTitle() const = 0;
+			const QString & getTitle() const;
+
+		protected:
+			void setSuffix( const QString & suffix );
+			void setTitle( const QString & title );
+
+		private:
+			AbstractPanelPrivate * p_;
 		};
 
 	}
-
 }
-
-Q_DECLARE_INTERFACE( khopper::plugin::AbstractPanel, "org.FoolproofProject.Khopper.Plugin.Panel/0.2" )
 
 #endif

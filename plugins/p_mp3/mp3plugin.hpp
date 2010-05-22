@@ -1,5 +1,5 @@
 /**
- * @file flacpanel.hpp
+ * @file mp3plugin.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,58 +19,38 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_PLUGIN_FLACPANEL_HPP
-#define KHOPPER_PLUGIN_FLACPANEL_HPP
+#ifndef KHOPPER_PLUGIN_MP3PLUGIN_HPP
+#define KHOPPER_PLUGIN_MP3PLUGIN_HPP
 
-#include "plugin/abstractpanel.hpp"
-
-#include <QtGui/QButtonGroup>
-#include <QtGui/QComboBox>
+#include "plugin/abstractplugin.hpp"
 
 namespace khopper {
+
+	namespace widget {
+		class MP3Panel;
+	}
 
 	namespace plugin {
 
 		/**
-		 * @brief flac option widget
+		 * @brief Mp3 option widget
 		 */
-		class FlacPanel : public AbstractPanel {
-			Q_OBJECT
-			Q_INTERFACES( khopper::plugin::AbstractPanel )
-
+		class MP3Plugin : public AbstractPlugin {
 		public:
 			/**
 			 * @brief Default constructor
 			 * @param parent Parent widget
 			 * @param f Window flags
 			 */
-			FlacPanel( QWidget * parent = 0, Qt::WindowFlags f = 0 );
-
-			virtual QString getID() const;
-			virtual QString getVersion() const;
-			/**
-			 * @brief Get encoder setting object
-			 * @return Smart pointer contains AbstractWriter
-			 */
-			virtual codec::WriterSP getWriter() const;
-			/**
-			 * @brief Get file suffix
-			 * @return File extension, without leading '.'
-			 */
-			virtual QString getSuffix() const;
-			/**
-			 * @brief Get tab title
-			 * @return Title use in tab widget
-			 */
-			virtual QString getTitle() const;
+			MP3Plugin();
+			virtual ~MP3Plugin();
 
 		protected:
-			void doInstall( const QFileInfo & fileInfo );
-			void doUninstall();
+			virtual void doInstall( const QFileInfo & fileInfo );
+			virtual void doUninstall();
 
 		private:
-			QComboBox * sampleRate_;
-			QComboBox * channels_;
+			widget::MP3Panel * panel_;
 		};
 
 	}

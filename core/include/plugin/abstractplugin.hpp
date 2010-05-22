@@ -31,6 +31,8 @@ namespace khopper {
 
 	namespace plugin {
 
+		struct AbstractPluginPrivate;
+
 		/**
 		 * @brief Interface of plugins
 		 *
@@ -39,7 +41,7 @@ namespace khopper {
 		 * AbstractPanel, AbstractReaderCreator and AbstractWriterCreator do so.
 		 * Use them instead of this interface.
 		 */
-		class KHOPPER_DLL AbstractPlugin {
+		class KHOPPER_DLL AbstractPlugin : public QObject {
 		public:
 			AbstractPlugin();
 			/// virtual destructor
@@ -50,20 +52,28 @@ namespace khopper {
 			bool isInstalled() const;
 
 			/// get the id of the plugin, must be unique
-			virtual QString getID() const = 0;
+			const QString & getID() const;
 			/// get version string of the plugin
-			virtual QString getVersion() const = 0;
+			const QString & getVersion() const;
 
 		protected:
+			void setID( const QString & id );
+			void setVersion( const QString & version );
+
 			virtual void doInstall( const QFileInfo & fileInfo ) = 0;
 			virtual void doUninstall() = 0;
 
 		private:
-			bool installed_;
+			AbstractPlugin( const AbstractPlugin & );
+			AbstractPlugin & operator =( const AbstractPlugin & );
+
+			AbstractPluginPrivate * p_;
 		};
 
 	}
 
 }
+
+Q_DECLARE_INTERFACE( khopper::plugin::AbstractPlugin, "org.FoolproofProject.Khopper.Plugin/0.2" )
 
 #endif

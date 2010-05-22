@@ -20,133 +20,95 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "mp3panel.hpp"
+#include "ui_mp3panel.h"
+#include "mp3plugin.hpp"
 #include "mp3writer.hpp"
 #include "util/text.hpp"
 #include "application.hpp"
 
 #include <QtCore/QVariant>
 #include <QtDebug>
-#include <QtGui/QGroupBox>
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QLabel>
-#include <QtGui/QRadioButton>
-#include <QtGui/QVBoxLayout>
 #include <QtPlugin>
 
-Q_EXPORT_PLUGIN2( KHOPPER_PLUGIN_ID, khopper::plugin::MP3Panel )
+Q_EXPORT_PLUGIN2( KHOPPER_PLUGIN_ID, khopper::plugin::MP3Plugin )
 
-namespace khopper {
+using namespace khopper::plugin;
+using namespace khopper::widget;
+using namespace khopper::codec;
 
-	namespace plugin {
+MP3Plugin::MP3Plugin():
+AbstractPlugin(),
+panel_( new MP3Panel ) {
+	this->setID( KHOPPER_STRINGIZE(KHOPPER_PLUGIN_ID) );
+	this->setVersion( KHOPPER_STRINGIZE(KHOPPER_VERSION) );
+}
 
-		MP3Panel::MP3Panel( QWidget * parent, Qt::WindowFlags f ):
-		AbstractPanel( parent, f ),
-		brChoise_( new QButtonGroup( this ) ),
-		bitRate_( new QComboBox( this ) ),
-		level_( new QComboBox( this ) ),
-		sampleRate_( new QComboBox( this ) ),
-		channels_( new QComboBox( this ) ) {
-			QVBoxLayout * vbox = new QVBoxLayout( this );
-			this->setLayout( vbox );
+MP3Plugin::~MP3Plugin() {
+	delete this->panel_;
+}
 
-			QGroupBox * brGroup = new QGroupBox( tr( "Bit Rate" ), this );
-			vbox->addWidget( brGroup );
-			QVBoxLayout * brBox = new QVBoxLayout( brGroup );
-			brGroup->setLayout( brBox );
+void MP3Plugin::doInstall( const QFileInfo & /*fileInfo*/ ) {
+	KHOPPER_APPLICATION->addPanel( this->panel_ );
+}
 
-			QHBoxLayout * cbrBox = new QHBoxLayout;
-			brBox->addLayout( cbrBox );
-			QRadioButton * cbr = new QRadioButton( tr( "CBR" ), this );
-			cbrBox->addWidget( cbr );
-			this->bitRate_->addItem( "64", QVariant( 64000 ) );
-			this->bitRate_->addItem( "128", QVariant( 128000 ) );
-			this->bitRate_->addItem( "192", QVariant( 192000 ) );
-			this->bitRate_->addItem( "256", QVariant( 256000 ) );
-			this->bitRate_->addItem( "320", QVariant( 320000 ) );
-			this->bitRate_->setCurrentIndex( 4 );
-			cbrBox->addWidget( this->bitRate_ );
+void MP3Plugin::doUninstall() {
+	KHOPPER_APPLICATION->removePanel( this->panel_ );
+}
 
-			QHBoxLayout * vbrBox = new QHBoxLayout;
-			brBox->addLayout( vbrBox );
-			QRadioButton * vbr = new QRadioButton( tr( "VBR" ), this );
-			vbrBox->addWidget( vbr );
-			this->level_->addItem( "0 (Highest)", QVariant( 0 ) );
-			for( int i = 1; i < 9; ++i ) {
-				this->level_->addItem( QString::number( i ), QVariant( i ) );
-			}
-			this->level_->addItem( "9 (Lowest)", QVariant( 9 ) );
-			vbrBox->addWidget( this->level_ );
+MP3Panel::MP3Panel():
+AbstractPanel(),
+ui_( new Ui::MP3Panel ),
+choise_( new QButtonGroup( this ) ) {
+	this->setTitle( "MPEG Layer 3" );
+	this->setSuffix( "mp3" );
 
-			this->brChoise_->addButton( cbr );
-			this->brChoise_->setId( cbr, 0 );
-			this->brChoise_->addButton( vbr );
-			this->brChoise_->setId( vbr, 1 );
-			connect( cbr, SIGNAL( toggled( bool ) ), this->bitRate_, SLOT( setEnabled( bool ) ) );
-			connect( vbr, SIGNAL( toggled( bool ) ), this->level_, SLOT( setEnabled( bool ) ) );
-			cbr->setChecked( true );
-			this->level_->setEnabled( false );
+	this->ui_->setupUi( this );
 
-			QHBoxLayout * srBox = new QHBoxLayout;
-			vbox->addLayout( srBox );
-			QLabel * srLabel = new QLabel( tr( "Sample Rate:" ) );
-			srBox->addWidget( srLabel );
-			this->sampleRate_->addItem( "44100 Hz", QVariant( 44100 ) );
-			this->sampleRate_->addItem( "48000 Hz", QVariant( 48000 ) );
-			srBox->addWidget( this->sampleRate_ );
+	this->ui_->bitRate->addItem( "64", QVariant( 64000 ) );
+	this->ui_->bitRate->addItem( "128", QVariant( 128000 ) );
+	this->ui_->bitRate->addItem( "192", QVariant( 192000 ) );
+	this->ui_->bitRate->addItem( "256", QVariant( 256000 ) );
+	this->ui_->bitRate->addItem( "320", QVariant( 320000 ) );
+	this->ui_->bitRate->setCurrentIndex( 4 );
 
-			QHBoxLayout * cBox = new QHBoxLayout;
-			vbox->addLayout( cBox );
-			QLabel * cLabel = new QLabel( tr( "Channel:" ) );
-			cBox->addWidget( cLabel );
-			this->channels_->addItem( "Mono", QVariant( 1 ) );
-			this->channels_->addItem( "Streao", QVariant( 2 ) );
-			this->channels_->setCurrentIndex( 1 );
-			cBox->addWidget( this->channels_ );
-		}
-
-		QString MP3Panel::getID() const {
-			return KHOPPER_STRINGIZE(KHOPPER_PLUGIN_ID);
-		}
-
-		QString MP3Panel::getVersion() const {
-			return KHOPPER_STRINGIZE(KHOPPER_VERSION);
-		}
-
-		codec::WriterSP MP3Panel::getWriter() const {
-			codec::Mp3Writer * encoder = new codec::Mp3Writer;
-
-			switch( this->brChoise_->checkedId() ) {
-			case 0:
-				encoder->setBitRate( this->bitRate_->itemData( this->bitRate_->currentIndex() ).toInt() );
-				break;
-			case 1:
-				encoder->setVBRQuality( this->level_->itemData( this->level_->currentIndex() ).toInt() );
-				break;
-			default:
-				;
-			}
-			encoder->setSampleRate( this->sampleRate_->itemData( this->sampleRate_->currentIndex() ).toInt() );
-			encoder->setChannels( this->channels_->itemData( this->channels_->currentIndex() ).toInt() );
-
-			return codec::WriterSP( encoder );
-		}
-
-		QString MP3Panel::getSuffix() const {
-			return "mp3";
-		}
-
-		QString MP3Panel::getTitle() const {
-			return "mp3";
-		}
-
-		void MP3Panel::doInstall( const QFileInfo & /*fileInfo*/ ) {
-			KHOPPER_APPLICATION->addPanel( this );
-		}
-
-		void MP3Panel::doUninstall() {
-			KHOPPER_APPLICATION->removePanel( this );
-		}
-
+	this->ui_->level->addItem( "0 (Highest)", QVariant( 0 ) );
+	for( int i = 1; i < 9; ++i ) {
+		this->ui_->level->addItem( QString::number( i ), QVariant( i ) );
 	}
+	this->ui_->level->addItem( "9 (Lowest)", QVariant( 9 ) );
 
+	this->choise_->addButton( this->ui_->cbr );
+	this->choise_->setId( this->ui_->cbr, 0 );
+	this->choise_->addButton( this->ui_->vbr );
+	this->choise_->setId( this->ui_->vbr, 1 );
+
+	this->ui_->sampleRate->addItem( "44100 Hz", QVariant( 44100 ) );
+	this->ui_->sampleRate->addItem( "48000 Hz", QVariant( 48000 ) );
+
+	this->ui_->channels->addItem( "Mono", QVariant( 1 ) );
+	this->ui_->channels->addItem( "Streao", QVariant( 2 ) );
+	this->ui_->channels->setCurrentIndex( 1 );
+}
+
+MP3Panel::~MP3Panel() {
+	delete this->ui_;
+}
+
+WriterSP MP3Panel::getWriter() const {
+	Mp3Writer * encoder = new Mp3Writer;
+
+	switch( this->choise_->checkedId() ) {
+	case 0:
+		encoder->setBitRate( this->ui_->bitRate->itemData( this->ui_->bitRate->currentIndex() ).toInt() );
+		break;
+	case 1:
+		encoder->setVBRQuality( this->ui_->level->itemData( this->ui_->level->currentIndex() ).toInt() );
+		break;
+	default:
+		;
+	}
+	encoder->setSampleRate( this->ui_->sampleRate->itemData( this->ui_->sampleRate->currentIndex() ).toInt() );
+	encoder->setChannels( this->ui_->channels->itemData( this->ui_->channels->currentIndex() ).toInt() );
+
+	return codec::WriterSP( encoder );
 }

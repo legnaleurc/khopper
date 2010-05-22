@@ -24,6 +24,7 @@
 #include "application.hpp"
 #include "progress.hpp"
 #include "converterthread.hpp"
+#include "widget/abstractpanel.hpp"
 
 #include <QtDebug>
 #include <QtGui/QFileDialog>
@@ -73,7 +74,7 @@ namespace khopper {
 				return;
 			}
 
-			plugin::AbstractPanel * panel = this->getCurrent();
+			AbstractPanel * panel = this->getCurrent();
 			codec::WriterSP encoder( panel->getWriter() );
 			if( encoder == NULL ) {
 				this->errorOccured( tr( "Plugin Error" ), tr( "Can\'t load codec." ) );
@@ -94,15 +95,15 @@ namespace khopper {
 			this->progress_->show();
 		}
 
-		plugin::AbstractPanel * ConversionDialog::getCurrent() const {
+		AbstractPanel * ConversionDialog::getCurrent() const {
 			return this->table_.find( this->ui_->tabWidget->currentIndex() )->second;
 		}
 
-		void ConversionDialog::addPanel( plugin::AbstractPanel * panel ) {
+		void ConversionDialog::addPanel( AbstractPanel * panel ) {
 			this->table_.insert( std::make_pair( this->ui_->tabWidget->addTab( panel, panel->getTitle() ), panel ) );
 		}
 
-		void ConversionDialog::removePanel( plugin::AbstractPanel * panel ) {
+		void ConversionDialog::removePanel( AbstractPanel * panel ) {
 			int index = this->ui_->tabWidget->indexOf( panel );
 			this->table_.erase( index );
 			this->ui_->tabWidget->removeTab( index );

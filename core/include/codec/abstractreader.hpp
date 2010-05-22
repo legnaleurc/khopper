@@ -338,6 +338,27 @@ namespace khopper {
 
 	}
 
+	namespace plugin {
+
+		/**
+		 * @ingroup Plugins
+		 * @brief Register plugin to factory
+		 * @param key the key used in program
+		 * @param name plugin name
+		 * @return if registered in factory
+		 */
+		KHOPPER_DLL bool registerReader( const std::string & key, codec::AbstractReader * ( *creator )() );
+		/**
+		 * @ingroup Plugins
+		 * @brief Create reader
+		 * @param key format key
+		 * @return Smart pointer of Product
+		 * @throws RunTimeError Can not load any plugin
+		 */
+		KHOPPER_DLL codec::ReaderSP createReader( const std::string & key );
+
+	}
+
 }
 
 #endif

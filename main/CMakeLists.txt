@@ -15,7 +15,7 @@ file(GLOB_RECURSE KHOPPER_MAIN_FORMS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} src/*.
 include_directories(
     src/album
     src/widget
-    "${CMAKE_BINARY_DIR}/main"
+    ${CMAKE_CURRENT_BINARY_DIR}
     "${CMAKE_SOURCE_DIR}/core/include"
     ${QT_PHONON_INCLUDE_DIR})
 set(KHOPPER_MAIN_MOC_HEADERS

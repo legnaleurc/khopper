@@ -1,5 +1,5 @@
 /**
- * @file wavpanel.cpp
+ * @file flacpanel.cpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,46 +19,33 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "wavpanel.hpp"
-#include "ui_wavpanel.h"
-#include "wavplugin.hpp"
+#include "flacpanel.hpp"
+#include "ui_flacpanel.h"
+#include "flacwriter.hpp"
 
-#include "codec/defaultwriter.hpp"
 #include "application.hpp"
 #include "util/text.hpp"
 
+#include <QtCore/QLibrary>
 #include <QtCore/QVariant>
-#include <QtPlugin>
+#include <QtDebug>
 
-Q_EXPORT_PLUGIN2( KHOPPER_PLUGIN_ID, khopper::plugin::WAVPlugin )
+#ifdef Q_OS_WIN32
+static const char * LIBFLAC = KHOPPER_STRINGIZE(KHOPPER_XIPH_LIBRARY);
+#else
+static const char * LIBFLAC = KHOPPER_STRINGIZE(KHOPPER_XIPH_LIBRARY) ".so.0.2.60";
+#endif
 
-using namespace khopper::plugin;
 using namespace khopper::widget;
 using khopper::codec::WriterSP;
-using khopper::codec::DefaultWriter;
+using khopper::codec::FlacWriter;
 
-WAVPlugin::WAVPlugin():
-AbstractPlugin(),
-panel_( new WAVPanel ) {
-	this->setID( KHOPPER_STRINGIZE(KHOPPER_PLUGIN_ID) );
-	this->setVersion( KHOPPER_STRINGIZE(KHOPPER_VERSION) );
-}
-
-WAVPlugin::~WAVPlugin() {
-	delete this->panel_;
-}
-
-void WAVPlugin::doInstall( const QFileInfo & fileInfo ) {
-	KHOPPER_APPLICATION->addPanel( this->panel_ );
-}
-
-void WAVPlugin::doUninstall() {
-	KHOPPER_APPLICATION->removePanel( this->panel_ );
-}
-
-WAVPanel::WAVPanel():
+FlacPanel::FlacPanel():
 AbstractPanel(),
-ui_( new Ui::WAVPanel ) {
+ui_( new Ui::FlacPanel ) {
+	this->setTitle( "FLAC" );
+	this->setSuffix( "flac" );
+
 	this->ui_->setupUi( this );
 
 	this->ui_->sampleRate->addItem( "44100 Hz", QVariant( 44100 ) );
@@ -69,12 +56,16 @@ ui_( new Ui::WAVPanel ) {
 	this->ui_->channels->setCurrentIndex( 1 );
 }
 
-WAVPanel::~WAVPanel() {
+FlacPanel::~FlacPanel() {
 	delete this->ui_;
 }
 
-WriterSP WAVPanel::getWriter() const {
-	WriterSP encoder( new DefaultWriter );
+WriterSP FlacPanel::getWriter() const {
+	FlacWriterCreator loader = reinterpret_cast< FlacWriterCreator >( QLibrary::resolve( LIBFLAC, "createFlacWriter" ) );
+	if( loader == NULL ) {
+		return WriterSP();
+	}
+	std::tr1::shared_ptr< FlacWriter > encoder( loader() );
 
 	encoder->setSampleRate( this->ui_->sampleRate->itemData( this->ui_->sampleRate->currentIndex() ).toInt() );
 	encoder->setChannels( this->ui_->channels->itemData( this->ui_->channels->currentIndex() ).toInt() );
