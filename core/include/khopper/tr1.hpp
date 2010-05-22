@@ -39,7 +39,7 @@
 // reserved for older msvc
 # endif
 # elif defined( __GNUC__ )
-# define KHOPPER_EXPORT
+# define KHOPPER_DLL
 # if __GNUC__ >= 4
 # include <tr1/memory>
 # include <cstdint>

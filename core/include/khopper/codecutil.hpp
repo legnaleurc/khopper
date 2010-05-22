@@ -27,8 +27,8 @@
 // @}
 
 
-#include "khopper/tr1.hpp"
-#include "khopper/error.hpp"
+#include "tr1.hpp"
+#include "error.hpp"
 
 #include <vector>
 
