@@ -87,30 +87,33 @@ loadedPlugins_() {
 void PluginManager::reloadPlugins() {
 	this->loadedPlugins_.clear();
 
-	foreach( QString filePath, this->getPluginFiles_() ) {
-		qDebug() << filePath;
-		QPluginLoader loader( filePath );
-		QObject * pInstance = loader.instance();
-		if( pInstance ) {
-			AbstractPlugin * pPlugin = dynamic_cast< AbstractPlugin * >( pInstance );
-			if( pPlugin ) {
-				std::string id = pPlugin->getID().toStdString();
-				std::map< std::string, AbstractPlugin * >::const_iterator it = this->loadedPlugins_.find( id );
-				if( it == this->loadedPlugins_.end() ) {
-					try {
-						pPlugin->install( QFileInfo( filePath ) );
-					} catch( error::BaseError & e ) {
-						qDebug() << "install error:" << e.what();
-						continue;
-					}
-					this->loadedPlugins_.insert( std::make_pair( id, pPlugin ) );
-				} else {
-					bool unloaded = loader.unload();
-					qDebug() << "unload deprecated plugin:" << unloaded;
-				}
+	foreach( QFileInfo fileInfo, this->getPluginsFileInfo_() ) {
+		qDebug() << fileInfo.absoluteFilePath();
+		QPluginLoader loader( fileInfo.absoluteFilePath() );
+		AbstractPlugin * pPlugin = dynamic_cast< AbstractPlugin * >( loader.instance() );
+		if( pPlugin == NULL ) {
+			if( loader.isLoaded() ) {
+				emit this->errorOccured( tr( "Invalid plugin" ), tr( "This plugin: %1 is not valid for Khopper." ).arg( fileInfo.absoluteFilePath() ) );
+			} else {
+				emit this->errorOccured( tr( "Plugin load error" ), loader.errorString() );
 			}
+			continue;
+		}
+
+		std::string id = pPlugin->getID().toStdString();
+		std::map< std::string, AbstractPlugin * >::const_iterator it = this->loadedPlugins_.find( id );
+		if( it == this->loadedPlugins_.end() ) {
+			try {
+				pPlugin->install( fileInfo );
+			} catch( error::BaseError & e ) {
+				emit this->errorOccured( tr( "Plugin install error" ), e.getMessage() );
+				loader.unload();
+				continue;
+			}
+			this->loadedPlugins_.insert( std::make_pair( id, pPlugin ) );
 		} else {
-			qDebug() << loader.errorString();
+			bool unloaded = loader.unload();
+			qDebug() << "unload deprecated plugin:" << unloaded;
 		}
 	}
 }
@@ -124,12 +127,10 @@ AbstractPlugin * PluginManager::getPluginInstance( const QString & name ) const 
 	}
 }
 
-QStringList PluginManager::getPluginFiles_() const {
-	QStringList list;
+QFileInfoList PluginManager::getPluginsFileInfo_() const {
+	QFileInfoList list;
 	foreach( QDir d, this->searchPaths_ ) {
-		foreach( QString fileName, d.entryList( getPluginNameFilter(), QDir::Files ) ) {
-			list << d.absoluteFilePath( fileName );
-		}
+		list.append( d.entryInfoList( getPluginNameFilter(), QDir::Files ) );
 	}
 	return list;
 }

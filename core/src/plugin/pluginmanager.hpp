@@ -25,12 +25,7 @@
 #include "error.hpp"
 
 #include <QtCore/QDir>
-
-#ifndef LOKI_CLASS_LEVEL_THREADING
-# define LOKI_CLASS_LEVEL_THREADING
-#endif
-
-#include <loki/Singleton.h>
+#include <QtCore/QObject>
 
 #include <string>
 #include <list>
@@ -47,7 +42,9 @@ namespace khopper {
 		 * @ingroup Plugins
 		 * @brief Private plugin manager
 		 */
-		class PluginManager {
+		class PluginManager : public QObject {
+			Q_OBJECT
+
 		public:
 			/// default constructor
 			PluginManager();
@@ -65,8 +62,11 @@ namespace khopper {
 			/// get plugin instance by name
 			AbstractPlugin * getPluginInstance( const QString & name ) const;
 
+		signals:
+			void errorOccured( const QString & title, const QString & message );
+
 		private:
-			QStringList getPluginFiles_() const;
+			QFileInfoList getPluginsFileInfo_() const;
 
 			std::list< QDir > searchPaths_;
 			std::map< std::string, AbstractPlugin * > loadedPlugins_;
