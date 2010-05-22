@@ -32,7 +32,7 @@
 #ifdef Q_OS_WIN32
 static const char * LIBFLAC = KHOPPER_STRINGIZE(KHOPPER_XIPH_LIBRARY);
 #else
-static const char * LIBFLAC = KHOPPER_STRINGIZE(KHOPPER_XIPH_LIBRARY) ".so.0.2.60";
+static const char * LIBFLAC = KHOPPER_STRINGIZE(KHOPPER_XIPH_LIBRARY) ".so." KHOPPER_STRINGIZE(KHOPPER_VERSION);
 #endif
 
 using namespace khopper::widget;
