@@ -20,7 +20,7 @@
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 #include "pluginmanager.hpp"
-#include "plugin/abstractplugin.hpp"
+#include "abstractplugin.hpp"
 
 #include <QtCore/QPluginLoader>
 #include <QtDebug>
@@ -62,11 +62,13 @@ loadedPlugins_() {
 		this->searchPaths_.push_back( tmp );
 	}
 # endif
-#else
-	if( tmp.cd( "../lib/plugins" ) ) {
+	tmp = qApp->applicationDirPath();
+#endif
+
+	if( tmp.cd( "../plugins" ) ) {
 		this->searchPaths_.push_back( tmp );
 	}
-#endif
+
 	// second search personal settings
 	tmp = QDir::home();
 	if( tmp.cd( ".khopper/plugins" ) ) {

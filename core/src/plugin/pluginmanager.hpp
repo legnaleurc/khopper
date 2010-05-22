@@ -22,7 +22,7 @@
 #ifndef KHOPPER_PLUGIN_PLUGINMANAGER_HPP
 #define KHOPPER_PLUGIN_PLUGINMANAGER_HPP
 
-#include "util/error.hpp"
+#include "error.hpp"
 
 #include <QtCore/QDir>
 
