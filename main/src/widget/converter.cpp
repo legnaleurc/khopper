@@ -21,10 +21,10 @@
  */
 #include "converter.hpp"
 
-#include "codec/abstractreader.hpp"
-#include "codec/abstractwriter.hpp"
-#include "util/error.hpp"
-#include "util/text.hpp"
+#include "khopper/abstractreader.hpp"
+#include "khopper/abstractwriter.hpp"
+#include "khopper/error.hpp"
+#include "khopper/text.hpp"
 
 #include <QtDebug>
 

@@ -24,8 +24,8 @@
 #include "progress.hpp"
 #include "converterthread.hpp"
 
-#include "widget/abstractpanel.hpp"
-#include "application.hpp"
+#include "khopper/abstractpanel.hpp"
+#include "khopper/application.hpp"
 
 #include <QtDebug>
 #include <QtGui/QFileDialog>

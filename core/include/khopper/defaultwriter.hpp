@@ -22,7 +22,7 @@
 #ifndef KHOPPER_CODEC_DEFAULTWRITER_HPP
 #define KHOPPER_CODEC_DEFAULTWRITER_HPP
 
-#include "codec/abstractwriter.hpp"
+#include "abstractwriter.hpp"
 
 #include <deque>
 

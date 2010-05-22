@@ -21,8 +21,8 @@
  */
 #include "flacwriter.hpp"
 
-#include "util/text.hpp"
-#include "util/error.hpp"
+#include "khopper/text.hpp"
+#include "khopper/error.hpp"
 
 #include <QtDebug>
 

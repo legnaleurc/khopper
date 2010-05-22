@@ -22,7 +22,7 @@
 #ifndef KHOPPER_PLUGIN_MP3PLUGIN_HPP
 #define KHOPPER_PLUGIN_MP3PLUGIN_HPP
 
-#include "plugin/abstractplugin.hpp"
+#include "khopper/abstractplugin.hpp"
 
 namespace khopper {
 

@@ -22,7 +22,7 @@
 #ifndef KHOPPER_APPLICATION_HPP
 #define KHOPPER_APPLICATION_HPP
 
-#include "util/tr1.hpp"
+#include "tr1.hpp"
 
 #include <QtGui/QApplication>
 

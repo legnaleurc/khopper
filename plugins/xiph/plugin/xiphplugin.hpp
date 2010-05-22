@@ -22,7 +22,7 @@
 #ifndef KHOPPER_PLUGIN_XIPHPLUGIN_HPP
 #define KHOPPER_PLUGIN_XIPHPLUGIN_HPP
 
-#include "plugin/abstractplugin.hpp"
+#include "khopper/abstractplugin.hpp"
 
 namespace khopper {
 

@@ -22,7 +22,7 @@
 #ifndef KHOPPER_CODEC_FLACWRITER_HPP
 #define KHOPPER_CODEC_FLACWRITER_HPP
 
-#include "codec/abstractwriter.hpp"
+#include "khopper/abstractwriter.hpp"
 
 #include <FLAC/stream_encoder.h>
 #include <FLAC/metadata.h>

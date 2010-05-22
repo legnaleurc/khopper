@@ -22,7 +22,7 @@
 #ifndef KHOPPER_PLUGIN_FLACPANEL_HPP
 #define KHOPPER_PLUGIN_FLACPANEL_HPP
 
-#include "widget/abstractpanel.hpp"
+#include "khopper/abstractpanel.hpp"
 
 namespace Ui {
 	class FlacPanel;

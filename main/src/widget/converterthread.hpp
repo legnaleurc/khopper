@@ -24,7 +24,8 @@
 
 #include "track.hpp"
 #include "converter.hpp"
-#include "codec/abstractwriter.hpp"
+
+#include "khopper/abstractwriter.hpp"
 
 #include <QtCore/QStringList>
 #include <QtCore/QThread>

@@ -23,9 +23,9 @@
 #include "ui_wavpanel.h"
 #include "wavplugin.hpp"
 
-#include "codec/defaultwriter.hpp"
-#include "application.hpp"
-#include "util/text.hpp"
+#include "khopper/defaultwriter.hpp"
+#include "khopper/text.hpp"
+#include "khopper/application.hpp"
 
 #include <QtCore/QVariant>
 #include <QtPlugin>

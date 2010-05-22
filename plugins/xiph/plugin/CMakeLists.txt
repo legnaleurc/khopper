@@ -18,3 +18,8 @@ source_group("Form Files" REGULAR_EXPRESSION .*\\.ui)
 add_library(khopper_plugin_xiph SHARED ${KHOPPER_PLUGIN_XIPH_HEADERS} ${KHOPPER_PLUGIN_XIPH_SOURCES} ${KHOPPER_PLUGIN_XIPH_FORMS})
 target_link_libraries(khopper_plugin_xiph ${FLAC_LIBRARIES})
 khopper_add_plugin(khopper_plugin_xiph)
+
+install(TARGETS khopper_plugin_xiph
+    RUNTIME DESTINATION "plugins"
+    LIBRARY DESTINATION "plugins"
+    ARCHIVE DESTINATION "lib")

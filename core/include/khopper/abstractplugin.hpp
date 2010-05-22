@@ -22,7 +22,7 @@
 #ifndef KHOPPER_PLUGIN_ABSTRACTPLUGIN_HPP
 #define KHOPPER_PLUGIN_ABSTRACTPLUGIN_HPP
 
-#include "util/tr1.hpp"
+#include "tr1.hpp"
 
 #include <QtCore/QFileInfo>
 #include <QtCore/QString>

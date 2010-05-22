@@ -28,7 +28,7 @@
 #include "player.hpp"
 #include "preference.hpp"
 
-#include "util/error.hpp"
+#include "khopper/error.hpp"
 
 #include <QtCore/QDir>
 #include <QtCore/QFile>

@@ -20,8 +20,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "oggwriter.hpp"
-#include "util/error.hpp"
-#include "util/text.hpp"
+
+#include "khopper/error.hpp"
+#include "khopper/text.hpp"
 
 #include <cstdio>
 #include <cstdlib>

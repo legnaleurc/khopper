@@ -22,7 +22,7 @@
 #ifndef KHOPPER_UTIL_TEXT_HPP
 #define KHOPPER_UTIL_TEXT_HPP
 
-#include "util/tr1.hpp"
+#include "tr1.hpp"
 
 #include <QtCore/QString>
 

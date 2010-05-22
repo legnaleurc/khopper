@@ -1,5 +1,5 @@
 /**
- * @file mp3panel.hpp
+ * @file mp3writer.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,44 +19,39 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_WIDGET_MP3PANEL_HPP
-#define KHOPPER_WIDGET_MP3PANEL_HPP
+#ifndef KHOPPER_CODEC_MP3WRITER_HPP
+#define KHOPPER_CODEC_MP3WRITER_HPP
 
-#include "widget/abstractpanel.hpp"
+#include "khopper/abstractwriter.hpp"
 
-class QButtonGroup;
-namespace Ui {
-	class MP3Panel;
-}
+#include <lame/lame.h>
 
 namespace khopper {
-	namespace widget {
 
-		/**
-		 * @brief Mp3 option widget
-		 */
-		class MP3Panel : public AbstractPanel {
+	namespace codec {
+
+		class Mp3Writer : public AbstractWriter {
 		public:
-			/**
-			 * @brief Default constructor
-			 * @param parent Parent widget
-			 * @param f Window flags
-			 */
-			MP3Panel();
-			virtual ~MP3Panel();
+			Mp3Writer();
+			virtual ~Mp3Writer();
 
-			/**
-			 * @brief Get encoder setting object
-			 * @return Smart pointer contains AbstractWriter
-			 */
-			virtual codec::WriterSP getWriter() const;
+			void setVBRQuality( int quality ) {
+				this->quality_ = quality;
+			}
 
 		private:
-			Ui::MP3Panel * ui_;
-			QButtonGroup * choise_;
+			virtual void doOpen();
+			virtual void doClose();
+			virtual void writeFrame( const ByteArray & );
+
+			std::tr1::shared_ptr< FILE > fout_;
+			std::tr1::shared_ptr< lame_global_flags > gfp_;
+			int quality_;
+			long id3v2Offset_;
 		};
 
 	}
+
 }
 
 #endif

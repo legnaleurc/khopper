@@ -22,7 +22,7 @@
 #ifndef KHOPPER_CODEC_FLACREADER_HPP
 #define KHOPPER_CODEC_FLACREADER_HPP
 
-#include "codec/abstractreader.hpp"
+#include "khopper/abstractreader.hpp"
 
 #include <FLAC/stream_decoder.h>
 

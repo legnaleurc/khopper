@@ -21,9 +21,9 @@
  */
 #include "track.hpp"
 
-#include "codec/abstractreader.hpp"
-#include "util/error.hpp"
-#include "util/text.hpp"
+#include "khopper/abstractreader.hpp"
+#include "khopper/error.hpp"
+#include "khopper/text.hpp"
 
 using namespace khopper::album;
 

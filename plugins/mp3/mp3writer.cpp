@@ -21,7 +21,7 @@
  */
 #include "mp3writer.hpp"
 
-#include "util/text.hpp"
+#include "khopper/text.hpp"
 
 #include <id3v2tag.h>
 

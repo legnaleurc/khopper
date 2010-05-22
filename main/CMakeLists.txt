@@ -48,3 +48,5 @@ else()
 endif()
 add_dependencies(khopper khopper_core)
 set_target_properties(khopper PROPERTIES VERSION ${KHOPPER_VERSION})
+
+install(TARGETS khopper DESTINATION "bin")

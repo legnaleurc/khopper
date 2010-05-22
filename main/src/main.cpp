@@ -23,13 +23,13 @@
  * @namespace khopper
  * @brief All componets in this program
  */
-#include "application.hpp"
 #include "mainwindow.hpp"
-#include "util/text.hpp"
+
+#include "khopper/application.hpp"
+#include "khopper/text.hpp"
 
 #include <QtCore/QSettings>
 #include <QtCore/QTextCodec>
-//#include <QtGui/QApplication>
 
 /// Main program
 int main( int argc, char * argv[] ) {

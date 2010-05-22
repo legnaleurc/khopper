@@ -25,7 +25,7 @@
 #include "album.hpp"
 #include "track.hpp"
 
-#include "util/error.hpp"
+#include "khopper/error.hpp"
 
 #include <vector>
 #include <string>

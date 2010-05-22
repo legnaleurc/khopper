@@ -21,3 +21,8 @@ source_group("Form Files" REGULAR_EXPRESSION .*\\.ui)
 add_library(khopper_panel_mp3 SHARED ${KHOPPER_PLUGIN_PANEL_MP3_HEADERS} ${KHOPPER_PLUGIN_PANEL_MP3_SOURCES} ${KHOPPER_PLUGIN_PANEL_MP3_UIC_HEADERS})
 khopper_add_plugin(khopper_panel_mp3)
 target_link_libraries(khopper_panel_mp3 ${LAME_LIBRARIES} ${TAGLIB_LIBRARIES})
+
+install(TARGETS khopper_panel_mp3 DESTINATION
+    RUNTIME DESTINATION "plugins"
+    LIBRARY DESTINATION "plugins"
+    ARCHIVE DESTINATION "lib")

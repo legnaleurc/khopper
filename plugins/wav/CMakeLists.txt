@@ -13,3 +13,8 @@ source_group("Form Files" REGULAR_EXPRESSION .*\\.ui)
 
 add_library(khopper_panel_wav SHARED ${KHOPPER_PLUGIN_PANEL_WAV_HEADERS} ${KHOPPER_PLUGIN_PANEL_WAV_SOURCES} ${KHOPPER_PLUGIN_PANEL_WAV_UIC_HEADERS})
 khopper_add_plugin(khopper_panel_wav)
+
+install(TARGETS khopper_panel_wav
+    RUNTIME DESTINATION "plugins"
+    LIBRARY DESTINATION "plugins"
+    ARCHIVE DESTINATION "lib")

@@ -1,5 +1,5 @@
 /**
- * @file wavplugin.hpp
+ * @file mp3panel.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,42 +19,44 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_PLUGIN_WAVPLUGIN_HPP
-#define KHOPPER_PLUGIN_WAVPLUGIN_HPP
+#ifndef KHOPPER_WIDGET_MP3PANEL_HPP
+#define KHOPPER_WIDGET_MP3PANEL_HPP
 
-#include "plugin/abstractplugin.hpp"
+#include "khopper/abstractpanel.hpp"
+
+class QButtonGroup;
+namespace Ui {
+	class MP3Panel;
+}
 
 namespace khopper {
-
 	namespace widget {
-		class WAVPanel;
-	}
-
-	namespace plugin {
 
 		/**
-		 * @brief Wav option widget
+		 * @brief Mp3 option widget
 		 */
-		class WAVPlugin : public AbstractPlugin {
+		class MP3Panel : public AbstractPanel {
 		public:
 			/**
 			 * @brief Default constructor
 			 * @param parent Parent widget
 			 * @param f Window flags
 			 */
-			WAVPlugin();
-			virtual ~WAVPlugin();
+			MP3Panel();
+			virtual ~MP3Panel();
 
-		protected:
-			virtual void doInstall( const QFileInfo & fileInfo );
-			virtual void doUninstall();
+			/**
+			 * @brief Get encoder setting object
+			 * @return Smart pointer contains AbstractWriter
+			 */
+			virtual codec::WriterSP getWriter() const;
 
 		private:
-			widget::WAVPanel * panel_;
+			Ui::MP3Panel * ui_;
+			QButtonGroup * choise_;
 		};
 
 	}
-
 }
 
 #endif

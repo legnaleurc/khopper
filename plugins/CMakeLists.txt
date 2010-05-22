@@ -14,6 +14,6 @@ macro(KHOPPER_ADD_PLUGIN target)
     set_target_properties(${target} PROPERTIES VERSION ${KHOPPER_VERSION} SOVERSION ${KHOPPER_VERSION})
 endmacro()
 
-add_subdirectory(p_mp3)
-add_subdirectory(p_wav)
+add_subdirectory(mp3)
+add_subdirectory(wav)
 add_subdirectory(xiph)

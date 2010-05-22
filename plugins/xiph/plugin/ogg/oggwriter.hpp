@@ -22,7 +22,7 @@
 #ifndef KHOPPER_CODEC_OGGWRITER_HPP
 #define KHOPPER_CODEC_OGGWRITER_HPP
 
-#include "codec/abstractwriter.hpp"
+#include "khopper/abstractwriter.hpp"
 
 #include <vorbis/vorbisenc.h>
 

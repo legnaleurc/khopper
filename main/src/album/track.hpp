@@ -22,7 +22,6 @@
 #ifndef KHOPPER_ALBUM_TRACK_HPP
 #define KHOPPER_ALBUM_TRACK_HPP
 
-#include "util/tr1.hpp"
 #include "timestamp.hpp"
 
 #include <QtCore/QByteArray>

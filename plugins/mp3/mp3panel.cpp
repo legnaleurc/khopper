@@ -23,8 +23,9 @@
 #include "ui_mp3panel.h"
 #include "mp3plugin.hpp"
 #include "mp3writer.hpp"
-#include "util/text.hpp"
-#include "application.hpp"
+
+#include "khopper/text.hpp"
+#include "khopper/application.hpp"
 
 #include <QtCore/QVariant>
 #include <QtDebug>

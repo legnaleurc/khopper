@@ -22,7 +22,7 @@
 #ifndef KHOPPER_WIDGET_OGGPANEL_HPP
 #define KHOPPER_WIDGET_OGGPANEL_HPP
 
-#include "widget/abstractpanel.hpp"
+#include "khopper/abstractpanel.hpp"
 
 class QButtonGroup;
 namespace Ui {

@@ -23,8 +23,7 @@
 #include "ui_flacpanel.h"
 #include "flacwriter.hpp"
 
-#include "application.hpp"
-#include "util/text.hpp"
+#include "khopper/text.hpp"
 
 #include <QtCore/QLibrary>
 #include <QtCore/QVariant>
