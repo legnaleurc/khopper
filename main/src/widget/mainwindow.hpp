@@ -43,6 +43,7 @@ namespace khopper {
 		class ConverterThread;
 		class Progress;
 		class Player;
+		class PluginViewer;
 		class CodecSelector;
 		class Preference;
 		class ConversionDialog;
@@ -78,6 +79,7 @@ namespace khopper {
 			ConversionDialog * conversion_;
 			Preference * preference_;
 			AboutWidget * about_;
+			PluginViewer * plugins_;
 			QString lastOpenedDir_;
 
 			void initMenuBar_();

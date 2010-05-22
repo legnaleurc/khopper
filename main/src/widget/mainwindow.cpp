@@ -26,6 +26,7 @@
 #include "conversiondialog.hpp"
 #include "cuesheet.hpp"
 #include "player.hpp"
+#include "pluginviewer.hpp"
 #include "preference.hpp"
 
 #include "khopper/error.hpp"
@@ -48,6 +49,7 @@ namespace khopper {
 		conversion_( new ConversionDialog( this ) ),
 		preference_( new Preference( this ) ),
 		about_( new AboutWidget( this ) ),
+		plugins_( new PluginViewer( this ) ),
 		lastOpenedDir_( QDir::homePath() ) {
 			this->ui_->setupUi( this );
 			// Setting menu bar
@@ -64,6 +66,7 @@ namespace khopper {
 
 		void MainWindow::initMenuBar_() {
 			connect( this->ui_->action_Open, SIGNAL( triggered() ), this, SLOT( showOpenFilesDialog() ) );
+			connect( this->ui_->actionPlugins_Manager, SIGNAL( triggered() ), this->plugins_, SLOT( show() ) );
 			connect( this->ui_->action_Preference, SIGNAL( triggered() ), this->preference_, SLOT( exec() ) );
 			connect( this->ui_->actionAbout_Khopper, SIGNAL( triggered() ), this->about_, SLOT( show() ) );
 			connect( this->ui_->actionAbout_Qt, SIGNAL( triggered() ), qApp, SLOT( aboutQt() ) );
