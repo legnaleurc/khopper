@@ -59,6 +59,9 @@ void WAVPlugin::doUninstall() {
 WAVPanel::WAVPanel():
 AbstractPanel(),
 ui_( new Ui::WAVPanel ) {
+	this->setTitle( "Wav" );
+	this->setSuffix( "wav" );
+
 	this->ui_->setupUi( this );
 
 	this->ui_->sampleRate->addItem( "44100 Hz", QVariant( 44100 ) );
