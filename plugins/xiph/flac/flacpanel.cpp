@@ -23,17 +23,7 @@
 #include "ui_flacpanel.h"
 #include "flacwriter.hpp"
 
-#include "khopper/text.hpp"
-
-#include <QtCore/QLibrary>
 #include <QtCore/QVariant>
-#include <QtDebug>
-
-#ifdef Q_OS_WIN32
-static const char * LIBFLAC = KHOPPER_STRINGIZE(KHOPPER_XIPH_LIBRARY);
-#else
-static const char * LIBFLAC = KHOPPER_STRINGIZE(KHOPPER_XIPH_LIBRARY) ".so." KHOPPER_STRINGIZE(KHOPPER_VERSION);
-#endif
 
 using namespace khopper::widget;
 using khopper::codec::WriterSP;
@@ -60,14 +50,10 @@ FlacPanel::~FlacPanel() {
 }
 
 WriterSP FlacPanel::getWriter() const {
-	FlacWriterCreator loader = reinterpret_cast< FlacWriterCreator >( QLibrary::resolve( LIBFLAC, "createFlacWriter" ) );
-	if( loader == NULL ) {
-		return WriterSP();
-	}
-	std::tr1::shared_ptr< FlacWriter > encoder( loader() );
+	FlacWriter * encoder = new FlacWriter;
 
 	encoder->setSampleRate( this->ui_->sampleRate->itemData( this->ui_->sampleRate->currentIndex() ).toInt() );
 	encoder->setChannels( this->ui_->channels->itemData( this->ui_->channels->currentIndex() ).toInt() );
 
-	return encoder;
+	return WriterSP( encoder );
 }

@@ -1,7 +1,24 @@
 # xiph plugin
 
-set(KHOPPER_XIPH_DIR ${CMAKE_CURRENT_SOURCE_DIR})
-set(KHOPPER_XIPH_LIBRARY khopper_shared_xiph)
+find_package(Flac REQUIRED)
+find_package(OggVorbis REQUIRED)
 
-add_subdirectory(shared)
-add_subdirectory(plugin)
+file(GLOB_RECURSE KHOPPER_PLUGIN_XIPH_HEADERS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.hpp)
+file(GLOB_RECURSE KHOPPER_PLUGIN_XIPH_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp)
+file(GLOB_RECURSE KHOPPER_PLUGIN_XIPH_FORMS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.ui)
+
+include_directories("flac" ${CMAKE_CURRENT_BINARY_DIR})
+
+qt4_wrap_ui(KHOPPER_PLUGIN_XIPH_UIC_HEADERS ${KHOPPER_PLUGIN_XIPH_FORMS})
+
+source_group("Generated Files" FILES ${KHOPPER_PLUGIN_XIPH_UIC_HEADERS})
+source_group("Form Files" REGULAR_EXPRESSION .*\\.ui)
+
+add_library(khopper_plugin_xiph SHARED ${KHOPPER_PLUGIN_XIPH_HEADERS} ${KHOPPER_PLUGIN_XIPH_SOURCES} ${KHOPPER_PLUGIN_XIPH_UIC_HEADERS})
+target_link_libraries(khopper_plugin_xiph ${FLAC_LIBRARIES} ${OGGVORBIS_LIBRARIES})
+khopper_add_plugin(khopper_plugin_xiph)
+
+install(TARGETS khopper_plugin_xiph
+    RUNTIME DESTINATION "plugins"
+    LIBRARY DESTINATION "plugins"
+    ARCHIVE DESTINATION "lib")

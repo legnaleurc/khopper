@@ -26,18 +26,11 @@
 
 #include "khopper/text.hpp"
 
-#include <QtCore/QLibrary>
 #include <QtCore/QVariant>
-#include <QtPlugin>
-
-#ifdef Q_OS_WIN32
-static const char * LIBFLAC = KHOPPER_STRINGIZE(KHOPPER_XIPH_LIBRARY);
-#else
-static const char * LIBFLAC = KHOPPER_STRINGIZE(KHOPPER_XIPH_LIBRARY) ".so.0.2.60";
-#endif
 
 using namespace khopper::widget;
 using khopper::codec::WriterSP;
+using khopper::codec::FlacWriter;
 using khopper::codec::OggWriter;
 
 OggPanel::OggPanel():
@@ -77,13 +70,9 @@ WriterSP OggPanel::getWriter() const {
 	int id = this->choise_->checkedId();
 
 	if( id == 0 ) {
-		FlacWriterCreator loader = reinterpret_cast< FlacWriterCreator >( QLibrary::resolve( LIBFLAC, "createFlacWriter" ) );
-		if( loader == NULL ) {
-			return WriterSP();
-		}
-		std::tr1::shared_ptr< codec::FlacWriter > flac( loader() );
+		FlacWriter * flac = new FlacWriter;
 		flac->setOggMode( true );
-		tmp = flac;
+		tmp.reset( flac );
 	} else if( id == 1 ) {
 		OggWriter * vorbis = new OggWriter;
 		vorbis->setVBRQuality( this->ui_->quality->itemData( this->ui_->quality->currentIndex() ).toInt() / 10.f );
