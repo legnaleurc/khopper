@@ -113,7 +113,7 @@ void ConversionDialog::removePanel( AbstractPanel * panel ) {
 
 QString ConversionDialog::getOutputPath_( TrackSP track ) {
 	if( this->ui_->useSource->isChecked() && track->getURI().scheme() == "file" ) {
-		return track->getURI().toLocalFile();
+		return QFileInfo( track->getURI().toLocalFile() ).path();
 	}
 	return this->ui_->outputPath->text();
 }
