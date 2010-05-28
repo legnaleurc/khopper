@@ -24,12 +24,11 @@
 
 #include "abstractwriter.hpp"
 
+#include <QtCore/QSharedPointer>
 #include <QtGui/QWidget>
 
 namespace khopper {
 	namespace widget {
-
-		struct AbstractPanelPrivate;
 
 		/**
 		 * @brief Abstract panel widget
@@ -67,7 +66,8 @@ namespace khopper {
 			void setTitle( const QString & title );
 
 		private:
-			AbstractPanelPrivate * p_;
+			struct AbstractPanelPrivate;
+			QSharedPointer< AbstractPanelPrivate > p_;
 		};
 
 	}

@@ -22,12 +22,14 @@
 #ifndef KHOPPER_PLUGIN_ABSTRACTPLUGINPRIVATE_HPP
 #define KHOPPER_PLUGIN_ABSTRACTPLUGINPRIVATE_HPP
 
+#include "abstractplugin.hpp"
+
 #include <QtCore/QString>
 
 namespace khopper {
 	namespace plugin {
 
-		struct AbstractPluginPrivate {
+		struct AbstractPlugin::AbstractPluginPrivate {
 			AbstractPluginPrivate();
 
 			bool installed;

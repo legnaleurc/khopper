@@ -19,7 +19,6 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
-#include "application.hpp"
 #include "applicationprivate.hpp"
 #include "plugin/pluginmanager.hpp"
 
@@ -31,10 +30,6 @@ using khopper::plugin::PluginManager;
 Application::Application( int & argc, char * * argv ):
 QApplication( argc, argv ),
 p_( new ApplicationPrivate ) {
-}
-
-Application::~Application() {
-	delete this->p_;
 }
 
 void Application::addPanel( AbstractPanel * panel ) {
@@ -53,6 +48,6 @@ AbstractPlugin * Application::getPluginInstance( const QString & pluginID ) cons
 	return this->p_->pm->getPluginInstance( pluginID );
 }
 
-ApplicationPrivate::ApplicationPrivate():
+Application::ApplicationPrivate::ApplicationPrivate():
 pm( new PluginManager ) {
 }

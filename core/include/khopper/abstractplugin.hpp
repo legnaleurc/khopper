@@ -25,13 +25,11 @@
 #include "tr1.hpp"
 
 #include <QtCore/QFileInfo>
+#include <QtCore/QSharedPointer>
 #include <QtCore/QString>
 
 namespace khopper {
-
 	namespace plugin {
-
-		struct AbstractPluginPrivate;
 
 		/**
 		 * @brief Interface of plugins
@@ -44,8 +42,6 @@ namespace khopper {
 		class KHOPPER_DLL AbstractPlugin : public QObject {
 		public:
 			AbstractPlugin();
-			/// virtual destructor
-			virtual ~AbstractPlugin();
 
 			void install( const QFileInfo & fileInfo );
 			void uninstall();
@@ -68,11 +64,11 @@ namespace khopper {
 			AbstractPlugin( const AbstractPlugin & );
 			AbstractPlugin & operator =( const AbstractPlugin & );
 
+			struct AbstractPluginPrivate;
 			AbstractPluginPrivate * p_;
 		};
 
 	}
-
 }
 
 Q_DECLARE_INTERFACE( khopper::plugin::AbstractPlugin, "org.FoolproofProject.Khopper.Plugin/0.2" )

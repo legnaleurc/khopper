@@ -22,16 +22,18 @@
 #ifndef KHOPPER_APPLICATIONPRIVATE_HPP
 #define KHOPPER_APPLICATIONPRIVATE_HPP
 
+#include "application.hpp"
+
 namespace khopper {
 
 	namespace plugin {
 		class PluginManager;
 	}
 
-	struct ApplicationPrivate {
+	struct Application::ApplicationPrivate {
 		ApplicationPrivate();
 
-		plugin::PluginManager * pm;
+		QSharedPointer< plugin::PluginManager > pm;
 	};
 }
 
