@@ -65,7 +65,7 @@ loadedPlugins_() {
 	tmp = qApp->applicationDirPath();
 #endif
 
-	if( tmp.cd( "../plugins" ) ) {
+	if( tmp.cd( "../lib/plugins" ) ) {
 		this->searchPaths_.push_back( tmp );
 	}
 
