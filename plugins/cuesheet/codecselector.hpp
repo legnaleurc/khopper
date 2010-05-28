@@ -39,29 +39,20 @@ namespace khopper {
 			Q_OBJECT
 
 		public:
-			/**
-			 * @brief Default constructor
-			 * @param parent Parent widget
-			 * @param f Window flags
-			 */
-			explicit CodecSelector( QWidget * parent );
-			virtual ~CodecSelector();
-			/**
-			 * @brief Set encoded string
-			 * @param [in] encoded Encoded string
-			 */
-			void setEncoded( const QByteArray & encoded );
-			/**
-			 * @brief Get decoded string
-			 * @return Decoded string, in Unicode
-			 */
-			QString getDecoded() const;
+			static QString selectTextCodec( const QByteArray & encoded );
 
 		private slots:
 			void update_( int );
 
 		private:
-			Ui::CodecSelector * ui_;
+			/**
+			 * @brief Default constructor
+			 * @param parent Parent widget
+			 * @param f Window flags
+			 */
+			explicit CodecSelector( const QByteArray & encoded );
+
+			std::tr1::shared_ptr< Ui::CodecSelector > ui_;
 			QByteArray encoded_;
 			QString decoded_;
 		};

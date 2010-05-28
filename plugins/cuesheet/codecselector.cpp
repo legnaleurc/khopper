@@ -25,45 +25,37 @@
 #include <QtCore/QTextCodec>
 #include <QtCore/QTextStream>
 
-namespace khopper {
+using namespace khopper::widget;
 
-	namespace widget {
-
-		CodecSelector::CodecSelector( QWidget * parent ):
-		QDialog( parent ),
-		ui_( new Ui::CodecSelector ),
-		encoded_(),
-		decoded_() {
-			this->ui_->setupUi( this );
-
-			this->ui_->codecs->addItem( "UTF-8", QTextCodec::codecForName( "UTF-8" )->mibEnum() );
-			this->ui_->codecs->addItem( "Shift-JIS", QTextCodec::codecForName( "Shift-JIS" )->mibEnum() );
-			this->ui_->codecs->addItem( "Big5", QTextCodec::codecForName( "Big5" )->mibEnum() );
-			connect( this->ui_->codecs, SIGNAL( currentIndexChanged( int ) ), this, SLOT( update_( int ) ) );
-		}
-
-		CodecSelector::~CodecSelector() {
-			delete this->ui_;
-		}
-
-		void CodecSelector::setEncoded( const QByteArray & encoded ) {
-			this->encoded_ = encoded;
-			this->update_( this->ui_->codecs->currentIndex() );
-		}
-
-		QString CodecSelector::getDecoded() const {
-			return this->decoded_;
-		}
-
-		void CodecSelector::update_( int index ) {
-			int mib = this->ui_->codecs->itemData( index ).toInt();
-			QTextStream ts( &this->encoded_ );
-			ts.setCodec( QTextCodec::codecForMib( mib ) );
-			this->decoded_ = ts.readAll();
-
-			this->ui_->contents->setText( this->decoded_ );
-		}
-
+QString CodecSelector::selectTextCodec( const QByteArray & encoded ) {
+	std::tr1::shared_ptr< CodecSelector > dialog( new CodecSelector( encoded ) );
+	if( dialog->exec() == QDialog::Rejected ) {
+		return "";
+	} else {
+		return dialog->decoded_;
 	}
+}
 
+CodecSelector::CodecSelector( const QByteArray & encoded ):
+QDialog( 0, 0 ),
+ui_( new Ui::CodecSelector ),
+encoded_( encoded ),
+decoded_() {
+	this->ui_->setupUi( this );
+
+	this->ui_->codecs->addItem( "UTF-8", QTextCodec::codecForName( "UTF-8" )->mibEnum() );
+	this->ui_->codecs->addItem( "Shift-JIS", QTextCodec::codecForName( "Shift-JIS" )->mibEnum() );
+	this->ui_->codecs->addItem( "Big5", QTextCodec::codecForName( "Big5" )->mibEnum() );
+	QObject::connect( this->ui_->codecs, SIGNAL( currentIndexChanged( int ) ), this, SLOT( update_( int ) ) );
+
+	this->update_( this->ui_->codecs->currentIndex() );
+}
+
+void CodecSelector::update_( int index ) {
+	int mib = this->ui_->codecs->itemData( index ).toInt();
+	QTextStream ts( &this->encoded_ );
+	ts.setCodec( QTextCodec::codecForMib( mib ) );
+	this->decoded_ = ts.readAll();
+
+	this->ui_->contents->setText( this->decoded_ );
 }

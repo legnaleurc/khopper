@@ -20,6 +20,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "cuesheetplugin.hpp"
+#include "codecselector.hpp"
 
 #include "khopper/playlist.hpp"
 #include "khopper/text.hpp"
@@ -47,6 +48,8 @@ namespace {
 	}
 
 	khopper::album::PlayList creator( const QUrl & uri ) {
+		QFile fin( uri.toLocalFile() );
+		QString content = khopper::widget::CodecSelector::selectTextCodec( fin.readAll() );
 		return khopper::album::PlayList();
 	}
 
