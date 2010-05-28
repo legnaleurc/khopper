@@ -20,6 +20,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "songlist.hpp"
+#include "playlist.hpp"
 #include "propertieswidget.hpp"
 
 #include <QtCore/QFileInfo>
@@ -86,181 +87,182 @@ namespace {
 
 }
 
-namespace khopper {
-	namespace widget {
+using namespace khopper::widget;
+using khopper::album::PlayList;
+using khopper::album::TrackList;
 
-		SongList::SongList( QWidget * parent ):
-		QTableView( parent ),
-		model_( new QStandardItemModel( this ) ),
-		contextMenu_( new QMenu( this ) ),
-		propWidget_( new PropertiesWidget( this ) ),
-		tracks_(),
-		droppingFiles_() {
-			// Set drag and drop
-			this->setAcceptDrops( true );
+SongList::SongList( QWidget * parent ):
+QTableView( parent ),
+model_( new QStandardItemModel( this ) ),
+contextMenu_( new QMenu( this ) ),
+propWidget_( new PropertiesWidget( this ) ),
+tracks_(),
+droppingFiles_() {
+	// Set drag and drop
+	this->setAcceptDrops( true );
 
-			// Set selection behavior
-			this->setSelectionBehavior( SelectRows );
-			this->setEditTriggers( NoEditTriggers );
+	// Set selection behavior
+	this->setSelectionBehavior( SelectRows );
+	this->setEditTriggers( NoEditTriggers );
 
-			this->setWordWrap( false );
-			this->setShowGrid( false );
+	this->setWordWrap( false );
+	this->setShowGrid( false );
 
-			// Set header
-			QStringList headers;
-			foreach( HeaderData hd, getHeaderList() ) {
-				headers << hd.header;
-			}
-			this->model_->setHorizontalHeaderLabels( headers );
+	// Set header
+	QStringList headers;
+	foreach( HeaderData hd, getHeaderList() ) {
+		headers << hd.header;
+	}
+	this->model_->setHorizontalHeaderLabels( headers );
 
-			// Set model
-			this->setModel( this->model_ );
-			QAction * delSong = new QAction( this );
-			delSong->setShortcut( QKeySequence::Delete );
-			this->addAction( delSong );
-			connect( delSong, SIGNAL( triggered() ), this, SLOT( removeSelected_() ) );
+	// Set model
+	this->setModel( this->model_ );
+	QAction * delSong = new QAction( this );
+	delSong->setShortcut( QKeySequence::Delete );
+	this->addAction( delSong );
+	connect( delSong, SIGNAL( triggered() ), this, SLOT( removeSelected_() ) );
 
-			// Set context menu
-			QMenu * codecs = new QMenu( tr( "Change Text Codec" ), this );
+	// Set context menu
+	QMenu * codecs = new QMenu( tr( "Change Text Codec" ), this );
 
-			QSignalMapper * sm = new QSignalMapper( this );
+	QSignalMapper * sm = new QSignalMapper( this );
 
-			// generate codec menu
-			foreach( int mib, QTextCodec::availableMibs() ) {
-				QAction * codec = new QAction( QTextCodec::codecForMib( mib )->name(), this );
-				codecs->addAction( codec );
-				connect( codec, SIGNAL( triggered() ), sm, SLOT( map() ) );
-				sm->setMapping( codec, mib );
-			}
+	// generate codec menu
+	foreach( int mib, QTextCodec::availableMibs() ) {
+		QAction * codec = new QAction( QTextCodec::codecForMib( mib )->name(), this );
+		codecs->addAction( codec );
+		connect( codec, SIGNAL( triggered() ), sm, SLOT( map() ) );
+		sm->setMapping( codec, mib );
+	}
 
-			connect( sm, SIGNAL( mapped( int ) ), this, SLOT( changeTextCodec_( int ) ) );
+	connect( sm, SIGNAL( mapped( int ) ), this, SLOT( changeTextCodec_( int ) ) );
 
-			this->contextMenu_->addMenu( codecs );
+	this->contextMenu_->addMenu( codecs );
 
-			this->contextMenu_->addSeparator();
+	this->contextMenu_->addSeparator();
 
-			QAction * properties = new QAction( tr( "Properties" ), this );
-			connect( properties, SIGNAL( triggered() ), this, SLOT( propertiesHelper_() ) );
-			this->contextMenu_->addAction( properties );
+	QAction * properties = new QAction( tr( "Properties" ), this );
+	connect( properties, SIGNAL( triggered() ), this, SLOT( propertiesHelper_() ) );
+	this->contextMenu_->addAction( properties );
 
-			this->contextMenu_->addSeparator();
+	this->contextMenu_->addSeparator();
 
-			QAction * convert = new QAction( tr( "Convert" ), this );
-			convert->setShortcut( Qt::CTRL + Qt::Key_Return );
-			connect( convert, SIGNAL( triggered() ), this, SLOT( convertHelper_() ) );
-			this->addAction( convert );
-			this->contextMenu_->addAction( convert );
+	QAction * convert = new QAction( tr( "Convert" ), this );
+	convert->setShortcut( Qt::CTRL + Qt::Key_Return );
+	connect( convert, SIGNAL( triggered() ), this, SLOT( convertHelper_() ) );
+	this->addAction( convert );
+	this->contextMenu_->addAction( convert );
+}
+
+void SongList::propertiesHelper_() {
+	QModelIndexList selected = this->selectionModel()->selectedRows();
+	if( selected.isEmpty() ) {
+		// no track selected
+		emit this->error( tr( "No track selected!" ), tr( "Please select at least one track." ) );
+		return;
+	}
+	this->propWidget_->exec( this->getSelectedTracks() );
+}
+
+void SongList::convertHelper_() {
+	QModelIndexList selected = this->selectionModel()->selectedRows();
+	if( selected.isEmpty() ) {
+		emit this->error( tr( "No track selected!" ), tr( "Please select at least one track." ) );
+		return;
+	}
+
+	std::sort( selected.begin(), selected.end(), ::indexRowCompD );
+	album::TrackList result( selected.size() );
+
+	for( std::size_t i = 0; i < result.size(); ++i ) {
+		result[i] = this->tracks_.at( selected[i].row() );
+	}
+
+	emit this->requireConvert( result );
+}
+
+void SongList::append( const PlayList & playList ) {
+	this->tracks_.insert( this->tracks_.end(), playList.begin(), playList.end() );
+
+	// get last row number
+	int offset = this->model_->rowCount();
+	// add all tracks
+	for( int row = 0; row < playList.size(); ++row ) {
+		const int currentRow = row + offset;
+		for( int col = 0; col < getHeaderList().size(); ++col ) {
+			this->model_->setItem( currentRow, col, new QStandardItem( displayHelper( playList[row]->get( getHeaderList()[col].id ) ) ) );
 		}
 
-		void SongList::propertiesHelper_() {
-			QModelIndexList selected = this->selectionModel()->selectedRows();
-			if( selected.isEmpty() ) {
-				// no track selected
-				emit this->error( tr( "No track selected!" ), tr( "Please select at least one track." ) );
-				return;
-			}
-			this->propWidget_->exec( this->getSelectedTracks() );
-		}
+		this->resizeRowToContents( currentRow );
+	}
+}
 
-		void SongList::convertHelper_() {
-			QModelIndexList selected = this->selectionModel()->selectedRows();
-			if( selected.isEmpty() ) {
-				emit this->error( tr( "No track selected!" ), tr( "Please select at least one track." ) );
-				return;
-			}
+TrackList SongList::getSelectedTracks() const {
+	QModelIndexList selected = this->selectionModel()->selectedRows( 0 );
+	std::sort( selected.begin(), selected.end(), ::indexRowCompD );
+	album::TrackList result( selected.size() );
 
-			std::sort( selected.begin(), selected.end(), ::indexRowCompD );
-			album::TrackList result( selected.size() );
+	for( std::size_t i = 0; i < result.size(); ++i ) {
+		result[i] = this->tracks_.at( selected[i].row() );
+	}
 
-			for( std::size_t i = 0; i < result.size(); ++i ) {
-				result[i] = this->tracks_.at( selected[i].row() );
-			}
+	return result;
+}
 
-			emit this->requireConvert( result );
-		}
+void SongList::changeTextCodec_( int mib ) {
+	QTextCodec * codec = QTextCodec::codecForMib( mib );
+	QModelIndexList selected = this->selectionModel()->selectedRows();
+	foreach( QModelIndex index, selected ) {
+		album::TrackSP track( this->tracks_[index.row()] );
+		track->setTextCodec( codec );
 
-		void SongList::appendTracks( const album::TrackList & tracks ) {
-			this->tracks_.insert( this->tracks_.end(), tracks.begin(), tracks.end() );
+		// FIXME: generic
+		this->model_->item( index.row(), 0 )->setText( track->get( "title" ).toString() );
+		this->model_->item( index.row(), 1 )->setText( track->get( "artist" ).toString() );
+		this->model_->item( index.row(), 2 )->setText( track->get( "album" ).toString() );
+	}
+}
 
-			// get last row number
-			int offset = this->model_->rowCount();
-			// add all tracks
-			for( std::size_t row = 0; row < tracks.size(); ++row ) {
-				const std::size_t currentRow = row + offset;
-				for( int col = 0; col < getHeaderList().size(); ++col ) {
-					this->model_->setItem( currentRow, col, new QStandardItem( displayHelper( tracks[row]->get( getHeaderList()[col].id ) ) ) );
-				}
+void SongList::removeSelected_() {
+	QModelIndexList selected = this->selectionModel()->selectedRows();
+	std::sort( selected.begin(), selected.end(), ::indexRowCompD );
+	foreach( QModelIndex index, selected ) {
+		this->tracks_.erase( this->tracks_.begin() + index.row() );
+		this->model_->removeRow( index.row() );
+	}
+	this->selectionModel()->clear();
+}
 
-				this->resizeRowToContents( currentRow );
-			}
-		}
+void SongList::contextMenuEvent( QContextMenuEvent * event ) {
+	this->contextMenu_->exec( event->globalPos() );
+}
 
-		album::TrackList SongList::getSelectedTracks() const {
-			QModelIndexList selected = this->selectionModel()->selectedRows( 0 );
-			std::sort( selected.begin(), selected.end(), ::indexRowCompD );
-			album::TrackList result( selected.size() );
+void SongList::dragEnterEvent( QDragEnterEvent * event ) {
+	if( event->mimeData()->hasFormat( "text/uri-list" ) ) {
+		event->acceptProposedAction();
+	}
+}
 
-			for( std::size_t i = 0; i < result.size(); ++i ) {
-				result[i] = this->tracks_.at( selected[i].row() );
-			}
+void SongList::dragMoveEvent( QDragMoveEvent * event ) {
+	if( event->mimeData()->hasFormat( "text/uri-list" ) ) {
+		event->acceptProposedAction();
+	}
+}
 
-			return result;
-		}
+void SongList::dropEvent( QDropEvent * event ) {
+	if( event->mimeData()->hasUrls() ) {
+		this->droppingFiles_ = event->mimeData()->urls();
+		QTimer::singleShot( 0, this, SLOT( dropFiles_() ) );
+	}
+	event->acceptProposedAction();
+}
 
-		void SongList::changeTextCodec_( int mib ) {
-			QTextCodec * codec = QTextCodec::codecForMib( mib );
-			QModelIndexList selected = this->selectionModel()->selectedRows();
-			foreach( QModelIndex index, selected ) {
-				album::TrackSP track( this->tracks_[index.row()] );
-				track->setTextCodec( codec );
-
-				// FIXME: generic
-				this->model_->item( index.row(), 0 )->setText( track->get( "title" ).toString() );
-				this->model_->item( index.row(), 1 )->setText( track->get( "artist" ).toString() );
-				this->model_->item( index.row(), 2 )->setText( track->get( "album" ).toString() );
-			}
-		}
-
-		void SongList::removeSelected_() {
-			QModelIndexList selected = this->selectionModel()->selectedRows();
-			std::sort( selected.begin(), selected.end(), ::indexRowCompD );
-			foreach( QModelIndex index, selected ) {
-				this->tracks_.erase( this->tracks_.begin() + index.row() );
-				this->model_->removeRow( index.row() );
-			}
-			this->selectionModel()->clear();
-		}
-
-		void SongList::contextMenuEvent( QContextMenuEvent * event ) {
-			this->contextMenu_->exec( event->globalPos() );
-		}
-
-		void SongList::dragEnterEvent( QDragEnterEvent * event ) {
-			if( event->mimeData()->hasFormat( "text/uri-list" ) ) {
-				event->acceptProposedAction();
-			}
-		}
-
-		void SongList::dragMoveEvent( QDragMoveEvent * event ) {
-			if( event->mimeData()->hasFormat( "text/uri-list" ) ) {
-				event->acceptProposedAction();
-			}
-		}
-
-		void SongList::dropEvent( QDropEvent * event ) {
-			if( event->mimeData()->hasUrls() ) {
-				this->droppingFiles_ = event->mimeData()->urls();
-				QTimer::singleShot( 0, this, SLOT( dropFiles_() ) );
-			}
-			event->acceptProposedAction();
-		}
-
-		void SongList::mouseDoubleClickEvent( QMouseEvent * event ) {
+void SongList::mouseDoubleClickEvent( QMouseEvent * event ) {
 // 			this->QTableView::mouseDoubleClickEvent( event );
-			emit this->requirePlay();
-			qDebug() << "Double Clicked Item:" << this->rowAt( event->y() );
-			event->accept();
-		}
+	emit this->requirePlay();
+	qDebug() << "Double Clicked Item:" << this->rowAt( event->y() );
+	event->accept();
+}
 
 // 		void SongList::mousePressEvent( QMouseEvent * event ) {
 // 			this->QTableView::mousePressEvent( event );
@@ -274,9 +276,6 @@ namespace khopper {
 // 			event->accept();
 // 		}
 
-		void SongList::dropFiles_() {
-			emit this->fileDropped( this->droppingFiles_ );
-		}
-
-	}
+void SongList::dropFiles_() {
+	emit this->fileDropped( this->droppingFiles_ );
 }

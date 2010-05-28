@@ -30,6 +30,11 @@
 #include <QtGui/QTableView>
 
 namespace khopper {
+
+	namespace album {
+		class PlayList;
+	}
+
 	namespace widget {
 
 		class PropertiesWidget;
@@ -51,7 +56,7 @@ namespace khopper {
 			 * @brief Append tracks to the song list
 			 * @param [in] tracks Tracks
 			 */
-			void appendTracks( const album::TrackList & tracks );
+			void append( const album::PlayList & playList );
 			/**
 			 * @brief Get all tracks
 			 */
@@ -117,6 +122,7 @@ namespace khopper {
 		};
 
 	}
+
 }
 
 #endif

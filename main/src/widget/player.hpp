@@ -26,6 +26,7 @@
 
 #include <Phonon/MediaObject>
 #include <Phonon/VolumeSlider>
+#include <QtCore/QSharedPointer>
 #include <QtGui/QLabel>
 #include <QtGui/QPushButton>
 
@@ -34,6 +35,10 @@ namespace Ui {
 }
 
 namespace khopper {
+
+	namespace album {
+		class PlayList;
+	}
 
 	namespace widget {
 
@@ -47,14 +52,13 @@ namespace khopper {
 		public:
 			/// Default constructor
 			explicit Player( QWidget * parent );
-			virtual ~Player();
 
 			/// Get selected tracks
 			album::TrackList getSelectedTracks() const;
 			/// Get all tracks
 			const album::TrackList & getTracks() const;
 			/// Append tracks
-			void appendTracks( const album::TrackList & tracks );
+			void append( const album::PlayList & playList );
 
 		signals:
 			/**
@@ -82,7 +86,7 @@ namespace khopper {
 			void updateTimestamp_( int ms );
 
 		private:
-			Ui::Player * ui_;
+			QSharedPointer< Ui::Player > ui_;
 			Phonon::MediaObject * player_;
 			album::Timestamp currentTimeStamp_;
 			album::Timestamp duration_;

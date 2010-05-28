@@ -25,6 +25,7 @@
 #include "track.hpp"
 
 #include <QtCore/QList>
+#include <QtCore/QSharedPointer>
 #include <QtCore/QUrl>
 #include <QtGui/QCheckBox>
 #include <QtGui/QComboBox>
@@ -59,7 +60,6 @@ namespace khopper {
 			 * @brief Default constructor
 			 */
 			MainWindow();
-			virtual ~MainWindow();
 
 		public slots:
 			/**
@@ -73,7 +73,7 @@ namespace khopper {
 			void open( const QList< QUrl > & uris );
 
 		private:
-			Ui::MainWindow * ui_;
+			std::tr1::shared_ptr< Ui::MainWindow > ui_;
 			CodecSelector * codec_;
 			ConversionDialog * conversion_;
 			Preference * preference_;
@@ -81,7 +81,6 @@ namespace khopper {
 			QString lastOpenedDir_;
 
 			void initMenuBar_();
-			void initOptionWindow_();
 
 		private slots:
 			void fire_( const album::TrackList & );
