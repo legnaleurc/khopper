@@ -22,7 +22,7 @@
 #ifndef KHOPPER_WIDGET_PLAYER_HPP
 #define KHOPPER_WIDGET_PLAYER_HPP
 
-#include "track.hpp"
+#include "khopper/track.hpp"
 
 #include <Phonon/MediaObject>
 #include <Phonon/VolumeSlider>

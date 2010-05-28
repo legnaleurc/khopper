@@ -20,8 +20,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "songlist.hpp"
-#include "playlist.hpp"
 #include "propertieswidget.hpp"
+
+#include "khopper/playlist.hpp"
 
 #include <QtCore/QFileInfo>
 #include <QtCore/QSignalMapper>

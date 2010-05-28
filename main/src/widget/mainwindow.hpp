@@ -22,7 +22,7 @@
 #ifndef KHOPPER_WIDGET_MAINWINDOW_HPP
 #define KHOPPER_WIDGET_MAINWINDOW_HPP
 
-#include "track.hpp"
+#include "khopper/track.hpp"
 
 #include <QtCore/QList>
 #include <QtCore/QSharedPointer>
@@ -44,7 +44,6 @@ namespace khopper {
 		class ConverterThread;
 		class Progress;
 		class Player;
-		class CodecSelector;
 		class Preference;
 		class ConversionDialog;
 
@@ -74,7 +73,6 @@ namespace khopper {
 
 		private:
 			std::tr1::shared_ptr< Ui::MainWindow > ui_;
-			CodecSelector * codec_;
 			ConversionDialog * conversion_;
 			Preference * preference_;
 			AboutWidget * about_;

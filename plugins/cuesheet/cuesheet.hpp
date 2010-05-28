@@ -22,10 +22,9 @@
 #ifndef KHOPPER_ALBUM_CUESHEET_HPP
 #define KHOPPER_ALBUM_CUESHEET_HPP
 
-#include "album.hpp"
-#include "track.hpp"
-
+#include "khopper/album.hpp"
 #include "khopper/error.hpp"
+#include "khopper/track.hpp"
 
 #include <vector>
 #include <string>

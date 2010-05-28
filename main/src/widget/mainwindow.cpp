@@ -22,14 +22,12 @@
 #include "mainwindow.hpp"
 #include "ui_mainwindow.h"
 #include "aboutwidget.hpp"
-#include "codecselector.hpp"
 #include "conversiondialog.hpp"
-#include "cuesheet.hpp"
 #include "player.hpp"
-#include "playlist.hpp"
 #include "preference.hpp"
 
 #include "khopper/error.hpp"
+#include "khopper/playlist.hpp"
 
 #include <QtCore/QDir>
 #include <QtCore/QFile>
@@ -45,7 +43,6 @@ using khopper::album::PlayList;
 MainWindow::MainWindow():
 QMainWindow( 0, 0 ),
 ui_( new Ui::MainWindow ),
-codec_( new CodecSelector( this ) ),
 conversion_( new ConversionDialog( this ) ),
 preference_( new Preference( this ) ),
 about_( new AboutWidget( this ) ),

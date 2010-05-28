@@ -22,8 +22,8 @@
 #ifndef KHOPPER_WIDGET_CONVERTER_HPP
 #define KHOPPER_WIDGET_CONVERTER_HPP
 
-#include "track.hpp"
 #include "khopper/abstractwriter.hpp"
+#include "khopper/track.hpp"
 
 #include <QtCore/QObject>
 

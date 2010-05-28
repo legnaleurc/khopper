@@ -20,11 +20,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "cuesheet.hpp"
-#include "track.hpp"
 
 #include "khopper/abstractreader.hpp"
 #include "khopper/error.hpp"
 #include "khopper/text.hpp"
+#include "khopper/track.hpp"
 
 #include <QtDebug>
 #include <QtCore/QRegExp>

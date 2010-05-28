@@ -22,7 +22,7 @@
 #ifndef KHOPPER_WIDGET_SONGLIST_HPP
 #define KHOPPER_WIDGET_SONGLIST_HPP
 
-#include "track.hpp"
+#include "khopper/track.hpp"
 
 #include <QtCore/QList>
 #include <QtCore/QUrl>

@@ -31,7 +31,7 @@
 namespace khopper {
 	namespace album {
 
-		class PlayList : public QList< TrackSP > {
+		class KHOPPER_DLL PlayList : public QList< TrackSP > {
 		public:
 			typedef Loki::Functor< unsigned int, Loki::TL::MakeTypelist< const QUrl & >::Result > Verifier;
 			typedef Loki::Functor< PlayList, Loki::TL::MakeTypelist< const QUrl & >::Result > Creator;

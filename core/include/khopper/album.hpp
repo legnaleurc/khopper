@@ -31,7 +31,7 @@ namespace khopper {
 
 	namespace album {
 
-		class Album {
+		class KHOPPER_DLL Album {
 		public:
 			typedef QVector< TrackSP >::iterator TrackIterator;
 			typedef QVector< TrackSP >::const_iterator TrackConstIterator;

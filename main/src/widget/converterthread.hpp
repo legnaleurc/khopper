@@ -22,10 +22,10 @@
 #ifndef KHOPPER_WIDGET_CONVERTERTHREAD_HPP
 #define KHOPPER_WIDGET_CONVERTERTHREAD_HPP
 
-#include "track.hpp"
 #include "converter.hpp"
 
 #include "khopper/abstractwriter.hpp"
+#include "khopper/track.hpp"
 
 #include <QtCore/QStringList>
 #include <QtCore/QThread>

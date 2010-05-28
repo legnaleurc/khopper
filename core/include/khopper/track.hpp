@@ -44,7 +44,7 @@ namespace khopper {
 		 * gives you decoded strings. Please use setTextCodec to
 		 * change the decoder.
 		 */
-		class Track {
+		class KHOPPER_DLL Track {
 		public:
 			/**
 			 * @brief Default constructor.

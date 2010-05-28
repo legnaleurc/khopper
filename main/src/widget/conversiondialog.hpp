@@ -22,7 +22,7 @@
 #ifndef KHOPPER_WIDGET_CONVERSIONDIALOG_HPP
 #define KHOPPER_WIDGET_CONVERSIONDIALOG_HPP
 
-#include "track.hpp"
+#include "khopper/track.hpp"
 
 #include <boost/format.hpp>
 

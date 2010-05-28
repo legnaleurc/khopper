@@ -22,7 +22,7 @@
 #ifndef KHOPPER_ALBUM_TIMESTAMP_HPP
 #define KHOPPER_ALBUM_TIMESTAMP_HPP
 
-#include "khopper/tr1.hpp"
+#include "tr1.hpp"
 
 #include <QtCore/QMetaType>
 
@@ -35,7 +35,7 @@ namespace khopper {
 		/**
 		 * @brief Track index information
 		 */
-		class Timestamp {
+		class KHOPPER_DLL Timestamp {
 		public:
 			/**
 			 * @brief Default constructor

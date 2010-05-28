@@ -1,5 +1,5 @@
 /**
- * @file propertieswidget.hpp
+ * @file cuesheetplugin.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,42 +19,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_WIDGET_PROPERTIESWIDGET_HPP
-#define KHOPPER_WIDGET_PROPERTIESWIDGET_HPP
+#ifndef KHOPPER_PLUGIN_CUESHEETPLUGIN_HPP
+#define KHOPPER_PLUGIN_CUESHEETPLUGIN_HPP
 
-#include "khopper/track.hpp"
-
-#include <QtGui/QDialog>
-
-class QAbstractButton;
-class QDialogButtonBox;
-class QGridLayout;
-class QLineEdit;
+#include "khopper/abstractplugin.hpp"
 
 namespace khopper {
-	namespace widget {
-		class PropertiesWidget : public QDialog {
-			Q_OBJECT
+	namespace plugin {
 
+		class CueSheetPlugin : public AbstractPlugin {
 		public:
-			PropertiesWidget( QWidget * parent );
+			CueSheetPlugin();
 
-			using QDialog::exec;
-			int exec( const album::TrackList & tracks );
-
-		private slots:
-			void perform_( QAbstractButton * );
-
-		private:
-			void initFieldLayout_( QGridLayout * );
-			void write_();
-
-			QLineEdit * albumInput_;
-			QLineEdit * artistInput_;
-			QDialogButtonBox * buttonBox_;
-			QLineEdit * titleInput_;
+		protected:
+			virtual void doInstall();
+			virtual void doUninstall();
 		};
+
 	}
 }
 
-#endif // KHOPPER_WIDGET_PROPERTIESWIDGET_HPP
+#endif
