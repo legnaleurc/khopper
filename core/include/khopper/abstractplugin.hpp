@@ -25,7 +25,6 @@
 #include "tr1.hpp"
 
 #include <QtCore/QFileInfo>
-#include <QtCore/QSharedPointer>
 #include <QtCore/QString>
 
 namespace khopper {
@@ -65,7 +64,7 @@ namespace khopper {
 			AbstractPlugin & operator =( const AbstractPlugin & );
 
 			struct AbstractPluginPrivate;
-			AbstractPluginPrivate * p_;
+			std::tr1::shared_ptr< AbstractPluginPrivate > p_;
 		};
 
 	}

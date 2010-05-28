@@ -24,7 +24,6 @@
 
 #include "abstractwriter.hpp"
 
-#include <QtCore/QSharedPointer>
 #include <QtGui/QWidget>
 
 namespace khopper {
@@ -67,7 +66,7 @@ namespace khopper {
 
 		private:
 			struct AbstractPanelPrivate;
-			QSharedPointer< AbstractPanelPrivate > p_;
+			std::tr1::shared_ptr< AbstractPanelPrivate > p_;
 		};
 
 	}

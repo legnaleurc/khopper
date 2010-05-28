@@ -33,7 +33,7 @@ namespace khopper {
 	struct Application::ApplicationPrivate {
 		ApplicationPrivate();
 
-		QSharedPointer< plugin::PluginManager > pm;
+		std::tr1::shared_ptr< plugin::PluginManager > pm;
 	};
 }
 

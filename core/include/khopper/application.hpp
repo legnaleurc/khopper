@@ -24,7 +24,6 @@
 
 #include "tr1.hpp"
 
-#include <QtCore/QSharedPointer>
 #include <QtGui/QApplication>
 
 namespace khopper {
@@ -39,6 +38,7 @@ namespace khopper {
 
 	class KHOPPER_DLL Application : public QApplication {
 		Q_OBJECT
+
 	public:
 		Application( int & argc, char * * argv );
 
@@ -53,7 +53,7 @@ namespace khopper {
 
 	private:
 		struct ApplicationPrivate;
-		QSharedPointer< ApplicationPrivate > p_;
+		std::tr1::shared_ptr< ApplicationPrivate > p_;
 	};
 
 }
