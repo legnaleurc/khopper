@@ -85,7 +85,7 @@ namespace khopper {
 			/**
 			 * @brief Emitted when convert action is required.
 			 */
-			void requireConvert( const album::PlayList & tracks );
+			void requireConvert( const khopper::album::PlayList & tracks );
 			/**
 			 * @brief Emitted when play is required.
 			 * @todo Add parameter.

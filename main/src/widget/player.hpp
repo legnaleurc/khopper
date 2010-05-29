@@ -25,10 +25,8 @@
 #include "khopper/playlist.hpp"
 
 #include <Phonon/MediaObject>
-#include <Phonon/VolumeSlider>
 #include <QtCore/QSharedPointer>
-#include <QtGui/QLabel>
-#include <QtGui/QPushButton>
+#include <QtGui/QWidget>
 
 namespace Ui {
 	class Player;
@@ -65,7 +63,7 @@ namespace khopper {
 			/**
 			 * @brief Emmited when convert action is required.
 			 */
-			void requireConvert( const album::PlayList & );
+			void requireConvert( const khopper::album::PlayList & );
 			/**
 			 * @brief Error message
 			 * @param title Error title

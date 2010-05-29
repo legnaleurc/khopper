@@ -66,7 +66,7 @@ starting_( false ) {
 	connect( this->ui_->seeker, SIGNAL( dragged( int ) ), this, SLOT( updateTimestamp_( int ) ) );
 
 	connect( this->ui_->songList, SIGNAL( fileDropped( const QList< QUrl > & ) ), this, SIGNAL( fileDropped( const QList< QUrl > & ) ) );
-	connect( this->ui_->songList, SIGNAL( requireConvert( const PlayList & ) ), this, SIGNAL( requireConvert( const PlayList & ) ) );
+	connect( this->ui_->songList, SIGNAL( requireConvert( const khopper::album::PlayList & ) ), this, SIGNAL( requireConvert( const khopper::album::PlayList & ) ) );
 	connect( this->ui_->songList, SIGNAL( requirePlay() ), this, SLOT( play_() ) );
 	connect( this->ui_->songList, SIGNAL( error( const QString &, const QString & ) ), this, SIGNAL( error( const QString &, const QString & ) ) );
 }

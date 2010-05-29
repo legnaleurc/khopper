@@ -81,7 +81,7 @@ namespace khopper {
 			void initMenuBar_();
 
 		private slots:
-			void fire_( const album::PlayList & );
+			void fire_( const khopper::album::PlayList & );
 			void showErrorMessage_( const QString &, const QString & );
 		};
 
