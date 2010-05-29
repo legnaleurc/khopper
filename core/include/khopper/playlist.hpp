@@ -24,6 +24,9 @@
 
 #include "track.hpp"
 
+#ifndef LOKI_CLASS_LEVEL_THREADING
+# define LOKI_CLASS_LEVEL_THREADING
+#endif
 #include <loki/Functor.h>
 
 #include <QtCore/QList>
@@ -35,8 +38,16 @@ namespace khopper {
 
 		class KHOPPER_DLL PlayList : public QList< TrackSP > {
 		public:
-			typedef Loki::Functor< unsigned int, Loki::TL::MakeTypelist< const QUrl & >::Result > Verifier;
-			typedef Loki::Functor< PlayList, Loki::TL::MakeTypelist< const QUrl & >::Result > Creator;
+			typedef Loki::Functor<
+				unsigned int,
+				LOKI_TYPELIST_1( const QUrl & ),
+				Loki::ClassLevelLockable
+			> Verifier;
+			typedef Loki::Functor<
+				PlayList,
+				LOKI_TYPELIST_1( const QUrl & ),
+				Loki::ClassLevelLockable
+			> Creator;
 
 			static PlayList loadFromUri( const QUrl & uri );
 			static void registerPlayList( Verifier v, Creator c );

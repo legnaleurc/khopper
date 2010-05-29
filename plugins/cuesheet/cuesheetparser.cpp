@@ -118,7 +118,7 @@ void CueSheetParser::parseSingle_( const QString & c, const QString & s ) {
 			this->currentTrack_->setSongWriter( content );
 		}
 	} else if( c == "TITLE" ) {
-		if( this->trackIndex_ == -1 ) {
+		if( this->trackIndex_ == 0 ) {
 			this->album_->setTitle( content );
 		} else {
 			this->currentTrack_->setTitle( content );

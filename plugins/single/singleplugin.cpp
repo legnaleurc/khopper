@@ -48,7 +48,7 @@ namespace {
 		khopper::codec::ReaderSP decoder( khopper::plugin::createReader( khopper::text::getSuffix( uri.toLocalFile() ) ) );
 		decoder->open( uri );
 		if( decoder->isOpen() ) {
-			track->getAlbum().reset( new khopper::album::Album );
+			track->setAlbum( khopper::album::AlbumSP( new khopper::album::Album ) );
 			// FIXME: text codec
 			track->getAlbum()->setTitle( decoder->getAlbum().c_str() );
 			track->setArtist( QByteArray( decoder->getArtist().c_str() ) );
