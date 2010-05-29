@@ -1,5 +1,5 @@
 /**
- * @file playlist.hpp
+ * @file cuesheettrack.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,27 +19,38 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_ALBUM_PLAYLIST_HPP
-#define KHOPPER_ALBUM_PLAYLIST_HPP
+#ifndef KHOPPER_ALBUM_CUESHEETTRACK_HPP
+#define KHOPPER_ALBUM_CUESHEETTRACK_HPP
 
-#include "track.hpp"
+#include "khopper/track.hpp"
 
-#include <loki/Functor.h>
-
-#include <QtCore/QList>
-#include <QtCore/QVector>
-#include <QtCore/QSet>
+#include <QtCore/QStringList>
 
 namespace khopper {
 	namespace album {
 
-		class KHOPPER_DLL PlayList : public QList< TrackSP > {
+		class CueSheetTrack : public Track {
 		public:
-			typedef Loki::Functor< unsigned int, Loki::TL::MakeTypelist< const QUrl & >::Result > Verifier;
-			typedef Loki::Functor< PlayList, Loki::TL::MakeTypelist< const QUrl & >::Result > Creator;
+			const QStringList & getComments() const;
+			const QStringList & getGarbage() const;
 
-			static PlayList loadFromUri( const QUrl & uri );
-			static void registerPlayList( Verifier v, Creator c );
+			void setComments( const QStringList & comments );
+			void setDataType( const QString & dataType );
+			void setFileType( const QString & fileType );
+			void setGarbage( const QStringList & garbage );
+			void setISRC( const QString & isrc );
+			void setPostgap( const Timestamp & postgap );
+			void setPregap( const Timestamp & pregap );
+
+		private:
+			QStringList comments_;
+			QString dataType_;
+			QString fileType_;
+			QStringList garbage_;
+			QString isrc_;
+			Timestamp postgap_;
+			Timestamp pregap_;
+			Timestamp startTime_;
 		};
 
 	}

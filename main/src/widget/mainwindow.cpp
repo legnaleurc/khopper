@@ -37,7 +37,6 @@
 #include <QtGui/QMessageBox>
 
 using namespace khopper::widget;
-using khopper::album::TrackList;
 using khopper::album::PlayList;
 
 MainWindow::MainWindow():
@@ -65,7 +64,7 @@ void MainWindow::initMenuBar_() {
 	QObject::connect( this->ui_->actionAbout_Qt, SIGNAL( triggered() ), qApp, SLOT( aboutQt() ) );
 }
 
-void MainWindow::fire_( const TrackList & tracks ) {
+void MainWindow::fire_( const PlayList & tracks ) {
 	if( tracks.empty() ) {
 		this->showErrorMessage_( tr( "Run-time error!" ), tr( "No track selected." ) );
 		return;
@@ -94,7 +93,7 @@ void MainWindow::open( const QList< QUrl > & uris ) {
 		return;
 	}
 
-	TrackList tracks;
+	PlayList tracks;
 
 	foreach( QUrl uri, uris ) {
 		if( uri.isEmpty() ) {
@@ -173,9 +172,9 @@ void MainWindow::open( const QList< QUrl > & uris ) {
 		//		this->showErrorMessage_( tr( "Can not decode this file!" ), trUtf8( e.what() ) );
 		//	}
 		//}
-
-		this->ui_->player->append( pl );
 	}
+
+	this->ui_->player->append( tracks );
 }
 
 void MainWindow::showErrorMessage_( const QString & title, const QString & msg ) {

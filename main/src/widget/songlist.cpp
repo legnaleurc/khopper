@@ -71,26 +71,25 @@ namespace {
 		return hdl;
 	}
 
-	QString displayHelper( const QVariant & v ) {
-		if( v.canConvert( QVariant::String ) ) {
-			return v.toString();
-		} else if( v.canConvert( QVariant::Int ) ) {
-			return QString::number( v.toInt() );
-		} else if( v.canConvert< khopper::album::Timestamp >() ) {
-			return v.value< khopper::album::Timestamp >().toString();
-		} else if( !v.isValid() ) {
-			qDebug() << v;
-			return "!!!";
-		} else {
-			return "to be continue";
-		}
-	}
+	//QString displayHelper( const QVariant & v ) {
+	//	if( v.canConvert( QVariant::String ) ) {
+	//		return v.toString();
+	//	} else if( v.canConvert( QVariant::Int ) ) {
+	//		return QString::number( v.toInt() );
+	//	} else if( v.canConvert< khopper::album::Timestamp >() ) {
+	//		return v.value< khopper::album::Timestamp >().toString();
+	//	} else if( !v.isValid() ) {
+	//		qDebug() << v;
+	//		return "!!!";
+	//	} else {
+	//		return "to be continue";
+	//	}
+	//}
 
 }
 
 using namespace khopper::widget;
 using khopper::album::PlayList;
-using khopper::album::TrackList;
 
 SongList::SongList( QWidget * parent ):
 QTableView( parent ),
@@ -172,39 +171,44 @@ void SongList::convertHelper_() {
 		return;
 	}
 
-	std::sort( selected.begin(), selected.end(), ::indexRowCompD );
-	album::TrackList result( selected.size() );
+	std::sort( selected.begin(), selected.end(), indexRowCompD );
+	PlayList result;
 
-	for( std::size_t i = 0; i < result.size(); ++i ) {
-		result[i] = this->tracks_.at( selected[i].row() );
+	for( int i = 0; i < selected.size(); ++i ) {
+		result.push_back( this->tracks_.at( selected[i].row() ) );
 	}
 
 	emit this->requireConvert( result );
 }
 
 void SongList::append( const PlayList & playList ) {
-	this->tracks_.insert( this->tracks_.end(), playList.begin(), playList.end() );
+	this->tracks_.append( playList );
 
 	// get last row number
 	int offset = this->model_->rowCount();
 	// add all tracks
 	for( int row = 0; row < playList.size(); ++row ) {
 		const int currentRow = row + offset;
-		for( int col = 0; col < getHeaderList().size(); ++col ) {
-			this->model_->setItem( currentRow, col, new QStandardItem( displayHelper( playList[row]->get( getHeaderList()[col].id ) ) ) );
-		}
+
+		this->model_->setItem( currentRow, 0, new QStandardItem( playList[row]->getTitle() ) );
+		this->model_->setItem( currentRow, 1, new QStandardItem( playList[row]->getArtist() ) );
+		this->model_->setItem( currentRow, 2, new QStandardItem( playList[row]->getAlbum()->getTitle() ) );
+		this->model_->setItem( currentRow, 3, new QStandardItem( playList[row]->getDuration().toString() ) );
+		this->model_->setItem( currentRow, 4, new QStandardItem( QString::number( playList[row]->getBitRate() ) ) );
+		this->model_->setItem( currentRow, 5, new QStandardItem( QString::number( playList[row]->getSampleRate() ) ) );
+		this->model_->setItem( currentRow, 6, new QStandardItem( QString::number( playList[row]->getChannels() ) ) );
 
 		this->resizeRowToContents( currentRow );
 	}
 }
 
-TrackList SongList::getSelectedTracks() const {
+PlayList SongList::getSelectedTracks() const {
 	QModelIndexList selected = this->selectionModel()->selectedRows( 0 );
 	std::sort( selected.begin(), selected.end(), ::indexRowCompD );
-	album::TrackList result( selected.size() );
+	PlayList result;
 
-	for( std::size_t i = 0; i < result.size(); ++i ) {
-		result[i] = this->tracks_.at( selected[i].row() );
+	for( int i = 0; i < result.size(); ++i ) {
+		result.push_back( this->tracks_.at( selected[i].row() ) );
 	}
 
 	return result;
@@ -218,9 +222,9 @@ void SongList::changeTextCodec_( int mib ) {
 		track->setTextCodec( codec );
 
 		// FIXME: generic
-		this->model_->item( index.row(), 0 )->setText( track->get( "title" ).toString() );
-		this->model_->item( index.row(), 1 )->setText( track->get( "artist" ).toString() );
-		this->model_->item( index.row(), 2 )->setText( track->get( "album" ).toString() );
+		this->model_->item( index.row(), 0 )->setText( track->getTitle() );
+		this->model_->item( index.row(), 1 )->setText( track->getArtist() );
+		this->model_->item( index.row(), 2 )->setText( track->getAlbum()->getTitle() );
 	}
 }
 

@@ -38,7 +38,6 @@ namespace {
 }
 
 using namespace khopper::widget;
-using khopper::album::TrackList;
 using khopper::album::PlayList;
 
 Player::Player( QWidget * parent ):
@@ -67,16 +66,16 @@ starting_( false ) {
 	connect( this->ui_->seeker, SIGNAL( dragged( int ) ), this, SLOT( updateTimestamp_( int ) ) );
 
 	connect( this->ui_->songList, SIGNAL( fileDropped( const QList< QUrl > & ) ), this, SIGNAL( fileDropped( const QList< QUrl > & ) ) );
-	connect( this->ui_->songList, SIGNAL( requireConvert( const album::TrackList & ) ), this, SIGNAL( requireConvert( const album::TrackList & ) ) );
+	connect( this->ui_->songList, SIGNAL( requireConvert( const PlayList & ) ), this, SIGNAL( requireConvert( const PlayList & ) ) );
 	connect( this->ui_->songList, SIGNAL( requirePlay() ), this, SLOT( play_() ) );
 	connect( this->ui_->songList, SIGNAL( error( const QString &, const QString & ) ), this, SIGNAL( error( const QString &, const QString & ) ) );
 }
 
-TrackList Player::getSelectedTracks() const {
+PlayList Player::getSelectedTracks() const {
 	return this->ui_->songList->getSelectedTracks();
 }
 
-const TrackList & Player::getTracks() const {
+const PlayList & Player::getTracks() const {
 	return this->ui_->songList->getTracks();
 }
 
@@ -90,10 +89,10 @@ void Player::play_() {
 		return;
 	}
 
-	const album::TrackList & tracks( this->ui_->songList->getTracks() );
+	const PlayList & tracks( this->ui_->songList->getTracks() );
 
 	if( !tracks.empty() ) {
-		const album::TrackList selected( this->ui_->songList->getSelectedTracks() );
+		const PlayList selected( this->ui_->songList->getSelectedTracks() );
 		if( selected.empty() ) {
 			this->currentTrack_ = tracks[0];
 		} else {
@@ -101,8 +100,8 @@ void Player::play_() {
 		}
 
 		this->player_->setCurrentSource( this->currentTrack_->getURI() );
-		album::Timestamp startTime = this->currentTrack_->get( "start_time" ).value< album::Timestamp >();
-		this->duration_ = this->currentTrack_->get( "duration" ).value< album::Timestamp >();
+		album::Timestamp startTime = this->currentTrack_->getStartTime();
+		this->duration_ = this->currentTrack_->getDuration();
 		this->currentBeginTime_ = startTime.toMillisecond();
 		this->currentEndTime_ = this->currentBeginTime_ + this->duration_.toMillisecond();
 		this->ui_->seeker->setRange( this->currentBeginTime_, this->currentEndTime_ );

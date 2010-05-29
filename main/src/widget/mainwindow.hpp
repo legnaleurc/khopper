@@ -22,7 +22,7 @@
 #ifndef KHOPPER_WIDGET_MAINWINDOW_HPP
 #define KHOPPER_WIDGET_MAINWINDOW_HPP
 
-#include "khopper/track.hpp"
+#include "khopper/playlist.hpp"
 
 #include <QtCore/QList>
 #include <QtCore/QSharedPointer>
@@ -81,7 +81,7 @@ namespace khopper {
 			void initMenuBar_();
 
 		private slots:
-			void fire_( const album::TrackList & );
+			void fire_( const album::PlayList & );
 			void showErrorMessage_( const QString &, const QString & );
 		};
 

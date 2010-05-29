@@ -23,120 +23,34 @@
 #define KHOPPER_ALBUM_CUESHEET_HPP
 
 #include "khopper/album.hpp"
-#include "khopper/error.hpp"
-#include "khopper/track.hpp"
 
-#include <vector>
-#include <string>
+#include <QtCore/QSet>
+#include <QtCore/QStringList>
 
 namespace khopper {
-
 	namespace album {
 
-		/**
-		 * @brief The CUE parser
-		 */
-		class CUESheet : public Album {
+		class CueSheet : public Album {
 		public:
-			/**
-			 * @brief Default constructor
-			 */
-			CUESheet();
+			const QStringList & getComments() const;
+			const QSet< QString > & getFlags() const;
+			const QStringList & getGarbage() const;
 
-			/**
-			 * @brief Give a CUE Sheet content and create this object
-			 * @param [in] content CHESheet content
-			 * @param [in] dirPath where the CUE sheet comes from
-			 * @throws ParsingError Invalid CUE format
-			 * @throws CodecError Decode media error
-			 * @throws IOError File not openable
-			 */
-			explicit CUESheet( const QString & content, const QString & dirPath = QString() );
-
-			/**
-			 * @brief Set CUE sheet by given whole content
-			 * @param [in] content CHESheet content
-			 * @param [in] dirPath where the CUE sheet comes from
-			 * @throws ParsingError Invalid CUE format
-			 * @throws CodecError Decode media error
-			 * @throws IOError File not openable
-			 */
-			void open( const QString & content, const QString & dirPath = QString() );
-
-			/**
-			 * @brief Set media file
-			 * @param [in] filePath Audio path
-			 * @throws CodecError Decode media error
-			 * @throws IOError File not openable
-			 */
-			void setMedia( const QUrl & uri );
-
-			/// Get artist
-//			const QString & getArtist() const {
-//				return this->artist_;
-//			}
-			/// Get catalog
-//			const QString & getCatalog() const {
-//				return this->catalog_;
-//			}
-			/// Get CD Text File
-//			const QString & getCDTextFile() const {
-//				return this->cdTextFile_;
-//			}
-			/// Get comment by key
-//			const QString & getComment( const QString & key ) const {
-//				return this->comments_.find( key )->second;
-//			}
-			/// Get garbage
-//			const std::vector< QString > & getGarbage() const {
-//				return this->garbage_;
-//			}
-			/// Get song writer
-//			const QString & getSongWriter() const {
-//				return this->songWriter_;
-//			}
-			/// Get album title
-//			const QString & getTitle() const {
-//				return this->title_;
-//			}
-			/// Get tracks
-//			const std::vector< TrackSP > & getTracks() const {
-//				return this->tracks_;
-//			}
+			void setCatalog( const QString & catalog );
+			void setCDTextFile( const QString & cdTextFile );
+			void setComments( const QStringList & comments );
+			void setFlags( const QSet< QString > & flags );
+			void setGarbage( const QStringList & garbage );
 
 		private:
-//			QString artist_;
-//			QString catalog_;
-//			QString cdTextFile_;
-//			std::map< QString, QString > comments_;
-//			std::vector< QString > garbage_;
-//			QString songWriter_;
-//			QString title_;
-//			std::vector< TrackSP > tracks_;
-
-			void parseCUE_( QString, const QString & );
-			void parseSingle_( const QString &, const QString &, int );
-			std::pair< QString, QString > parseFile_( const QString &, const QString &, const QString & );
-			void parseFlags_( const QString &, int );
-			void parseIndex_( const QString &, const QString &, const QString &, const QString &, const QString &, int );
-			void parseComment_( const QString &, const QString &, int );
-			void parseTrack_( const QString &, const std::pair< QString, QString > &, const QString & );
-			void parseGarbage_( const QString &, int );
+			QString catalog_;
+			QString cdTextFile_;
+			QStringList comments_;
+			QSet< QString > flags_;
+			QStringList garbage_;
 		};
 
 	}
-
-	namespace error {
-
-		/// Parsing error policy
-		class Parsing {};
-		/// Error on parsing
-		typedef Error< Parsing > ParsingError;
-
-	}
-
 }
-
-Q_DECLARE_METATYPE(QSet<QString>)
 
 #endif

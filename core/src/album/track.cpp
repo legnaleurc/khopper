@@ -19,52 +19,126 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "track.hpp"
+#include "trackprivate.hpp"
 
 #include "abstractreader.hpp"
 #include "error.hpp"
 #include "text.hpp"
 
+#include <QHash>
+
 using namespace khopper::album;
 
 Track::Track():
-fields_(),
-uri_(),
-textCodec_( QTextCodec::codecForName( "UTF-8" ) ) {
+p_( new TrackPrivate ) {
 }
 
-void Track::set( const QString & key, const std::string & value ) {
-	this->set( key, QVariant( QByteArray( value.c_str() ) ) );
+Track::~Track() {
 }
 
-void Track::set( const QString & key, const QString & value ) {
-	this->set( key, QVariant( this->textCodec_->fromUnicode( value ) ) );
+AlbumSP Track::getAlbum() const {
+	return this->p_->album;
 }
 
-void Track::set( const QString & key, const QVariant & value ) {
-	QMap< QString, QVariant >::iterator it = this->fields_.find( key );
-	if( it == this->fields_.end() ) {
-		this->fields_.insert( key, value );
-	} else {
-		it.value() = value;
+QString Track::getArtist() const {
+	return this->p_->textCodec->toUnicode( this->p_->artist );
+}
+
+unsigned int Track::getBitRate() const {
+	return this->p_->bitRate;
+}
+
+unsigned int Track::getChannels() const {
+	return this->p_->channels;
+}
+
+const Timestamp & Track::getDuration() const {
+	return this->p_->duration;
+}
+
+unsigned int Track::getIndex() const {
+	return this->p_->index;
+}
+
+unsigned int Track::getSampleRate() const {
+	return this->p_->sampleRate;
+}
+
+const Timestamp & Track::getStartTime() const {
+	return this->p_->startTime;
+}
+
+QString Track::getTitle() const {
+	return this->p_->textCodec->toUnicode( this->p_->title );
+}
+
+const QUrl & Track::getURI() const {
+	return this->p_->uri;
+}
+
+void Track::setAlbum( AlbumSP album ) {
+	this->p_->album = album;
+}
+
+void Track::setArtist( const QByteArray & artist ) {
+	this->p_->artist = artist;
+}
+
+void Track::setArtist( const QString & artist ) {
+	this->p_->artist = this->p_->textCodec->fromUnicode( artist );
+}
+
+void Track::setBitRate( unsigned int bitRate ) {
+	this->p_->bitRate = bitRate;
+}
+
+void Track::setChannels( unsigned int channels ) {
+	this->p_->channels = channels;
+}
+
+void Track::setDuration( const Timestamp & duration ) {
+	this->p_->duration = duration;
+}
+
+void Track::setIndex( unsigned int index ) {
+	this->p_->index = index;
+}
+
+void Track::setSampleRate( unsigned int sampleRate ) {
+	this->p_->sampleRate = sampleRate;
+}
+
+void Track::setSongWriter( const QByteArray & songWriter ) {
+	this->p_->songWriter = songWriter;
+}
+
+void Track::setSongWriter( const QString & songWriter ) {
+	this->p_->songWriter = this->p_->textCodec->fromUnicode( songWriter );
+}
+
+void Track::setStartTime( const Timestamp & startTime ) {
+	this->p_->startTime = startTime;
+}
+
+void Track::setTextCodec( QTextCodec * textCodec ) {
+	if( textCodec ) {
+		this->p_->textCodec = textCodec;
 	}
 }
 
-QVariant Track::get( const QString & key ) const {
-	QMap< QString, QVariant >::const_iterator it = this->fields_.find( key );
-	if( it == this->fields_.end() ) {
-		// no such data, invalid
-		return QVariant();
-	} else {
-		if( it.value().canConvert( QVariant::ByteArray ) ) {
-			// should decode using textcodec
-			return this->textCodec_->toUnicode( it.value().toByteArray() );
-		} else {
-			return it.value();
-		}
-	}
+void Track::setTitle( const QByteArray & title ) {
+	this->p_->title = title;
 }
 
+void Track::setTitle( const QString & title ) {
+	this->p_->title = this->p_->textCodec->fromUnicode( title );
+}
+
+void Track::setURI( const QUrl & uri ) {
+	this->p_->uri = uri;
+}
+
+/*
 void Track::load( const QUrl & uri ) {
 	this->uri_ = uri;
 
@@ -84,4 +158,22 @@ void Track::load( const QUrl & uri ) {
 	} else {
 		throw error::CodecError( "Can not open file!" );
 	}
+}
+*/
+
+Track::TrackPrivate::TrackPrivate():
+album(),
+artist(),
+bitRate( 0 ),
+channels( 0 ),
+duration(),
+sampleRate( 0 ),
+songWriter(),
+title(),
+textCodec( QTextCodec::codecForName( "UTF-8" ) ),
+uri() {
+}
+
+uint qHash( TrackCSP key ) {
+	return qHash( key.get() );
 }

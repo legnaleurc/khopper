@@ -1,5 +1,5 @@
 /**
- * @file cuesheet.cpp
+ * @file cuesheettrack.cpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,38 +19,42 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "cuesheet.hpp"
+#include "cuesheettrack.hpp"
 
 using namespace khopper::album;
 
-const QStringList & CueSheet::getComments() const {
+const QStringList & CueSheetTrack::getComments() const {
 	return this->comments_;
 }
 
-const QSet< QString > & CueSheet::getFlags() const {
-	return this->flags_;
-}
-
-const QStringList & CueSheet::getGarbage() const {
+const QStringList & CueSheetTrack::getGarbage() const {
 	return this->garbage_;
 }
 
-void CueSheet::setCatalog( const QString & catalog ) {
-	this->catalog_ = catalog;
-}
-
-void CueSheet::setCDTextFile( const QString & cdTextFile ) {
-	this->cdTextFile_ = cdTextFile;
-}
-
-void CueSheet::setComments( const QStringList & comments ) {
+void CueSheetTrack::setComments( const QStringList & comments ) {
 	this->comments_ = comments;
 }
 
-void CueSheet::setFlags( const QSet< QString > & flags ) {
-	this->flags_ = flags_;
+void CueSheetTrack::setDataType( const QString & dataType ) {
+	this->dataType_ = dataType;
 }
 
-void CueSheet::setGarbage( const QStringList & garbage ) {
+void CueSheetTrack::setFileType( const QString & fileType ) {
+	this->fileType_ = fileType;
+}
+
+void CueSheetTrack::setGarbage( const QStringList & garbage ) {
 	this->garbage_ = garbage;
+}
+
+void CueSheetTrack::setISRC( const QString & isrc ) {
+	this->isrc_ = isrc;
+}
+
+void CueSheetTrack::setPostgap( const Timestamp & postgap ) {
+	this->postgap_ = postgap;
+}
+
+void CueSheetTrack::setPregap( const Timestamp & pregap ) {
+	this->pregap_ = pregap;
 }

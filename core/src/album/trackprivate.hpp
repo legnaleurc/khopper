@@ -1,5 +1,5 @@
 /**
- * @file cuesheet.cpp
+ * @file trackprivate.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,38 +19,35 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "cuesheet.hpp"
+#ifndef KHOPPER_ALBUM_TRACKPRIVATE_HPP
+#define KHOPPER_ALBUM_TRACKPRIVATE_HPP
 
-using namespace khopper::album;
+#include "track.hpp"
 
-const QStringList & CueSheet::getComments() const {
-	return this->comments_;
+#include <QtCore/QTextCodec>
+#include <QtCore/QUrl>
+
+namespace khopper {
+	namespace album {
+
+		struct Track::TrackPrivate {
+			TrackPrivate();
+
+			AlbumSP album;
+			QByteArray artist;
+			unsigned int bitRate;
+			unsigned int channels;
+			Timestamp duration;
+			unsigned int index;
+			unsigned int sampleRate;
+			QByteArray songWriter;
+			Timestamp startTime;
+			QByteArray title;
+			QTextCodec * textCodec;
+			QUrl uri;
+		};
+
+	}
 }
 
-const QSet< QString > & CueSheet::getFlags() const {
-	return this->flags_;
-}
-
-const QStringList & CueSheet::getGarbage() const {
-	return this->garbage_;
-}
-
-void CueSheet::setCatalog( const QString & catalog ) {
-	this->catalog_ = catalog;
-}
-
-void CueSheet::setCDTextFile( const QString & cdTextFile ) {
-	this->cdTextFile_ = cdTextFile;
-}
-
-void CueSheet::setComments( const QStringList & comments ) {
-	this->comments_ = comments;
-}
-
-void CueSheet::setFlags( const QSet< QString > & flags ) {
-	this->flags_ = flags_;
-}
-
-void CueSheet::setGarbage( const QStringList & garbage ) {
-	this->garbage_ = garbage;
-}
+#endif

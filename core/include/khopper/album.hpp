@@ -22,10 +22,9 @@
 #ifndef KHOPPER_ALBUM_ALBUM_HPP
 #define KHOPPER_ALBUM_ALBUM_HPP
 
-#include "track.hpp"
+#include "tr1.hpp"
 
-#include <QtCore/QVariant>
-#include <QtCore/QVector>
+#include <QtCore/QString>
 
 namespace khopper {
 
@@ -33,48 +32,22 @@ namespace khopper {
 
 		class KHOPPER_DLL Album {
 		public:
-			typedef QVector< TrackSP >::iterator TrackIterator;
-			typedef QVector< TrackSP >::const_iterator TrackConstIterator;
+			Album();
+			virtual ~Album();
 
-			QVariant get( const QString & key ) const;
-			void set( const QString & key, const QVariant & value );
+			const QString & getArtist() const;
+			const QString & getTitle() const;
 
-			TrackCSP operator []( unsigned int index ) const {
-				return this->tracks_[index];
-			}
-			TrackSP operator []( unsigned int index ) {
-				return this->tracks_[index];
-			}
-			unsigned int trackSize() const {
-				return this->tracks_.size();
-			}
-			TrackIterator trackBegin() {
-				return this->tracks_.begin();
-			}
-			TrackConstIterator trackBegin() const {
-				return this->tracks_.begin();
-			}
-			TrackIterator trackEnd() {
-				return this->tracks_.end();
-			}
-			TrackConstIterator trackEnd() const {
-				return this->tracks_.end();
-			}
-			TrackSP trackBack() {
-				return this->tracks_.back();
-			}
-			TrackCSP trackBack() const {
-				return this->tracks_.back();
-			}
-
-			void pushBack( TrackSP track ) {
-				this->tracks_.push_back( track );
-			}
+			void setArtist( const QString & artist );
+			void setSongWriter( const QString & songWriter );
+			void setTitle( const QString & title );
 
 		private:
-			QMap< QString, QVariant > fields_;
-			QVector< TrackSP > tracks_;
+			struct AlbumPrivate;
+			std::tr1::shared_ptr< AlbumPrivate > p_;
 		};
+
+		typedef std::tr1::shared_ptr< Album > AlbumSP;
 
 	}
 

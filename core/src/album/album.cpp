@@ -19,32 +19,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "album.hpp"
+#include "albumprivate.hpp"
 
-namespace khopper {
+using namespace khopper::album;
 
-	namespace album {
+Album::Album() : p_( new AlbumPrivate ) {
+}
 
-		QVariant Album::get( const QString & key ) const {
-			QMap< QString, QVariant >::const_iterator it = this->fields_.find( key );
-			if( it == this->fields_.end() ) {
-				// no such data, invalid
-				return QVariant();
-			} else {
-				// assume no text codec problem
-				return it.value();
-			}
-		}
+Album::~Album() {
+}
 
-		void Album::set( const QString & key, const QVariant & value ) {
-			QMap< QString, QVariant >::iterator it = this->fields_.find( key );
-			if( it == this->fields_.end() ) {
-				this->fields_.insert( key, value );
-			} else {
-				it.value() = value;
-			}
-		}
+const QString & Album::getTitle() const {
+	return this->p_->title;
+}
 
-	}
+void Album::setArtist( const QString & artist ) {
+	this->p_->artist = artist;
+}
 
+void Album::setSongWriter( const QString & songWriter ) {
+	this->p_->songWriter = songWriter;
+}
+
+void Album::setTitle( const QString & title ) {
+	this->p_->title = title;
 }

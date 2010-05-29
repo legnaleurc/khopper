@@ -23,15 +23,11 @@
 #define KHOPPER_ALBUM_TRACK_HPP
 
 #include "timestamp.hpp"
+#include "album.hpp"
 
 #include <QtCore/QByteArray>
-#include <QtCore/QMap>
 #include <QtCore/QTextCodec>
 #include <QtCore/QUrl>
-#include <QtCore/QVariant>
-
-#include <map>
-#include <vector>
 
 namespace khopper {
 
@@ -50,6 +46,7 @@ namespace khopper {
 			 * @brief Default constructor.
 			 */
 			Track();
+			virtual ~Track();
 
 			/**
 			 * @brief Load track from a url.
@@ -57,39 +54,47 @@ namespace khopper {
 			 */
 			void load( const QUrl & uri );
 
+			AlbumSP getAlbum() const;
+			QString getArtist() const;
+			unsigned int getBitRate() const;
+			unsigned int getChannels() const;
+			const Timestamp & getDuration() const;
+			unsigned int getIndex() const;
+			unsigned int getSampleRate() const;
+			const Timestamp & getStartTime() const;
+			QString getTitle() const;
 			/**
 			 * @brief Get url.
 			 * @sa setFilePath(const QString &) setFilePath(const QByteArray &)
 			 */
-			const QUrl & getURI() const {
-				return this->uri_;
-			}
+			const QUrl & getURI() const;
+
+			void setAlbum( AlbumSP album );
+			void setArtist( const QByteArray & artist );
+			void setArtist( const QString & artist );
+			void setBitRate( unsigned int bitRate );
+			void setChannels( unsigned int channels );
+			void setDuration( const Timestamp & duration );
+			void setIndex( unsigned int index );
+			void setSampleRate( unsigned int sampleRate );
+			void setSongWriter( const QByteArray & songWriter );
+			void setSongWriter( const QString & songWriter );
+			void setStartTime( const Timestamp & startTime );
+			void setTitle( const QByteArray & title );
+			void setTitle( const QString & title );
 			/**
 			 * @brief Set url.
 			 * @sa getFilePath() setFilePath(const QByteArray &)
 			 */
-			void setURI( const QUrl & uri ) {
-				this->uri_ = uri;
-			}
+			void setURI( const QUrl & uri );
 			/**
 			 * @brief Set metadata text codec.
 			 */
-			void setTextCodec( QTextCodec * textCodec ) {
-				if( textCodec ) {
-					this->textCodec_ = textCodec;
-				}
-			}
-
-			void set( const QString & key, const std::string & value );
-			void set( const QString & key, const QString & value );
-			void set( const QString & key, const QVariant & value );
-
-			QVariant get( const QString & key ) const;
+			void setTextCodec( QTextCodec * textCodec );
 
 		private:
-			QMap< QString, QVariant > fields_;
-			QUrl uri_;
-			QTextCodec * textCodec_;
+			struct TrackPrivate;
+			std::tr1::shared_ptr< TrackPrivate > p_;
 		};
 
 		/**
@@ -100,13 +105,11 @@ namespace khopper {
 		 * @brief Smart pointer of const Track.
 		 */
 		typedef std::tr1::shared_ptr< const Track > TrackCSP;
-		/**
-		 * @brief Track list.
-		 */
-		typedef std::vector< TrackSP > TrackList;
 
 	}
 
 }
+
+uint KHOPPER_DLL qHash( khopper::album::TrackCSP key );
 
 #endif

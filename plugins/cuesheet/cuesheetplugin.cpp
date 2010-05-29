@@ -21,6 +21,7 @@
  */
 #include "cuesheetplugin.hpp"
 #include "codecselector.hpp"
+#include "cuesheetparser.hpp"
 
 #include "khopper/playlist.hpp"
 #include "khopper/text.hpp"
@@ -48,9 +49,17 @@ namespace {
 	}
 
 	khopper::album::PlayList creator( const QUrl & uri ) {
-		QFile fin( uri.toLocalFile() );
+		QFileInfo info( uri.toLocalFile() );
+		QFile fin;
+		if( info.suffix().toLower() == "cue" ) {
+			fin.setFileName( info.filePath() );
+		} else {
+			fin.setFileName( info.path() + "/" + info.baseName() + ".cue" );
+		}
+		fin.open( QIODevice::ReadOnly );
 		QString content = khopper::widget::CodecSelector::selectTextCodec( fin.readAll() );
-		return khopper::album::PlayList();
+		fin.close();
+		return khopper::album::CueSheetParser::load( content, info.dir() );
 	}
 
 }

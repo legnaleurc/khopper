@@ -22,7 +22,7 @@
 #ifndef KHOPPER_WIDGET_PLAYER_HPP
 #define KHOPPER_WIDGET_PLAYER_HPP
 
-#include "khopper/track.hpp"
+#include "khopper/playlist.hpp"
 
 #include <Phonon/MediaObject>
 #include <Phonon/VolumeSlider>
@@ -35,10 +35,6 @@ namespace Ui {
 }
 
 namespace khopper {
-
-	namespace album {
-		class PlayList;
-	}
 
 	namespace widget {
 
@@ -54,9 +50,9 @@ namespace khopper {
 			explicit Player( QWidget * parent );
 
 			/// Get selected tracks
-			album::TrackList getSelectedTracks() const;
+			album::PlayList getSelectedTracks() const;
 			/// Get all tracks
-			const album::TrackList & getTracks() const;
+			const album::PlayList & getTracks() const;
 			/// Append tracks
 			void append( const album::PlayList & playList );
 
@@ -69,7 +65,7 @@ namespace khopper {
 			/**
 			 * @brief Emmited when convert action is required.
 			 */
-			void requireConvert( const album::TrackList & );
+			void requireConvert( const album::PlayList & );
 			/**
 			 * @brief Error message
 			 * @param title Error title

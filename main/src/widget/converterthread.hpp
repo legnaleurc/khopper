@@ -25,7 +25,7 @@
 #include "converter.hpp"
 
 #include "khopper/abstractwriter.hpp"
-#include "khopper/track.hpp"
+#include "khopper/playlist.hpp"
 
 #include <QtCore/QStringList>
 #include <QtCore/QThread>
@@ -58,7 +58,7 @@ namespace khopper {
 			 * @brief Set tracks to convert
 			 * @param [in] tracks Tracks information
 			 */
-			void setTracks( const album::TrackList & tracks );
+			void setTracks( const album::PlayList & tracks );
 
 		public slots:
 			/**
@@ -104,7 +104,7 @@ namespace khopper {
 
 		private:
 			codec::WriterSP encoder_;
-			album::TrackList tracks_;
+			album::PlayList tracks_;
 			QList< QString > paths_;
 			bool canceled_;
 			Converter converter_;

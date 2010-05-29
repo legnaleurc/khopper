@@ -22,7 +22,7 @@
 #ifndef KHOPPER_WIDGET_CONVERSIONDIALOG_HPP
 #define KHOPPER_WIDGET_CONVERSIONDIALOG_HPP
 
-#include "khopper/track.hpp"
+#include "khopper/playlist.hpp"
 
 #include <boost/format.hpp>
 
@@ -52,7 +52,7 @@ namespace khopper {
 
 			/// Get current panel
 			AbstractPanel * getCurrent() const;
-			void convert( const album::TrackList & tracks, const boost::format & tpl );
+			void convert( const album::PlayList & tracks, const boost::format & tpl );
 
 		public slots:
 			void addPanel( khopper::widget::AbstractPanel * panel );

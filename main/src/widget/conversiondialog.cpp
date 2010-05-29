@@ -32,14 +32,14 @@
 
 namespace {
 	inline QString applyFormat( boost::format tpl, khopper::album::TrackCSP track ) {
-		return QString::fromUtf8( ( tpl % track->get( "title" ).toString().toUtf8().constData() % track->get( "artist" ).toString().toUtf8().constData() % track->get( "index" ).toInt() ).str().c_str() );
+		return QString::fromUtf8( ( tpl % track->getTitle().toUtf8().constData() % track->getArtist().toUtf8().constData() % track->getIndex() ).str().c_str() );
 	}
 }
 
 using namespace khopper::widget;
-using khopper::album::TrackList;
 using khopper::album::TrackCSP;
 using khopper::album::TrackSP;
+using khopper::album::PlayList;
 
 ConversionDialog::ConversionDialog( QWidget * parent ):
 QDialog( parent ),
@@ -70,7 +70,7 @@ ConversionDialog::~ConversionDialog() {
 	delete this->ui_;
 }
 
-void ConversionDialog::convert( const TrackList & tracks, const boost::format & tpl ) {
+void ConversionDialog::convert( const PlayList & tracks, const boost::format & tpl ) {
 	int result = this->exec();
 	if( result == QDialog::Rejected ) {
 		return;
