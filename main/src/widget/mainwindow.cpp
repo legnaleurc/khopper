@@ -38,6 +38,7 @@
 
 using namespace khopper::widget;
 using khopper::album::PlayList;
+using khopper::error::BaseError;
 
 MainWindow::MainWindow():
 QMainWindow( 0, 0 ),
@@ -100,78 +101,11 @@ void MainWindow::open( const QList< QUrl > & uris ) {
 			continue;
 		}
 
-		PlayList pl = PlayList::loadFromUri( uri );
-
-		//if( fI.suffix() == "cue" ) {
-		//	// if cue sheet opened
-		//	QFile fin( fI.absoluteFilePath() );
-		//	if( !fin.open( QIODevice::ReadOnly | QIODevice::Text ) ) {
-		//		this->showErrorMessage_(
-		//			tr( "File open error!" ),
-		//			tr( "Could not open the file: `%1\'" ).arg( fI.absoluteFilePath() )
-		//		);
-		//	}
-
-		//	QByteArray raw_input = fin.readAll();
-		//	fin.close();
-
-		//	this->codec_->setEncoded( raw_input );
-
-		//	if( this->codec_->exec() ) {
-		//		album::CUESheet sheet;
-		//		try {
-		//			sheet.open( this->codec_->getDecoded(), fI.absolutePath() );
-		//		} catch( error::ParsingError & e ) {
-		//			this->showErrorMessage_( tr( "Error on parsing CUE Sheet!" ), trUtf8( e.what() ) );
-		//		} catch( error::BaseError & ) {
-		//			int ret = QMessageBox::warning(
-		//				this,
-		//				tr( "Can not decode media" ),
-		//				tr( "I can not open the media, please select another file." ),
-		//				QMessageBox::Ok,
-		//				QMessageBox::Cancel
-		//			);
-		//			while( ret == QMessageBox::Ok ) {
-		//				QString filePath = QFileDialog::getOpenFileName(
-		//					this,
-		//					tr( "Open audio" ),
-		//					this->lastOpenedDir_
-		//				);
-		//				if( filePath.isEmpty() ) {
-		//					break;
-		//				} else {
-		//					this->lastOpenedDir_ = QFileInfo( filePath ).absolutePath();
-		//				}
-		//				try {
-		//					qDebug() << filePath;
-		//					sheet.setMedia( QUrl::fromLocalFile( filePath ) );
-		//					break;
-		//				} catch( std::exception & ) {
-		//					ret = QMessageBox::warning(
-		//						this,
-		//						tr( "Can not decode media" ),
-		//						tr( "I can not open the media, please select another file." ),
-		//						QMessageBox::Ok,
-		//						QMessageBox::Cancel
-		//					);
-		//				}
-		//			}
-		//		} catch( std::exception & e ) {
-		//			this->showErrorMessage_( tr( "Unknow error" ), trUtf8( e.what() ) );
-		//		}
-		//		tracks.insert( tracks.end(), sheet.trackBegin(), sheet.trackEnd() );
-		//	}
-		//} else {
-		//	// other, single media
-		//	album::TrackSP track( new album::Track );
-
-		//	try {
-		//		track->load( uri );
-		//		tracks.push_back( track );
-		//	} catch( std::exception & e ) {
-		//		this->showErrorMessage_( tr( "Can not decode this file!" ), trUtf8( e.what() ) );
-		//	}
-		//}
+		try {
+			tracks.append( PlayList::loadFromUri( uri ) );
+		} catch( BaseError & e ) {
+			this->showErrorMessage_( tr( "Can not decode this file!" ), e.getMessage() );
+		}
 	}
 
 	this->ui_->player->append( tracks );

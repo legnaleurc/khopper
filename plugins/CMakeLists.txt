@@ -16,5 +16,6 @@ endmacro()
 
 add_subdirectory(cuesheet)
 add_subdirectory(mp3)
+add_subdirectory(single)
 add_subdirectory(wav)
 add_subdirectory(xiph)
