@@ -21,10 +21,6 @@
  */
 #include "trackprivate.hpp"
 
-#include "abstractreader.hpp"
-#include "error.hpp"
-#include "text.hpp"
-
 #include <QHash>
 
 using namespace khopper::album;
@@ -137,29 +133,6 @@ void Track::setTitle( const QString & title ) {
 void Track::setURI( const QUrl & uri ) {
 	this->p_->uri = uri;
 }
-
-/*
-void Track::load( const QUrl & uri ) {
-	this->uri_ = uri;
-
-	// FIXME: not always local file
-	codec::ReaderSP decoder( plugin::createReader( text::getSuffix( uri.toLocalFile() ) ) );
-	decoder->open( uri );
-	if( decoder->isOpen() ) {
-		this->set( "album", decoder->getAlbum() );
-		this->set( "artist", decoder->getArtist() );
-		this->set( "bit_rate", decoder->getBitRate() );
-		this->set( "channels", decoder->getChannels() );
-		this->set( "duration", QVariant::fromValue( Timestamp::fromMillisecond( decoder->getDuration() ) ) );
-		this->set( "sample_rate", decoder->getSampleRate() );
-		this->set( "title", decoder->getTitle() );
-
-		decoder->close();
-	} else {
-		throw error::CodecError( "Can not open file!" );
-	}
-}
-*/
 
 Track::TrackPrivate::TrackPrivate():
 album(),

@@ -48,12 +48,6 @@ namespace khopper {
 			Track();
 			virtual ~Track();
 
-			/**
-			 * @brief Load track from a url.
-			 * @param uri URL
-			 */
-			void load( const QUrl & uri );
-
 			AlbumSP getAlbum() const;
 			QString getArtist() const;
 			unsigned int getBitRate() const;
@@ -80,6 +74,10 @@ namespace khopper {
 			void setSongWriter( const QByteArray & songWriter );
 			void setSongWriter( const QString & songWriter );
 			void setStartTime( const Timestamp & startTime );
+			/**
+			 * @brief Set metadata text codec.
+			 */
+			void setTextCodec( QTextCodec * textCodec );
 			void setTitle( const QByteArray & title );
 			void setTitle( const QString & title );
 			/**
@@ -87,10 +85,6 @@ namespace khopper {
 			 * @sa getFilePath() setFilePath(const QByteArray &)
 			 */
 			void setURI( const QUrl & uri );
-			/**
-			 * @brief Set metadata text codec.
-			 */
-			void setTextCodec( QTextCodec * textCodec );
 
 		private:
 			struct TrackPrivate;
