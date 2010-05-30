@@ -47,3 +47,13 @@ PlayList PlayList::loadFromUri( const QUrl & uri ) {
 void PlayList::registerPlayList( Verifier v, Creator c ) {
 	PlayListFactory::Instance().fList.push_back( std::make_pair( v, c ) );
 }
+
+void PlayList::unregisterPlayList( Verifier v ) {
+	std::list< PlayListFactoryPrivate::Pair > & fList( PlayListFactory::Instance().fList );
+	for( std::list< PlayListFactoryPrivate::Pair >::iterator it = fList.begin(); it != fList.end(); ++it ) {
+		if( it->first == v ) {
+			fList.erase( it );
+			break;
+		}
+	}
+}

@@ -62,6 +62,9 @@ namespace khopper {
 			/// get plugin instance by name
 			AbstractPlugin * getPluginInstance( const QString & name ) const;
 
+		public slots:
+			void unloadPlugins();
+
 		signals:
 			void errorOccured( const QString & title, const QString & message );
 

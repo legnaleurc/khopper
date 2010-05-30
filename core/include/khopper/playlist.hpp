@@ -51,6 +51,7 @@ namespace khopper {
 
 			static PlayList loadFromUri( const QUrl & uri );
 			static void registerPlayList( Verifier v, Creator c );
+			static void unregisterPlayList( Verifier v );
 		};
 
 	}

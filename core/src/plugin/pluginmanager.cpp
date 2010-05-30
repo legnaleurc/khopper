@@ -47,6 +47,9 @@ using namespace khopper::plugin;
 PluginManager::PluginManager():
 searchPaths_(),
 loadedPlugins_() {
+	// unload plugins on exit
+	QObject::connect( qApp, SIGNAL( aboutToQuit() ), this, SLOT( unloadPlugins() ) );
+
 	// initialize search paths
 
 	// first search binary related paths, for build time testing
@@ -85,7 +88,7 @@ loadedPlugins_() {
 }
 
 void PluginManager::reloadPlugins() {
-	this->loadedPlugins_.clear();
+	this->unloadPlugins();
 
 	foreach( QFileInfo fileInfo, this->getPluginsFileInfo_() ) {
 		qDebug() << fileInfo.absoluteFilePath();
@@ -116,6 +119,13 @@ void PluginManager::reloadPlugins() {
 			qDebug() << "unload deprecated plugin:" << unloaded;
 		}
 	}
+}
+
+void PluginManager::unloadPlugins() {
+	for( std::map< std::string, AbstractPlugin * >::iterator it = this->loadedPlugins_.begin(); it != this->loadedPlugins_.end(); ++it ) {
+		it->second->uninstall();
+	}
+	this->loadedPlugins_.clear();
 }
 
 AbstractPlugin * PluginManager::getPluginInstance( const QString & name ) const {

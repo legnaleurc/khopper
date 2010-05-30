@@ -84,5 +84,5 @@ void SinglePlugin::doInstall() {
 }
 
 void SinglePlugin::doUninstall() {
-	/* TODO: remove factory */
+	PlayList::unregisterPlayList( verifier );
 }

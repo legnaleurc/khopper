@@ -78,5 +78,5 @@ void CueSheetPlugin::doInstall() {
 }
 
 void CueSheetPlugin::doUninstall() {
-	/* TODO: remove factory */
+	PlayList::unregisterPlayList( verifier );
 }
