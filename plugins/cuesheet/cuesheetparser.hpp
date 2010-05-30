@@ -57,64 +57,6 @@ namespace khopper {
 			 */
 			CueSheetParser( const QString & content, const QDir & dir );
 
-			/**
-			 * @brief Set media file
-			 * @param [in] filePath Audio path
-			 * @throws CodecError Decode media error
-			 * @throws IOError File not openable
-			 */
-			//void setMedia_( const QUrl & uri );
-
-			/// Get artist
-//			const QString & getArtist() const {
-//				return this->artist_;
-//			}
-			/// Get catalog
-//			const QString & getCatalog() const {
-//				return this->catalog_;
-//			}
-			/// Get CD Text File
-//			const QString & getCDTextFile() const {
-//				return this->cdTextFile_;
-//			}
-			/// Get comment by key
-//			const QString & getComment( const QString & key ) const {
-//				return this->comments_.find( key )->second;
-//			}
-			/// Get garbage
-//			const std::vector< QString > & getGarbage() const {
-//				return this->garbage_;
-//			}
-			/// Get song writer
-//			const QString & getSongWriter() const {
-//				return this->songWriter_;
-//			}
-			/// Get album title
-//			const QString & getTitle() const {
-//				return this->title_;
-//			}
-			/// Get tracks
-//			const std::vector< TrackSP > & getTracks() const {
-//				return this->tracks_;
-//			}
-
-			PlayList playList_;
-			std::tr1::shared_ptr< CueSheet > album_;
-			QString currentFilePath_;
-			QString currentFileType_;
-			std::tr1::shared_ptr< CueSheetTrack > previousTrack_;
-			std::tr1::shared_ptr< CueSheetTrack > currentTrack_;
-			unsigned int trackIndex_;
-
-//			QString artist_;
-//			QString catalog_;
-//			QString cdTextFile_;
-//			std::map< QString, QString > comments_;
-//			std::vector< QString > garbage_;
-//			QString songWriter_;
-//			QString title_;
-//			std::vector< TrackSP > tracks_;
-
 			void parseCue_( QString, const QDir & );
 			void parseSingle_( const QString &, const QString & );
 			void parseFile_( const QString &, const QString &, const QDir & );
@@ -123,6 +65,24 @@ namespace khopper {
 			void parseComment_( const QString &, const QString & );
 			void parseTrack_( const QString &, const QString & );
 			void parseGarbage_( const QString & );
+
+			void updateLastTrack_();
+
+			/**
+			 * @brief Set media file
+			 * @param [in] filePath Audio path
+			 * @throws CodecError Decode media error
+			 * @throws IOError File not openable
+			 */
+			//void setMedia_( const QUrl & uri );
+
+			PlayList playList_;
+			std::tr1::shared_ptr< CueSheet > album_;
+			QString currentFilePath_;
+			QString currentFileType_;
+			std::tr1::shared_ptr< CueSheetTrack > previousTrack_;
+			std::tr1::shared_ptr< CueSheetTrack > currentTrack_;
+			unsigned int trackIndex_;
 		};
 
 	}

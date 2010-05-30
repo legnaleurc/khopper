@@ -46,6 +46,7 @@ namespace {
 }
 
 using namespace khopper::album;
+using khopper::error::CodecError;
 
 PlayList CueSheetParser::load( const QString & content, const QDir & dir ) {
 	CueSheetParser parser( content, dir );
@@ -92,7 +93,7 @@ void CueSheetParser::parseCue_( QString content, const QDir & dir ) {
 		track->setAlbum( this->album_ );
 	}
 
-//	this->setMedia_( QUrl::fromLocalFile( currentFile.first ) );
+	this->updateLastTrack_();
 }
 
 void CueSheetParser::parseSingle_( const QString & c, const QString & s ) {
@@ -127,26 +128,8 @@ void CueSheetParser::parseSingle_( const QString & c, const QString & s ) {
 }
 
 void CueSheetParser::parseFile_( const QString & fileName, const QString & type, const QDir & dir ) {
-	// get the total length, because cue sheet don't provide it
-	// FIXME: not always local file
-	codec::ReaderSP decoder( plugin::createReader( text::getSuffix( this->currentFilePath_ ) ) );
-	try {
-		// NOTE: may throw exception
-		decoder->open( QUrl::fromLocalFile( this->currentFilePath_ ) );
-	} catch( error::CodecError & e ) {
-		qDebug() << e.getMessage();
-	}
-	if( decoder->isOpen() ) {
-		// set bit rate, channels, sample rate
-		foreach( TrackSP track, this->playList_ ) {
-			track->setBitRate( decoder->getBitRate() );
-			track->setChannels( decoder->getChannels() );
-			track->setSampleRate( decoder->getSampleRate() );
-		}
-
-		this->currentTrack_->setDuration( Timestamp::fromMillisecond( decoder->getDuration() ) - this->currentTrack_->getStartTime() );
-
-		decoder->close();
+	if( this->trackIndex_ > 0 ) {
+		this->updateLastTrack_();
 	}
 
 	this->currentFilePath_ = dir.filePath( stripQuote( fileName ) );
@@ -223,5 +206,28 @@ void CueSheetParser::parseGarbage_( const QString & line ) {
 		QStringList garbage( this->currentTrack_->getGarbage() );
 		garbage.append( line );
 		this->currentTrack_->setGarbage( garbage );
+	}
+}
+
+void CueSheetParser::updateLastTrack_() {
+	// get the total length, because cue sheet don't provide it
+	codec::ReaderSP decoder( plugin::createReader( text::getSuffix( this->currentFilePath_ ) ) );
+	try {
+		// NOTE: may throw exception
+		decoder->open( QUrl::fromLocalFile( this->currentFilePath_ ) );
+	} catch( CodecError & e ) {
+		qDebug() << e.getMessage();
+	}
+	if( decoder->isOpen() ) {
+		// set bit rate, channels, sample rate
+		foreach( TrackSP track, this->playList_ ) {
+			track->setBitRate( decoder->getBitRate() );
+			track->setChannels( decoder->getChannels() );
+			track->setSampleRate( decoder->getSampleRate() );
+		}
+
+		this->currentTrack_->setDuration( Timestamp::fromMillisecond( decoder->getDuration() ) - this->currentTrack_->getStartTime() );
+
+		decoder->close();
 	}
 }
