@@ -49,7 +49,7 @@ namespace khopper {
 			 * @param [in] targetPath output file path
 			 * @param [in] encoder encoder setting
 			 */
-			void convert( album::TrackCSP track, const QUrl & targetURI, codec::WriterSP encoder );
+			void convert( album::TrackCSP track, const QString & targetPath, codec::WriterSP encoder );
 
 		public slots:
 			/**

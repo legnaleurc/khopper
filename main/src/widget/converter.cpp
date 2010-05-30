@@ -41,12 +41,12 @@ QObject( parent ),
 canceled_( false ) {
 }
 
-void Converter::convert( TrackCSP track, const QUrl & targetURI, WriterSP encoder ) {
+void Converter::convert( TrackCSP track, const QString & targetPath, WriterSP encoder ) {
 	// FIXME: not always local file
 	ReaderSP decoder( createReader( text::getSuffix( track->getURI().toLocalFile() ) ) );
 	qDebug() << track->getURI();
 	decoder->open( track->getURI() );
-	encoder->open( targetURI );
+	encoder->open( QUrl::fromLocalFile( targetPath ) );
 	this->canceled_ = false;
 
 	if( !decoder->isOpen() || !encoder->isOpen() ) {
