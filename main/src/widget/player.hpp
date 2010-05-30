@@ -25,7 +25,6 @@
 #include "khopper/playlist.hpp"
 
 #include <Phonon/MediaObject>
-#include <QtCore/QSharedPointer>
 #include <QtGui/QWidget>
 
 namespace Ui {
@@ -80,7 +79,7 @@ namespace khopper {
 			void updateTimestamp_( int ms );
 
 		private:
-			QSharedPointer< Ui::Player > ui_;
+			std::tr1::shared_ptr< Ui::Player > ui_;
 			Phonon::MediaObject * player_;
 			album::Timestamp currentTimeStamp_;
 			album::Timestamp duration_;
