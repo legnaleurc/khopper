@@ -26,51 +26,41 @@
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QPushButton>
 
-namespace khopper {
+using namespace khopper::widget;
 
-	namespace widget {
+Progress::Progress( QWidget * parent ):
+QWidget( parent, Qt::Dialog ),
+ui_( new Ui::Progress ),
+current_( 0 ),
+total_( 0 ) {
+	this->ui_->setupUi( this );
 
-		Progress::Progress( QWidget * parent ):
-		QWidget( parent, Qt::Dialog ),
-		ui_( new Ui::Progress ),
-		current_( 0 ),
-		total_( 0 ) {
-			this->ui_->setupUi( this );
+	connect( this->ui_->cancel, SIGNAL( clicked() ), this, SIGNAL( canceled() ) );
+}
 
-			connect( this->ui_->cancel, SIGNAL( clicked() ), this, SIGNAL( canceled() ) );
-		}
+void Progress::increase( qint64 value ) {
+	this->ui_->progressBar->setValue( value + this->ui_->progressBar->value() );
+}
 
-		Progress::~Progress() {
-			delete this->ui_;
-		}
+void Progress::setMaximum( qint64 maximum ) {
+	this->ui_->progressBar->setMaximum( maximum );
+	this->ui_->progressBar->setValue( 0 );
+}
 
-		void Progress::increase( qint64 value ) {
-			this->ui_->progressBar->setValue( value + this->ui_->progressBar->value() );
-		}
+void Progress::setItemName( const QString & name ) {
+	this->ui_->name->setText( name );
+}
 
-		void Progress::setMaximum( qint64 maximum ) {
-			this->ui_->progressBar->setMaximum( maximum );
-			this->ui_->progressBar->setValue( 0 );
-		}
+void Progress::setCurrent( int current ) {
+	this->current_ = current;
+	this->updateIndex_();
+}
 
-		void Progress::setItemName( const QString & name ) {
-			this->ui_->name->setText( name );
-		}
+void Progress::setTotal( int total ) {
+	this->total_ = total;
+	this->updateIndex_();
+}
 
-		void Progress::setCurrent( int current ) {
-			this->current_ = current;
-			this->updateIndex_();
-		}
-
-		void Progress::setTotal( int total ) {
-			this->total_ = total;
-			this->updateIndex_();
-		}
-
-		void Progress::updateIndex_() {
-			this->ui_->index->setText( QString( "%1/%2" ).arg( this->current_ ).arg( this->total_ ) );
-		}
-
-	}
-
+void Progress::updateIndex_() {
+	this->ui_->index->setText( QString( "%1/%2" ).arg( this->current_ ).arg( this->total_ ) );
 }

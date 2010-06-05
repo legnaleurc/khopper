@@ -19,52 +19,41 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
-#include "abstractwriter.hpp"
+#include "abstractwriterprivate.hpp"
 
 #include <QtDebug>
 
 #include <cassert>
 
-namespace khopper {
+using namespace khopper::codec;
 
-	namespace codec {
+AbstractWriter::AbstractWriter( const QUrl & uri ):
+p_( new AbstractWriterPrivate( uri ) ) {
+}
 
-		AbstractWriter::AbstractWriter():
-		album_(),
-		artist_(),
-		bitRate_( -1 ),
-		channelLayout_( LayoutNative ),
-		channels_( -1 ),
-		uri_(),
-		opening_( false ),
-		sampleFormat_( SF_NONE ),
-		sampleRate_( -1 ),
-		title_() {
-		}
+AbstractWriter::~AbstractWriter() {
+}
 
-		AbstractWriter::~AbstractWriter() {
-		}
+bool AbstractWriter::open( OpenMode /*mode*/ ) {
+	if( this->isOpen() ) {
+		this->close();
+	}
 
-		void AbstractWriter::open( const QUrl & uri ) {
-			this->uri_ = uri;
-			if( this->isOpen() ) {
-				this->close();
-			}
+	bool opened = this->QIODevice::open( WriteOnly );
+	this->doOpen();
 
-			this->doOpen();
+	return opened;
+}
 
-			this->opening_ = true;
-		}
-
-		void AbstractWriter::close() {
-			try {
-				this->flush();
-				this->doClose();
-			} catch( ... ) {
-				// TODO: log an error
-				assert( !"a plugin can not clean up its own mess ..." );
-			}
-			// FIXME: know what should be reset
+void AbstractWriter::close() {
+	try {
+		this->flush();
+		this->doClose();
+	} catch( ... ) {
+		// TODO: log an error
+		assert( !"a plugin can not clean up its own mess ..." );
+	}
+	// FIXME: know what should be reset
 //			this->album_.clear();
 //			this->artist_.clear();.
 //			this->bitRate_ = -1;
@@ -74,20 +63,90 @@ namespace khopper {
 //			this->sampleFormat_ = SF_NONE;
 //			this->sampleRate_ = -1;
 //			this->title_.clear();
-			this->opening_ = false;
-		}
+	this->QIODevice::close();
+}
 
-		void AbstractWriter::write( const ByteArray & data ) {
-			if( !this->isOpen() ) {
-				return;
-			}
-			this->writeFrame( data );
-		}
+qint64 AbstractWriter::readData( char * data, qint64 maxlen ) {
+	return -1;
+}
 
-		void AbstractWriter::flush() {
-			this->write();
-		}
+qint64 AbstractWriter::writeData( const char * data, qint64 len ) {
+	this->writeFrame( QByteArray( data, len ) );
+	return len;
+}
 
-	}
+void AbstractWriter::flush() {
+	this->writeData( NULL, 0 );
+}
 
+const QUrl & AbstractWriter::getURI() const {
+	return this->p_->uri;
+}
+
+unsigned int AbstractWriter::getChannels() const {
+	return this->p_->channels;
+}
+
+unsigned int AbstractWriter::getBitRate() const {
+	return this->p_->bitRate;
+}
+
+unsigned int AbstractWriter::getSampleRate() const {
+	return this->p_->sampleRate;
+}
+
+const QByteArray & AbstractWriter::getAlbum() const {
+	return this->p_->album;
+}
+
+const QByteArray & AbstractWriter::getArtist() const {
+	return this->p_->artist;
+}
+
+const QByteArray & AbstractWriter::getTitle() const {
+	return this->p_->title;
+}
+
+void AbstractWriter::setChannels( unsigned int channels ) {
+	this->p_->channels = channels;
+}
+
+void AbstractWriter::setSampleRate( unsigned int sampleRate ) {
+	this->p_->sampleRate = sampleRate;
+}
+
+void AbstractWriter::setBitRate( unsigned int bitRate ) {
+	this->p_->bitRate = bitRate;
+}
+
+void AbstractWriter::setAlbum( const QByteArray & album ) {
+	this->p_->album = album;
+}
+
+void AbstractWriter::setArtist( const QByteArray & artist ) {
+	this->p_->artist = artist;
+}
+
+void AbstractWriter::setTitle( const QByteArray & title ) {
+	this->p_->title = title;
+}
+
+void AbstractWriter::setChannelLayout( ChannelLayout channelLayout ) {
+	this->p_->channelLayout = channelLayout;
+}
+
+void AbstractWriter::setSampleFormat( SampleFormat sampleFormat ) {
+	this->p_->sampleFormat = sampleFormat;
+}
+
+AbstractWriter::AbstractWriterPrivate::AbstractWriterPrivate( const QUrl & uri ):
+album(),
+artist(),
+bitRate( 0 ),
+channelLayout( LayoutNative ),
+channels( 0 ),
+uri( uri ),
+sampleFormat( SF_NONE ),
+sampleRate( 0 ),
+title() {
 }

@@ -44,7 +44,10 @@ namespace khopper {
 			/**
 			 * @brief Default constructor
 			 */
-			DefaultReader();
+			explicit DefaultReader( const QUrl & uri );
+
+			virtual bool atEnd() const;
+			virtual qint64 pos() const;
 
 		protected:
 			/**
@@ -70,17 +73,18 @@ namespace khopper {
 			virtual void setupDecoder();
 			/// Read header
 			virtual void readHeader();
-			virtual ByteArray readFrame( int64_t &, bool & );
-			virtual bool seekFrame( int64_t );
-
-		private:
+			virtual QByteArray readFrame();
+			virtual bool seekFrame( qint64 msPos );
 			virtual void doOpen();
 			virtual void doClose();
 
+		private:
 			std::tr1::shared_ptr< AVFormatContext > pFormatContext_;
 			std::tr1::shared_ptr< AVCodecContext > pCodecContext_;
 			std::tr1::shared_ptr< AVPacket > pPacket_;
 			AVStream * pStream_;
+			int64_t msCurrent_;
+			bool eof_;
 		};
 
 	}

@@ -24,6 +24,7 @@
 
 #include "timestamp.hpp"
 #include "album.hpp"
+#include "abstractreader.hpp"
 
 #include <QtCore/QByteArray>
 #include <QtCore/QTextCodec>
@@ -45,7 +46,7 @@ namespace khopper {
 			/**
 			 * @brief Default constructor.
 			 */
-			Track();
+			explicit Track( codec::ReaderSP reader );
 			virtual ~Track();
 
 			AlbumSP getAlbum() const;
@@ -54,6 +55,7 @@ namespace khopper {
 			unsigned int getChannels() const;
 			const Timestamp & getDuration() const;
 			unsigned int getIndex() const;
+			codec::ReaderSP getReader() const;
 			unsigned int getSampleRate() const;
 			const Timestamp & getStartTime() const;
 			QString getTitle() const;

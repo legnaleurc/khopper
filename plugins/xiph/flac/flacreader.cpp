@@ -46,18 +46,22 @@ namespace {
 
 using namespace khopper::codec;
 
-FlacReader::FlacReader():
-	AbstractReader(),
-	pFD_( FLAC__stream_decoder_new(), FLAC__stream_decoder_delete ),
-	buffer_(),
-	offset_( 0 ),
-	msDecoded_( 0 ) {
-		if( !this->pFD_ ) {
-			throw error::CodecError( "Not enough memory! (from khopper::codec::FlacReader)" );
-		}
+FlacReader::FlacReader( const QUrl & uri ):
+AbstractReader( uri ),
+pFD_( FLAC__stream_decoder_new(), FLAC__stream_decoder_delete ),
+buffer_(),
+offset_( 0 ) {
+	if( !this->pFD_ ) {
+		throw error::CodecError( "Not enough memory! (from khopper::codec::FlacReader)" );
+	}
 }
 
-FlacReader::~FlacReader() {
+bool FlacReader::atEnd() const {
+	return FLAC__stream_decoder_get_state( this->pFD_.get() ) == FLAC__STREAM_DECODER_END_OF_STREAM;
+}
+
+qint64 FlacReader::pos() const {
+	return this->offset_ * 1000LL / this->getSampleRate();
 }
 
 void FlacReader::doOpen() {
@@ -90,7 +94,6 @@ void FlacReader::doClose() {
 	FLAC__stream_decoder_finish( this->pFD_.get() );
 	this->buffer_.clear();
 	this->offset_ = 0;
-	this->msDecoded_ = 0;
 }
 
 bool FlacReader::seekFrame( int64_t ms ) {
@@ -102,14 +105,13 @@ bool FlacReader::seekFrame( int64_t ms ) {
 	return ok;
 }
 
-ByteArray FlacReader::readFrame( int64_t & msDecoded, bool & stop ) {
-	stop = false;
+QByteArray FlacReader::readFrame() {
+	//stop = false;
 	FLAC__bool ok = FLAC__stream_decoder_process_single( this->pFD_.get() );
 	if( !ok || FLAC__stream_decoder_get_state( this->pFD_.get() ) == FLAC__STREAM_DECODER_END_OF_STREAM ) {
-		stop = true;
-		return ByteArray();
+		//stop = true;
+		return QByteArray();
 	} else {
-		msDecoded = this->msDecoded_;
 		return this->buffer_;
 	}
 }
@@ -134,7 +136,7 @@ void FlacReader::parseVorbisComments_( const FLAC__StreamMetadata_VorbisComment 
 		} else if( it.key() == "GENRE" ) {
 			this->setGenre( QStringList( tags.values( it.key() ) ).join( " & " ).toUtf8().constData() );
 		} else if( it.key() == "DATE" ) {
-			this->setYear( it.value().toInt() );
+			this->setYear( it.value() );
 		} else {
 			qDebug() << "readed `" << it.key() << "\' but ignored";
 		}
@@ -215,10 +217,10 @@ FLAC__StreamDecoderWriteStatus FlacReader::writeCallback_(
 	unsigned int decoded = 0;
 	for( unsigned int i = 0; i < frame->header.blocksize; ++i ) {
 		uint64_t ts = static_cast< uint64_t >( self->offset_ + i ) * 1000 / frame->header.sample_rate;
-		if( self->afterBegin( ts ) ) {
-			if( self->afterEnd( ts ) ) {
-				return FLAC__STREAM_DECODER_WRITE_STATUS_ABORT;
-			}
+		//if( self->afterBegin( ts ) ) {
+			//if( self->afterEnd( ts ) ) {
+			//	return FLAC__STREAM_DECODER_WRITE_STATUS_ABORT;
+			//}
 			for( unsigned int c = 0; c < frame->header.channels; ++c ) {
 				const uint8_t * tmp = static_cast< const uint8_t * >( static_cast< const void * >( &buffer[c][i] ) );
 				switch( frame->header.bits_per_sample ) {
@@ -247,13 +249,13 @@ FLAC__StreamDecoderWriteStatus FlacReader::writeCallback_(
 				default:
 					throw error::CodecError( "Unsupported sample resolution (from khopper::codec::FlacReader)" );
 				}
-			}
+			//}
 			++decoded;
 		}
 	}
 
 	self->offset_ += decoded;
-	self->msDecoded_ = decoded * 1000LL / frame->header.sample_rate;
+	//self->msDecoded_ = decoded * 1000LL / frame->header.sample_rate;
 
 	return FLAC__STREAM_DECODER_WRITE_STATUS_CONTINUE;
 }

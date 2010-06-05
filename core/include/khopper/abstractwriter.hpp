@@ -25,9 +25,7 @@
 #include "codecutil.hpp"
 
 #include <QtCore/QUrl>
-
-#include <string>
-#include <vector>
+#include <QtCore/QIODevice>
 
 namespace khopper {
 
@@ -38,12 +36,8 @@ namespace khopper {
 		 * @brief Audio writer interface
 		 * @sa AbstractReader
 		 */
-		class KHOPPER_DLL AbstractWriter {
+		class KHOPPER_DLL AbstractWriter : public QIODevice {
 		public:
-			/**
-			 * @brief Default constructor
-			 */
-			AbstractWriter();
 			/**
 			 * @brief Virtual destructor
 			 */
@@ -56,22 +50,18 @@ namespace khopper {
 			 * AbstractWriter do not handle path encoding,
 			 * so you should help yourself.
 			 */
-			void open( const QUrl & uri );
-			/// Check if audio writer is opening
-			bool isOpen() const {
-				return this->opening_;
-			}
+			virtual bool open( OpenMode mode );
 			/**
 			 * @brief Close file
 			 * @note No fail!
 			 */
-			void close();
+			virtual void close();
 
 			/**
 			 * @brief Write @p data to encoder
 			 * @param [in] data Raw binary data
 			 */
-			void write( const ByteArray & data = ByteArray() );
+			//void write( const ByteArray & data = ByteArray() );
 			/**
 			 * @brief Write unwrited data in buffer.
 			 */
@@ -81,127 +71,93 @@ namespace khopper {
 			 * @brief Set album
 			 * @sa getAlbum
 			 */
-			void setAlbum( const std::string & album ) {
-				this->album_ = album;
-			}
+			void setAlbum( const QByteArray & album );
 			/**
 			 * @brief Set artist
 			 * @sa getArtist
 			 */
-			void setArtist( const std::string & artist ) {
-				this->artist_ = artist;
-			}
+			void setArtist( const QByteArray & artist );
 			/**
 			 * @brief Set bitRate
 			 * @sa getBitRate
 			 */
-			void setBitRate( int bitRate ) {
-				this->bitRate_ = bitRate;
-			}
-			void setChannelLayout( ChannelLayout channelLayout ) {
-				this->channelLayout_ = channelLayout;
-			}
+			void setBitRate( unsigned int bitRate );
+			void setChannelLayout( ChannelLayout channelLayout );
 			/**
 			 * @brief Set channels
 			 * @sa getChannels
 			 */
-			void setChannels( int channels ) {
-				this->channels_ = channels;
-			}
-			void setSampleFormat( SampleFormat sampleFormat ) {
-				this->sampleFormat_ = sampleFormat;
-			}
+			void setChannels( unsigned int channels );
+			void setSampleFormat( SampleFormat sampleFormat );
 			/**
 			 * @brief Set sample rate
 			 * @sa getSampleRate
 			 */
-			void setSampleRate( int sampleRate ) {
-				this->sampleRate_ = sampleRate;
-			}
+			void setSampleRate( unsigned int sampleRate );
 			/**
 			 * @brief Set title
 			 * @sa getTitle
 			 */
-			void setTitle( const std::string & title ) {
-				this->title_ = title;
-			}
+			void setTitle( const QByteArray & title );
 
 		protected:
+			/**
+			 * @brief Default constructor
+			 */
+			explicit AbstractWriter( const QUrl & uri );
+
 			/**
 			 * @brief Get album
 			 * @sa setAlbum
 			 */
-			const std::string & getAlbum() const {
-				return this->album_;
-			}
+			const QByteArray & getAlbum() const;
 			/**
 			 * @brief Get artist
 			 * @sa setArtist
 			 */
-			const std::string & getArtist() const {
-				return this->artist_;
-			}
+			const QByteArray & getArtist() const;
 			/**
 			 * @brief Get bit rate
 			 * @sa setBitRate
 			 */
-			int getBitRate() const {
-				return this->bitRate_;
-			}
-			ChannelLayout getChannelLayout() const {
-				return this->channelLayout_;
-			}
+			unsigned int getBitRate() const;
+			ChannelLayout getChannelLayout() const;
 			/**
 			 * @brief Get channels
 			 * @sa setChannels
 			 */
-			int getChannels() const {
-				return this->channels_;
-			}
+			unsigned int getChannels() const;
 			/**
 			 * @brief Get file path
 			 * @sa setFilePath
 			 */
-			const QUrl & getURI() const {
-				return this->uri_;
-			}
-			SampleFormat getSampleFormat() const {
-				return this->sampleFormat_;
-			}
+			const QUrl & getURI() const;
+			SampleFormat getSampleFormat() const;
 			/**
 			 * @brief Get sample rate
 			 * @sa setSampleRate
 			 */
-			int getSampleRate() const {
-				return this->sampleRate_;
-			}
+			unsigned int getSampleRate() const;
 			/**
 			 * @brief Get title
 			 * @sa setTitle
 			 */
-			const std::string & getTitle() const {
-				return this->title_;
-			}
+			const QByteArray & getTitle() const;
+
+			virtual qint64 readData( char * data, qint64 maxlen );
+			virtual qint64 writeData( const char * data, qint64 len );
+
+			virtual void doOpen() = 0;
+			virtual void doClose() = 0;
+			virtual void writeFrame( const QByteArray & sample ) = 0;
 
 		private:
 			// prevent copying
 			AbstractWriter( const AbstractWriter & );
 			AbstractWriter & operator =( const AbstractWriter & );
 
-			virtual void doOpen() = 0;
-			virtual void doClose() = 0;
-			virtual void writeFrame( const ByteArray & sample ) = 0;
-
-			std::string album_;
-			std::string artist_;
-			int bitRate_;
-			ChannelLayout channelLayout_;
-			int channels_;
-			QUrl uri_;
-			bool opening_;
-			SampleFormat sampleFormat_;
-			int sampleRate_;
-			std::string title_;
+			struct AbstractWriterPrivate;
+			std::tr1::shared_ptr< AbstractWriterPrivate > p_;
 		};
 
 		/**

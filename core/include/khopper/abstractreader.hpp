@@ -24,301 +24,19 @@
 
 #include "codecutil.hpp"
 
+#include <QtCore/QIODevice>
 #include <QtCore/QUrl>
 
-#include <string>
+#ifndef LOKI_CLASS_LEVEL_THREADING
+# define LOKI_CLASS_LEVEL_THREADING
+#endif
+#include <loki/Functor.h>
 
 namespace khopper {
 
 	namespace codec {
 
-		/**
-		 * @ingroup Codecs
-		 * @brief Audio reader interface
-		 * @sa AbstractWriter
-		 */
-		class KHOPPER_DLL AbstractReader {
-		public:
-			/**
-			 * @brief Default constructor
-			 */
-			AbstractReader();
-			/**
-			 * @brief Virtual destructor
-			 */
-			virtual ~AbstractReader();
-
-			/**
-			 * @brief Open file
-			 * @param [in] filePath
-			 *
-			 * AbstractReader do not handle path encoding,
-			 * so you should help yourself.
-			 */
-			void open( const QUrl & uri );
-			/// Check if audio reader is opening
-			bool isOpen() const {
-				return this->opening_;
-			}
-			/**
-			 * @brief Close file
-			 * @note No fail!
-			 */
-			void close();
-
-			/**
-			 * @brief Seek to @p ms
-			 * @return succeed of failed
-			 */
-			bool seek( int64_t ms );
-			/**
-			 * @brief Set decode range
-			 */
-			void setRange( int64_t msBegin, int64_t msEnd ) {
-				this->msBegin_ = msBegin;
-				this->msEnd_ = msEnd;
-			}
-			/**
-			 * @brief Read frame
-			 * @param [out] decoded
-			 * @return raw data
-			 */
-			ByteArray read( int64_t & msDecoded );
-			/**
-			 * @brief Checks if there is any data to read
-			 */
-			bool hasNext() const {
-				return this->hasNext_;
-			}
-
-			/**
-			 * @brief Get album title
-			 * @return Album title
-			 */
-			const std::string & getAlbum() const {
-				return this->album_;
-			}
-			/**
-			 * @brief Get author
-			 * @sa setArtist
-			 */
-			const std::string & getArtist() const {
-				return this->artist_;
-			}
-			/**
-			 * @brief Get bit rate
-			 * @sa setBitRate
-			 */
-			int getBitRate() const {
-				return this->bitRate_;
-			}
-			ChannelLayout getChannelLayout() const {
-				return this->channelLayout_;
-			}
-			/**
-			 * @brief Get channels
-			 * @sa setChannels
-			 */
-			int getChannels() const {
-				return this->channels_;
-			}
-			/**
-			 * @brief Get comment
-			 * @sa setComment
-			 */
-			const std::string & getComment() const {
-				return this->comment_;
-			}
-			/**
-			 * @brief Get copyright
-			 * @sa setCopyright
-			 */
-			const std::string & getCopyright() const {
-				return this->copyright_;
-			}
-			/**
-			 * @brief Get sample duration in millisecond
-			 * @sa setDuration
-			 */
-			int64_t getDuration() const {
-				return this->msDuration_;
-			}
-			/**
-			 * @brief Get genre
-			 * @sa setGenre
-			 */
-			const std::string & getGenre() const {
-				return this->genre_;
-			}
-			/**
-			 * @brief Get track index
-			 * @sa setIndex
-			 */
-			int getIndex() const {
-				return this->index_;
-			}
-			SampleFormat getSampleFormat() const {
-				return this->sampleFormat_;
-			}
-			/**
-			 * @brief Get sample rate
-			 * @sa setSampleRate
-			 */
-			int getSampleRate() const {
-				return this->sampleRate_;
-			}
-			/**
-			 * @brief Get title
-			 * @sa setTitle
-			 */
-			const std::string & getTitle() const {
-				return this->title_;
-			}
-			/**
-			 * @brief Get year
-			 * @sa setYear
-			 */
-			int getYear() const {
-				return this->year_;
-			}
-
-		protected:
-			/// If @p timestamp is after decoding begin timestamp
-			bool afterBegin( int64_t ms ) const;
-			/// If @p timestamp is after decoding end timestamp
-			bool afterEnd( int64_t ms ) const;
-
-			/**
-			 * @brief Set album
-			 * @sa getAlbum
-			 */
-			void setAlbum( const std::string & album ) {
-				this->album_ = album;
-			}
-			/**
-			 * @brief Set artist
-			 * @sa getArtist
-			 */
-			void setArtist( const std::string & artist ) {
-				this->artist_ = artist;
-			}
-			/**
-			 * @brief Set bit rate
-			 * @sa getBitRate
-			 */
-			void setBitRate( int bitRate ) {
-				this->bitRate_ = bitRate;
-			}
-			void setChannelLayout( ChannelLayout channelLayout ) {
-				this->channelLayout_ = channelLayout;
-			}
-			/**
-			 * @brief Set channels
-			 * @sa getChannels
-			 */
-			void setChannels( int channels ) {
-				this->channels_ = channels;
-			}
-			/**
-			 * @brief Set comment
-			 * @sa getComment
-			 */
-			void setComment( const std::string & comment ) {
-				this->comment_ = comment;
-			}
-			/**
-			 * @brief Set copyright
-			 * @sa getCopyright
-			 */
-			void setCopyright( const std::string & copyright ) {
-				this->copyright_ = copyright;
-			}
-			/**
-			 * @brief Set duration in millisecond
-			 * @sa getDuration
-			 */
-			void setDuration( int64_t msDuration ) {
-				this->msDuration_ = msDuration;
-			}
-			/**
-			 * @brief Get file path
-			 */
-			const QUrl & getURI() const {
-				return this->uri_;
-			}
-			/**
-			 * @brief Set genre
-			 * @sa getGenre
-			 */
-			void setGenre( const std::string & genre ) {
-				this->genre_ = genre;
-			}
-			/**
-			 * @brief Set track index
-			 * @sa getIndex
-			 */
-			void setIndex( int index ) {
-				this->index_ = index;
-			}
-			void setSampleFormat( SampleFormat sampleFormat ) {
-				this->sampleFormat_ = sampleFormat;
-			}
-			/**
-			 * @brief Set sample rate
-			 * @sa getSampleRate
-			 */
-			void setSampleRate( int sampleRate ) {
-				this->sampleRate_ = sampleRate;
-			}
-			/**
-			 * @brief Set track title
-			 * @sa getTitle
-			 */
-			void setTitle( const std::string & title ) {
-				this->title_ = title;
-			}
-			/**
-			 * @brief Set year
-			 * @sa getYear
-			 */
-			void setYear( int year ) {
-				this->year_ = year;
-			}
-
-			/// Read one frame
-			virtual ByteArray readFrame( int64_t &, bool & ) = 0;
-			/// Seek frame
-			virtual bool seekFrame( int64_t ) = 0;
-
-		private:
-			// prevent copying
-			AbstractReader( const AbstractReader & );
-			AbstractReader & operator =( const AbstractReader & );
-
-			virtual void doOpen() = 0;
-			virtual void doClose() = 0;
-
-			std::string album_;
-			std::string artist_;
-			int64_t msBegin_;
-			int bitRate_;
-			ChannelLayout channelLayout_;
-			int channels_;
-			std::string comment_;
-			std::string copyright_;
-			int64_t msDuration_;
-			int64_t msEnd_;
-			QUrl uri_;
-			std::string genre_;
-			bool hasNext_;
-			int index_;
-			bool opening_;
-			SampleFormat sampleFormat_;
-			int sampleRate_;
-			std::string title_;
-			int year_;
-		};
-
+		class AbstractReader;
 		/**
 		 * @ingroup Codecs
 		 * @brief AbstractReader smart pointer
@@ -336,9 +54,227 @@ namespace khopper {
 		 */
 		typedef std::tr1::shared_ptr< const AbstractReader > ReaderCSP;
 
+		/**
+		 * @ingroup Codecs
+		 * @brief Audio reader interface
+		 * @sa AbstractWriter
+		 */
+		class KHOPPER_DLL AbstractReader : public QIODevice {
+		public:
+			/**
+			 * @brief Virtual destructor
+			 */
+			virtual ~AbstractReader();
+
+			/**
+			 * @brief Open file
+			 * @param [in] filePath
+			 *
+			 * AbstractReader do not handle path encoding,
+			 * so you should help yourself.
+			 */
+			virtual bool open( OpenMode mode );
+			/**
+			 * @brief Close file
+			 * @note No fail!
+			 */
+			virtual void close();
+
+			/**
+			 * @brief Seek to @p ms
+			 * @return succeed of failed
+			 */
+			virtual bool seek( qint64 msPos );
+			virtual qint64 size() const;
+			/**
+			 * @brief Set decode range
+			 */
+			//void setRange( int64_t msBegin, int64_t msEnd );
+			/**
+			 * @brief Read frame
+			 * @param [out] decoded
+			 * @return raw data
+			 */
+//			ByteArray read( int64_t & msDecoded );
+			/**
+			 * @brief Checks if there is any data to read
+			 */
+			//bool hasNext() const;
+
+			/**
+			 * @brief Get album title
+			 * @return Album title
+			 */
+			const QByteArray & getAlbum() const;
+			/**
+			 * @brief Get author
+			 * @sa setArtist
+			 */
+			const QByteArray & getArtist() const;
+			/**
+			 * @brief Get bit rate
+			 * @sa setBitRate
+			 */
+			unsigned int getBitRate() const;
+			ChannelLayout getChannelLayout() const;
+			/**
+			 * @brief Get channels
+			 * @sa setChannels
+			 */
+			unsigned int getChannels() const;
+			/**
+			 * @brief Get comment
+			 * @sa setComment
+			 */
+			const QByteArray & getComment() const;
+			/**
+			 * @brief Get copyright
+			 * @sa setCopyright
+			 */
+			const QByteArray & getCopyright() const;
+			/**
+			 * @brief Get sample duration in millisecond
+			 * @sa setDuration
+			 */
+			qint64 getDuration() const;
+			/**
+			 * @brief Get genre
+			 * @sa setGenre
+			 */
+			const QByteArray & getGenre() const;
+			/**
+			 * @brief Get track index
+			 * @sa setIndex
+			 */
+			unsigned int getIndex() const;
+			SampleFormat getSampleFormat() const;
+			/**
+			 * @brief Get sample rate
+			 * @sa setSampleRate
+			 */
+			unsigned int getSampleRate() const;
+			/**
+			 * @brief Get title
+			 * @sa setTitle
+			 */
+			const QByteArray & getTitle() const;
+			/**
+			 * @brief Get file path
+			 */
+			const QUrl & getURI() const;
+			/**
+			 * @brief Get year
+			 * @sa setYear
+			 */
+			const QString & getYear() const;
+
+		protected:
+			/**
+			 * @brief Default constructor
+			 */
+			explicit AbstractReader( const QUrl & uri );
+
+			/// If @p timestamp is after decoding begin timestamp
+			//bool afterBegin( int64_t ms ) const;
+			/// If @p timestamp is after decoding end timestamp
+			//bool afterEnd( int64_t ms ) const;
+
+			/**
+			 * @brief Set album
+			 * @sa getAlbum
+			 */
+			void setAlbum( const QByteArray & album );
+			/**
+			 * @brief Set artist
+			 * @sa getArtist
+			 */
+			void setArtist( const QByteArray & artist );
+			/**
+			 * @brief Set bit rate
+			 * @sa getBitRate
+			 */
+			void setBitRate( unsigned int bitRate );
+			void setChannelLayout( ChannelLayout channelLayout );
+			/**
+			 * @brief Set channels
+			 * @sa getChannels
+			 */
+			void setChannels( unsigned int channels );
+			/**
+			 * @brief Set comment
+			 * @sa getComment
+			 */
+			void setComment( const QByteArray & comment );
+			/**
+			 * @brief Set copyright
+			 * @sa getCopyright
+			 */
+			void setCopyright( const QByteArray & copyright );
+			/**
+			 * @brief Set duration in millisecond
+			 * @sa getDuration
+			 */
+			void setDuration( qint64 msDuration );
+			/**
+			 * @brief Set genre
+			 * @sa getGenre
+			 */
+			void setGenre( const QByteArray & genre );
+			/**
+			 * @brief Set track index
+			 * @sa getIndex
+			 */
+			void setIndex( unsigned int index );
+			void setSampleFormat( SampleFormat sampleFormat );
+			/**
+			 * @brief Set sample rate
+			 * @sa getSampleRate
+			 */
+			void setSampleRate( unsigned int sampleRate );
+			/**
+			 * @brief Set track title
+			 * @sa getTitle
+			 */
+			void setTitle( const QByteArray & title );
+			/**
+			 * @brief Set year
+			 * @sa getYear
+			 */
+			void setYear( const QString & year );
+
+			virtual qint64 readData( char * data, qint64 maxSize );
+			virtual qint64 writeData( const char * data, qint64 maxSize );
+
+			/// Read one frame
+			virtual QByteArray readFrame() = 0;
+			/// Seek frame
+			virtual bool seekFrame( qint64 msPos ) = 0;
+			virtual void doOpen() = 0;
+			virtual void doClose() = 0;
+
+		private:
+			// prevent copying
+			AbstractReader( const AbstractReader & );
+			AbstractReader & operator =( const AbstractReader & );
+
+			struct AbstractReaderPrivate;
+			std::tr1::shared_ptr< AbstractReaderPrivate > p_;
+		};
+
 	}
 
 	namespace plugin {
+
+		typedef Loki::Functor<
+			unsigned int,
+			LOKI_TYPELIST_1( const QUrl & ),
+			Loki::ClassLevelLockable
+		> ReaderVerifier;
+		typedef Loki::Functor<
+			codec::ReaderSP,
+			LOKI_TYPELIST_1( const QUrl & ),
+			Loki::ClassLevelLockable
+		> ReaderCreator;
 
 		/**
 		 * @ingroup Plugins
@@ -347,7 +283,8 @@ namespace khopper {
 		 * @param name plugin name
 		 * @return if registered in factory
 		 */
-		KHOPPER_DLL bool registerReader( const std::string & key, codec::AbstractReader * ( *creator )() );
+		bool KHOPPER_DLL registerReader( ReaderVerifier v, ReaderCreator c );
+		void KHOPPER_DLL unregisterReader( ReaderVerifier v );
 		/**
 		 * @ingroup Plugins
 		 * @brief Create reader
@@ -355,7 +292,7 @@ namespace khopper {
 		 * @return Smart pointer of Product
 		 * @throws RunTimeError Can not load any plugin
 		 */
-		KHOPPER_DLL codec::ReaderSP createReader( const std::string & key );
+		codec::ReaderSP KHOPPER_DLL createReader( const QUrl & uri );
 
 	}
 

@@ -33,23 +33,24 @@ namespace khopper {
 
 		class FlacWriter : public AbstractWriter {
 		public:
-			FlacWriter();
+			explicit FlacWriter( const QUrl & uri );
 			virtual ~FlacWriter();
 
 			void setOggMode( bool ogg ) {
 				this->ogg_ = ogg;
 			}
 
-		private:
+		protected:
 			virtual void doOpen();
 			virtual void doClose();
-			virtual void writeFrame( const ByteArray & );
+			virtual void writeFrame( const QByteArray & sample );
+
+		private:
+			static void progressCallback_( const FLAC__StreamEncoder *, FLAC__uint64, FLAC__uint64, unsigned, unsigned, void * );
 
 			std::tr1::shared_ptr< FLAC__StreamEncoder > pFE_;
 			std::vector< std::tr1::shared_ptr< FLAC__StreamMetadata > > metadataOwner_;
 			bool ogg_;
-
-			static void progressCallback_( const FLAC__StreamEncoder *, FLAC__uint64, FLAC__uint64, unsigned, unsigned, void * );
 		};
 
 	}

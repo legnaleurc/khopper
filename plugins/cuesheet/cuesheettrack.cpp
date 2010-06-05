@@ -22,6 +22,11 @@
 #include "cuesheettrack.hpp"
 
 using namespace khopper::album;
+using khopper::codec::ReaderSP;
+
+CueSheetTrack::CueSheetTrack( ReaderSP reader ):
+Track( reader ) {
+}
 
 const QStringList & CueSheetTrack::getComments() const {
 	return this->comments_;

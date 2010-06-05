@@ -46,12 +46,8 @@ ui_( new Ui::WavPanel ) {
 	this->ui_->channels->setCurrentIndex( 1 );
 }
 
-WavPanel::~WavPanel() {
-	delete this->ui_;
-}
-
-WriterSP WavPanel::getWriter() const {
-	WriterSP encoder( new DefaultWriter );
+WriterSP WavPanel::createWriter( const QUrl & uri ) const {
+	WriterSP encoder( new DefaultWriter( uri ) );
 
 	encoder->setSampleRate( this->ui_->sampleRate->itemData( this->ui_->sampleRate->currentIndex() ).toInt() );
 	encoder->setChannels( this->ui_->channels->itemData( this->ui_->channels->currentIndex() ).toInt() );

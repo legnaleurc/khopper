@@ -45,12 +45,8 @@ ui_( new Ui::FlacPanel ) {
 	this->ui_->channels->setCurrentIndex( 1 );
 }
 
-FlacPanel::~FlacPanel() {
-	delete this->ui_;
-}
-
-WriterSP FlacPanel::getWriter() const {
-	FlacWriter * encoder = new FlacWriter;
+WriterSP FlacPanel::createWriter( const QUrl & uri ) const {
+	FlacWriter * encoder = new FlacWriter( uri );
 
 	encoder->setSampleRate( this->ui_->sampleRate->itemData( this->ui_->sampleRate->currentIndex() ).toInt() );
 	encoder->setChannels( this->ui_->channels->itemData( this->ui_->channels->currentIndex() ).toInt() );

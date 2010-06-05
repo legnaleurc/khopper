@@ -48,7 +48,7 @@ namespace khopper {
 			 * @brief Get encoder setting object
 			 * @return Smart pointer contains AbstractWriter
 			 */
-			virtual codec::WriterSP getWriter() const = 0;
+			virtual codec::WriterSP createWriter( const QUrl & uri ) const = 0;
 			/**
 			 * @brief Get file suffix
 			 * @return File extension, without leading '.'

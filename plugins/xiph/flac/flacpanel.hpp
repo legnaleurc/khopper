@@ -42,16 +42,15 @@ namespace khopper {
 			 * @param f Window flags
 			 */
 			FlacPanel();
-			virtual ~FlacPanel();
 
 			/**
 			 * @brief Get encoder setting object
 			 * @return Smart pointer contains AbstractWriter
 			 */
-			virtual codec::WriterSP getWriter() const;
+			virtual codec::WriterSP createWriter( const QUrl & uri ) const;
 
 		private:
-			Ui::FlacPanel * ui_;
+			std::tr1::shared_ptr< Ui::FlacPanel > ui_;
 		};
 
 	}

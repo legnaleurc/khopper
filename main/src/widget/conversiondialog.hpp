@@ -24,8 +24,6 @@
 
 #include "khopper/playlist.hpp"
 
-#include <boost/format.hpp>
-
 #include <QtGui/QDialog>
 
 #include <map>
@@ -48,11 +46,10 @@ namespace khopper {
 		public:
 			/// Default constructor
 			explicit ConversionDialog( QWidget * parent );
-			virtual ~ConversionDialog();
 
 			/// Get current panel
 			AbstractPanel * getCurrent() const;
-			void convert( const album::PlayList & tracks, const boost::format & tpl );
+			void convert( const album::PlayList & tracks );
 
 		public slots:
 			void addPanel( khopper::widget::AbstractPanel * panel );
@@ -66,8 +63,9 @@ namespace khopper {
 
 		private:
 			QString getOutputPath_( album::TrackSP );
+			QString getOutputName_( album::TrackSP );
 
-			Ui::ConversionDialog * ui_;
+			std::tr1::shared_ptr< Ui::ConversionDialog > ui_;
 			Progress * progress_;
 			ConverterThread * thread_;
 			std::map< int, widget::AbstractPanel * > table_;

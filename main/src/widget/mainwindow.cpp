@@ -72,7 +72,7 @@ void MainWindow::fire_( const PlayList & tracks ) {
 	}
 
 	// get option widget
-	this->conversion_->convert( tracks, this->preference_->getTemplate() );
+	this->conversion_->convert( tracks );
 }
 
 void MainWindow::showOpenFilesDialog() {

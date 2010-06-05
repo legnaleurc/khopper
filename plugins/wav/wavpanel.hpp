@@ -43,16 +43,15 @@ namespace khopper {
 			 * @param f Window flags
 			 */
 			WavPanel();
-			virtual ~WavPanel();
 
 			/**
 			 * @brief Get encoder setting object
 			 * @return Smart pointer contains AbstractWriter
 			 */
-			virtual codec::WriterSP getWriter() const;
+			virtual codec::WriterSP createWriter( const QUrl & uri ) const;
 
 		private:
-			Ui::WavPanel * ui_;
+			std::tr1::shared_ptr< Ui::WavPanel > ui_;
 		};
 
 	}

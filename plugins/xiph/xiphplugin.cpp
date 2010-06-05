@@ -32,14 +32,27 @@
 Q_EXPORT_PLUGIN2( KHOPPER_PLUGIN_ID, khopper::plugin::XiphPlugin )
 
 namespace {
-	khopper::codec::AbstractReader * creator() {
-		return new khopper::codec::FlacReader;
+
+	unsigned int verifier( const QUrl & uri ) {
+		// FIXME
+		QFileInfo info( uri.toLocalFile() );
+		if( info.suffix().toLower() == "flac" ) {
+			return 200;
+		}
+		return 0;
 	}
+
+	khopper::codec::ReaderSP creator( const QUrl & uri ) {
+		return khopper::codec::ReaderSP( new khopper::codec::FlacReader( uri ) );
+	}
+
 }
 
 using namespace khopper::plugin;
 using khopper::widget::FlacPanel;
 using khopper::widget::OggPanel;
+using khopper::plugin::registerReader;
+using khopper::plugin::unregisterReader;
 
 XiphPlugin::XiphPlugin():
 AbstractPlugin(),
@@ -57,10 +70,11 @@ XiphPlugin::~XiphPlugin() {
 void XiphPlugin::doInstall() {
 	KHOPPER_APPLICATION->addPanel( this->flacPanel_ );
 	KHOPPER_APPLICATION->addPanel( this->oggPanel_ );
-	khopper::plugin::registerReader( "flac", creator );
+	registerReader( verifier, creator );
 }
 
 void XiphPlugin::doUninstall() {
 	KHOPPER_APPLICATION->removePanel( this->flacPanel_ );
 	KHOPPER_APPLICATION->removePanel( this->oggPanel_ );
+	unregisterReader( verifier );
 }

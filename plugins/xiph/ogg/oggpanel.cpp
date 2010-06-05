@@ -61,20 +61,16 @@ choise_( new QButtonGroup( this ) ) {
 	this->ui_->sampleRate->addItem( tr( "48000 Hz" ), QVariant( 48000 ) );
 }
 
-OggPanel::~OggPanel() {
-	delete this->ui_;
-}
-
-WriterSP OggPanel::getWriter() const {
+WriterSP OggPanel::createWriter( const QUrl & uri ) const {
 	WriterSP tmp;
 	int id = this->choise_->checkedId();
 
 	if( id == 0 ) {
-		FlacWriter * flac = new FlacWriter;
+		FlacWriter * flac = new FlacWriter( uri );
 		flac->setOggMode( true );
 		tmp.reset( flac );
 	} else if( id == 1 ) {
-		OggWriter * vorbis = new OggWriter;
+		OggWriter * vorbis = new OggWriter( uri );
 		vorbis->setVBRQuality( this->ui_->quality->itemData( this->ui_->quality->currentIndex() ).toInt() / 10.f );
 		tmp.reset( vorbis );
 	} else {

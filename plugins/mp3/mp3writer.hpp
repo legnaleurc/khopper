@@ -32,18 +32,18 @@ namespace khopper {
 
 		class Mp3Writer : public AbstractWriter {
 		public:
-			Mp3Writer();
-			virtual ~Mp3Writer();
+			explicit Mp3Writer( const QUrl & uri );
 
 			void setVBRQuality( int quality ) {
 				this->quality_ = quality;
 			}
 
-		private:
+		protected:
 			virtual void doOpen();
 			virtual void doClose();
-			virtual void writeFrame( const ByteArray & );
+			virtual void writeFrame( const QByteArray & sample );
 
+		private:
 			std::tr1::shared_ptr< FILE > fout_;
 			std::tr1::shared_ptr< lame_global_flags > gfp_;
 			int quality_;

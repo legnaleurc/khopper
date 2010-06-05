@@ -40,18 +40,19 @@ namespace khopper {
 			/**
 			 * @brief Default constructor
 			 */
-			OggWriter();
+			explicit OggWriter( const QUrl & uri );
 			virtual ~OggWriter();
 
 			void setVBRQuality( float quality ) {
 				this->quality_ = quality;
 			}
 
-		private:
+		protected:
 			virtual void doOpen();
 			virtual void doClose();
-			virtual void writeFrame( const ByteArray & );
+			virtual void writeFrame( const QByteArray & sample );
 
+		private:
 			std::tr1::shared_ptr< FILE > fout_;
 			std::tr1::shared_ptr< vorbis_info > encoder_;
 			std::tr1::shared_ptr< ogg_stream_state > muxer_;

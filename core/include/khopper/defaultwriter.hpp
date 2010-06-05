@@ -44,7 +44,7 @@ namespace khopper {
 			/**
 			 * @brief Default constructor
 			 */
-			DefaultWriter();
+			explicit DefaultWriter( const QUrl & uri );
 
 			void setQuality( double quality ) {
 				this->quality_ = quality;
@@ -70,13 +70,12 @@ namespace khopper {
 			virtual void openResource();
 			virtual void closeResource();
 			virtual void writeHeader();
-			virtual void writeFrame( const short * );
-
-		private:
+			virtual void writeFrame( const short * sample );
 			virtual void doOpen();
 			virtual void doClose();
-			virtual void writeFrame( const ByteArray & );
+			virtual void writeFrame( const QByteArray & sample );
 
+		private:
 			typedef std::deque< ByteArray::value_type > ByteQueue;
 
 			std::tr1::shared_ptr< AVFormatContext > pFormatContext_;

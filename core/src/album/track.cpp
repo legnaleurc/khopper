@@ -20,13 +20,41 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "trackprivate.hpp"
+#include "error.hpp"
 
 #include <QHash>
 
 using namespace khopper::album;
+using khopper::codec::ReaderSP;
+using khopper::error::RunTimeError;
+using khopper::error::CodecError;
 
-Track::Track():
+Track::Track( ReaderSP reader ):
 p_( new TrackPrivate ) {
+	if( !reader ) {
+		throw RunTimeError( "Invalid reader" );
+	}
+
+	reader->open( QIODevice::ReadOnly );
+	if( !reader->isOpen() ) {
+		throw CodecError( QObject::tr( "Can not open file!" ) );
+	}
+
+	this->setAlbum( AlbumSP( new Album ) );
+	// FIXME: text codec
+	this->getAlbum()->setTitle( reader->getAlbum() );
+	this->setArtist( reader->getArtist() );
+	this->setBitRate( reader->getBitRate() );
+	this->setChannels( reader->getChannels() );
+	this->setDuration( Timestamp::fromMillisecond( reader->getDuration() ) );
+	this->setIndex( reader->getIndex() );
+	this->setSampleRate( reader->getSampleRate() );
+	this->setTitle( reader->getTitle() );
+	this->setURI( reader->getURI() );
+
+	reader->close();
+
+	this->p_->reader = reader;
 }
 
 Track::~Track() {
@@ -54,6 +82,10 @@ const Timestamp & Track::getDuration() const {
 
 unsigned int Track::getIndex() const {
 	return this->p_->index;
+}
+
+ReaderSP Track::getReader() const {
+	return this->p_->reader;
 }
 
 unsigned int Track::getSampleRate() const {
@@ -140,6 +172,7 @@ artist(),
 bitRate( 0 ),
 channels( 0 ),
 duration(),
+reader(),
 sampleRate( 0 ),
 songWriter(),
 title(),

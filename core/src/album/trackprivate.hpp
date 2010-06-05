@@ -39,6 +39,7 @@ namespace khopper {
 			unsigned int channels;
 			Timestamp duration;
 			unsigned int index;
+			codec::ReaderSP reader;
 			unsigned int sampleRate;
 			QByteArray songWriter;
 			Timestamp startTime;

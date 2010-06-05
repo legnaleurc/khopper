@@ -20,8 +20,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "cuesheetparser.hpp"
+#include "rangedreader.hpp"
 
-#include "khopper/abstractreader.hpp"
 #include "khopper/error.hpp"
 #include "khopper/text.hpp"
 #include "khopper/track.hpp"
@@ -47,6 +47,9 @@ namespace {
 
 using namespace khopper::album;
 using khopper::error::CodecError;
+using khopper::codec::ReaderSP;
+using khopper::codec::RangedReader;
+using khopper::plugin::createReader;
 
 PlayList CueSheetParser::load( const QString & content, const QDir & dir ) {
 	CueSheetParser parser( content, dir );
@@ -186,13 +189,12 @@ void CueSheetParser::parseComment_( const QString & key, const QString & value )
 
 void CueSheetParser::parseTrack_( const QString & num, const QString & type ) {
 	this->previousTrack_ = this->currentTrack_;
-	this->currentTrack_.reset( new CueSheetTrack );
+	this->currentTrack_.reset( new CueSheetTrack( ReaderSP( new RangedReader( QUrl::fromLocalFile( this->currentFilePath_ ) ) ) ) );
 
 	this->trackIndex_ = num.toUInt();
 	this->currentTrack_->setIndex( num.toShort() );
 	this->currentTrack_->setFileType( this->currentFileType_ );
 	this->currentTrack_->setDataType( type );
-	this->currentTrack_->setURI( QUrl::fromLocalFile( this->currentFilePath_ ) );
 
 	this->playList_.push_back( this->currentTrack_ );
 }
@@ -211,10 +213,10 @@ void CueSheetParser::parseGarbage_( const QString & line ) {
 
 void CueSheetParser::updateLastTrack_() {
 	// get the total length, because cue sheet don't provide it
-	codec::ReaderSP decoder( plugin::createReader( text::getSuffix( this->currentFilePath_ ) ) );
+	ReaderSP decoder( createReader( QUrl::fromLocalFile( this->currentFilePath_ ) ) );
 	try {
 		// NOTE: may throw exception
-		decoder->open( QUrl::fromLocalFile( this->currentFilePath_ ) );
+		decoder->open( QIODevice::ReadOnly );
 	} catch( CodecError & e ) {
 		qDebug() << e.getMessage();
 	}

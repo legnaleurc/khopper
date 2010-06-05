@@ -38,13 +38,12 @@ namespace khopper {
 		public:
 			/// Default constructor
 			OggPanel();
-			virtual ~OggPanel();
 
 			/// Get configured Writer instance
-			virtual codec::WriterSP getWriter() const;
+			virtual codec::WriterSP createWriter( const QUrl & uri ) const;
 
 		private:
-			Ui::OggPanel * ui_;
+			std::tr1::shared_ptr< Ui::OggPanel > ui_;
 			QButtonGroup * choise_;
 		};
 

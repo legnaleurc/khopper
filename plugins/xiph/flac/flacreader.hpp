@@ -32,16 +32,18 @@ namespace khopper {
 
 		class FlacReader : public AbstractReader {
 		public:
-			FlacReader();
-			virtual ~FlacReader();
+			explicit FlacReader( const QUrl & uri );
+
+			virtual bool atEnd() const;
+			virtual qint64 pos() const;
 
 		protected:
-			virtual ByteArray readFrame( int64_t &, bool & );
-			virtual bool seekFrame( int64_t );
-
-		private:
+			virtual QByteArray readFrame();
+			virtual bool seekFrame( qint64 msPos );
 			virtual void doOpen();
 			virtual void doClose();
+
+		private:
 
 			static void metadataCallback_( const FLAC__StreamDecoder *, const FLAC__StreamMetadata *, void * );
 			static FLAC__StreamDecoderWriteStatus writeCallback_( const FLAC__StreamDecoder *, const FLAC__Frame *, const FLAC__int32 * const [], void * );
@@ -50,9 +52,8 @@ namespace khopper {
 			void parseVorbisComments_( const FLAC__StreamMetadata_VorbisComment & );
 
 			std::tr1::shared_ptr< FLAC__StreamDecoder > pFD_;
-			ByteArray buffer_;
+			QByteArray buffer_;
 			uint64_t offset_;
-			uint64_t msDecoded_;
 		};
 
 	}

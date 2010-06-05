@@ -64,12 +64,8 @@ choise_( new QButtonGroup( this ) ) {
 	this->ui_->channels->setCurrentIndex( 1 );
 }
 
-Mp3Panel::~Mp3Panel() {
-	delete this->ui_;
-}
-
-WriterSP Mp3Panel::getWriter() const {
-	Mp3Writer * encoder = new Mp3Writer;
+WriterSP Mp3Panel::createWriter( const QUrl & uri ) const {
+	Mp3Writer * encoder = new Mp3Writer( uri );
 
 	switch( this->choise_->checkedId() ) {
 	case 0:

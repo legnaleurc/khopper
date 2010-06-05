@@ -47,8 +47,8 @@ namespace {
 using namespace khopper::codec;
 using khopper::error::SystemError;
 
-FlacWriter::FlacWriter():
-AbstractWriter(),
+FlacWriter::FlacWriter( const QUrl & uri ):
+AbstractWriter( uri ),
 pFE_( FLAC__stream_encoder_new(), FLAC__stream_encoder_delete ),
 metadataOwner_(),
 ogg_( false ) {
@@ -70,11 +70,11 @@ void FlacWriter::doOpen() {
 		throw error::SystemError( "memory allocation error" );
 	}
 	FLAC__StreamMetadata_VorbisComment_Entry entry;
-	ok &= FLAC__metadata_object_vorbiscomment_entry_from_name_value_pair( &entry, "TITLE", this->getTitle().c_str() );
+	ok &= FLAC__metadata_object_vorbiscomment_entry_from_name_value_pair( &entry, "TITLE", this->getTitle().constData() );
 	ok &= FLAC__metadata_object_vorbiscomment_append_comment( tmp, entry, false );
-	ok &= FLAC__metadata_object_vorbiscomment_entry_from_name_value_pair( &entry, "ALBUM", this->getAlbum().c_str() );
+	ok &= FLAC__metadata_object_vorbiscomment_entry_from_name_value_pair( &entry, "ALBUM", this->getAlbum().constData() );
 	ok &= FLAC__metadata_object_vorbiscomment_append_comment( tmp, entry, false );
-	ok &= FLAC__metadata_object_vorbiscomment_entry_from_name_value_pair( &entry, "ARTIST", this->getArtist().c_str() );
+	ok &= FLAC__metadata_object_vorbiscomment_entry_from_name_value_pair( &entry, "ARTIST", this->getArtist().constData() );
 	ok &= FLAC__metadata_object_vorbiscomment_append_comment( tmp, entry, false );
 	if( !ok ) {
 		throw error::CodecError( "encoder vorbis comment error" );
@@ -147,14 +147,14 @@ void FlacWriter::doOpen() {
 	}
 }
 
-void FlacWriter::writeFrame( const ByteArray & sample ) {
-	if( sample.empty() ) {
+void FlacWriter::writeFrame( const QByteArray & sample ) {
+	if( sample.isEmpty() ) {
 		return;
 	}
 	// TODO: assumed that sample format is S16LE, please fix the interface later
 	const int32_t bufSize = sample.size() / sizeof( int16_t );
 	// TODO: big or little endian
-	const int16_t * audio = static_cast< const int16_t * >( static_cast< const void * >( &sample[0] ) );
+	const int16_t * audio = static_cast< const int16_t * >( static_cast< const void * >( sample.data() ) );
 	std::vector< int32_t > buffer( bufSize );
 	for( int i = 0; i < bufSize; ++i ) {
 		buffer[i] = audio[i];

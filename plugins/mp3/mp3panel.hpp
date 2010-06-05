@@ -43,16 +43,15 @@ namespace khopper {
 			 * @param f Window flags
 			 */
 			Mp3Panel();
-			virtual ~Mp3Panel();
 
 			/**
 			 * @brief Get encoder setting object
 			 * @return Smart pointer contains AbstractWriter
 			 */
-			virtual codec::WriterSP getWriter() const;
+			virtual codec::WriterSP createWriter( const QUrl & uri ) const;
 
 		private:
-			Ui::Mp3Panel * ui_;
+			std::tr1::shared_ptr< Ui::Mp3Panel > ui_;
 			QButtonGroup * choise_;
 		};
 

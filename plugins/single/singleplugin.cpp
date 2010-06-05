@@ -41,27 +41,7 @@ namespace {
 	}
 
 	khopper::album::PlayList creator( const QUrl & uri ) {
-		khopper::album::TrackSP track( new khopper::album::Track );
-
-		track->setURI( uri );
-
-		khopper::codec::ReaderSP decoder( khopper::plugin::createReader( khopper::text::getSuffix( uri.toLocalFile() ) ) );
-		decoder->open( uri );
-		if( decoder->isOpen() ) {
-			track->setAlbum( khopper::album::AlbumSP( new khopper::album::Album ) );
-			// FIXME: text codec
-			track->getAlbum()->setTitle( decoder->getAlbum().c_str() );
-			track->setArtist( QByteArray( decoder->getArtist().c_str() ) );
-			track->setBitRate( decoder->getBitRate() );
-			track->setChannels( decoder->getChannels() );
-			track->setDuration( khopper::album::Timestamp::fromMillisecond( decoder->getDuration() ) );
-			track->setSampleRate( decoder->getSampleRate() );
-			track->setTitle( QByteArray( decoder->getTitle().c_str() ) );
-
-			decoder->close();
-		} else {
-			throw khopper::error::CodecError( QObject::tr( "Can not open file!" ) );
-		}
+		khopper::album::TrackSP track( new khopper::album::Track( khopper::plugin::createReader( uri ) ) );
 
 		khopper::album::PlayList tmp;
 		tmp.push_back( track );

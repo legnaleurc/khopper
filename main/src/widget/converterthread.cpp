@@ -29,18 +29,16 @@ using khopper::codec::WriterSP;
 
 ConverterThread::ConverterThread( QObject * parent ):
 QThread( parent ),
-encoder_(),
 tracks_(),
-paths_(),
+outs_(),
 canceled_( false ),
-converter_( this ) {
-	connect( &this->converter_, SIGNAL( decodedTime( qint64 ) ), this, SIGNAL( step( qint64 ) ) );
-	connect( this, SIGNAL( canceled() ), &this->converter_, SLOT( cancel() ) );
+converter_( new Converter( this ) ) {
+	connect( this->converter_, SIGNAL( decodedTime( qint64 ) ), this, SIGNAL( step( qint64 ) ) );
+	connect( this, SIGNAL( canceled() ), this->converter_, SLOT( cancel() ) );
 }
 
-void ConverterThread::setOutput( WriterSP output, const QList< QString > & paths ) {
-	this->encoder_ = output;
-	this->paths_ = paths;
+void ConverterThread::setOutput( const QList< WriterSP > & outs ) {
+	this->outs_ = outs;
 }
 
 void ConverterThread::setTracks( const PlayList & tracks ) {
@@ -55,14 +53,14 @@ void ConverterThread::cancel() {
 void ConverterThread::run() {
 	try {
 		for( int i = 0; i < this->tracks_.size(); ++i ) {
-			this->encoder_->setTitle( this->tracks_[i]->getTitle().toUtf8().constData() );
-			this->encoder_->setArtist( this->tracks_[i]->getArtist().toUtf8().constData() );
-			this->encoder_->setAlbum( this->tracks_[i]->getAlbum()->getTitle().toUtf8().constData() );
+			this->outs_[i]->setTitle( this->tracks_[i]->getTitle().toUtf8().constData() );
+			this->outs_[i]->setArtist( this->tracks_[i]->getArtist().toUtf8().constData() );
+			this->outs_[i]->setAlbum( this->tracks_[i]->getAlbum()->getTitle().toUtf8().constData() );
 			emit taskName( this->tracks_[i]->getTitle() );
 			emit taskGoal( this->tracks_[i]->getDuration().toMillisecond() );
 			emit currentTask( i + 1 );
 
-			this->converter_.convert( this->tracks_[i], this->paths_[i], this->encoder_ );
+			this->converter_->convert( this->tracks_[i], this->outs_[i] );
 			if( this->canceled_ ) {
 				this->canceled_ = false;
 				break;

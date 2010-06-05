@@ -41,7 +41,7 @@ namespace khopper {
 			/**
 			 * @brief Default constructor
 			 */
-			Converter( QObject * parent = 0 );
+			explicit Converter( QObject * parent );
 
 			/**
 			 * @brief Convert @p track
@@ -49,7 +49,7 @@ namespace khopper {
 			 * @param [in] targetPath output file path
 			 * @param [in] encoder encoder setting
 			 */
-			void convert( album::TrackCSP track, const QString & targetPath, codec::WriterSP encoder );
+			void convert( album::TrackCSP track, codec::WriterSP encoder );
 
 		public slots:
 			/**
