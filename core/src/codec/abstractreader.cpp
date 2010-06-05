@@ -31,6 +31,8 @@
 #include <QtDebug>
 
 #include <cassert>
+#include <cmath>
+#include <cstring>
 
 namespace {
 
@@ -108,7 +110,7 @@ qint64 AbstractReader::readData( char * data, qint64 maxSize ) {
 	}
 
 	this->p_->buffer.append( frame );
-	maxSize = min( maxSize, this->p_->buffer.size() );
+	maxSize = std::min( maxSize, qint64( this->p_->buffer.size() ) );
 	std::memcpy( data, this->p_->buffer, maxSize );
 	this->p_->buffer.remove( 0, maxSize );
 	return maxSize;
