@@ -44,12 +44,12 @@ Player::Player( QWidget * parent ):
 QWidget( parent, 0 ),
 ui_( new Ui::Player ),
 player_( new Phonon::MediaObject( this ) ),
-currentTimeStamp_(),
+//currentTimeStamp_(),
 duration_(),
-currentTrack_(),
+currentTrack_()/*,
 currentBeginTime_( -1 ),
 currentEndTime_( -1 ),
-starting_( false ) {
+starting_( false )*/ {
 	this->ui_->setupUi( this );
 
 	// Set player
@@ -58,12 +58,12 @@ starting_( false ) {
 	this->ui_->seeker->setMediaObject( this->player_ );
 	this->ui_->volume->setAudioOutput( ao );
 	connect( this->player_, SIGNAL( stateChanged( Phonon::State, Phonon::State ) ), this, SLOT( handleState_( Phonon::State, Phonon::State ) ) );
-	connect( this->player_, SIGNAL( tick( qint64 ) ), this, SLOT( tick_( qint64 ) ) );
+	//connect( this->player_, SIGNAL( tick( qint64 ) ), this, SLOT( tick_( qint64 ) ) );
 
 	connect( this->ui_->playOrPause, SIGNAL( clicked() ), this, SLOT( playOrPause_() ) );
 	connect( this->ui_->stop, SIGNAL( clicked() ), this, SLOT( stop_() ) );
 
-	connect( this->ui_->seeker, SIGNAL( dragged( int ) ), this, SLOT( updateTimestamp_( int ) ) );
+	//connect( this->ui _->seeker, SIGNAL( dragged( int ) ), this, SLOT( updateTimestamp_( int ) ) );
 
 	connect( this->ui_->songList, SIGNAL( fileDropped( const QList< QUrl > & ) ), this, SIGNAL( fileDropped( const QList< QUrl > & ) ) );
 	connect( this->ui_->songList, SIGNAL( requireConvert( const khopper::album::PlayList & ) ), this, SIGNAL( requireConvert( const khopper::album::PlayList & ) ) );
@@ -99,17 +99,17 @@ void Player::play_() {
 			this->currentTrack_ = selected[0];
 		}
 
-		this->player_->setCurrentSource( this->currentTrack_->getURI() );
-		album::Timestamp startTime = this->currentTrack_->getStartTime();
-		this->duration_ = this->currentTrack_->getDuration();
-		this->currentBeginTime_ = startTime.toMillisecond();
-		this->currentEndTime_ = this->currentBeginTime_ + this->duration_.toMillisecond();
-		this->ui_->seeker->setRange( this->currentBeginTime_, this->currentEndTime_ );
-		qDebug() << this->currentBeginTime_ << this->currentEndTime_;
+		this->player_->setCurrentSource( this->currentTrack_->getReader().get() );
+		//album::Timestamp startTime = this->currentTrack_->getStartTime();
+		//this->duration_ = this->currentTrack_->getDuration();
+		//this->currentBeginTime_ = startTime.toMillisecond();
+		//this->currentEndTime_ = this->currentBeginTime_ + this->duration_.toMillisecond();
+		//this->ui_->seeker->setRange( this->currentBeginTime_, this->currentEndTime_ );
+		//qDebug() << this->currentBeginTime_ << this->currentEndTime_;
 		// set time display
-		this->currentTimeStamp_ = album::Timestamp::fromMillisecond( 0 );
-		this->ui_->passedTime->setText( fromTimestamp( this->currentTimeStamp_ ) );
-		this->ui_->remainTime->setText( fromTimestamp( this->duration_ ) );
+		//this->currentTimeStamp_ = album::Timestamp::fromMillisecond( 0 );
+		//this->ui_->passedTime->setText( fromTimestamp( this->currentTimeStamp_ ) );
+		//this->ui_->remainTime->setText( fromTimestamp( this->duration_ ) );
 		this->starting_ = true;
 		this->player_->play();
 	}
@@ -118,8 +118,8 @@ void Player::play_() {
 void Player::stop_() {
 	if( this->player_->state() != Phonon::StoppedState ) {
 		this->ui_->playOrPause->setText( tr( "Play" ) );
-		this->ui_->passedTime->setText( "00:00" );
-		this->ui_->remainTime->setText( "00:00" );
+		//this->ui_->passedTime->setText( "00:00" );
+		//this->ui_->remainTime->setText( "00:00" );
 		this->player_->stop();
 	}
 }
@@ -136,10 +136,10 @@ void Player::playOrPause_() {
 void Player::handleState_( Phonon::State newState, Phonon::State /*oldState*/ ) {
 	switch( newState ) {
 	case Phonon::PlayingState:
-		if( this->starting_ ) {
-			this->player_->seek( this->currentBeginTime_ );
-			this->starting_ = false;
-		}
+		//if( this->starting_ ) {
+			//this->player_->seek( this->currentBeginTime_ );
+			//this->starting_ = false;
+		//}
 		this->ui_->playOrPause->setText( tr( "Pause" ) );
 		break;
 	case Phonon::StoppedState:
@@ -153,18 +153,18 @@ void Player::handleState_( Phonon::State newState, Phonon::State /*oldState*/ ) 
 	}
 }
 
-void Player::tick_( qint64 time ) {
-	this->currentTimeStamp_ = album::Timestamp::fromMillisecond( time - this->currentBeginTime_ );
-	this->ui_->passedTime->setText( fromTimestamp( this->currentTimeStamp_ ) );
-	this->ui_->remainTime->setText( fromTimestamp( this->duration_ - this->currentTimeStamp_ ) );
-//			qDebug() << time;
-	if( time >= this->currentEndTime_ ) {
-		this->stop_();
-	}
-}
-
-void Player::updateTimestamp_( int ms ) {
-	this->currentTimeStamp_ = album::Timestamp::fromMillisecond( this->currentBeginTime_ + ms );
-	this->ui_->passedTime->setText( fromTimestamp( this->currentTimeStamp_ ) );
-	this->ui_->remainTime->setText( fromTimestamp( this->duration_ - this->currentTimeStamp_ ) );
-}
+//void Player::tick_( qint64 time ) {
+//	this->currentTimeStamp_ = album::Timestamp::fromMillisecond( time - this->currentBeginTime_ );
+//	this->ui_->passedTime->setText( fromTimestamp( this->currentTimeStamp_ ) );
+//	this->ui_->remainTime->setText( fromTimestamp( this->duration_ - this->currentTimeStamp_ ) );
+////			qDebug() << time;
+//	if( time >= this->currentEndTime_ ) {
+//		this->stop_();
+//	}
+//}
+//
+//void Player::updateTimestamp_( int ms ) {
+//	this->currentTimeStamp_ = album::Timestamp::fromMillisecond( this->currentBeginTime_ + ms );
+//	this->ui_->passedTime->setText( fromTimestamp( this->currentTimeStamp_ ) );
+//	this->ui_->remainTime->setText( fromTimestamp( this->duration_ - this->currentTimeStamp_ ) );
+//}

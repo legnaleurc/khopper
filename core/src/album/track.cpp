@@ -92,10 +92,6 @@ unsigned int Track::getSampleRate() const {
 	return this->p_->sampleRate;
 }
 
-const Timestamp & Track::getStartTime() const {
-	return this->p_->startTime;
-}
-
 QString Track::getTitle() const {
 	return this->p_->textCodec->toUnicode( this->p_->title );
 }
@@ -142,10 +138,6 @@ void Track::setSongWriter( const QByteArray & songWriter ) {
 
 void Track::setSongWriter( const QString & songWriter ) {
 	this->p_->songWriter = this->p_->textCodec->fromUnicode( songWriter );
-}
-
-void Track::setStartTime( const Timestamp & startTime ) {
-	this->p_->startTime = startTime;
 }
 
 void Track::setTextCodec( QTextCodec * textCodec ) {

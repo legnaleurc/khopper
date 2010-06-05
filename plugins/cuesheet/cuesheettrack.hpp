@@ -35,6 +35,7 @@ namespace khopper {
 
 			const QStringList & getComments() const;
 			const QStringList & getGarbage() const;
+			const Timestamp & getStartTime() const;
 
 			void setComments( const QStringList & comments );
 			void setDataType( const QString & dataType );
@@ -43,6 +44,7 @@ namespace khopper {
 			void setISRC( const QString & isrc );
 			void setPostgap( const Timestamp & postgap );
 			void setPregap( const Timestamp & pregap );
+			void setStartTime( const Timestamp & startTime );
 
 		private:
 			QStringList comments_;

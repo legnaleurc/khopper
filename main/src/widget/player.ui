@@ -31,24 +31,10 @@
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="passedTime">
-       <property name="text">
-        <string>00:00</string>
-       </property>
-      </widget>
+      <widget class="Phonon::SeekSlider" name="seeker"/>
      </item>
      <item>
-      <widget class="khopper::widget::SeekSlider" name="seeker" native="true"/>
-     </item>
-     <item>
-      <widget class="QLabel" name="remainTime">
-       <property name="text">
-        <string>00:00</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="Phonon::VolumeSlider" name="volume" native="true"/>
+      <widget class="Phonon::VolumeSlider" name="volume"/>
      </item>
     </layout>
    </item>
@@ -59,15 +45,14 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>Phonon::VolumeSlider</class>
+   <class>Phonon::SeekSlider</class>
    <extends>QWidget</extends>
-   <header location="global">Phonon/VolumeSlider</header>
-   <container>1</container>
+   <header location="global">phonon/seekslider.h</header>
   </customwidget>
   <customwidget>
-   <class>khopper::widget::SeekSlider</class>
+   <class>Phonon::VolumeSlider</class>
    <extends>QWidget</extends>
-   <header>seekslider.hpp</header>
+   <header location="global">phonon/volumeslider.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>

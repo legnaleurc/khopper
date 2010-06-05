@@ -36,6 +36,10 @@ const QStringList & CueSheetTrack::getGarbage() const {
 	return this->garbage_;
 }
 
+const Timestamp & CueSheetTrack::getStartTime() const {
+	return this->startTime_;
+}
+
 void CueSheetTrack::setComments( const QStringList & comments ) {
 	this->comments_ = comments;
 }
@@ -62,4 +66,8 @@ void CueSheetTrack::setPostgap( const Timestamp & postgap ) {
 
 void CueSheetTrack::setPregap( const Timestamp & pregap ) {
 	this->pregap_ = pregap;
+}
+
+void CueSheetTrack::setStartTime( const Timestamp & startTime ) {
+	this->startTime_ = startTime;
 }

@@ -42,7 +42,6 @@ namespace khopper {
 			codec::ReaderSP reader;
 			unsigned int sampleRate;
 			QByteArray songWriter;
-			Timestamp startTime;
 			QByteArray title;
 			QTextCodec * textCodec;
 			QUrl uri;

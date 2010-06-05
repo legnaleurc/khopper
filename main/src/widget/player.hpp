@@ -75,8 +75,8 @@ namespace khopper {
 			void playOrPause_();
 			void stop_();
 			void handleState_( Phonon::State, Phonon::State );
-			void tick_( qint64 );
-			void updateTimestamp_( int ms );
+			//void tick_( qint64 );
+			//void updateTimestamp_( int ms );
 
 		private:
 			std::tr1::shared_ptr< Ui::Player > ui_;

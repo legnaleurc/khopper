@@ -57,7 +57,6 @@ namespace khopper {
 			unsigned int getIndex() const;
 			codec::ReaderSP getReader() const;
 			unsigned int getSampleRate() const;
-			const Timestamp & getStartTime() const;
 			QString getTitle() const;
 			/**
 			 * @brief Get url.
@@ -75,7 +74,6 @@ namespace khopper {
 			void setSampleRate( unsigned int sampleRate );
 			void setSongWriter( const QByteArray & songWriter );
 			void setSongWriter( const QString & songWriter );
-			void setStartTime( const Timestamp & startTime );
 			/**
 			 * @brief Set metadata text codec.
 			 */
