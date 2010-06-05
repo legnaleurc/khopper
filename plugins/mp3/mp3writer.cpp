@@ -79,9 +79,9 @@ void Mp3Writer::doOpen() {
 	lame_set_write_id3tag_automatic( this->gfp_.get(), 0 );
 
 	TagLib::ID3v2::Tag tag;
-	tag.setTitle( TagLib::String( this->getTitle(), TagLib::String::UTF8 ) );
-	tag.setArtist( TagLib::String( this->getArtist(), TagLib::String::UTF8 ) );
-	tag.setAlbum( TagLib::String( this->getAlbum(), TagLib::String::UTF8 ) );
+	tag.setTitle( TagLib::String( this->getTitle().constData(), TagLib::String::UTF8 ) );
+	tag.setArtist( TagLib::String( this->getArtist().constData(), TagLib::String::UTF8 ) );
+	tag.setAlbum( TagLib::String( this->getAlbum().constData(), TagLib::String::UTF8 ) );
 
 	TagLib::ByteVector id3v2 = tag.render();
 	qDebug( "ID3v2 length: %d", id3v2.size() );

@@ -96,7 +96,7 @@ void FlacReader::doClose() {
 	this->offset_ = 0;
 }
 
-bool FlacReader::seekFrame( int64_t ms ) {
+bool FlacReader::seekFrame( qint64 ms ) {
 	FLAC__uint64 ts = ms * this->getSampleRate() / 1000;
 	FLAC__bool ok = FLAC__stream_decoder_seek_absolute( this->pFD_.get(), ts );
 	if( ok ) {

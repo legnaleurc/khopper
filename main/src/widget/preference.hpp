@@ -22,6 +22,8 @@
 #ifndef KHOPPER_WIDGET_PREFERENCE_HPP
 #define KHOPPER_WIDGET_PREFERENCE_HPP
 
+#include "khopper/tr1.hpp"
+
 #include <QtGui/QAbstractButton>
 #include <QtGui/QDialog>
 

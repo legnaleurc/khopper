@@ -22,6 +22,8 @@
 #ifndef KHOPPER_WIDGET_PROGRESS_HPP
 #define KHOPPER_WIDGET_PROGRESS_HPP
 
+#include "khopper/tr1.hpp"
+
 #include <QtGui/QWidget>
 
 namespace Ui {

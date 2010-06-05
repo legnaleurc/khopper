@@ -115,7 +115,7 @@ qint64 AbstractReader::writeData( const char * /*data*/, qint64 /*maxSize*/ ) {
 	return -1;
 }
 
-bool AbstractReader::seek( int64_t msPos ) {
+bool AbstractReader::seek( qint64 msPos ) {
 	bool succeed = this->QIODevice::seek( msPos );
 	succeed &= this->seekFrame( msPos );
 	return succeed;

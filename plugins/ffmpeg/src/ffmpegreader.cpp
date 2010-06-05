@@ -297,7 +297,7 @@ QByteArray FfmpegReader::readFrame() {
 		// decoded time: decoded size in byte / sizeof int16_t * AV_TIME_BASE / ( sample rate * channels )
 		int64_t ptsDiff = ( static_cast< int64_t >( AV_TIME_BASE ) * ( sampleByteLength / sizeof( int16_t ) ) ) / ( this->getSampleRate() * this->getChannels() );
 		//if( this->afterBegin( toMS( curPts ) ) ) {
-			const int8_t * tmp = static_cast< int8_t * >( static_cast< void * >( sampleBuffer ) );
+			const char * tmp = static_cast< char * >( static_cast< void * >( sampleBuffer ) );
 			frame.append( tmp, sampleByteLength );
 			decoded += ptsDiff;
 		//}

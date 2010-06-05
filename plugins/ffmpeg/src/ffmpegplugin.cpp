@@ -21,13 +21,15 @@
  */
 #include "ffmpegplugin.hpp"
 #include "wavpanel.hpp"
+#ifdef _WIN32
 #include "wfile.hpp"
+#endif
 
 #include "khopper/text.hpp"
 #include "khopper/application.hpp"
 
 extern "C" {
-#include <libavcodec/avcodec.h>
+#include <libavformat/avformat.h>
 }
 
 #include <QtPlugin>
