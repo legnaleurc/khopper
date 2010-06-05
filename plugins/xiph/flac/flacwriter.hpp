@@ -27,6 +27,8 @@
 #include <FLAC/stream_encoder.h>
 #include <FLAC/metadata.h>
 
+#include <vector>
+
 namespace khopper {
 
 	namespace codec {

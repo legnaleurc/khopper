@@ -30,8 +30,6 @@
 #include "tr1.hpp"
 #include "error.hpp"
 
-#include <vector>
-
 namespace khopper {
 
 	/**
@@ -101,12 +99,6 @@ namespace khopper {
 
 			LayoutNative        = 0x00000000
 		};
-
-		/**
-		 * @ingroup Codecs
-		 * @brief Used for storing raw binary data
-		 */
-		typedef std::vector< uint8_t > ByteArray;
 
 	}
 
