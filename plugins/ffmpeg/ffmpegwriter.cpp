@@ -1,5 +1,5 @@
 /**
- * @file defaultwriter.cpp
+ * @file ffmpegwriter.cpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,8 +19,9 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
-#include "defaultwriter.hpp"
-#include "error.hpp"
+#include "ffmpegwriter.hpp"
+
+#include "khopper/error.hpp"
 
 extern "C" {
 #include <libavcodec/avcodec.h>
@@ -57,13 +58,6 @@ namespace {
 
 		av_freep( &oc );
 	}
-
-	static inline bool initFFmpeg() {
-		av_register_all();
-		return true;
-	}
-
-	static const bool INITIALIZED = initFFmpeg();
 	static const double QSCALE_NONE = -99999.;
 	static const int OUTPUT_BUFFER_SIZE = FF_MIN_BUFFER_SIZE * 4;
 
@@ -71,7 +65,7 @@ namespace {
 
 using namespace khopper::codec;
 
-DefaultWriter::DefaultWriter( const QUrl & uri ):
+FfmpegWriter::FfmpegWriter( const QUrl & uri ):
 AbstractWriter( uri ),
 pFormatContext_(),
 pStream_( NULL ),
@@ -80,18 +74,18 @@ quality_( QSCALE_NONE ),
 frameSize_( -1 ) {
 }
 
-void DefaultWriter::doOpen() {
+void FfmpegWriter::doOpen() {
 	this->setupMuxer();
 	this->setupEncoder();
 	this->openResource();
 	this->writeHeader();
 }
 
-void DefaultWriter::doClose() {
+void FfmpegWriter::doClose() {
 	this->closeResource();
 }
 
-void DefaultWriter::setupMuxer() {
+void FfmpegWriter::setupMuxer() {
 	AVOutputFormat * pOF = guess_format( NULL, wHelper( this->getURI() ).c_str(), NULL );
 	if( pOF == NULL ) {
 		throw error::CodecError( "Can not recognize output format" );
@@ -106,7 +100,7 @@ void DefaultWriter::setupMuxer() {
 	std::strncpy( this->pFormatContext_->filename, this->getURI().toString().toStdString().c_str(), sizeof( this->pFormatContext_->filename ) );
 }
 
-void DefaultWriter::setupEncoder() {
+void FfmpegWriter::setupEncoder() {
 	AVOutputFormat * pOF = this->pFormatContext_->oformat;
 	if( pOF->audio_codec == CODEC_ID_NONE ) {
 		throw error::CodecError( "Can not setup encoder" );
@@ -178,7 +172,7 @@ void DefaultWriter::setupEncoder() {
 	}
 }
 
-void DefaultWriter::openResource() {
+void FfmpegWriter::openResource() {
 	AVOutputFormat * pOF = this->pFormatContext_->oformat;
 	if( !( pOF->flags & AVFMT_NOFILE ) ) {
 		if( url_fopen( &this->pFormatContext_->pb, wHelper( this->getURI() ).c_str(), URL_WRONLY ) < 0 ) {
@@ -187,14 +181,14 @@ void DefaultWriter::openResource() {
 	}
 }
 
-void DefaultWriter::closeResource() {
+void FfmpegWriter::closeResource() {
 	this->writeFrame( NULL );
 	av_write_trailer( this->pFormatContext_.get() );
 	this->queue_.clear();
 	this->pFormatContext_.reset();
 }
 
-void DefaultWriter::writeHeader() {
+void FfmpegWriter::writeHeader() {
 	av_metadata_set( &this->pFormatContext_->metadata, "title", this->getTitle().constData() );
 	av_metadata_set( &this->pFormatContext_->metadata, "author", this->getArtist().constData() );
 	av_metadata_set( &this->pFormatContext_->metadata, "album", this->getAlbum().constData() );
@@ -204,28 +198,24 @@ void DefaultWriter::writeHeader() {
 	}
 }
 
-void DefaultWriter::writeFrame( const QByteArray & sample ) {
+void FfmpegWriter::writeFrame( const QByteArray & sample ) {
 	if( !sample.isEmpty() ) {
 		// put samples into queue
-		this->queue_.insert( this->queue_.end(), sample.begin(), sample.end() );
+		this->queue_.append( sample );
 		// encode if possible
 		while( this->queue_.size() >= this->frameSize_ ) {
-			ByteQueue::iterator copyEnd = this->queue_.begin();
-			std::advance( copyEnd, this->frameSize_ );
-			ByteArray data( this->queue_.begin(), copyEnd );
-			this->writeFrame( static_cast< const short * >( static_cast< const void * >( &data[0] ) ) );
-			this->queue_.erase( this->queue_.begin(), copyEnd );
+			this->writeFrame( static_cast< const short * >( static_cast< const void * >( this->queue_.left( this->frameSize_ ).constData() ) ) );
+			this->queue_.remove( 0, this->frameSize_ );
 		}
 	} else {
-		if( !this->queue_.empty() ) {
-			ByteArray data( this->queue_.begin(), this->queue_.end() );
-			this->writeFrame( static_cast< const short * >( static_cast< const void * >( &data[0] ) ) );
+		if( !this->queue_.isEmpty() ) {
+			this->writeFrame( static_cast< const short * >( static_cast< const void * >( this->queue_.constData() ) ) );
 			this->queue_.clear();
 		}
 	}
 }
 
-void DefaultWriter::writeFrame( const short * sample ) {
+void FfmpegWriter::writeFrame( const short * sample ) {
 	AVCodecContext * pCC = this->pStream_->codec;
 
 	static uint8_t audio_outbuf[OUTPUT_BUFFER_SIZE];

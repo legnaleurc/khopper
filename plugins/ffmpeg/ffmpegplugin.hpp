@@ -1,5 +1,5 @@
 /**
- * @file wavplugin.hpp
+ * @file ffmpegplugin.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,8 +19,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_PLUGIN_WAVPLUGIN_HPP
-#define KHOPPER_PLUGIN_WAVPLUGIN_HPP
+#ifndef KHOPPER_PLUGIN_FFMPEGPLUGIN_HPP
+#define KHOPPER_PLUGIN_FFMPEGPLUGIN_HPP
 
 #include "khopper/abstractplugin.hpp"
 
@@ -35,22 +35,21 @@ namespace khopper {
 		/**
 		 * @brief Wav option widget
 		 */
-		class WavPlugin : public AbstractPlugin {
+		class FfmpegPlugin : public AbstractPlugin {
 		public:
 			/**
 			 * @brief Default constructor
 			 * @param parent Parent widget
 			 * @param f Window flags
 			 */
-			WavPlugin();
-			virtual ~WavPlugin();
+			FfmpegPlugin();
 
 		protected:
 			virtual void doInstall();
 			virtual void doUninstall();
 
 		private:
-			widget::WavPanel * panel_;
+			std::tr1::shared_ptr< widget::WavPanel > panel_;
 		};
 
 	}

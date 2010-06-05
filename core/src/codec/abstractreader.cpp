@@ -20,7 +20,6 @@
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 #include "abstractreaderprivate.hpp"
-#include "defaultreader.hpp"
 
 #ifndef LOKI_CLASS_LEVEL_THREADING
 # define LOKI_CLASS_LEVEL_THREADING
@@ -86,8 +85,6 @@ bool AbstractReader::open( OpenMode /*mode*/ ) {
 	bool opened = this->QIODevice::open( ReadOnly );
 	this->doOpen();
 
-	this->p_->hasNext = true;
-
 	return opened;
 }
 
@@ -102,23 +99,13 @@ void AbstractReader::close() {
 		// TODO: log an error
 		assert( !"a plugin can not clean up its own mess ..." );
 	}
-
-	this->p_->hasNext = false;
 }
 
 qint64 AbstractReader::readData( char * data, qint64 maxSize ) {
-	//if( !this->p_->hasNext ) {
-	//	return 0;
-	//}
-
-	//bool stop = false;
 	QByteArray frame( this->readFrame() );
-	while( /*!stop &&*/ frame.isEmpty() ) {
+	while( frame.isEmpty() ) {
 		frame = this->readFrame();
 	}
-	//if( stop ) {
-	//	this->p_->hasNext = false;
-	//}
 
 	this->p_->buffer << frame;
 	return this->p_->buffer.readRawData( data, maxSize );
@@ -131,29 +118,12 @@ qint64 AbstractReader::writeData( const char * /*data*/, qint64 /*maxSize*/ ) {
 bool AbstractReader::seek( int64_t msPos ) {
 	bool succeed = this->QIODevice::seek( msPos );
 	succeed &= this->seekFrame( msPos );
-	//if( succeed ) {
-	//	this->p_->hasNext = true;
-	//}
 	return succeed;
 }
 
 qint64 AbstractReader::size() const {
 	return this->isSequential() ? this->bytesAvailable() : this->getDuration();
 }
-
-//bool AbstractReader::afterBegin( int64_t ms ) const {
-//	if( this->p_->msBegin < 0 ) {
-//		return true;
-//	}
-//	return ms >= this->p_->msBegin;
-//}
-//
-//bool AbstractReader::afterEnd( int64_t ms ) const {
-//	if( this->p_->msEnd < 0 ) {
-//		return false;
-//	}
-//	return ms >= this->p_->msEnd;
-//}
 
 const QUrl & AbstractReader::getURI() const {
 	return this->p_->uri;
@@ -280,12 +250,9 @@ channelLayout( LayoutNative ),
 channels( 0 ),
 comment(),
 copyright(),
-msBegin( 0 ),
 msDuration( 0 ),
-msEnd( 0 ),
 uri( uri ),
 genre(),
-hasNext( false ),
 index( 0 ),
 sampleFormat( SF_NONE ),
 sampleRate( 0 ),

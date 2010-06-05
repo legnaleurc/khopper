@@ -23,8 +23,9 @@
 #error This file must compile on Windows only!
 #endif
 
+#include "wfile.hpp"
+
 extern "C" {
-#include <libavformat/avformat.h>
 #include <libavutil/avstring.h>
 }
 
@@ -102,25 +103,13 @@ namespace {
 		return 0;
 	}
 
-	URLProtocol wfile_protocol = {
-		"wfile",
-		wfile_open,
-		wfile_read,
-		wfile_write,
-		wfile_seek,
-		wfile_close
-	};
-
-	static inline int initialize() {
-		static int initialized = 0;
-		if( !initialized ) {
-			initialized = 1;
-			return av_register_protocol( &wfile_protocol );
-		} else {
-			return 0;
-		}
-	}
-
-	static const int REGISTERED_ = initialize();
-
 }
+
+URLProtocol khopper::codec::wfileProtocol = {
+	"wfile",
+	wfile_open,
+	wfile_read,
+	wfile_write,
+	wfile_seek,
+	wfile_close
+};

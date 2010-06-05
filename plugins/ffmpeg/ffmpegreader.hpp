@@ -1,5 +1,5 @@
 /**
- * @file defaultreader.hpp
+ * @file ffmpegreader.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,10 +19,10 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_CODEC_DEFAULTREADER_HPP
-#define KHOPPER_CODEC_DEFAULTREADER_HPP
+#ifndef KHOPPER_CODEC_FFMPEGREADER_HPP
+#define KHOPPER_CODEC_FFMPEGREADER_HPP
 
-#include "abstractreader.hpp"
+#include "khopper/abstractreader.hpp"
 
 struct AVFormatContext;
 struct AVCodecContext;
@@ -39,12 +39,12 @@ namespace khopper {
 		 *
 		 * This class provides a default audio reader implementation.
 		 */
-		class KHOPPER_DLL DefaultReader : public AbstractReader {
+		class FfmpegReader : public AbstractReader {
 		public:
 			/**
 			 * @brief Default constructor
 			 */
-			explicit DefaultReader( const QUrl & uri );
+			explicit FfmpegReader( const QUrl & uri );
 
 			virtual bool atEnd() const;
 			virtual qint64 pos() const;

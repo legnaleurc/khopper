@@ -37,7 +37,6 @@ namespace khopper {
 
 			QByteArray album;
 			QByteArray artist;
-			int64_t msBegin;
 			unsigned int bitRate;
 			QDataStream buffer;
 			ChannelLayout channelLayout;
@@ -45,10 +44,8 @@ namespace khopper {
 			QByteArray comment;
 			QByteArray copyright;
 			int64_t msDuration;
-			int64_t msEnd;
 			QUrl uri;
 			QByteArray genre;
-			bool hasNext;
 			unsigned int index;
 			SampleFormat sampleFormat;
 			unsigned int sampleRate;

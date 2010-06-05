@@ -1,5 +1,5 @@
 /**
- * @file defaultwriter.hpp
+ * @file ffmpegwriter.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,12 +19,10 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_CODEC_DEFAULTWRITER_HPP
-#define KHOPPER_CODEC_DEFAULTWRITER_HPP
+#ifndef KHOPPER_CODEC_FFMPEGWRITER_HPP
+#define KHOPPER_CODEC_FFMPEGWRITER_HPP
 
-#include "abstractwriter.hpp"
-
-#include <deque>
+#include "khopper/abstractwriter.hpp"
 
 struct AVFormatContext;
 struct AVStream;
@@ -39,23 +37,16 @@ namespace khopper {
 		 *
 		 * This class provides a default audio writer implementation.
 		 */
-		class KHOPPER_DLL DefaultWriter : public AbstractWriter {
+		class FfmpegWriter : public AbstractWriter {
 		public:
 			/**
 			 * @brief Default constructor
 			 */
-			explicit DefaultWriter( const QUrl & uri );
+			explicit FfmpegWriter( const QUrl & uri );
 
-			void setQuality( double quality ) {
-				this->quality_ = quality;
-			}
+			void setQuality( double quality );
 
 		protected:
-			/// Get format context
-			std::tr1::shared_ptr< AVFormatContext > formatContext() {
-				return this->pFormatContext_;
-			}
-
 			/**
 			 * @brief setup muxer
 			 * @throws CodecError Unknown output format
@@ -76,11 +67,9 @@ namespace khopper {
 			virtual void writeFrame( const QByteArray & sample );
 
 		private:
-			typedef std::deque< ByteArray::value_type > ByteQueue;
-
 			std::tr1::shared_ptr< AVFormatContext > pFormatContext_;
 			AVStream * pStream_;
-			ByteQueue queue_;
+			QByteArray queue_;
 			double quality_;
 			std::size_t frameSize_;
 		};

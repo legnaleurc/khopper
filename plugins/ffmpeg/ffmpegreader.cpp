@@ -1,5 +1,5 @@
 /**
- * @file defaultreader.cpp
+ * @file ffmpegreader.cpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,8 +19,9 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
-#include "defaultreader.hpp"
-#include "error.hpp"
+#include "ffmpegreader.hpp"
+
+#include "khopper/error.hpp"
 
 extern "C" {
 #include <libavcodec/avcodec.h>
@@ -52,20 +53,13 @@ namespace {
 		return av_rescale( timestamp, 1000, AV_TIME_BASE );
 	}
 
-	static inline bool initFFmpeg() {
-		av_register_all();
-		return true;
-	}
-
-	static const bool INITIALIZED = initFFmpeg();
-
 }
 
 using namespace khopper::codec;
 using khopper::error::IOError;
 using khopper::error::CodecError;
 
-DefaultReader::DefaultReader( const QUrl & uri ):
+FfmpegReader::FfmpegReader( const QUrl & uri ):
 AbstractReader( uri ),
 pFormatContext_(),
 pCodecContext_(),
@@ -76,15 +70,15 @@ eof_( true ) {
 	av_init_packet( this->pPacket_.get() );
 }
 
-bool DefaultReader::atEnd() const {
+bool FfmpegReader::atEnd() const {
 	return this->eof_;
 }
 
-qint64 DefaultReader::pos() const {
+qint64 FfmpegReader::pos() const {
 	return this->msCurrent_;
 }
 
-void DefaultReader::doOpen() {
+void FfmpegReader::doOpen() {
 	this->openResource();
 	this->setupDemuxer();
 	this->setupDecoder();
@@ -92,12 +86,12 @@ void DefaultReader::doOpen() {
 	this->eof_ = false;
 }
 
-void DefaultReader::doClose() {
+void FfmpegReader::doClose() {
 	this->eof_ = true;
 	this->closeResource();
 }
 
-void DefaultReader::openResource() {
+void FfmpegReader::openResource() {
 	AVFormatContext * pFC = NULL;
 	int ret = av_open_input_file( &pFC, wHelper( this->getURI() ).c_str(), NULL, 0, NULL );
 	if( ret != 0 ) {
@@ -111,7 +105,7 @@ void DefaultReader::openResource() {
 	this->pFormatContext_.reset( pFC, av_close_input_file );
 }
 
-void DefaultReader::setupDemuxer() {
+void FfmpegReader::setupDemuxer() {
 	if( av_find_stream_info( this->pFormatContext_.get() ) < 0 ) {
 		throw CodecError( "Can not find codec info!" );
 	}
@@ -123,7 +117,7 @@ void DefaultReader::setupDemuxer() {
 	}
 }
 
-void DefaultReader::setupDecoder() {
+void FfmpegReader::setupDecoder() {
 	int a_stream = -1;
 	for( std::size_t i = 0 ; i < this->pFormatContext_->nb_streams; ++i ) {
 		if( this->pFormatContext_->streams[i]->codec->codec_type == CODEC_TYPE_AUDIO ) {
@@ -189,7 +183,7 @@ void DefaultReader::setupDecoder() {
 	this->pCodecContext_.reset( pCC, avcodec_close );
 }
 
-void DefaultReader::readHeader() {
+void FfmpegReader::readHeader() {
 	av_metadata_conv( this->pFormatContext_.get(), NULL, this->pFormatContext_->iformat->metadata_conv );
 	AVMetadataTag * mt = NULL;
 	if( ( mt = av_metadata_get( this->pFormatContext_->metadata, "title", NULL, 0 ) ) ) {
@@ -218,7 +212,7 @@ void DefaultReader::readHeader() {
 	}
 }
 
-void DefaultReader::closeResource() {
+void FfmpegReader::closeResource() {
 	// clear native information
 	this->msCurrent_ = 0LL;
 	this->pStream_ = NULL;
@@ -229,7 +223,7 @@ void DefaultReader::closeResource() {
 	this->pFormatContext_.reset();
 }
 
-QByteArray DefaultReader::readFrame() {
+QByteArray FfmpegReader::readFrame() {
 	//stop = false;
 
 	// read a frame
@@ -323,7 +317,7 @@ QByteArray DefaultReader::readFrame() {
 	return frame;
 }
 
-bool DefaultReader::seekFrame( qint64 msPos ) {
+bool FfmpegReader::seekFrame( qint64 msPos ) {
 	int64_t internalPos = av_rescale( msPos, this->pStream_->time_base.den, this->pStream_->time_base.num * 1000 );
 	int succeed = av_seek_frame( this->pFormatContext_.get(), this->pStream_->index, internalPos, AVSEEK_FLAG_ANY | AVSEEK_FLAG_BACKWARD );
 	if( succeed >= 0 ) {
