@@ -21,6 +21,7 @@
  */
 #include "ffmpegplugin.hpp"
 #include "wavpanel.hpp"
+#include "ffmpegreader.hpp"
 #ifdef _WIN32
 #include "wfile.hpp"
 #endif
@@ -36,8 +37,25 @@ extern "C" {
 
 Q_EXPORT_PLUGIN2( KHOPPER_PLUGIN_ID, khopper::plugin::FfmpegPlugin )
 
+namespace {
+
+	unsigned int verifier( const QUrl & uri ) {
+		if( guess_format( NULL, uri.toLocalFile().toStdString().c_str(), NULL ) != NULL ) {
+			return 100;
+		}
+		return 0;
+	}
+
+	khopper::codec::ReaderSP creator( const QUrl & uri ) {
+		return khopper::codec::ReaderSP( new khopper::codec::FfmpegReader( uri ) );
+	}
+
+}
+
 using namespace khopper::plugin;
 using khopper::widget::WavPanel;
+using khopper::plugin::registerReader;
+using khopper::plugin::unregisterReader;
 
 FfmpegPlugin::FfmpegPlugin():
 AbstractPlugin(),
@@ -52,8 +70,10 @@ void FfmpegPlugin::doInstall() {
 #ifdef _WIN32
 	av_register_protocol( &khopper::codec::wfileProtocol );
 #endif
+	registerReader( verifier, creator );
 }
 
 void FfmpegPlugin::doUninstall() {
 	KHOPPER_APPLICATION->removePanel( this->panel_.get() );
+	unregisterReader( verifier );
 }
