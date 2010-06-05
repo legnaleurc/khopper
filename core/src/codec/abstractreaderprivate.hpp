@@ -38,7 +38,7 @@ namespace khopper {
 			QByteArray album;
 			QByteArray artist;
 			unsigned int bitRate;
-			QDataStream buffer;
+			QByteArray buffer;
 			ChannelLayout channelLayout;
 			unsigned int channels;
 			QByteArray comment;

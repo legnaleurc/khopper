@@ -103,12 +103,15 @@ void AbstractReader::close() {
 
 qint64 AbstractReader::readData( char * data, qint64 maxSize ) {
 	QByteArray frame( this->readFrame() );
-	while( frame.isEmpty() ) {
+	while( frame.isEmpty() && !this->atEnd() ) {
 		frame = this->readFrame();
 	}
 
-	this->p_->buffer << frame;
-	return this->p_->buffer.readRawData( data, maxSize );
+	this->p_->buffer.append( frame );
+	maxSize = min( maxSize, this->p_->buffer.size() );
+	std::memcpy( data, this->p_->buffer, maxSize );
+	this->p_->buffer.remove( 0, maxSize );
+	return maxSize;
 }
 
 qint64 AbstractReader::writeData( const char * /*data*/, qint64 /*maxSize*/ ) {
