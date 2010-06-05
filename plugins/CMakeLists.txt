@@ -16,6 +16,6 @@ endmacro()
 
 add_subdirectory(cuesheet)
 add_subdirectory(ffmpeg)
-add_subdirectory(mp3)
+add_subdirectory(mp3lame)
 add_subdirectory(single)
 add_subdirectory(xiph)
