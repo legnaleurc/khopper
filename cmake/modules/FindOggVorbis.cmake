@@ -23,7 +23,7 @@ else()
         HINTS
             ${PC_OGGVORBIS_vorbis_LIBDIR}
             ${PC_OGGVORBIS_vorbis_LIBRARY_DIRS})
-    find_library(VORBIS_LIBRARY_DEBUG vorbis_D
+    find_library(VORBIS_LIBRARY_DEBUG vorbisd
         HINTS
             ${PC_OGGVORBIS_vorbis_LIBDIR}
             ${PC_OGGVORBIS_vorbis_LIBRARY_DIRS})
@@ -31,7 +31,7 @@ else()
         HINTS
             ${PC_OGGVORBIS_ogg_LIBDIR}
             ${PC_OGGVORBIS_ogg_LIBRARY_DIRS})
-    find_library(OGG_LIBRARY_DEBUG ogg_D
+    find_library(OGG_LIBRARY_DEBUG oggd
         HINTS
             ${PC_OGGVORBIS_ogg_LIBDIR}
             ${PC_OGGVORBIS_ogg_LIBRARY_DIRS})

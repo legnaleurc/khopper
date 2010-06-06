@@ -24,7 +24,7 @@ else()
         HINTS
             ${PC_FLAC_LIBDIR}
             ${PC_FLAC_LIBRARY_DIRS})
-    find_library(FLAC_LIBRARIES_DEBUG FLAC_D
+    find_library(FLAC_LIBRARIES_DEBUG FLACd
         HINTS
             ${PC_FLAC_LIBDIR}
             ${PC_FLAC_LIBRARY_DIRS})
