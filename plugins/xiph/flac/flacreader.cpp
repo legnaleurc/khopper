@@ -61,7 +61,7 @@ bool FlacReader::atEnd() const {
 }
 
 qint64 FlacReader::pos() const {
-	return this->offset_ * 1000LL / this->getSampleRate();
+	return this->offset_ * 1000LL / this->getAudioFormat().frequency() / this->getAudioFormat().sampleSize();
 }
 
 void FlacReader::doOpen() {
@@ -97,7 +97,7 @@ void FlacReader::doClose() {
 }
 
 bool FlacReader::seekFrame( qint64 ms ) {
-	FLAC__uint64 ts = ms * this->getSampleRate() / 1000;
+	FLAC__uint64 ts = ms * this->getAudioFormat().frequency() / 1000;
 	FLAC__bool ok = FLAC__stream_decoder_seek_absolute( this->pFD_.get(), ts );
 	if( ok ) {
 		this->offset_ = ts;
@@ -145,33 +145,17 @@ void FlacReader::parseVorbisComments_( const FLAC__StreamMetadata_VorbisComment 
 
 void FlacReader::metadataCallback_( const FLAC__StreamDecoder * /*decoder*/, const FLAC__StreamMetadata * metadata, void * client_data ) {
 	FlacReader * self = static_cast< FlacReader * >( client_data );
+	QAudioFormat format;
 	switch( metadata->type ) {
 	case FLAC__METADATA_TYPE_STREAMINFO:
 		qDebug( "FLAC__METADATA_TYPE_STREAMINFO" );
-		self->setSampleRate( metadata->data.stream_info.sample_rate );
-		self->setChannels( metadata->data.stream_info.channels );
 		self->setDuration( metadata->data.stream_info.total_samples * 1000 / metadata->data.stream_info.sample_rate );
 		self->setBitRate( 0 );
-		switch( metadata->data.stream_info.bits_per_sample ) {
-		case 8:
-			self->setSampleFormat( SF_U8 );
-			break;
-		case 16:
-#if Q_BYTE_ORDER == Q_LITTLE_ENDIAN
-			self->setSampleFormat( SF_S16LE );
-#else
-			self->setSampleFormat( SF_S16BE );
-#endif
-		case 32:
-#if Q_BYTE_ORDER == Q_LITTLE_ENDIAN
-			self->setSampleFormat( SF_S32LE );
-#else
-			self->setSampleFormat( SF_S32BE );
-#endif
-			break;
-		default:
-			self->setSampleFormat( SF_NONE );
-		}
+		format.setFrequency( metadata->data.stream_info.sample_rate );
+		format.setChannels( metadata->data.stream_info.channels );
+		format.setSampleType( QAudioFormat::SignedInt );
+		format.setSampleSize( metadata->data.stream_info.bits_per_sample );
+		self->setAudioFormat( format );
 		break;
 	case FLAC__METADATA_TYPE_PADDING:
 		qDebug( "FLAC__METADATA_TYPE_PADDING" );

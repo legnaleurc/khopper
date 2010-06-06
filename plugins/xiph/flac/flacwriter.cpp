@@ -87,7 +87,7 @@ void FlacWriter::doOpen() {
 		throw error::SystemError( "memory allocation error" );
 	}
 	// FIXME: dirty hack, I don't know how to rescale seek table size
-	FLAC__metadata_object_seektable_template_append_spaced_points_by_samples( tmp, this->getSampleRate(), this->getSampleRate() * 7200 );
+	FLAC__metadata_object_seektable_template_append_spaced_points_by_samples( tmp, this->getAudioFormat().frequency(), this->getAudioFormat().frequency() * 7200 );
 	this->metadataOwner_.push_back( std::tr1::shared_ptr< FLAC__StreamMetadata >( tmp, FLAC__metadata_object_delete ) );
 	metadata.push_back( tmp );
 
@@ -106,10 +106,10 @@ void FlacWriter::doOpen() {
 	}
 
 	// setup encoder setting
-	ok &= FLAC__stream_encoder_set_channels( this->pFE_.get(), this->getChannels() );
+	ok &= FLAC__stream_encoder_set_channels( this->pFE_.get(), this->getAudioFormat().channels() );
 	// TODO: forcing sample format S16LE, but may cause other problems.
-	ok &= FLAC__stream_encoder_set_bits_per_sample( this->pFE_.get(), 16 );
-	ok &= FLAC__stream_encoder_set_sample_rate( this->pFE_.get(), this->getSampleRate() );
+	ok &= FLAC__stream_encoder_set_bits_per_sample( this->pFE_.get(), this->getAudioFormat().sampleSize() );
+	ok &= FLAC__stream_encoder_set_sample_rate( this->pFE_.get(), this->getAudioFormat().frequency() );
 	// if ogg mode is set
 	if( this->ogg_ ) {
 		ok &= FLAC__stream_encoder_set_ogg_serial_number( this->pFE_.get(), 0xcafebabeL );
@@ -152,7 +152,7 @@ void FlacWriter::writeFrame( const QByteArray & sample ) {
 		return;
 	}
 	// TODO: assumed that sample format is S16LE, please fix the interface later
-	const int32_t bufSize = sample.size() / sizeof( int16_t );
+	const int32_t bufSize = sample.size() / this->getAudioFormat().sampleSize();
 	// TODO: big or little endian
 	const int16_t * audio = static_cast< const int16_t * >( static_cast< const void * >( sample.data() ) );
 	std::vector< int32_t > buffer( bufSize );
@@ -160,7 +160,7 @@ void FlacWriter::writeFrame( const QByteArray & sample ) {
 		buffer[i] = audio[i];
 	}
 
-	FLAC__bool ok = FLAC__stream_encoder_process_interleaved( this->pFE_.get(), &buffer[0], bufSize / this->getChannels() );
+	FLAC__bool ok = FLAC__stream_encoder_process_interleaved( this->pFE_.get(), &buffer[0], bufSize / this->getAudioFormat().channels() );
 	if( !ok ) {
 		throw error::CodecError( FLAC__StreamEncoderStateString[FLAC__stream_encoder_get_state( this->pFE_.get() )] );
 	}

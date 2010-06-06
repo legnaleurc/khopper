@@ -56,15 +56,14 @@ void RangedReader::doOpen() {
 
 	this->setAlbum( this->client_->getAlbum() );
 	this->setArtist( this->client_->getArtist() );
+	this->setAudioFormat( this->client_->getAudioFormat() );
 	this->setBitRate( this->client_->getBitRate() );
 	this->setChannelLayout( this->client_->getChannelLayout() );
-	this->setChannels( this->client_->getChannels() );
 	this->setComment( this->client_->getComment() );
 	this->setCopyright( this->client_->getCopyright() );
 	this->setDuration( this->msDuration_ );
 	this->setGenre( this->client_->getGenre() );
 	this->setIndex( this->client_->getIndex() );
-	this->setSampleFormat( this->client_->getSampleFormat() );
 	this->setTitle( this->client_->getTitle() );
 	this->setYear( this->client_->getYear() );
 
@@ -79,17 +78,18 @@ void RangedReader::doClose() {
 }
 
 QByteArray RangedReader::readFrame() {
-	QByteArray frame( this->client_->read( this->getSampleRate() * this->getChannels() ) );
-	qint64 msDuration = frame.size() * 1000 / this->getSampleRate() / this->getChannels();
+	int unit = this->getAudioFormat().frequency() * this->getAudioFormat().channels() * this->getAudioFormat().sampleSize();
+	QByteArray frame( this->client_->read( unit ) );
+	qint64 msDuration = frame.size() * 1000 / unit;
 	qint64 msBegin = this->pos() - msDuration;
 
 	qint64 begin = 0, duration = -1;
 	
 	if( msBegin < this->msBegin_ && msBegin + msDuration >= this->msBegin_ ) {
-		begin = ( this->msBegin_ - msBegin ) * this->getSampleRate() / 1000 * this->getChannels();
+		begin = ( this->msBegin_ - msBegin ) * unit / 1000;
 	}
 	if( msBegin < this->msBegin_ + this->msDuration_ && msBegin + msDuration >= this->msBegin_ + this->msDuration_ ) {
-		duration = ( ( msBegin + msDuration ) - ( this->msBegin_ + this->msDuration_ ) ) * this->getSampleRate() / 1000 * this->getChannels();
+		duration = ( ( msBegin + msDuration ) - ( this->msBegin_ + this->msDuration_ ) ) * unit / 1000;
 	}
 	return frame.mid( begin, duration );
 }

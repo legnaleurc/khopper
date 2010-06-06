@@ -60,9 +60,9 @@ namespace {
 		<< HeaderData( "artist", QObject::tr( "Artist" ), true )
 		<< HeaderData( "album", QObject::tr( "Album" ), true )
 		<< HeaderData( "duration", QObject::tr( "Duration" ), false )
-		<< HeaderData( "bit_rate", QObject::tr( "Bit Rate" ), false )
-		<< HeaderData( "sample_rate", QObject::tr( "Sample Rate" ), false )
-		<< HeaderData( "channels", QObject::tr( "Channels" ), false )
+		//<< HeaderData( "bit_rate", QObject::tr( "Bit Rate" ), false )
+		//<< HeaderData( "sample_rate", QObject::tr( "Sample Rate" ), false )
+		//<< HeaderData( "channels", QObject::tr( "Channels" ), false )
 		;
 	}
 
@@ -194,9 +194,9 @@ void SongList::append( const PlayList & playList ) {
 		this->model_->setItem( currentRow, 1, new QStandardItem( playList[row]->getArtist() ) );
 		this->model_->setItem( currentRow, 2, new QStandardItem( playList[row]->getAlbum()->getTitle() ) );
 		this->model_->setItem( currentRow, 3, new QStandardItem( playList[row]->getDuration().toString() ) );
-		this->model_->setItem( currentRow, 4, new QStandardItem( QString::number( playList[row]->getBitRate() ) ) );
-		this->model_->setItem( currentRow, 5, new QStandardItem( QString::number( playList[row]->getSampleRate() ) ) );
-		this->model_->setItem( currentRow, 6, new QStandardItem( QString::number( playList[row]->getChannels() ) ) );
+		//this->model_->setItem( currentRow, 4, new QStandardItem( QString::number( playList[row]->getBitRate() ) ) );
+		//this->model_->setItem( currentRow, 5, new QStandardItem( QString::number( playList[row]->getSampleRate() ) ) );
+		//this->model_->setItem( currentRow, 6, new QStandardItem( QString::number( playList[row]->getChannels() ) ) );
 
 		this->resizeRowToContents( currentRow );
 	}

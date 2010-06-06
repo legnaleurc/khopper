@@ -49,8 +49,8 @@ ui_( new Ui::WavPanel ) {
 WriterSP WavPanel::createWriter( const QUrl & uri ) const {
 	WriterSP encoder( new FfmpegWriter( uri ) );
 
-	encoder->setSampleRate( this->ui_->sampleRate->itemData( this->ui_->sampleRate->currentIndex() ).toInt() );
-	encoder->setChannels( this->ui_->channels->itemData( this->ui_->channels->currentIndex() ).toInt() );
+	//encoder->setSampleRate( this->ui_->sampleRate->itemData( this->ui_->sampleRate->currentIndex() ).toInt() );
+	//encoder->setChannels( this->ui_->channels->itemData( this->ui_->channels->currentIndex() ).toInt() );
 
 	return encoder;
 }

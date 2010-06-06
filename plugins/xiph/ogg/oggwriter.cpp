@@ -90,7 +90,7 @@ void OggWriter::doOpen() {
 	vorbis_info * vi = static_cast< vorbis_info * >( std::malloc( sizeof( vorbis_info ) ) );
 	this->encoder_.reset( vi, vorbisInfoHelper );
 	vorbis_info_init( vi );
-	int ret = vorbis_encode_init_vbr( vi, this->getChannels(), this->getSampleRate(), this->quality_ );
+	int ret = vorbis_encode_init_vbr( vi, this->getAudioFormat().channels(), this->getAudioFormat().frequency(), this->quality_ );
 	if( ret != 0 ) {
 		throw error::CodecError( "Vorbis initialization error" );
 	}
@@ -144,11 +144,11 @@ void OggWriter::doOpen() {
 
 void OggWriter::writeFrame( const QByteArray & sample ) {
 	if( !sample.isEmpty() ) {
-		const int nSamples = sample.size() / sizeof( short int ) / this->getChannels();
+		const int nSamples = sample.size() / sizeof( short int ) / this->getAudioFormat().channels();
 		const short int * audio = static_cast< const short int * >( static_cast< const void * >( sample.data() ) );
 		float * * buffer = vorbis_analysis_buffer( this->dsp_.get(), nSamples );
 
-		if( this->getChannels() == 1 ) {
+		if( this->getAudioFormat().channels() == 1 ) {
 			for( int l = 0; l < nSamples; ++l ) {
 				buffer[0][l] = audio[l] / 32768.f;
 			}

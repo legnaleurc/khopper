@@ -115,12 +115,12 @@ void FfmpegWriter::setupEncoder() {
 	pCC->codec_id = pOF->audio_codec;
 	pCC->codec_type = CODEC_TYPE_AUDIO;
 	pCC->time_base.num = 1;
-	pCC->time_base.den = this->getSampleRate();
+	pCC->time_base.den = this->getAudioFormat().frequency();
 
 	// setting special parameters
 	pCC->bit_rate = this->getBitRate();
-	pCC->sample_rate = this->getSampleRate();
-	pCC->channels = this->getChannels();
+	pCC->sample_rate = this->getAudioFormat().frequency();
+	pCC->channels = this->getAudioFormat().channels();
 	if( this->quality_ != QSCALE_NONE ) {
 		pCC->flags |= CODEC_FLAG_QSCALE;
 		this->pStream_->quality = static_cast< float >( FF_QP2LAMBDA * this->quality_ );

@@ -62,8 +62,8 @@ void Mp3Writer::doOpen() {
 
 	// lame encoder setting
 	this->gfp_.reset( lame_init(), lame_close );
-	lame_set_num_channels( this->gfp_.get(), this->getChannels() );
-	lame_set_in_samplerate( this->gfp_.get(), this->getSampleRate() );
+	lame_set_num_channels( this->gfp_.get(), this->getAudioFormat().channels() );
+	lame_set_in_samplerate( this->gfp_.get(), this->getAudioFormat().frequency() );
 	if( this->quality_ < 0 ) {
 		lame_set_brate( this->gfp_.get(), this->getBitRate() / 1000 );
 		lame_set_bWriteVbrTag( this->gfp_.get(), 0 );
@@ -99,11 +99,11 @@ void Mp3Writer::writeFrame( const QByteArray & sample ) {
 	if( !sample.isEmpty() ) {
 		short int * audio = static_cast< short int * >( const_cast< void * >( static_cast< const void * >( sample.data() ) ) );
 		// FIXME: watch out! should check sample format;
-		const int nSamples = sample.size() / sizeof( short int ) / this->getChannels();
+		const int nSamples = sample.size() / sizeof( short int ) / this->getAudioFormat().channels();
 		std::vector< unsigned char > buffer( 1.25 * nSamples + 7200 );
 
 		int ret = 0;
-		if( this->getChannels() == 1 ) {
+		if( this->getAudioFormat().channels() == 1 ) {
 			ret = lame_encode_buffer(
 				this->gfp_.get(),
 				audio,

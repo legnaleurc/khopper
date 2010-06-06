@@ -46,6 +46,10 @@ void Converter::convert( TrackCSP track, WriterSP encoder ) {
 	ReaderSP decoder( track->getReader() );
 	qDebug() << track->getURI();
 	decoder->open( QIODevice::ReadOnly );
+
+	encoder->setAudioFormat( decoder->getAudioFormat() );
+	encoder->setChannelLayout( decoder->getChannelLayout() );
+
 	encoder->open( QIODevice::WriteOnly );
 	this->canceled_ = false;
 
@@ -60,16 +64,15 @@ void Converter::convert( TrackCSP track, WriterSP encoder ) {
 //		throw CodecError( "Invalid start point" );
 //	}
 
-	encoder->setSampleFormat( decoder->getSampleFormat() );
-	encoder->setChannelLayout( decoder->getChannelLayout() );
-
 	//int64_t decoded;
+	int sec = decoder->getAudioFormat().frequency() * decoder->getAudioFormat().channels() * decoder->getAudioFormat().sampleSize() / 8;
 	while( !decoder->atEnd() ) {
 		if( this->canceled_ ) {
 			break;
 		}
-		encoder->write( decoder->read( decoder->getSampleRate() * decoder->getChannels() ) );
-		//emit this->decodedTime( decoded );
+		QByteArray frame( decoder->read( sec ) );
+		encoder->write( frame );
+		emit this->decodedTime( frame.size() * 1000 / sec );
 	}
 
 	encoder->close();

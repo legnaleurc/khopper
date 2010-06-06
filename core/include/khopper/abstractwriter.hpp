@@ -24,8 +24,9 @@
 
 #include "codecutil.hpp"
 
-#include <QtCore/QUrl>
 #include <QtCore/QIODevice>
+#include <QtCore/QUrl>
+#include <QtMultimedia/QAudioFormat>
 
 namespace khopper {
 
@@ -77,23 +78,13 @@ namespace khopper {
 			 * @sa getArtist
 			 */
 			void setArtist( const QByteArray & artist );
+			void setAudioFormat( const QAudioFormat & format );
 			/**
 			 * @brief Set bitRate
 			 * @sa getBitRate
 			 */
 			void setBitRate( unsigned int bitRate );
 			void setChannelLayout( ChannelLayout channelLayout );
-			/**
-			 * @brief Set channels
-			 * @sa getChannels
-			 */
-			void setChannels( unsigned int channels );
-			void setSampleFormat( SampleFormat sampleFormat );
-			/**
-			 * @brief Set sample rate
-			 * @sa getSampleRate
-			 */
-			void setSampleRate( unsigned int sampleRate );
 			/**
 			 * @brief Set title
 			 * @sa getTitle
@@ -116,6 +107,7 @@ namespace khopper {
 			 * @sa setArtist
 			 */
 			const QByteArray & getArtist() const;
+			const QAudioFormat & getAudioFormat() const;
 			/**
 			 * @brief Get bit rate
 			 * @sa setBitRate
@@ -123,21 +115,10 @@ namespace khopper {
 			unsigned int getBitRate() const;
 			ChannelLayout getChannelLayout() const;
 			/**
-			 * @brief Get channels
-			 * @sa setChannels
-			 */
-			unsigned int getChannels() const;
-			/**
 			 * @brief Get file path
 			 * @sa setFilePath
 			 */
 			const QUrl & getURI() const;
-			SampleFormat getSampleFormat() const;
-			/**
-			 * @brief Get sample rate
-			 * @sa setSampleRate
-			 */
-			unsigned int getSampleRate() const;
 			/**
 			 * @brief Get title
 			 * @sa setTitle

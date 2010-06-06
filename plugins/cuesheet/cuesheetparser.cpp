@@ -224,8 +224,7 @@ void CueSheetParser::updateLastTrack_() {
 		// set bit rate, channels, sample rate
 		foreach( TrackSP track, this->playList_ ) {
 			track->setBitRate( decoder->getBitRate() );
-			track->setChannels( decoder->getChannels() );
-			track->setSampleRate( decoder->getSampleRate() );
+			track->setAudioFormat( decoder->getAudioFormat() );
 		}
 
 		this->currentTrack_->setDuration( Timestamp::fromMillisecond( decoder->getDuration() ) - this->currentTrack_->getStartTime() );

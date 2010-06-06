@@ -132,9 +132,10 @@ void FfmpegReader::setupDecoder() {
 	AVCodecContext * pCC = this->pStream_->codec;
 	// getting codec information
 	this->setBitRate( pCC->bit_rate );
-	this->setSampleRate( pCC->sample_rate );
-	this->setChannels( pCC->channels );
-	switch( this->getChannels() ) {
+	QAudioFormat format;
+	format.setFrequency( pCC->sample_rate );
+	format.setChannels( pCC->channels );
+	switch( pCC->channels ) {
 	case 1:
 		this->setChannelLayout( LayoutMono );
 		break;
@@ -145,32 +146,30 @@ void FfmpegReader::setupDecoder() {
 		this->setChannelLayout( LayoutNative );
 	}
 	switch( pCC->sample_fmt ) {
-		case SAMPLE_FMT_U8:
-			this->setSampleFormat( SF_U8 );
-			break;
-		case SAMPLE_FMT_S16:
-#if Q_BYTE_ORDER == Q_LITTLE_ENDIAN
-			this->setSampleFormat( SF_S16LE );
-#else
-			this->setSampleFormat( SF_S16BE );
-#endif
-			break;
-		case SAMPLE_FMT_S32:
-#if Q_BYTE_ORDER == Q_LITTLE_ENDIAN
-			this->setSampleFormat( SF_S32LE );
-#else
-			this->setSampleFormat( SF_S32BE );
-#endif
-			break;
-		case SAMPLE_FMT_FLT:
-			this->setSampleFormat( SF_FLOAT );
-			break;
-		case SAMPLE_FMT_DBL:
-			this->setSampleFormat( SF_DOUBLE );
-			break;
-		default:
-			this->setSampleFormat( SF_NONE );
+	case SAMPLE_FMT_U8:
+		format.setSampleType( QAudioFormat::UnSignedInt );
+		format.setSampleSize( 8 );
+		break;
+	case SAMPLE_FMT_S16:
+		format.setSampleType( QAudioFormat::SignedInt );
+		format.setSampleSize( 16 );
+		break;
+	case SAMPLE_FMT_S32:
+		format.setSampleType( QAudioFormat::SignedInt );
+		format.setSampleSize( 32 );
+		break;
+	case SAMPLE_FMT_FLT:
+		format.setSampleType( QAudioFormat::Float );
+		format.setSampleSize( 32 );
+		break;
+	case SAMPLE_FMT_DBL:
+		format.setSampleType( QAudioFormat::Float );
+		format.setSampleSize( 64 );
+		break;
+	default:
+		;
 	}
+	this->setAudioFormat( format );
 
 	AVCodec * pC = avcodec_find_decoder( pCC->codec_id );
 	if( pC == NULL ) {
@@ -240,14 +239,14 @@ QByteArray FfmpegReader::readFrame() {
 	//int64_t curPts = -1;
 	// decoded time: in second * AV_TIME_BASE
 	int64_t decoded = 0;
-	if( this->pPacket_->pts != static_cast< int64_t >( AV_NOPTS_VALUE ) ) {
-		// rescale presentation timestamp
-		this->msCurrent_ = AV_TIME_BASE * av_rescale(
-			this->pPacket_->pts,
-			this->pStream_->time_base.num,
-			this->pStream_->time_base.den
-		);
-	}
+	//if( this->pPacket_->pts != static_cast< int64_t >( AV_NOPTS_VALUE ) ) {
+	//	// rescale presentation timestamp
+	//	this->msCurrent_ = AV_TIME_BASE * av_rescale(
+	//		this->pPacket_->pts,
+	//		this->pStream_->time_base.num,
+	//		this->pStream_->time_base.den
+	//	);
+	//}
 #if LIBAVCODEC_VERSION_MAJOR < 53
 	uint8_t * audio_pkt_data = this->pPacket_->data;
 	int audio_pkt_size = this->pPacket_->size;
@@ -295,7 +294,7 @@ QByteArray FfmpegReader::readFrame() {
 			continue;
 		}
 		// decoded time: decoded size in byte / sizeof int16_t * AV_TIME_BASE / ( sample rate * channels )
-		int64_t ptsDiff = ( static_cast< int64_t >( AV_TIME_BASE ) * ( sampleByteLength / sizeof( int16_t ) ) ) / ( this->getSampleRate() * this->getChannels() );
+		int64_t ptsDiff = ( static_cast< int64_t >( AV_TIME_BASE ) * ( sampleByteLength / sizeof( int16_t ) ) ) / ( this->getAudioFormat().frequency() * this->getAudioFormat().channels() );
 		//if( this->afterBegin( toMS( curPts ) ) ) {
 			const char * tmp = static_cast< char * >( static_cast< void * >( sampleBuffer ) );
 			frame.append( tmp, sampleByteLength );
@@ -322,7 +321,10 @@ bool FfmpegReader::seekFrame( qint64 msPos ) {
 	int succeed = av_seek_frame( this->pFormatContext_.get(), this->pStream_->index, internalPos, AVSEEK_FLAG_ANY | AVSEEK_FLAG_BACKWARD );
 	if( succeed >= 0 ) {
 		avcodec_flush_buffers( this->pCodecContext_.get() );
+		//this->msCurrent_ = msPos;
+		if( this->pStream_->cur_pkt.pts != static_cast< int64_t >( AV_NOPTS_VALUE ) ) {
+			this->msCurrent_ = av_rescale( this->pStream_->cur_pkt.pts, this->pStream_->time_base.num * 1000, this->pStream_->time_base.den );
+		}
 	}
-	this->msCurrent_ = av_rescale( this->pStream_->cur_pkt.pts, this->pStream_->time_base.num * 1000, this->pStream_->time_base.den );
 	return succeed >= 0;
 }

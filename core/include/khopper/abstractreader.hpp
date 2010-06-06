@@ -26,6 +26,7 @@
 
 #include <QtCore/QIODevice>
 #include <QtCore/QUrl>
+#include <QtMultimedia/QAudioFormat>
 
 #ifndef LOKI_CLASS_LEVEL_THREADING
 # define LOKI_CLASS_LEVEL_THREADING
@@ -111,6 +112,7 @@ namespace khopper {
 			 * @sa setArtist
 			 */
 			const QByteArray & getArtist() const;
+			const QAudioFormat & getAudioFormat() const;
 			/**
 			 * @brief Get bit rate
 			 * @sa setBitRate
@@ -121,7 +123,7 @@ namespace khopper {
 			 * @brief Get channels
 			 * @sa setChannels
 			 */
-			unsigned int getChannels() const;
+			//unsigned int getChannels() const;
 			/**
 			 * @brief Get comment
 			 * @sa setComment
@@ -147,12 +149,12 @@ namespace khopper {
 			 * @sa setIndex
 			 */
 			unsigned int getIndex() const;
-			SampleFormat getSampleFormat() const;
+			//SampleFormat getSampleFormat() const;
 			/**
 			 * @brief Get sample rate
 			 * @sa setSampleRate
 			 */
-			unsigned int getSampleRate() const;
+			//unsigned int getSampleRate() const;
 			/**
 			 * @brief Get title
 			 * @sa setTitle
@@ -189,6 +191,7 @@ namespace khopper {
 			 * @sa getArtist
 			 */
 			void setArtist( const QByteArray & artist );
+			void setAudioFormat( const QAudioFormat & format );
 			/**
 			 * @brief Set bit rate
 			 * @sa getBitRate
@@ -199,7 +202,7 @@ namespace khopper {
 			 * @brief Set channels
 			 * @sa getChannels
 			 */
-			void setChannels( unsigned int channels );
+			//void setChannels( unsigned int channels );
 			/**
 			 * @brief Set comment
 			 * @sa getComment
@@ -225,12 +228,12 @@ namespace khopper {
 			 * @sa getIndex
 			 */
 			void setIndex( unsigned int index );
-			void setSampleFormat( SampleFormat sampleFormat );
+			//void setSampleFormat( SampleFormat sampleFormat );
 			/**
 			 * @brief Set sample rate
 			 * @sa getSampleRate
 			 */
-			void setSampleRate( unsigned int sampleRate );
+			//void setSampleRate( unsigned int sampleRate );
 			/**
 			 * @brief Set track title
 			 * @sa getTitle

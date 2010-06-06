@@ -36,11 +36,10 @@ namespace khopper {
 			AlbumSP album;
 			QByteArray artist;
 			unsigned int bitRate;
-			unsigned int channels;
 			Timestamp duration;
+			QAudioFormat format;
 			unsigned int index;
 			codec::ReaderSP reader;
-			unsigned int sampleRate;
 			QByteArray songWriter;
 			QByteArray title;
 			QTextCodec * textCodec;

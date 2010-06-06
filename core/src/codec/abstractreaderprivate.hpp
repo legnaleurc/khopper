@@ -40,15 +40,13 @@ namespace khopper {
 			unsigned int bitRate;
 			QByteArray buffer;
 			ChannelLayout channelLayout;
-			unsigned int channels;
 			QByteArray comment;
 			QByteArray copyright;
+			QAudioFormat format;
 			int64_t msDuration;
 			QUrl uri;
 			QByteArray genre;
 			unsigned int index;
-			SampleFormat sampleFormat;
-			unsigned int sampleRate;
 			QByteArray title;
 			QString year;
 		};

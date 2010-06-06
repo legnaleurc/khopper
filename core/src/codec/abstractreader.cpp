@@ -138,24 +138,8 @@ void AbstractReader::setDuration( qint64 msDuration ) {
 	this->p_->msDuration = msDuration;
 }
 
-void AbstractReader::setSampleFormat( SampleFormat sampleFormat ) {
-	this->p_->sampleFormat = sampleFormat;
-}
-
 void AbstractReader::setChannelLayout( ChannelLayout channelLayout ) {
 	this->p_->channelLayout = channelLayout;
-}
-
-unsigned int AbstractReader::getChannels() const {
-	return this->p_->channels;
-}
-
-void AbstractReader::setChannels( unsigned int channels ) {
-	this->p_->channels = channels;
-}
-
-void AbstractReader::setSampleRate( unsigned int sampleRate ) {
-	this->p_->sampleRate = sampleRate;
 }
 
 void AbstractReader::setBitRate( unsigned int bitRate ) {
@@ -194,10 +178,6 @@ void AbstractReader::setTitle( const QByteArray & title ) {
 	this->p_->title = title;
 }
 
-unsigned int AbstractReader::getSampleRate() const {
-	return this->p_->sampleRate;
-}
-
 qint64 AbstractReader::getDuration() const {
 	return this->p_->msDuration;
 }
@@ -226,10 +206,6 @@ ChannelLayout AbstractReader::getChannelLayout() const {
 	return this->p_->channelLayout;
 }
 
-SampleFormat AbstractReader::getSampleFormat() const {
-	return this->p_->sampleFormat;
-}
-
 const QString & AbstractReader::getYear() const {
 	return this->p_->year;
 }
@@ -246,21 +222,27 @@ const QByteArray & AbstractReader::getComment() const {
 	return this->p_->comment;
 }
 
+const QAudioFormat & AbstractReader::getAudioFormat() const {
+	return this->p_->format;
+}
+
+void AbstractReader::setAudioFormat( const QAudioFormat & format ) {
+	this->p_->format = format;
+}
+
 AbstractReader::AbstractReaderPrivate::AbstractReaderPrivate( const QUrl & uri ):
 album(),
 artist(),
 bitRate( 0 ),
 buffer(),
 channelLayout( LayoutNative ),
-channels( 0 ),
 comment(),
 copyright(),
+format(),
 msDuration( 0 ),
 uri( uri ),
 genre(),
 index( 0 ),
-sampleFormat( SF_NONE ),
-sampleRate( 0 ),
 title(),
 year() {
 }

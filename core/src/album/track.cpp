@@ -44,11 +44,10 @@ p_( new TrackPrivate ) {
 	// FIXME: text codec
 	this->getAlbum()->setTitle( reader->getAlbum() );
 	this->setArtist( reader->getArtist() );
+	this->setAudioFormat( reader->getAudioFormat() );
 	this->setBitRate( reader->getBitRate() );
-	this->setChannels( reader->getChannels() );
 	this->setDuration( Timestamp::fromMillisecond( reader->getDuration() ) );
 	this->setIndex( reader->getIndex() );
-	this->setSampleRate( reader->getSampleRate() );
 	this->setTitle( reader->getTitle() );
 	this->setURI( reader->getURI() );
 
@@ -72,10 +71,6 @@ unsigned int Track::getBitRate() const {
 	return this->p_->bitRate;
 }
 
-unsigned int Track::getChannels() const {
-	return this->p_->channels;
-}
-
 const Timestamp & Track::getDuration() const {
 	return this->p_->duration;
 }
@@ -86,10 +81,6 @@ unsigned int Track::getIndex() const {
 
 ReaderSP Track::getReader() const {
 	return this->p_->reader;
-}
-
-unsigned int Track::getSampleRate() const {
-	return this->p_->sampleRate;
 }
 
 QString Track::getTitle() const {
@@ -116,20 +107,12 @@ void Track::setBitRate( unsigned int bitRate ) {
 	this->p_->bitRate = bitRate;
 }
 
-void Track::setChannels( unsigned int channels ) {
-	this->p_->channels = channels;
-}
-
 void Track::setDuration( const Timestamp & duration ) {
 	this->p_->duration = duration;
 }
 
 void Track::setIndex( unsigned int index ) {
 	this->p_->index = index;
-}
-
-void Track::setSampleRate( unsigned int sampleRate ) {
-	this->p_->sampleRate = sampleRate;
 }
 
 void Track::setSongWriter( const QByteArray & songWriter ) {
@@ -158,14 +141,21 @@ void Track::setURI( const QUrl & uri ) {
 	this->p_->uri = uri;
 }
 
+const QAudioFormat & Track::getAudioFormat() const {
+	return this->p_->format;
+}
+
+void Track::setAudioFormat( const QAudioFormat & format ) {
+	this->p_->format = format;
+}
+
 Track::TrackPrivate::TrackPrivate():
 album(),
 artist(),
 bitRate( 0 ),
-channels( 0 ),
 duration(),
+format(),
 reader(),
-sampleRate( 0 ),
 songWriter(),
 title(),
 textCodec( QTextCodec::codecForName( "UTF-8" ) ),

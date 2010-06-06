@@ -83,16 +83,8 @@ const QUrl & AbstractWriter::getURI() const {
 	return this->p_->uri;
 }
 
-unsigned int AbstractWriter::getChannels() const {
-	return this->p_->channels;
-}
-
 unsigned int AbstractWriter::getBitRate() const {
 	return this->p_->bitRate;
-}
-
-unsigned int AbstractWriter::getSampleRate() const {
-	return this->p_->sampleRate;
 }
 
 const QByteArray & AbstractWriter::getAlbum() const {
@@ -105,14 +97,6 @@ const QByteArray & AbstractWriter::getArtist() const {
 
 const QByteArray & AbstractWriter::getTitle() const {
 	return this->p_->title;
-}
-
-void AbstractWriter::setChannels( unsigned int channels ) {
-	this->p_->channels = channels;
-}
-
-void AbstractWriter::setSampleRate( unsigned int sampleRate ) {
-	this->p_->sampleRate = sampleRate;
 }
 
 void AbstractWriter::setBitRate( unsigned int bitRate ) {
@@ -135,8 +119,12 @@ void AbstractWriter::setChannelLayout( ChannelLayout channelLayout ) {
 	this->p_->channelLayout = channelLayout;
 }
 
-void AbstractWriter::setSampleFormat( SampleFormat sampleFormat ) {
-	this->p_->sampleFormat = sampleFormat;
+const QAudioFormat & AbstractWriter::getAudioFormat() const {
+	return this->p_->format;
+}
+
+void AbstractWriter::setAudioFormat( const QAudioFormat & format ) {
+	this->p_->format = format;
 }
 
 AbstractWriter::AbstractWriterPrivate::AbstractWriterPrivate( const QUrl & uri ):
@@ -144,9 +132,7 @@ album(),
 artist(),
 bitRate( 0 ),
 channelLayout( LayoutNative ),
-channels( 0 ),
+format(),
 uri( uri ),
-sampleFormat( SF_NONE ),
-sampleRate( 0 ),
 title() {
 }
