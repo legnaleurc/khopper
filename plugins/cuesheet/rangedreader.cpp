@@ -54,7 +54,7 @@ qint64 RangedReader::size() const {
 void RangedReader::doOpen() {
 	this->client_->open( ReadOnly );
 
-	this->setAlbum( this->client_->getAlbum() );
+	this->setAlbumTitle( this->client_->getAlbumTitle() );
 	this->setArtist( this->client_->getArtist() );
 	this->setAudioFormat( this->client_->getAudioFormat() );
 	this->setBitRate( this->client_->getBitRate() );

@@ -68,7 +68,11 @@ void khopper::plugin::unregisterReader( ReaderVerifier v ) {
 ReaderSP khopper::plugin::createReader( const QUrl & uri ) {
 	const std::list< ReaderFactoryPrivate::Pair > & l( ReaderFactory::Instance().l );
 
-	return std::max_element( l.begin(), l.end(), Helper( uri ) )->second( uri );
+	if( !l.empty() ) {
+		return std::max_element( l.begin(), l.end(), Helper( uri ) )->second( uri );
+	} else {
+		throw khopper::error::SystemError( QObject::tr( "No reader can be used." ) );
+	}
 }
 
 AbstractReader::AbstractReader( const QUrl & uri ):
@@ -79,12 +83,12 @@ p_( new AbstractReaderPrivate( uri ) ) {
 AbstractReader::~AbstractReader() {
 }
 
-bool AbstractReader::open( OpenMode /*mode*/ ) {
+bool AbstractReader::open( OpenMode mode ) {
 	if( this->isOpen() ) {
 		this->close();
 	}
 
-	bool opened = this->QIODevice::open( ReadOnly );
+	bool opened = this->QIODevice::open( mode & ~( WriteOnly & Text ) );
 	this->doOpen();
 
 	return opened;
@@ -103,28 +107,28 @@ void AbstractReader::close() {
 	}
 }
 
-qint64 AbstractReader::readData( char * data, qint64 maxSize ) {
-	QByteArray frame( this->readFrame() );
-	while( frame.isEmpty() && !this->atEnd() ) {
-		frame = this->readFrame();
-	}
-
-	this->p_->buffer.append( frame );
-	maxSize = min( maxSize, qint64( this->p_->buffer.size() ) );
-	std::memcpy( data, this->p_->buffer, maxSize );
-	this->p_->buffer.remove( 0, maxSize );
-	return maxSize;
-}
+//qint64 AbstractReader::readData( char * data, qint64 maxSize ) {
+//	QByteArray frame( this->readFrame() );
+//	while( frame.isEmpty() && !this->atEnd() ) {
+//		frame = this->readFrame();
+//	}
+//
+//	this->p_->buffer.append( frame );
+//	maxSize = min( maxSize, qint64( this->p_->buffer.size() ) );
+//	std::memcpy( data, this->p_->buffer, maxSize );
+//	this->p_->buffer.remove( 0, maxSize );
+//	return maxSize;
+//}
 
 qint64 AbstractReader::writeData( const char * /*data*/, qint64 /*maxSize*/ ) {
 	return -1;
 }
 
-bool AbstractReader::seek( qint64 msPos ) {
-	bool succeed = this->QIODevice::seek( msPos );
-	succeed &= this->seekFrame( msPos );
-	return succeed;
-}
+//bool AbstractReader::seek( qint64 msPos ) {
+//	bool succeed = this->QIODevice::seek( msPos );
+//	succeed &= this->seekFrame( msPos );
+//	return succeed;
+//}
 
 qint64 AbstractReader::size() const {
 	return this->isSequential() ? this->bytesAvailable() : this->getDuration();
@@ -158,7 +162,7 @@ void AbstractReader::setYear( const QString & year ) {
 	this->p_->year = year;
 }
 
-void AbstractReader::setAlbum( const QByteArray & album ) {
+void AbstractReader::setAlbumTitle( const QByteArray & album ) {
 	this->p_->album = album;
 }
 
@@ -194,7 +198,7 @@ const QByteArray & AbstractReader::getArtist() const {
 	return this->p_->artist;
 }
 
-const QByteArray & AbstractReader::getAlbum() const {
+const QByteArray & AbstractReader::getAlbumTitle() const {
 	return this->p_->album;
 }
 

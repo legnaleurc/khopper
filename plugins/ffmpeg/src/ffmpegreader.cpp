@@ -29,6 +29,9 @@ extern "C" {
 }
 
 #include <cstdlib>
+#include <cstring>
+
+#include <QtDebug>
 
 namespace {
 
@@ -65,8 +68,9 @@ pFormatContext_(),
 pCodecContext_(),
 pPacket_( static_cast< AVPacket * >( av_malloc( sizeof( AVPacket ) ) ), ::p_helper ),
 pStream_( NULL ),
-msCurrent_( 0LL ),
-eof_( true ) {
+curPos_( 0LL ),
+eof_( true ),
+buffer_() {
 	av_init_packet( this->pPacket_.get() );
 }
 
@@ -75,28 +79,29 @@ bool FfmpegReader::atEnd() const {
 }
 
 qint64 FfmpegReader::pos() const {
-	return this->msCurrent_;
+	qDebug() << this->AbstractReader::pos();
+	return this->curPos_;
 }
 
 void FfmpegReader::doOpen() {
-	this->openResource();
-	this->setupDemuxer();
-	this->setupDecoder();
-	this->readHeader();
+	this->openResource_();
+	this->setupDemuxer_();
+	this->setupDecoder_();
+	this->readHeader_();
 	this->eof_ = false;
 }
 
 void FfmpegReader::doClose() {
 	this->eof_ = true;
-	this->closeResource();
+	this->closeResource_();
 }
 
-void FfmpegReader::openResource() {
+void FfmpegReader::openResource_() {
 	AVFormatContext * pFC = NULL;
 	int ret = av_open_input_file( &pFC, wHelper( this->getURI() ).c_str(), NULL, 0, NULL );
 	if( ret != 0 ) {
 		throw IOError(
-			QString(
+			tr(
 				"Can not open `%1\':\n"
 				"%2"
 			).arg( this->getURI().toString() ).arg( strerror( AVUNERROR( ret ) ) )
@@ -105,19 +110,19 @@ void FfmpegReader::openResource() {
 	this->pFormatContext_.reset( pFC, av_close_input_file );
 }
 
-void FfmpegReader::setupDemuxer() {
+void FfmpegReader::setupDemuxer_() {
 	if( av_find_stream_info( this->pFormatContext_.get() ) < 0 ) {
-		throw CodecError( "Can not find codec info!" );
+		throw CodecError( tr( "Can not find codec info!" ) );
 	}
 
 	if( this->pFormatContext_->duration != static_cast< int64_t >( AV_NOPTS_VALUE ) ) {
 		this->setDuration( toMS( this->pFormatContext_->duration ) );
 	} else {
-		throw CodecError( "Can not get duration!" );
+		throw CodecError( tr( "Can not get duration!" ) );
 	}
 }
 
-void FfmpegReader::setupDecoder() {
+void FfmpegReader::setupDecoder_() {
 	int a_stream = -1;
 	for( std::size_t i = 0 ; i < this->pFormatContext_->nb_streams; ++i ) {
 		if( this->pFormatContext_->streams[i]->codec->codec_type == CODEC_TYPE_AUDIO ) {
@@ -173,16 +178,16 @@ void FfmpegReader::setupDecoder() {
 
 	AVCodec * pC = avcodec_find_decoder( pCC->codec_id );
 	if( pC == NULL ) {
-		throw error::CodecError( "Find no decoder!" );
+		throw error::CodecError( tr( "Find no decoder!" ) );
 	}
 
 	if( avcodec_open( pCC, pC ) < 0 ) {
-		throw error::CodecError( "Can not open decoder." );
+		throw error::CodecError( tr( "Can not open decoder." ) );
 	}
 	this->pCodecContext_.reset( pCC, avcodec_close );
 }
 
-void FfmpegReader::readHeader() {
+void FfmpegReader::readHeader_() {
 	av_metadata_conv( this->pFormatContext_.get(), NULL, this->pFormatContext_->iformat->metadata_conv );
 	AVMetadataTag * mt = NULL;
 	if( ( mt = av_metadata_get( this->pFormatContext_->metadata, "title", NULL, 0 ) ) ) {
@@ -198,7 +203,7 @@ void FfmpegReader::readHeader() {
 		this->setComment( mt->value );
 	}
 	if( ( mt = av_metadata_get( this->pFormatContext_->metadata, "album", NULL, 0 ) ) ) {
-		this->setAlbum( mt->value );
+		this->setAlbumTitle( mt->value );
 	}
 	if( ( mt = av_metadata_get( this->pFormatContext_->metadata, "year", NULL, 0 ) ) ) {
 		this->setYear( mt->value );
@@ -211,9 +216,9 @@ void FfmpegReader::readHeader() {
 	}
 }
 
-void FfmpegReader::closeResource() {
+void FfmpegReader::closeResource_() {
 	// clear native information
-	this->msCurrent_ = 0LL;
+	this->curPos_ = 0LL;
 	this->pStream_ = NULL;
 	// free the members in packet, not itself
 	av_free_packet( this->pPacket_.get() );
@@ -222,7 +227,17 @@ void FfmpegReader::closeResource() {
 	this->pFormatContext_.reset();
 }
 
-QByteArray FfmpegReader::readFrame() {
+qint64 FfmpegReader::readData( char * data, qint64 maxSize ) {
+	while( !this->atEnd() && this->buffer_.size() < maxSize ) {
+		this->buffer_.append( this->readFrame_() );
+	}
+	maxSize = min( static_cast< qint64 >( this->buffer_.size() ), maxSize );
+	std::memcpy( data, this->buffer_, maxSize );
+	this->buffer_.remove( 0, maxSize );
+	return maxSize;
+}
+
+QByteArray FfmpegReader::readFrame_() {
 	//stop = false;
 
 	// read a frame
@@ -311,20 +326,23 @@ QByteArray FfmpegReader::readFrame() {
 		av_free_packet( this->pPacket_.get() );
 	}
 
-	this->msCurrent_ += toMS( decoded );
+	this->curPos_ += toMS( decoded );
 
 	return frame;
 }
 
-bool FfmpegReader::seekFrame( qint64 msPos ) {
-	int64_t internalPos = av_rescale( msPos, this->pStream_->time_base.den, this->pStream_->time_base.num * 1000 );
-	int succeed = av_seek_frame( this->pFormatContext_.get(), this->pStream_->index, internalPos, AVSEEK_FLAG_ANY | AVSEEK_FLAG_BACKWARD );
-	if( succeed >= 0 ) {
+bool FfmpegReader::seek( qint64 pos ) {
+	bool succeed = this->AbstractReader::seek( pos );
+	// internal position = pos / frequency / channels / samplesize/ AVStream::time_base
+	int64_t internalPos = av_rescale( pos, this->pStream_->time_base.den, this->pStream_->time_base.num * this->getAudioFormat().frequency() * this->getAudioFormat().channels() * this->getAudioFormat().sampleSize() );
+	int ret = av_seek_frame( this->pFormatContext_.get(), this->pStream_->index, internalPos, AVSEEK_FLAG_ANY | AVSEEK_FLAG_BACKWARD );
+	if( ret >= 0 ) {
 		avcodec_flush_buffers( this->pCodecContext_.get() );
+		this->curPos_ = pos;
 		//this->msCurrent_ = msPos;
-		if( this->pStream_->cur_pkt.pts != static_cast< int64_t >( AV_NOPTS_VALUE ) ) {
-			this->msCurrent_ = av_rescale( this->pStream_->cur_pkt.pts, this->pStream_->time_base.num * 1000, this->pStream_->time_base.den );
-		}
+		//if( this->pStream_->cur_pkt.pts != static_cast< int64_t >( AV_NOPTS_VALUE ) ) {
+		//	this->msCurrent_ = av_rescale( this->pStream_->cur_pkt.pts, this->pStream_->time_base.num * 1000, this->pStream_->time_base.den );
+		//}
 	}
-	return succeed >= 0;
+	return succeed && ret >= 0;
 }

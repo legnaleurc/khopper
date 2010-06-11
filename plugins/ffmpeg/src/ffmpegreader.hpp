@@ -48,43 +48,29 @@ namespace khopper {
 
 			virtual bool atEnd() const;
 			virtual qint64 pos() const;
+			virtual bool seek( qint64 pos );
 
 		protected:
-			/**
-			 * @brief Open resource
-			 * @throws IOError Can not open file
-			 */
-			virtual void openResource();
-			/**
-			 * @brief Close resource
-			 */
-			virtual void closeResource();
-			/**
-			 * @brief Setup demuxer
-			 * @throws CodecError Can not find codec information.
-			 * @throws CodecError Can not find duration.
-			 */
-			virtual void setupDemuxer();
-			/**
-			 * @brief Setup decoder
-			 * @throws CodecError Can not find audio stream.
-			 * @throws CodecError Can not find decoder.
-			 */
-			virtual void setupDecoder();
-			/// Read header
-			virtual void readHeader();
-			virtual QByteArray readFrame();
-			virtual bool seekFrame( qint64 msPos );
+			//virtual bool seekFrame( qint64 msPos );
 			virtual void doOpen();
 			virtual void doClose();
+			virtual qint64 readData( char * data, qint64 maxSize );
 
 		private:
+			void openResource_();
+			void closeResource_();
+			void setupDemuxer_();
+			void setupDecoder_();
+			void readHeader_();
+			QByteArray readFrame_();
+
 			std::tr1::shared_ptr< AVFormatContext > pFormatContext_;
 			std::tr1::shared_ptr< AVCodecContext > pCodecContext_;
 			std::tr1::shared_ptr< AVPacket > pPacket_;
 			AVStream * pStream_;
-			int64_t msCurrent_;
+			qint64 curPos_;
 			bool eof_;
+			QByteArray buffer_;
 		};
 
 	}

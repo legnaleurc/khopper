@@ -42,7 +42,7 @@ p_( new TrackPrivate ) {
 
 	this->setAlbum( AlbumSP( new Album ) );
 	// FIXME: text codec
-	this->getAlbum()->setTitle( reader->getAlbum() );
+	this->getAlbum()->setTitle( reader->getAlbumTitle() );
 	this->setArtist( reader->getArtist() );
 	this->setAudioFormat( reader->getAudioFormat() );
 	this->setBitRate( reader->getBitRate() );

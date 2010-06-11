@@ -85,7 +85,7 @@ namespace khopper {
 			 * @brief Seek to @p ms
 			 * @return succeed of failed
 			 */
-			virtual bool seek( qint64 msPos );
+			//virtual bool seek( qint64 msPos );
 			virtual qint64 size() const;
 			/**
 			 * @brief Set decode range
@@ -106,7 +106,7 @@ namespace khopper {
 			 * @brief Get album title
 			 * @return Album title
 			 */
-			const QByteArray & getAlbum() const;
+			const QByteArray & getAlbumTitle() const;
 			/**
 			 * @brief Get author
 			 * @sa setArtist
@@ -185,7 +185,7 @@ namespace khopper {
 			 * @brief Set album
 			 * @sa getAlbum
 			 */
-			void setAlbum( const QByteArray & album );
+			void setAlbumTitle( const QByteArray & album );
 			/**
 			 * @brief Set artist
 			 * @sa getArtist
@@ -245,13 +245,13 @@ namespace khopper {
 			 */
 			void setYear( const QString & year );
 
-			virtual qint64 readData( char * data, qint64 maxSize );
+			//virtual qint64 readData( char * data, qint64 maxSize );
 			virtual qint64 writeData( const char * data, qint64 maxSize );
 
 			/// Read one frame
-			virtual QByteArray readFrame() = 0;
+			//virtual QByteArray readFrame() = 0;
 			/// Seek frame
-			virtual bool seekFrame( qint64 msPos ) = 0;
+			//virtual bool seekFrame( qint64 msPos ) = 0;
 			virtual void doOpen() = 0;
 			virtual void doClose() = 0;
 
