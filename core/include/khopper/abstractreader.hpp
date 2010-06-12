@@ -82,27 +82,6 @@ namespace khopper {
 			virtual void close();
 
 			/**
-			 * @brief Seek to @p ms
-			 * @return succeed of failed
-			 */
-			//virtual bool seek( qint64 msPos );
-			virtual qint64 size() const;
-			/**
-			 * @brief Set decode range
-			 */
-			//void setRange( int64_t msBegin, int64_t msEnd );
-			/**
-			 * @brief Read frame
-			 * @param [out] decoded
-			 * @return raw data
-			 */
-//			ByteArray read( int64_t & msDecoded );
-			/**
-			 * @brief Checks if there is any data to read
-			 */
-			//bool hasNext() const;
-
-			/**
 			 * @brief Get album title
 			 * @return Album title
 			 */
@@ -176,11 +155,6 @@ namespace khopper {
 			 */
 			explicit AbstractReader( const QUrl & uri );
 
-			/// If @p timestamp is after decoding begin timestamp
-			//bool afterBegin( int64_t ms ) const;
-			/// If @p timestamp is after decoding end timestamp
-			//bool afterEnd( int64_t ms ) const;
-
 			/**
 			 * @brief Set album
 			 * @sa getAlbum
@@ -245,13 +219,8 @@ namespace khopper {
 			 */
 			void setYear( const QString & year );
 
-			//virtual qint64 readData( char * data, qint64 maxSize );
 			virtual qint64 writeData( const char * data, qint64 maxSize );
 
-			/// Read one frame
-			//virtual QByteArray readFrame() = 0;
-			/// Seek frame
-			//virtual bool seekFrame( qint64 msPos ) = 0;
 			virtual void doOpen() = 0;
 			virtual void doClose() = 0;
 

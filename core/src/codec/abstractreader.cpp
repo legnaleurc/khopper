@@ -107,31 +107,8 @@ void AbstractReader::close() {
 	}
 }
 
-//qint64 AbstractReader::readData( char * data, qint64 maxSize ) {
-//	QByteArray frame( this->readFrame() );
-//	while( frame.isEmpty() && !this->atEnd() ) {
-//		frame = this->readFrame();
-//	}
-//
-//	this->p_->buffer.append( frame );
-//	maxSize = min( maxSize, qint64( this->p_->buffer.size() ) );
-//	std::memcpy( data, this->p_->buffer, maxSize );
-//	this->p_->buffer.remove( 0, maxSize );
-//	return maxSize;
-//}
-
 qint64 AbstractReader::writeData( const char * /*data*/, qint64 /*maxSize*/ ) {
 	return -1;
-}
-
-//bool AbstractReader::seek( qint64 msPos ) {
-//	bool succeed = this->QIODevice::seek( msPos );
-//	succeed &= this->seekFrame( msPos );
-//	return succeed;
-//}
-
-qint64 AbstractReader::size() const {
-	return this->isSequential() ? this->bytesAvailable() : this->getDuration();
 }
 
 const QUrl & AbstractReader::getURI() const {
@@ -232,6 +209,7 @@ const QAudioFormat & AbstractReader::getAudioFormat() const {
 
 void AbstractReader::setAudioFormat( const QAudioFormat & format ) {
 	this->p_->format = format;
+	this->p_->format.setCodec( "audio/pcm" );
 }
 
 AbstractReader::AbstractReaderPrivate::AbstractReaderPrivate( const QUrl & uri ):

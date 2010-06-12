@@ -49,6 +49,7 @@ namespace khopper {
 			virtual bool atEnd() const;
 			virtual qint64 pos() const;
 			virtual bool seek( qint64 pos );
+			virtual qint64 size() const;
 
 		protected:
 			//virtual bool seekFrame( qint64 msPos );

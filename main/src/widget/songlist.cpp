@@ -207,7 +207,7 @@ PlayList SongList::getSelectedTracks() const {
 	std::sort( selected.begin(), selected.end(), ::indexRowCompD );
 	PlayList result;
 
-	for( int i = 0; i < result.size(); ++i ) {
+	for( int i = 0; i < selected.size(); ++i ) {
 		result.push_back( this->tracks_.at( selected[i].row() ) );
 	}
 

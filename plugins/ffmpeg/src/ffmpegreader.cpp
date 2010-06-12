@@ -83,6 +83,14 @@ qint64 FfmpegReader::pos() const {
 	return this->curPos_;
 }
 
+qint64 FfmpegReader::size() const {
+	if( !this->isOpen() ) {
+		return 0;
+	}
+	// size = duration * AVStream::time_base * frequency * channels * sampleSize
+	return av_rescale( this->pStream_->duration, this->pStream_->time_base.num* this->getAudioFormat().frequency() * this->getAudioFormat().channels() * this->getAudioFormat().sampleSize() / 8, this->pStream_->time_base.den );
+}
+
 void FfmpegReader::doOpen() {
 	this->openResource_();
 	this->setupDemuxer_();
@@ -231,7 +239,7 @@ qint64 FfmpegReader::readData( char * data, qint64 maxSize ) {
 	while( !this->atEnd() && this->buffer_.size() < maxSize ) {
 		this->buffer_.append( this->readFrame_() );
 	}
-	maxSize = min( static_cast< qint64 >( this->buffer_.size() ), maxSize );
+	maxSize = qMin( static_cast< qint64 >( this->buffer_.size() ), maxSize );
 	std::memcpy( data, this->buffer_, maxSize );
 	this->buffer_.remove( 0, maxSize );
 	return maxSize;
@@ -334,10 +342,11 @@ QByteArray FfmpegReader::readFrame_() {
 bool FfmpegReader::seek( qint64 pos ) {
 	bool succeed = this->AbstractReader::seek( pos );
 	// internal position = pos / frequency / channels / samplesize/ AVStream::time_base
-	int64_t internalPos = av_rescale( pos, this->pStream_->time_base.den, this->pStream_->time_base.num * this->getAudioFormat().frequency() * this->getAudioFormat().channels() * this->getAudioFormat().sampleSize() );
+	int64_t internalPos = av_rescale( pos, this->pStream_->time_base.den, this->pStream_->time_base.num * this->getAudioFormat().frequency() * this->getAudioFormat().channels() * this->getAudioFormat().sampleSize() / 8 );
 	int ret = av_seek_frame( this->pFormatContext_.get(), this->pStream_->index, internalPos, AVSEEK_FLAG_ANY | AVSEEK_FLAG_BACKWARD );
 	if( ret >= 0 ) {
 		avcodec_flush_buffers( this->pCodecContext_.get() );
+		this->buffer_.clear();
 		this->curPos_ = pos;
 		//this->msCurrent_ = msPos;
 		//if( this->pStream_->cur_pkt.pts != static_cast< int64_t >( AV_NOPTS_VALUE ) ) {

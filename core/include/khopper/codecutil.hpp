@@ -38,23 +38,6 @@ namespace khopper {
 	 */
 	namespace codec {
 
-		enum SampleFormat {
-			SF_S8 = 0x1,
-			SF_U8,
-			SF_S16LE,
-			SF_S16BE,
-			SF_U16LE,
-			SF_U16BE,
-			SF_S32LE,
-			SF_S32BE,
-			SF_U32LE,
-			SF_U32BE,
-			SF_FLOAT,
-			SF_DOUBLE,
-
-			SF_NONE = 0x00000000
-		};
-
 		enum Channel {
 			FrontLeft          = 0x00000001,
 			FrontRight         = 0x00000002,

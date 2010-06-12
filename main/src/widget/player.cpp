@@ -22,12 +22,12 @@
 #include "player.hpp"
 #include "seekslider.hpp"
 #include "songlist.hpp"
+#include "wavwrapper.hpp"
 
 #include "ui_player.h"
 
 #include <Phonon/AudioOutput>
 #include <QtDebug>
-#include <QtGui/QHBoxLayout>
 
 namespace {
 
@@ -99,7 +99,7 @@ void Player::play_() {
 			this->currentTrack_ = selected[0];
 		}
 
-		this->player_->setCurrentSource( this->currentTrack_->getReader().get() );
+		this->player_->setCurrentSource( new WavWrapper( this->currentTrack_->getReader() ) );
 		//album::Timestamp startTime = this->currentTrack_->getStartTime();
 		//this->duration_ = this->currentTrack_->getDuration();
 		//this->currentBeginTime_ = startTime.toMillisecond();
