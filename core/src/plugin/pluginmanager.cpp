@@ -47,9 +47,6 @@ using namespace khopper::plugin;
 PluginManager::PluginManager():
 searchPaths_(),
 loadedPlugins_() {
-	// unload plugins on exit
-	QObject::connect( qApp, SIGNAL( aboutToQuit() ), this, SLOT( unloadPlugins() ) );
-
 	// initialize search paths
 
 	// first search binary related paths, for build time testing
@@ -58,13 +55,11 @@ loadedPlugins_() {
 	// hack for MSVC
 # ifdef _DEBUG
 	if( tmp.cd( "../plugins/Debug" ) ) {
-		this->searchPaths_.push_back( tmp );
-	}
 # else
 	if( tmp.cd( "../plugins/Release" ) ) {
+# endif
 		this->searchPaths_.push_back( tmp );
 	}
-# endif
 	tmp = qApp->applicationDirPath();
 #endif
 
@@ -87,6 +82,10 @@ loadedPlugins_() {
 	}
 }
 
+PluginManager::~PluginManager() {
+	this->unloadPlugins();
+}
+
 void PluginManager::reloadPlugins() {
 	this->unloadPlugins();
 
@@ -96,9 +95,9 @@ void PluginManager::reloadPlugins() {
 		AbstractPlugin * pPlugin = dynamic_cast< AbstractPlugin * >( loader.instance() );
 		if( pPlugin == NULL ) {
 			if( loader.isLoaded() ) {
-				emit this->errorOccured( tr( "Invalid plugin" ), tr( "This plugin: %1 is not valid for Khopper." ).arg( fileInfo.absoluteFilePath() ) );
+				emit this->errorOccured( QObject::tr( "Invalid plugin" ), QObject::tr( "This plugin: %1 is not valid for Khopper." ).arg( fileInfo.absoluteFilePath() ) );
 			} else {
-				emit this->errorOccured( tr( "Plugin load error" ), loader.errorString() );
+				emit this->errorOccured( QObject::tr( "Plugin load error" ), loader.errorString() );
 			}
 			continue;
 		}
@@ -109,7 +108,7 @@ void PluginManager::reloadPlugins() {
 			try {
 				pPlugin->install( fileInfo );
 			} catch( error::BaseError & e ) {
-				emit this->errorOccured( tr( "Plugin install error" ), e.getMessage() );
+				emit this->errorOccured( QObject::tr( "Plugin install error" ), e.getMessage() );
 				loader.unload();
 				continue;
 			}

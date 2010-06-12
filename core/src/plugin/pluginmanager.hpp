@@ -25,7 +25,6 @@
 #include "error.hpp"
 
 #include <QtCore/QDir>
-#include <QtCore/QObject>
 
 #include <string>
 #include <list>
@@ -48,6 +47,13 @@ namespace khopper {
 		public:
 			/// default constructor
 			PluginManager();
+			virtual ~PluginManager();
+
+			/// get plugin instance by name
+			AbstractPlugin * getPluginInstance( const QString & name ) const;
+			const std::list< QDir > & getSearchPaths() const {
+				return this->searchPaths_;
+			}
 
 			/**
 			 * @brief reload all plugins
@@ -55,14 +61,6 @@ namespace khopper {
 			 * Will discard duplicated plugins.
 			 */
 			void reloadPlugins();
-
-			const std::list< QDir > & getSearchPaths() const {
-				return this->searchPaths_;
-			}
-			/// get plugin instance by name
-			AbstractPlugin * getPluginInstance( const QString & name ) const;
-
-		public slots:
 			void unloadPlugins();
 
 		signals:
