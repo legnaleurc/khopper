@@ -19,8 +19,7 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
-#include "abstractreader.hpp"
-#include "defaultreader.hpp"
+#include "abstractreaderprivate.hpp"
 
 #ifndef LOKI_CLASS_LEVEL_THREADING
 # define LOKI_CLASS_LEVEL_THREADING
@@ -32,64 +31,73 @@
 #include <QtDebug>
 
 #include <cassert>
+#include <cmath>
+#include <cstring>
+
+namespace {
+
+	struct Helper {
+		Helper( const QUrl & uri ) : uri( uri ) {
+		}
+		bool operator ()( const khopper::plugin::ReaderFactoryPrivate::Pair & l, const khopper::plugin::ReaderFactoryPrivate::Pair & r ) {
+			return l.first( this->uri ) < r.first( this->uri );
+		}
+		const QUrl & uri;
+	};
+
+}
 
 using namespace khopper::codec;
+using namespace khopper::plugin;
 
-AbstractReader::AbstractReader():
-album_(),
-artist_(),
-msBegin_( -1 ),
-bitRate_( -1 ),
-channelLayout_( LayoutNative ),
-channels_( -1 ),
-comment_(),
-copyright_(),
-msDuration_( -1 ),
-msEnd_( -1 ),
-uri_(),
-genre_(),
-hasNext_( false ),
-index_( -1 ),
-opening_( false ),
-sampleFormat_( SF_NONE ),
-sampleRate_( -1 ),
-title_(),
-year_( -1 ) {
+bool khopper::plugin::registerReader( ReaderVerifier v, ReaderCreator c ) {
+	ReaderFactory::Instance().l.push_back( std::make_pair( v, c ) );
+	return true;
+}
+
+void khopper::plugin::unregisterReader( ReaderVerifier v ) {
+	std::list< ReaderFactoryPrivate::Pair > & l( ReaderFactory::Instance().l );
+	for( std::list< ReaderFactoryPrivate::Pair >::iterator it = l.begin(); it != l.end(); ++it ) {
+		if( it->first == v ) {
+			l.erase( it );
+			break;
+		}
+	}
+}
+
+ReaderSP khopper::plugin::createReader( const QUrl & uri ) {
+	const std::list< ReaderFactoryPrivate::Pair > & l( ReaderFactory::Instance().l );
+
+	if( !l.empty() ) {
+		return std::max_element( l.begin(), l.end(), Helper( uri ) )->second( uri );
+	} else {
+		throw khopper::error::SystemError( QObject::tr( "No reader can be used." ) );
+	}
+}
+
+AbstractReader::AbstractReader( const QUrl & uri ):
+QIODevice(),
+p_( new AbstractReaderPrivate( uri ) ) {
 }
 
 AbstractReader::~AbstractReader() {
 }
 
-void AbstractReader::open( const QUrl & uri ) {
-	if( this->opening_ ) {
+bool AbstractReader::open( OpenMode mode ) {
+	if( this->isOpen() ) {
 		this->close();
 	}
-	this->uri_ = uri;
 
+	bool opened = this->QIODevice::open( mode & ~( WriteOnly & Text ) );
 	this->doOpen();
 
-	this->opening_ = true;
-	this->hasNext_ = true;
+	return opened;
 }
 
 void AbstractReader::close() {
-	this->album_.clear();
-	this->artist_.clear();
-	this->msBegin_ = -1;
-	this->bitRate_ = -1;
-	this->channelLayout_ = LayoutNative;
-	this->channels_ = -1;
-	this->comment_.clear();
-	this->copyright_.clear();
-	this->msDuration_ = -1;
-	this->msEnd_ = -1;
-	this->uri_.clear();
-	this->genre_.clear();
-	this->index_ = -1;
-	this->sampleFormat_ = SF_NONE;
-	this->sampleRate_ = -1;
-	this->title_.clear();
-	this->year_ = -1;
+	this->QIODevice::close();
+
+	this->p_.reset( new AbstractReaderPrivate( this->p_->uri ) );
 
 	try {
 		this->doClose();
@@ -97,76 +105,126 @@ void AbstractReader::close() {
 		// TODO: log an error
 		assert( !"a plugin can not clean up its own mess ..." );
 	}
-
-	this->hasNext_ = false;
-	this->opening_ = false;
 }
 
-ByteArray AbstractReader::read( int64_t & msDecoded ) {
-	msDecoded = 0;
-	if( !this->opening_ || !this->hasNext_ ) {
-		return ByteArray();
-	}
-
-	bool stop = false;
-	ByteArray data( this->readFrame( msDecoded, stop ) );
-	while( !stop && data.empty() ) {
-		data = this->readFrame( msDecoded, stop );
-	}
-	if( stop ) {
-		this->hasNext_ = false;
-	}
-
-	return data;
+qint64 AbstractReader::writeData( const char * /*data*/, qint64 /*maxSize*/ ) {
+	return -1;
 }
 
-bool AbstractReader::seek( int64_t ms ) {
-	bool succeed = this->seekFrame( ms );
-	if( succeed ) {
-		this->hasNext_ = true;
-	}
-	return succeed;
+const QUrl & AbstractReader::getURI() const {
+	return this->p_->uri;
 }
 
-bool AbstractReader::afterBegin( int64_t ms ) const {
-	if( this->msBegin_ < 0 ) {
-		return true;
-	}
-	return ms >= this->msBegin_;
+void AbstractReader::setDuration( qint64 msDuration ) {
+	this->p_->msDuration = msDuration;
 }
 
-bool AbstractReader::afterEnd( int64_t ms ) const {
-	if( this->msEnd_ < 0 ) {
-		return false;
-	}
-	return ms >= this->msEnd_;
+void AbstractReader::setChannelLayout( ChannelLayout channelLayout ) {
+	this->p_->channelLayout = channelLayout;
 }
 
-using namespace khopper::plugin;
-
-/**
- * @brief The audio reader factory
- * @ingroup Plugins
- */
-typedef Loki::SingletonHolder<
-	Loki::Factory<
-		AbstractReader,
-		std::string
-	>,
-	Loki::CreateUsingNew,
-	Loki::LongevityLifetime::DieAsSmallObjectChild,
-	Loki::ClassLevelLockable
-> ReaderFactory;
-
-bool khopper::plugin::registerReader( const std::string & key, AbstractReader * ( *creator )() ) {
-	return ReaderFactory::Instance().Register( key, creator );
+void AbstractReader::setBitRate( unsigned int bitRate ) {
+	this->p_->bitRate = bitRate;
 }
 
-ReaderSP khopper::plugin::createReader( const std::string & key ) {
-	try {
-		// FIXME
-		return ReaderSP( ReaderFactory::Instance().CreateObject( key ) );
-	} catch( std::exception & ) {
-		return ReaderSP( new DefaultReader );
-	}
+void AbstractReader::setGenre( const QByteArray & genre ) {
+	this->p_->genre = genre;
+}
+
+void AbstractReader::setIndex( unsigned int index ) {
+	this->p_->index = index;
+}
+
+void AbstractReader::setYear( const QString & year ) {
+	this->p_->year = year;
+}
+
+void AbstractReader::setAlbumTitle( const QByteArray & album ) {
+	this->p_->album = album;
+}
+
+void AbstractReader::setComment( const QByteArray & comment ) {
+	this->p_->comment = comment;
+}
+
+void AbstractReader::setCopyright( const QByteArray & copyright ) {
+	this->p_->copyright = copyright;
+}
+
+void AbstractReader::setArtist( const QByteArray & artist ) {
+	this->p_->artist = artist;
+}
+
+void AbstractReader::setTitle( const QByteArray & title ) {
+	this->p_->title = title;
+}
+
+qint64 AbstractReader::getDuration() const {
+	return this->p_->msDuration;
+}
+
+const QByteArray & AbstractReader::getTitle() const {
+	return this->p_->title;
+}
+
+unsigned int AbstractReader::getBitRate() const {
+	return this->p_->bitRate;
+}
+
+const QByteArray & AbstractReader::getArtist() const {
+	return this->p_->artist;
+}
+
+const QByteArray & AbstractReader::getAlbumTitle() const {
+	return this->p_->album;
+}
+
+unsigned int AbstractReader::getIndex() const {
+	return this->p_->index;
+}
+
+ChannelLayout AbstractReader::getChannelLayout() const {
+	return this->p_->channelLayout;
+}
+
+const QString & AbstractReader::getYear() const {
+	return this->p_->year;
+}
+
+const QByteArray & AbstractReader::getGenre() const {
+	return this->p_->genre;
+}
+
+const QByteArray & AbstractReader::getCopyright() const {
+	return this->p_->copyright;
+}
+
+const QByteArray & AbstractReader::getComment() const {
+	return this->p_->comment;
+}
+
+const QAudioFormat & AbstractReader::getAudioFormat() const {
+	return this->p_->format;
+}
+
+void AbstractReader::setAudioFormat( const QAudioFormat & format ) {
+	this->p_->format = format;
+	this->p_->format.setCodec( "audio/pcm" );
+}
+
+AbstractReader::AbstractReaderPrivate::AbstractReaderPrivate( const QUrl & uri ):
+album(),
+artist(),
+bitRate( 0 ),
+buffer(),
+channelLayout( LayoutNative ),
+comment(),
+copyright(),
+format(),
+msDuration( 0 ),
+uri( uri ),
+genre(),
+index( 0 ),
+title(),
+year() {
 }

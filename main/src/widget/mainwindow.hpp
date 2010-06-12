@@ -22,9 +22,10 @@
 #ifndef KHOPPER_WIDGET_MAINWINDOW_HPP
 #define KHOPPER_WIDGET_MAINWINDOW_HPP
 
-#include "track.hpp"
+#include "khopper/playlist.hpp"
 
 #include <QtCore/QList>
+#include <QtCore/QSharedPointer>
 #include <QtCore/QUrl>
 #include <QtGui/QCheckBox>
 #include <QtGui/QComboBox>
@@ -44,7 +45,6 @@ namespace khopper {
 		class Progress;
 		class Player;
 		class PluginViewer;
-		class CodecSelector;
 		class Preference;
 		class ConversionDialog;
 
@@ -60,7 +60,6 @@ namespace khopper {
 			 * @brief Default constructor
 			 */
 			MainWindow();
-			virtual ~MainWindow();
 
 		public slots:
 			/**
@@ -74,8 +73,7 @@ namespace khopper {
 			void open( const QList< QUrl > & uris );
 
 		private:
-			Ui::MainWindow * ui_;
-			CodecSelector * codec_;
+			std::tr1::shared_ptr< Ui::MainWindow > ui_;
 			ConversionDialog * conversion_;
 			Preference * preference_;
 			AboutWidget * about_;
@@ -83,10 +81,9 @@ namespace khopper {
 			QString lastOpenedDir_;
 
 			void initMenuBar_();
-			void initOptionWindow_();
 
 		private slots:
-			void fire_( const album::TrackList & );
+			void fire_( const khopper::album::PlayList & );
 			void showErrorMessage_( const QString &, const QString & );
 		};
 

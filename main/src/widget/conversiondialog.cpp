@@ -27,19 +27,17 @@
 #include "khopper/abstractpanel.hpp"
 #include "khopper/application.hpp"
 
+#include <QtCore/QSettings>
 #include <QtDebug>
 #include <QtGui/QFileDialog>
 
-namespace {
-	inline QString applyFormat( boost::format tpl, khopper::album::TrackCSP track ) {
-		return QString::fromUtf8( ( tpl % track->get( "title" ).toString().toUtf8().constData() % track->get( "artist" ).toString().toUtf8().constData() % track->get( "index" ).toInt() ).str().c_str() );
-	}
-}
+#include <boost/format.hpp>
 
 using namespace khopper::widget;
-using khopper::album::TrackList;
 using khopper::album::TrackCSP;
 using khopper::album::TrackSP;
+using khopper::album::PlayList;
+using khopper::codec::WriterSP;
 
 ConversionDialog::ConversionDialog( QWidget * parent ):
 QDialog( parent ),
@@ -49,6 +47,12 @@ thread_( new ConverterThread( this ) ),
 table_() {
 	this->ui_->setupUi( this );
 	this->ui_->outputPath->setText( QDir::homePath() );
+
+	QSettings setting;
+	// Output name template
+	setting.beginGroup( "preference" );
+	this->ui_->tpl->setText( setting.value( "filename", "%2i_%t" ).toString() );
+	setting.endGroup();
 
 	connect( this->ui_->browse, SIGNAL( clicked() ), this, SLOT( changeOutputPath_() ) );
 
@@ -66,32 +70,23 @@ table_() {
 	connect( this->progress_, SIGNAL( canceled() ), this->thread_, SLOT( cancel() ) );
 }
 
-ConversionDialog::~ConversionDialog() {
-	delete this->ui_;
-}
-
-void ConversionDialog::convert( const TrackList & tracks, const boost::format & tpl ) {
+void ConversionDialog::convert( const PlayList & tracks ) {
 	int result = this->exec();
 	if( result == QDialog::Rejected ) {
 		return;
 	}
 
 	AbstractPanel * panel = this->getCurrent();
-	codec::WriterSP encoder( panel->getWriter() );
-	if( encoder == NULL ) {
-		this->errorOccured( tr( "Plugin Error" ), tr( "Can\'t load codec." ) );
-		return;
-	}
 
-	QList< QString > outputPaths;
+	QList< WriterSP > outs;
 	foreach( album::TrackSP track, tracks ) {
-		outputPaths.push_back( QString( "%1/%2.%3" ).arg( this->getOutputPath_( track ) ).arg( applyFormat( tpl, track ) ).arg( panel->getSuffix() ) );
+		outs.push_back( panel->createWriter( QUrl::fromLocalFile( QString( "%1/%2.%3" ).arg( this->getOutputPath_( track ) ).arg( this->getOutputName_( track ) ).arg( panel->getSuffix() ) ) ) );
 	}
 
 	// set progress bar
 	this->progress_->setTotal( tracks.size() );
 	// set output information
-	this->thread_->setOutput( encoder, outputPaths );
+	this->thread_->setOutput( outs );
 	this->thread_->setTracks( tracks );
 	this->thread_->start();
 	this->progress_->show();
@@ -113,9 +108,18 @@ void ConversionDialog::removePanel( AbstractPanel * panel ) {
 
 QString ConversionDialog::getOutputPath_( TrackSP track ) {
 	if( this->ui_->useSource->isChecked() && track->getURI().scheme() == "file" ) {
-		return track->getURI().toLocalFile();
+		return QFileInfo( track->getURI().toLocalFile() ).path();
 	}
 	return this->ui_->outputPath->text();
+}
+
+QString ConversionDialog::getOutputName_( TrackSP track ) {
+	QString tmp = this->ui_->tpl->text();
+	tmp.replace( "%t", "%1%" );
+	tmp.replace( "%a", "%2%" );
+	tmp.replace( QRegExp( "%(\\d*)i" ), "%|3$0\\1|" );
+	tmp.replace( "%%", "%" );
+	return QString::fromStdString( ( boost::format( tmp.toStdString() ) % track->getTitle().toStdString() % track->getArtist().toStdString() % track->getIndex() ).str() );
 }
 
 void ConversionDialog::changeOutputPath_() {

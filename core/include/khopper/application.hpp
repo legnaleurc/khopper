@@ -28,19 +28,19 @@
 
 namespace khopper {
 
-	struct ApplicationPrivate;
 	namespace plugin {
 		class AbstractPlugin;
 	}
+
 	namespace widget {
 		class AbstractPanel;
 	}
 
 	class KHOPPER_DLL Application : public QApplication {
 		Q_OBJECT
+
 	public:
 		Application( int & argc, char * * argv );
-		virtual ~Application();
 
 		void addPanel( khopper::widget::AbstractPanel * panel );
 		void removePanel( khopper::widget::AbstractPanel * panel );
@@ -52,7 +52,8 @@ namespace khopper {
 		void panelRemoved( khopper::widget::AbstractPanel * panel );
 
 	private:
-		ApplicationPrivate * p_;
+		struct ApplicationPrivate;
+		std::tr1::shared_ptr< ApplicationPrivate > p_;
 	};
 
 }

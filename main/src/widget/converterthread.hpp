@@ -22,10 +22,10 @@
 #ifndef KHOPPER_WIDGET_CONVERTERTHREAD_HPP
 #define KHOPPER_WIDGET_CONVERTERTHREAD_HPP
 
-#include "track.hpp"
 #include "converter.hpp"
 
 #include "khopper/abstractwriter.hpp"
+#include "khopper/playlist.hpp"
 
 #include <QtCore/QStringList>
 #include <QtCore/QThread>
@@ -45,20 +45,20 @@ namespace khopper {
 			 * @brief Default constructor
 			 * @param [in] parent parent object
 			 */
-			ConverterThread( QObject * parent = 0 );
+			explicit ConverterThread( QObject * parent );
 
 			/**
 			 * @brief Set output option
 			 * @param [in] output Encoder object
 			 * @param [in] paths Output file paths
 			 */
-			void setOutput( codec::WriterSP output, const QList< QString > & paths );
+			void setOutput( const QList< codec::WriterSP > & outs );
 
 			/**
 			 * @brief Set tracks to convert
 			 * @param [in] tracks Tracks information
 			 */
-			void setTracks( const album::TrackList & tracks );
+			void setTracks( const album::PlayList & tracks );
 
 		public slots:
 			/**
@@ -103,11 +103,10 @@ namespace khopper {
 			virtual void run();
 
 		private:
-			codec::WriterSP encoder_;
-			album::TrackList tracks_;
-			QList< QString > paths_;
+			album::PlayList tracks_;
+			QList< codec::WriterSP > outs_;
 			bool canceled_;
-			Converter converter_;
+			Converter * converter_;
 		};
 
 	}

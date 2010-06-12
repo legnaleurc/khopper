@@ -22,9 +22,9 @@
 #ifndef KHOPPER_WIDGET_PROGRESS_HPP
 #define KHOPPER_WIDGET_PROGRESS_HPP
 
-#include <QtGui/QDialog>
-#include <QtGui/QLabel>
-#include <QtGui/QProgressBar>
+#include "khopper/tr1.hpp"
+
+#include <QtGui/QWidget>
 
 namespace Ui {
 	class Progress;
@@ -45,7 +45,6 @@ namespace khopper {
 			 * @brief Pass arguments to QDialog
 			 */
 			explicit Progress( QWidget * parent );
-			virtual ~Progress();
 
 		public slots:
 			void increase( qint64 value );
@@ -72,7 +71,7 @@ namespace khopper {
 		private:
 			void updateIndex_();
 
-			Ui::Progress * ui_;
+			std::tr1::shared_ptr< Ui::Progress > ui_;
 			int current_;
 			int total_;
 		};

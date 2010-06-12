@@ -22,13 +22,10 @@
 #ifndef KHOPPER_WIDGET_PREFERENCE_HPP
 #define KHOPPER_WIDGET_PREFERENCE_HPP
 
-#include <boost/format.hpp>
+#include "khopper/tr1.hpp"
 
+#include <QtGui/QAbstractButton>
 #include <QtGui/QDialog>
-#include <QtGui/QDialogButtonBox>
-#include <QtGui/QFont>
-#include <QtGui/QLabel>
-#include <QtGui/QLineEdit>
 
 namespace Ui {
 	class Preference;
@@ -47,20 +44,13 @@ namespace khopper {
 		public:
 			/// Default constructor
 			explicit Preference( QWidget * parent );
-			virtual ~Preference();
-
-			/**
-			 * @brief Get file name template
-			 * @return Format string in boost::format
-			 */
-			boost::format getTemplate() const;
 
 		private slots:
 			void changeFont_();
 			void perform_( QAbstractButton * );
 
 		private:
-			Ui::Preference * ui_;
+			std::tr1::shared_ptr< Ui::Preference > ui_;
 			QFont currentFont_;
 
 			void apply_();

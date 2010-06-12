@@ -30,8 +30,6 @@
 #include "tr1.hpp"
 #include "error.hpp"
 
-#include <vector>
-
 namespace khopper {
 
 	/**
@@ -39,23 +37,6 @@ namespace khopper {
 	 * @brief Contains Codecs module
 	 */
 	namespace codec {
-
-		enum SampleFormat {
-			SF_S8 = 0x1,
-			SF_U8,
-			SF_S16LE,
-			SF_S16BE,
-			SF_U16LE,
-			SF_U16BE,
-			SF_S32LE,
-			SF_S32BE,
-			SF_U32LE,
-			SF_U32BE,
-			SF_FLOAT,
-			SF_DOUBLE,
-
-			SF_NONE = 0x00000000
-		};
 
 		enum Channel {
 			FrontLeft          = 0x00000001,
@@ -101,12 +82,6 @@ namespace khopper {
 
 			LayoutNative        = 0x00000000
 		};
-
-		/**
-		 * @ingroup Codecs
-		 * @brief Used for storing raw binary data
-		 */
-		typedef std::vector< uint8_t > ByteArray;
 
 	}
 

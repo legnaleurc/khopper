@@ -22,12 +22,10 @@
 #ifndef KHOPPER_WIDGET_PLAYER_HPP
 #define KHOPPER_WIDGET_PLAYER_HPP
 
-#include "track.hpp"
+#include "khopper/playlist.hpp"
 
 #include <Phonon/MediaObject>
-#include <Phonon/VolumeSlider>
-#include <QtGui/QLabel>
-#include <QtGui/QPushButton>
+#include <QtGui/QWidget>
 
 namespace Ui {
 	class Player;
@@ -47,14 +45,13 @@ namespace khopper {
 		public:
 			/// Default constructor
 			explicit Player( QWidget * parent );
-			virtual ~Player();
 
 			/// Get selected tracks
-			album::TrackList getSelectedTracks() const;
+			album::PlayList getSelectedTracks() const;
 			/// Get all tracks
-			const album::TrackList & getTracks() const;
+			const album::PlayList & getTracks() const;
 			/// Append tracks
-			void appendTracks( const album::TrackList & tracks );
+			void append( const album::PlayList & playList );
 
 		signals:
 			/**
@@ -65,7 +62,7 @@ namespace khopper {
 			/**
 			 * @brief Emmited when convert action is required.
 			 */
-			void requireConvert( const album::TrackList & );
+			void requireConvert( const khopper::album::PlayList & );
 			/**
 			 * @brief Error message
 			 * @param title Error title
@@ -78,11 +75,11 @@ namespace khopper {
 			void playOrPause_();
 			void stop_();
 			void handleState_( Phonon::State, Phonon::State );
-			void tick_( qint64 );
-			void updateTimestamp_( int ms );
+			//void tick_( qint64 );
+			//void updateTimestamp_( int ms );
 
 		private:
-			Ui::Player * ui_;
+			std::tr1::shared_ptr< Ui::Player > ui_;
 			Phonon::MediaObject * player_;
 			album::Timestamp currentTimeStamp_;
 			album::Timestamp duration_;

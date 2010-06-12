@@ -1,7 +1,8 @@
 # core
 
-find_package(FFmpeg REQUIRED)
 find_package(Loki REQUIRED)
+# use QtMultimedia
+set(QT_USE_QTMULTIMEDIA TRUE)
 
 # hack MSCV path
 if(MSVC)
@@ -21,15 +22,12 @@ set(KHOPPER_CORE_MOC_HEADERS
 
 qt4_wrap_cpp(KHOPPER_CORE_MOC_SOURCES ${KHOPPER_CORE_MOC_HEADERS})
 
-if(NOT WIN32)
-    list(REMOVE_ITEM KHOPPER_CORE_SOURCES src/codec/wfile.cpp)
-endif()
-include_directories("include/khopper" src ${FFMPEG_INCLUDE_DIR} ${LOKI_INCLUDE_DIR})
+include_directories("include/khopper" src ${LOKI_INCLUDE_DIR})
 
 source_group("Generated Files" FILES ${KHOPPER_CORE_MOC_SOURCES})
 
 add_library(khopper_core SHARED ${KHOPPER_CORE_HEADERS} ${KHOPPER_CORE_SOURCES} ${KHOPPER_CORE_MOC_SOURCES})
-target_link_libraries(khopper_core ${FFMPEG_LIBRARIES} ${LOKI_LIBRARIES} ${QT_LIBRARIES})
+target_link_libraries(khopper_core ${LOKI_LIBRARIES} ${QT_LIBRARIES} ${QT_QTMULTIMEDIA_LIBRARY})
 set_target_properties(khopper_core
     PROPERTIES
         VERSION ${KHOPPER_VERSION}

@@ -22,12 +22,14 @@
 #ifndef KHOPPER_WIDGET_ABSTRACTPANELPRIVATE_HPP
 #define KHOPPER_WIDGET_ABSTRACTPANELPRIVATE_HPP
 
+#include "abstractpanel.hpp"
+
 #include <QtCore/QString>
 
 namespace khopper {
 	namespace widget {
 
-		struct AbstractPanelPrivate {
+		struct AbstractPanel::AbstractPanelPrivate {
 			QString title;
 			QString suffix;
 		};

@@ -22,7 +22,6 @@
 #include "preference.hpp"
 #include "ui_preference.h"
 
-#include <QtCore/QRegExp>
 #include <QtCore/QSettings>
 #include <QtGui/QApplication>
 #include <QtGui/QFontDialog>
@@ -39,101 +38,73 @@ namespace {
 
 }
 
-namespace khopper {
+using namespace khopper::widget;
 
-	namespace widget {
+Preference::Preference( QWidget * parent ):
+QDialog( parent ),
+ui_( new Ui::Preference ),
+currentFont_() {
+	this->ui_->setupUi( this );
+	QSettings setting;
 
-		Preference::Preference( QWidget * parent ):
-		QDialog( parent ),
-		ui_( new Ui::Preference ),
-		currentFont_() {
-			this->ui_->setupUi( this );
-			QSettings setting;
-
-			setting.beginGroup( "preference" );
-			if( setting.contains( "font" ) && this->currentFont_.fromString( setting.value( "font" ).toString() ) ) {
-				qApp->setFont( this->currentFont_ );
-			} else {
-				this->currentFont_.fromString( qApp->font().toString() );
-			}
-			setting.endGroup();
-
-			this->ui_->fontName->setText( fontTemplate( this->currentFont_ ) );
-
-			connect( this->ui_->browse, SIGNAL( clicked() ), this, SLOT( changeFont_() ) );
-
-			// Output name template
-			setting.beginGroup( "preference" );
-			this->ui_->tpl->setText( setting.value( "filename", "%2i_%t" ).toString() );
-			setting.endGroup();
-
-			connect( this->ui_->buttonBox, SIGNAL( clicked( QAbstractButton * ) ), this, SLOT( perform_( QAbstractButton * ) ) );
-		}
-
-		Preference::~Preference() {
-			delete this->ui_;
-		}
-
-		boost::format Preference::getTemplate() const {
-			QString tmp = this->ui_->tpl->text();
-			tmp.replace( "%t", "%1%" );
-			tmp.replace( "%a", "%2%" );
-			tmp.replace( QRegExp( "%(\\d*)i" ), "%|3$0\\1|" );
-			tmp.replace( "%%", "%" );
-			return boost::format( tmp.toUtf8().constData() );
-		}
-
-		void Preference::changeFont_() {
-			bool ok = false;
-			QFont font = QFontDialog::getFont( &ok, this->currentFont_, this );
-			if( ok ) {
-				this->currentFont_ = font;
-			}
-			this->ui_->fontName->setText( fontTemplate( this->currentFont_ ) );
-		}
-
-		void Preference::perform_( QAbstractButton * button ) {
-			switch( this->ui_->buttonBox->buttonRole( button ) ) {
-			case QDialogButtonBox::AcceptRole:
-				this->apply_();
-				this->accept();
-				break;
-			case QDialogButtonBox::RejectRole:
-				this->revert_();
-				this->reject();
-				break;
-			case QDialogButtonBox::ApplyRole:
-				this->apply_();
-				break;
-			default:
-				;
-			};
-		}
-
-		void Preference::apply_() {
-			QSettings setting;
-			setting.beginGroup( "preference" );
-
-			setting.setValue( "font", this->currentFont_.toString() );
-			qApp->setFont( this->currentFont_ );
-
-			setting.setValue( "filename", this->ui_->tpl->text() );
-
-			setting.endGroup();
-		}
-
-		void Preference::revert_() {
-			QSettings setting;
-			setting.beginGroup( "preference" );
-
-			this->currentFont_.fromString( setting.value( "font", qApp->font().toString() ).toString() );
-			this->ui_->fontName->setText( fontTemplate( this->currentFont_ ) );
-
-			this->ui_->tpl->setText( setting.value( "filename", "%2i_%t" ).toString() );
-
-			setting.endGroup();
-		}
-
+	setting.beginGroup( "preference" );
+	if( setting.contains( "font" ) && this->currentFont_.fromString( setting.value( "font" ).toString() ) ) {
+		qApp->setFont( this->currentFont_ );
+	} else {
+		this->currentFont_.fromString( qApp->font().toString() );
 	}
+	setting.endGroup();
 
+	this->ui_->fontName->setText( fontTemplate( this->currentFont_ ) );
+
+	connect( this->ui_->browse, SIGNAL( clicked() ), this, SLOT( changeFont_() ) );
+
+	connect( this->ui_->buttonBox, SIGNAL( clicked( QAbstractButton * ) ), this, SLOT( perform_( QAbstractButton * ) ) );
+}
+
+void Preference::changeFont_() {
+	bool ok = false;
+	QFont font = QFontDialog::getFont( &ok, this->currentFont_, this );
+	if( ok ) {
+		this->currentFont_ = font;
+	}
+	this->ui_->fontName->setText( fontTemplate( this->currentFont_ ) );
+}
+
+void Preference::perform_( QAbstractButton * button ) {
+	switch( this->ui_->buttonBox->buttonRole( button ) ) {
+	case QDialogButtonBox::AcceptRole:
+		this->apply_();
+		this->accept();
+		break;
+	case QDialogButtonBox::RejectRole:
+		this->revert_();
+		this->reject();
+		break;
+	case QDialogButtonBox::ApplyRole:
+		this->apply_();
+		break;
+	default:
+		;
+	};
+}
+
+void Preference::apply_() {
+	QSettings setting;
+	setting.beginGroup( "preference" );
+
+	setting.setValue( "font", this->currentFont_.toString() );
+	qApp->setFont( this->currentFont_ );
+
+	setting.endGroup();
+}
+
+void Preference::revert_() {
+	QSettings setting;
+	setting.beginGroup( "preference" );
+
+	this->currentFont_.fromString( setting.value( "font", qApp->font().toString() ).toString() );
+	this->ui_->fontName->setText( fontTemplate( this->currentFont_ ) );
+
+	setting.endGroup();
 }

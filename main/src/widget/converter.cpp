@@ -41,35 +41,38 @@ QObject( parent ),
 canceled_( false ) {
 }
 
-void Converter::convert( TrackCSP track, const QUrl & targetURI, WriterSP encoder ) {
+void Converter::convert( TrackCSP track, WriterSP encoder ) {
 	// FIXME: not always local file
-	ReaderSP decoder( createReader( text::getSuffix( track->getURI().toLocalFile() ) ) );
+	ReaderSP decoder( track->getReader() );
 	qDebug() << track->getURI();
-	decoder->open( track->getURI() );
-	encoder->open( targetURI );
+	decoder->open( QIODevice::ReadOnly );
+
+	encoder->setAudioFormat( decoder->getAudioFormat() );
+	encoder->setChannelLayout( decoder->getChannelLayout() );
+
+	encoder->open( QIODevice::WriteOnly );
 	this->canceled_ = false;
 
 	if( !decoder->isOpen() || !encoder->isOpen() ) {
 		throw RunTimeError( "Can not open decoder or encoder!" );
 	}
 
-	int64_t begin = track->get( "start_time" ).value< album::Timestamp >().toMillisecond();
-	int64_t end = begin + track->get( "duration" ).value< album::Timestamp >().toMillisecond();
-	decoder->setRange( begin, end );
-	if( !decoder->seek( begin ) ) {
-		throw CodecError( "Invalid start point" );
-	}
+//	int64_t begin = track->getStartTime().toMillisecond();
+//	int64_t end = begin + track->getDuration().toMillisecond();
+//	decoder->setRange( begin, end );
+//	if( !decoder->seek( begin ) ) {
+//		throw CodecError( "Invalid start point" );
+//	}
 
-	encoder->setSampleFormat( decoder->getSampleFormat() );
-	encoder->setChannelLayout( decoder->getChannelLayout() );
-
-	int64_t decoded;
-	while( decoder->hasNext() ) {
+	//int64_t decoded;
+	int sec = decoder->getAudioFormat().frequency() * decoder->getAudioFormat().channels() * decoder->getAudioFormat().sampleSize() / 8;
+	while( !decoder->atEnd() ) {
 		if( this->canceled_ ) {
 			break;
 		}
-		encoder->write( decoder->read( decoded ) );
-		emit this->decodedTime( decoded );
+		QByteArray frame( decoder->read( sec ) );
+		encoder->write( frame );
+		emit this->decodedTime( frame.size() * 1000 / sec );
 	}
 
 	encoder->close();

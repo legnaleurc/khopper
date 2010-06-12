@@ -22,7 +22,7 @@
 #ifndef KHOPPER_WIDGET_SONGLIST_HPP
 #define KHOPPER_WIDGET_SONGLIST_HPP
 
-#include "track.hpp"
+#include "khopper/playlist.hpp"
 
 #include <QtCore/QList>
 #include <QtCore/QUrl>
@@ -30,6 +30,11 @@
 #include <QtGui/QTableView>
 
 namespace khopper {
+
+	namespace album {
+		class PlayList;
+	}
+
 	namespace widget {
 
 		class PropertiesWidget;
@@ -45,17 +50,17 @@ namespace khopper {
 			 * @brief Default constructor
 			 * @param [in] parent Parent widget
 			 */
-			SongList( QWidget * parent = 0 );
+			explicit SongList( QWidget * parent );
 
 			/**
 			 * @brief Append tracks to the song list
 			 * @param [in] tracks Tracks
 			 */
-			void appendTracks( const album::TrackList & tracks );
+			void append( const album::PlayList & playList );
 			/**
 			 * @brief Get all tracks
 			 */
-			const album::TrackList & getTracks() const {
+			const album::PlayList & getTracks() const {
 				return this->tracks_;
 			}
 			/**
@@ -63,7 +68,7 @@ namespace khopper {
 			 *
 			 * The cost may be expansive.
 			 */
-			album::TrackList getSelectedTracks() const;
+			album::PlayList getSelectedTracks() const;
 
 			/// Test if no track
 			bool isEmpty() const {
@@ -80,7 +85,7 @@ namespace khopper {
 			/**
 			 * @brief Emitted when convert action is required.
 			 */
-			void requireConvert( const album::TrackList & tracks );
+			void requireConvert( const khopper::album::PlayList & tracks );
 			/**
 			 * @brief Emitted when play is required.
 			 * @todo Add parameter.
@@ -98,8 +103,6 @@ namespace khopper {
 			virtual void dropEvent( QDropEvent * event );
 			/// See the documention of Qt toolkit
 			virtual void mouseDoubleClickEvent( QMouseEvent * event );
-// 			virtual void mousePressEvent( QMouseEvent * event );
-// 			virtual void mouseReleaseEvent( QMouseEvent * event );
 
 		private slots:
 			void changeTextCodec_( int );
@@ -112,11 +115,12 @@ namespace khopper {
 			QStandardItemModel * model_;
 			QMenu * contextMenu_;
 			PropertiesWidget * propWidget_;
-			album::TrackList tracks_;
+			album::PlayList tracks_;
 			QList< QUrl > droppingFiles_;
 		};
 
 	}
+
 }
 
 #endif

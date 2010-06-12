@@ -55,17 +55,15 @@ loadedPlugins_() {
 	// hack for MSVC
 # ifdef _DEBUG
 	if( tmp.cd( "../plugins/Debug" ) ) {
-		this->searchPaths_.push_back( tmp );
-	}
 # else
 	if( tmp.cd( "../plugins/Release" ) ) {
+# endif
 		this->searchPaths_.push_back( tmp );
 	}
-# endif
 	tmp = qApp->applicationDirPath();
 #endif
 
-	if( tmp.cd( "../plugins" ) ) {
+	if( tmp.cd( "../lib/plugins" ) ) {
 		this->searchPaths_.push_back( tmp );
 	}
 
@@ -84,8 +82,12 @@ loadedPlugins_() {
 	}
 }
 
+PluginManager::~PluginManager() {
+	this->unloadPlugins();
+}
+
 void PluginManager::reloadPlugins() {
-	this->loadedPlugins_.clear();
+	this->unloadPlugins();
 
 	foreach( QFileInfo fileInfo, this->getPluginsFileInfo_() ) {
 		qDebug() << fileInfo.absoluteFilePath();
@@ -93,9 +95,9 @@ void PluginManager::reloadPlugins() {
 		AbstractPlugin * pPlugin = dynamic_cast< AbstractPlugin * >( loader.instance() );
 		if( pPlugin == NULL ) {
 			if( loader.isLoaded() ) {
-				emit this->errorOccured( tr( "Invalid plugin" ), tr( "This plugin: %1 is not valid for Khopper." ).arg( fileInfo.absoluteFilePath() ) );
+				emit this->errorOccured( QObject::tr( "Invalid plugin" ), QObject::tr( "This plugin: %1 is not valid for Khopper." ).arg( fileInfo.absoluteFilePath() ) );
 			} else {
-				emit this->errorOccured( tr( "Plugin load error" ), loader.errorString() );
+				emit this->errorOccured( QObject::tr( "Plugin load error" ), loader.errorString() );
 			}
 			continue;
 		}
@@ -106,7 +108,7 @@ void PluginManager::reloadPlugins() {
 			try {
 				pPlugin->install( fileInfo );
 			} catch( error::BaseError & e ) {
-				emit this->errorOccured( tr( "Plugin install error" ), e.getMessage() );
+				emit this->errorOccured( QObject::tr( "Plugin install error" ), e.getMessage() );
 				loader.unload();
 				continue;
 			}
@@ -116,6 +118,13 @@ void PluginManager::reloadPlugins() {
 			qDebug() << "unload deprecated plugin:" << unloaded;
 		}
 	}
+}
+
+void PluginManager::unloadPlugins() {
+	for( std::map< std::string, AbstractPlugin * >::iterator it = this->loadedPlugins_.begin(); it != this->loadedPlugins_.end(); ++it ) {
+		it->second->uninstall();
+	}
+	this->loadedPlugins_.clear();
 }
 
 AbstractPlugin * PluginManager::getPluginInstance( const QString & name ) const {

@@ -29,8 +29,6 @@
 namespace khopper {
 	namespace widget {
 
-		struct AbstractPanelPrivate;
-
 		/**
 		 * @brief Abstract panel widget
 		 *
@@ -50,7 +48,7 @@ namespace khopper {
 			 * @brief Get encoder setting object
 			 * @return Smart pointer contains AbstractWriter
 			 */
-			virtual codec::WriterSP getWriter() const = 0;
+			virtual codec::WriterSP createWriter( const QUrl & uri ) const = 0;
 			/**
 			 * @brief Get file suffix
 			 * @return File extension, without leading '.'
@@ -67,7 +65,8 @@ namespace khopper {
 			void setTitle( const QString & title );
 
 		private:
-			AbstractPanelPrivate * p_;
+			struct AbstractPanelPrivate;
+			std::tr1::shared_ptr< AbstractPanelPrivate > p_;
 		};
 
 	}

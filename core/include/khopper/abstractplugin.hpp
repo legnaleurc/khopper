@@ -28,10 +28,7 @@
 #include <QtCore/QString>
 
 namespace khopper {
-
 	namespace plugin {
-
-		struct AbstractPluginPrivate;
 
 		/**
 		 * @brief Interface of plugins
@@ -44,13 +41,12 @@ namespace khopper {
 		class KHOPPER_DLL AbstractPlugin : public QObject {
 		public:
 			AbstractPlugin();
-			/// virtual destructor
-			virtual ~AbstractPlugin();
 
 			void install( const QFileInfo & fileInfo );
 			void uninstall();
 			bool isInstalled() const;
 
+			const QFileInfo & getFileInfo() const;
 			/// get the id of the plugin, must be unique
 			const QString & getID() const;
 			/// get version string of the plugin
@@ -60,18 +56,18 @@ namespace khopper {
 			void setID( const QString & id );
 			void setVersion( const QString & version );
 
-			virtual void doInstall( const QFileInfo & fileInfo ) = 0;
+			virtual void doInstall() = 0;
 			virtual void doUninstall() = 0;
 
 		private:
 			AbstractPlugin( const AbstractPlugin & );
 			AbstractPlugin & operator =( const AbstractPlugin & );
 
-			AbstractPluginPrivate * p_;
+			struct AbstractPluginPrivate;
+			std::tr1::shared_ptr< AbstractPluginPrivate > p_;
 		};
 
 	}
-
 }
 
 Q_DECLARE_INTERFACE( khopper::plugin::AbstractPlugin, "org.FoolproofProject.Khopper.Plugin/0.2" )
