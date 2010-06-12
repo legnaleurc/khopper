@@ -46,7 +46,7 @@ msDuration_( -1 ) {
 }
 
 bool RangedReader::atEnd() const {
-	return this->client_->atEnd();
+	return this->client_->atEnd() || this->client_->pos() >= posFromMs( this->msDuration_, this->getAudioFormat() );
 }
 
 void RangedReader::setRange( qint64 msBegin, qint64 msDuration ) {
