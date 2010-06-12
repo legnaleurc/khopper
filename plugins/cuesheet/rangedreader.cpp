@@ -78,9 +78,7 @@ void RangedReader::doOpen() {
 }
 
 void RangedReader::doClose() {
-	this->msBegin_ = 0;
 	this->msCurrent_ = 0;
-	this->msDuration_ = -1;
 	this->client_->close();
 }
 
@@ -105,9 +103,5 @@ qint64 RangedReader::readData( char * data, qint64 maxSize ) {
 
 bool RangedReader::seek( qint64 pos ) {
 	qint64 begin = posFromMs( this->msBegin_, this->getAudioFormat() );
-	qint64 length = posFromMs( this->msDuration_, this->getAudioFormat() );
-	if( pos >= begin && begin + pos < length ) {
-		return this->client_->seek( begin + pos );
-	}
-	return false;
+	return this->client_->seek( begin + pos );
 }
