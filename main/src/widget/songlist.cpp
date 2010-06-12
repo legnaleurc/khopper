@@ -44,48 +44,6 @@ namespace {
 		return l.row() > r.row();
 	}
 
-	struct HeaderData {
-		HeaderData( const QByteArray & i, const QString & h, bool e ):
-		id( i ), header( h ), editable( e ) {}
-		QByteArray id;
-		QString header;
-		bool editable;
-	};
-
-	typedef QList< HeaderData > HeaderDataList;
-
-	inline HeaderDataList initHeaderList() {
-		return HeaderDataList()
-		<< HeaderData( "title", QObject::tr( "Title" ), true )
-		<< HeaderData( "artist", QObject::tr( "Artist" ), true )
-		<< HeaderData( "album", QObject::tr( "Album" ), true )
-		<< HeaderData( "duration", QObject::tr( "Duration" ), false )
-		//<< HeaderData( "bit_rate", QObject::tr( "Bit Rate" ), false )
-		//<< HeaderData( "sample_rate", QObject::tr( "Sample Rate" ), false )
-		//<< HeaderData( "channels", QObject::tr( "Channels" ), false )
-		;
-	}
-
-	inline const HeaderDataList & getHeaderList() {
-		static HeaderDataList hdl( initHeaderList() );
-		return hdl;
-	}
-
-	//QString displayHelper( const QVariant & v ) {
-	//	if( v.canConvert( QVariant::String ) ) {
-	//		return v.toString();
-	//	} else if( v.canConvert( QVariant::Int ) ) {
-	//		return QString::number( v.toInt() );
-	//	} else if( v.canConvert< khopper::album::Timestamp >() ) {
-	//		return v.value< khopper::album::Timestamp >().toString();
-	//	} else if( !v.isValid() ) {
-	//		qDebug() << v;
-	//		return "!!!";
-	//	} else {
-	//		return "to be continue";
-	//	}
-	//}
-
 }
 
 using namespace khopper::widget;
@@ -109,18 +67,18 @@ droppingFiles_() {
 	this->setShowGrid( false );
 
 	// Set header
-	QStringList headers;
-	foreach( HeaderData hd, getHeaderList() ) {
-		headers << hd.header;
-	}
-	this->model_->setHorizontalHeaderLabels( headers );
+	this->model_->setHorizontalHeaderLabels( QStringList()
+		<< QObject::tr( "Title" )
+		<< QObject::tr( "Artist" )
+		<< QObject::tr( "Album" )
+		<< QObject::tr( "Duration" ) );
 
 	// Set model
 	this->setModel( this->model_ );
 	QAction * delSong = new QAction( this );
 	delSong->setShortcut( QKeySequence::Delete );
 	this->addAction( delSong );
-	connect( delSong, SIGNAL( triggered() ), this, SLOT( removeSelected_() ) );
+	connect( delSong, SIGNAL( triggered() ), this, SLOT( removeSelectedTracks() ) );
 
 	// Set context menu
 	QMenu * codecs = new QMenu( tr( "Change Text Codec" ), this );
@@ -158,7 +116,7 @@ void SongList::propertiesHelper_() {
 	QModelIndexList selected = this->selectionModel()->selectedRows();
 	if( selected.isEmpty() ) {
 		// no track selected
-		emit this->error( tr( "No track selected!" ), tr( "Please select at least one track." ) );
+		emit this->errorOccured( tr( "No track selected!" ), tr( "Please select at least one track." ) );
 		return;
 	}
 	this->propWidget_->exec( this->getSelectedTracks() );
@@ -167,7 +125,7 @@ void SongList::propertiesHelper_() {
 void SongList::convertHelper_() {
 	QModelIndexList selected = this->selectionModel()->selectedRows();
 	if( selected.isEmpty() ) {
-		emit this->error( tr( "No track selected!" ), tr( "Please select at least one track." ) );
+		emit this->errorOccured( tr( "No track selected!" ), tr( "Please select at least one track." ) );
 		return;
 	}
 
@@ -194,9 +152,6 @@ void SongList::append( const PlayList & playList ) {
 		this->model_->setItem( currentRow, 1, new QStandardItem( playList[row]->getArtist() ) );
 		this->model_->setItem( currentRow, 2, new QStandardItem( playList[row]->getAlbum()->getTitle() ) );
 		this->model_->setItem( currentRow, 3, new QStandardItem( playList[row]->getDuration().toString() ) );
-		//this->model_->setItem( currentRow, 4, new QStandardItem( QString::number( playList[row]->getBitRate() ) ) );
-		//this->model_->setItem( currentRow, 5, new QStandardItem( QString::number( playList[row]->getSampleRate() ) ) );
-		//this->model_->setItem( currentRow, 6, new QStandardItem( QString::number( playList[row]->getChannels() ) ) );
 
 		this->resizeRowToContents( currentRow );
 	}
@@ -228,7 +183,7 @@ void SongList::changeTextCodec_( int mib ) {
 	}
 }
 
-void SongList::removeSelected_() {
+void SongList::removeSelectedTracks() {
 	QModelIndexList selected = this->selectionModel()->selectedRows();
 	std::sort( selected.begin(), selected.end(), ::indexRowCompD );
 	foreach( QModelIndex index, selected ) {

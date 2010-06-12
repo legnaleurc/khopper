@@ -66,27 +66,23 @@ namespace khopper {
 			/**
 			 * @brief Error message
 			 * @param title Error title
-			 * @param errMsg Error masage
+			 * @param message Error masage
 			 */
-			void error( const QString & title, const QString & errMsg );
+			void errorOccured( const QString & title, const QString & message );
 
 		private slots:
 			void play_();
 			void playOrPause_();
 			void stop_();
 			void handleState_( Phonon::State, Phonon::State );
-			//void tick_( qint64 );
-			//void updateTimestamp_( int ms );
 
 		private:
+			void setQueue_( const album::PlayList & );
+
 			std::tr1::shared_ptr< Ui::Player > ui_;
 			Phonon::MediaObject * player_;
-			album::Timestamp currentTimeStamp_;
 			album::Timestamp duration_;
 			album::TrackSP currentTrack_;
-			qint64 currentBeginTime_;
-			qint64 currentEndTime_;
-			bool starting_;
 		};
 
 	}

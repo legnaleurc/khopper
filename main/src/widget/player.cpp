@@ -39,17 +39,14 @@ namespace {
 
 using namespace khopper::widget;
 using khopper::album::PlayList;
+using khopper::album::TrackSP;
 
 Player::Player( QWidget * parent ):
 QWidget( parent, 0 ),
 ui_( new Ui::Player ),
 player_( new Phonon::MediaObject( this ) ),
-//currentTimeStamp_(),
 duration_(),
-currentTrack_()/*,
-currentBeginTime_( -1 ),
-currentEndTime_( -1 ),
-starting_( false )*/ {
+currentTrack_() {
 	this->ui_->setupUi( this );
 
 	// Set player
@@ -63,12 +60,19 @@ starting_( false )*/ {
 	connect( this->ui_->playOrPause, SIGNAL( clicked() ), this, SLOT( playOrPause_() ) );
 	connect( this->ui_->stop, SIGNAL( clicked() ), this, SLOT( stop_() ) );
 
-	//connect( this->ui _->seeker, SIGNAL( dragged( int ) ), this, SLOT( updateTimestamp_( int ) ) );
-
 	connect( this->ui_->songList, SIGNAL( fileDropped( const QList< QUrl > & ) ), this, SIGNAL( fileDropped( const QList< QUrl > & ) ) );
 	connect( this->ui_->songList, SIGNAL( requireConvert( const khopper::album::PlayList & ) ), this, SIGNAL( requireConvert( const khopper::album::PlayList & ) ) );
 	connect( this->ui_->songList, SIGNAL( requirePlay() ), this, SLOT( play_() ) );
-	connect( this->ui_->songList, SIGNAL( error( const QString &, const QString & ) ), this, SIGNAL( error( const QString &, const QString & ) ) );
+	connect( this->ui_->songList, SIGNAL( errorOccured( const QString &, const QString & ) ), this, SIGNAL( errorOccured( const QString &, const QString & ) ) );
+}
+
+void Player::setQueue_( const PlayList & tracks ) {
+	QList< Phonon::MediaSource > queue;
+	foreach( TrackSP track, tracks ) {
+		queue.push_back( new WavWrapper( track->getReader() ) );
+		queue.back().setAutoDelete( true );
+	}
+	this->player_->setQueue( queue );
 }
 
 PlayList Player::getSelectedTracks() const {
@@ -94,23 +98,16 @@ void Player::play_() {
 	if( !tracks.empty() ) {
 		const PlayList selected( this->ui_->songList->getSelectedTracks() );
 		if( selected.empty() ) {
-			this->currentTrack_ = tracks[0];
+			this->setQueue_( tracks );
 		} else {
-			this->currentTrack_ = selected[0];
+			this->setQueue_( selected );
 		}
 
-		this->player_->setCurrentSource( new WavWrapper( this->currentTrack_->getReader() ) );
-		//album::Timestamp startTime = this->currentTrack_->getStartTime();
 		//this->duration_ = this->currentTrack_->getDuration();
-		//this->currentBeginTime_ = startTime.toMillisecond();
-		//this->currentEndTime_ = this->currentBeginTime_ + this->duration_.toMillisecond();
-		//this->ui_->seeker->setRange( this->currentBeginTime_, this->currentEndTime_ );
-		//qDebug() << this->currentBeginTime_ << this->currentEndTime_;
 		// set time display
 		//this->currentTimeStamp_ = album::Timestamp::fromMillisecond( 0 );
 		//this->ui_->passedTime->setText( fromTimestamp( this->currentTimeStamp_ ) );
 		//this->ui_->remainTime->setText( fromTimestamp( this->duration_ ) );
-		this->starting_ = true;
 		this->player_->play();
 	}
 }
@@ -146,7 +143,7 @@ void Player::handleState_( Phonon::State newState, Phonon::State /*oldState*/ ) 
 		this->ui_->playOrPause->setText( tr( "Play" ) );
 		break;
 	case Phonon::ErrorState:
-		emit this->error( tr( "Player error" ), this->player_->errorString() );
+		emit this->errorOccured( tr( "Player error" ), this->player_->errorString() );
 		break;
 	default:
 		;

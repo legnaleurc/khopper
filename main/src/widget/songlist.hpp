@@ -75,8 +75,11 @@ namespace khopper {
 				return this->tracks_.empty();
 			}
 
+		public slots:
+			void removeSelectedTracks();
+
 		signals:
-			void error( const QString & title, const QString & message );
+			void errorOccured( const QString & title, const QString & message );
 			/**
 			 * @brief Emitted when drop an openable file
 			 * @param paths File path
@@ -109,7 +112,6 @@ namespace khopper {
 			void convertHelper_();
 			void dropFiles_();
 			void propertiesHelper_();
-			void removeSelected_();
 
 		private:
 			QStandardItemModel * model_;
