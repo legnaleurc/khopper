@@ -34,27 +34,33 @@
 #include <QtCore/QSet>
 
 namespace khopper {
+
 	namespace album {
 
 		class KHOPPER_DLL PlayList : public QList< TrackSP > {
-		public:
-			typedef Loki::Functor<
-				unsigned int,
-				LOKI_TYPELIST_1( const QUrl & ),
-				Loki::ClassLevelLockable
-			> Verifier;
-			typedef Loki::Functor<
-				PlayList,
-				LOKI_TYPELIST_1( const QUrl & ),
-				Loki::ClassLevelLockable
-			> Creator;
-
-			static PlayList loadFromUri( const QUrl & uri );
-			static void registerPlayList( Verifier v, Creator c );
-			static void unregisterPlayList( Verifier v );
 		};
 
 	}
+
+	namespace plugin {
+
+		typedef Loki::Functor<
+			unsigned int,
+			LOKI_TYPELIST_1( const QUrl & ),
+			Loki::ClassLevelLockable
+		> PlayListVerifier;
+		typedef Loki::Functor<
+			album::PlayList,
+			LOKI_TYPELIST_1( const QUrl & ),
+			Loki::ClassLevelLockable
+		> PlayListCreator;
+
+		album::PlayList KHOPPER_DLL createPlayList( const QUrl & uri );
+		void KHOPPER_DLL registerPlayList( PlayListVerifier v, PlayListCreator c );
+		void KHOPPER_DLL unregisterPlayList( PlayListVerifier v );
+
+	}
+
 }
 
 #endif

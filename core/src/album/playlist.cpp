@@ -28,7 +28,7 @@ namespace {
 	struct Helper {
 		Helper( const QUrl & uri ) : uri( uri ) {
 		}
-		bool operator ()( const khopper::album::PlayListFactoryPrivate::Pair & l, const khopper::album::PlayListFactoryPrivate::Pair & r ) {
+		bool operator ()( const khopper::plugin::PlayListFactoryPrivate::Pair & l, const khopper::plugin::PlayListFactoryPrivate::Pair & r ) {
 			return l.first( this->uri ) < r.first( this->uri );
 		}
 		const QUrl & uri;
@@ -37,18 +37,23 @@ namespace {
 }
 
 using namespace khopper::album;
+using namespace khopper::plugin;
 
-PlayList PlayList::loadFromUri( const QUrl & uri ) {
+PlayList khopper::plugin::createPlayList( const QUrl & uri ) {
 	const std::list< PlayListFactoryPrivate::Pair > & fList( PlayListFactory::Instance().fList );
 
-	return std::max_element( fList.begin(), fList.end(), Helper( uri ) )->second( uri );
+	if( !fList.empty() ) {
+		return std::max_element( fList.begin(), fList.end(), Helper( uri ) )->second( uri );
+	} else {
+		throw khopper::error::SystemError( QObject::tr( "No playlist can be created." ) );
+	}
 }
 
-void PlayList::registerPlayList( Verifier v, Creator c ) {
+void khopper::plugin::registerPlayList( PlayListVerifier v, PlayListCreator c ) {
 	PlayListFactory::Instance().fList.push_back( std::make_pair( v, c ) );
 }
 
-void PlayList::unregisterPlayList( Verifier v ) {
+void khopper::plugin::unregisterPlayList( PlayListVerifier v ) {
 	std::list< PlayListFactoryPrivate::Pair > & fList( PlayListFactory::Instance().fList );
 	for( std::list< PlayListFactoryPrivate::Pair >::iterator it = fList.begin(); it != fList.end(); ++it ) {
 		if( it->first == v ) {

@@ -30,10 +30,10 @@
 #include <utility>
 
 namespace khopper {
-	namespace album {
+	namespace plugin {
 
 		struct PlayListFactoryPrivate {
-			typedef std::pair< PlayList::Verifier, PlayList::Creator > Pair;
+			typedef std::pair< PlayListVerifier, PlayListCreator > Pair;
 
 			std::list< Pair > fList;
 		};

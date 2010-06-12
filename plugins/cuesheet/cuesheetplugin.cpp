@@ -74,9 +74,9 @@ AbstractPlugin() {
 }
 
 void CueSheetPlugin::doInstall() {
-	PlayList::registerPlayList( verifier, creator );
+	registerPlayList( verifier, creator );
 }
 
 void CueSheetPlugin::doUninstall() {
-	PlayList::unregisterPlayList( verifier );
+	unregisterPlayList( verifier );
 }

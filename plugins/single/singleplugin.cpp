@@ -60,9 +60,9 @@ AbstractPlugin() {
 }
 
 void SinglePlugin::doInstall() {
-	PlayList::registerPlayList( verifier, creator );
+	registerPlayList( verifier, creator );
 }
 
 void SinglePlugin::doUninstall() {
-	PlayList::unregisterPlayList( verifier );
+	unregisterPlayList( verifier );
 }

@@ -39,6 +39,7 @@
 using namespace khopper::widget;
 using khopper::album::PlayList;
 using khopper::error::BaseError;
+using khopper::plugin::createPlayList;
 
 MainWindow::MainWindow():
 QMainWindow( 0, 0 ),
@@ -102,7 +103,7 @@ void MainWindow::open( const QList< QUrl > & uris ) {
 		}
 
 		try {
-			tracks.append( PlayList::loadFromUri( uri ) );
+			tracks.append( createPlayList( uri ) );
 		} catch( BaseError & e ) {
 			this->showErrorMessage_( tr( "Can not decode this file!" ), e.getMessage() );
 		}
