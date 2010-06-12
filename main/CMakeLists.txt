@@ -27,7 +27,6 @@ set(KHOPPER_MAIN_MOC_HEADERS
     src/widget/preference.hpp
     src/widget/progress.hpp
     src/widget/propertieswidget.hpp
-    src/widget/seekslider.hpp
     src/widget/songlist.hpp)
 
 qt4_wrap_cpp(KHOPPER_MAIN_MOC_SOURCES ${KHOPPER_MAIN_MOC_HEADERS})

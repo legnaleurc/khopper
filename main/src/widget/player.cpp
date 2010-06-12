@@ -20,7 +20,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "player.hpp"
-#include "seekslider.hpp"
 #include "songlist.hpp"
 #include "wavwrapper.hpp"
 
