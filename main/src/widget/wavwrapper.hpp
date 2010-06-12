@@ -34,8 +34,8 @@ namespace khopper {
 			explicit WavWrapper( codec::ReaderSP reader );
 
 			virtual bool atEnd() const;
-			virtual bool open( OpenMode mode );
 			virtual void close();
+			virtual bool open( OpenMode mode );
 			virtual bool seek( qint64 pos );
 			virtual qint64 size() const;
 

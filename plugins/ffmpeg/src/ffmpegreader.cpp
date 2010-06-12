@@ -78,11 +78,6 @@ bool FfmpegReader::atEnd() const {
 	return this->eof_;
 }
 
-qint64 FfmpegReader::pos() const {
-	qDebug() << this->AbstractReader::pos();
-	return this->curPos_;
-}
-
 qint64 FfmpegReader::size() const {
 	if( !this->isOpen() ) {
 		return 0;

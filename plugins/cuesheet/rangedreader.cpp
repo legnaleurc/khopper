@@ -21,6 +21,18 @@
  */
 #include "rangedreader.hpp"
 
+namespace {
+
+	inline static qint64 posFromMs( qint64 ms, const QAudioFormat & format ) {
+		return ms * format.frequency() * format.channels() * format.sampleSize() / 8 / 1000;
+	}
+
+	inline static qint64 msFromPos( qint64 pos, const QAudioFormat & format ) {
+		return pos * 8 * 1000 / format.frequency() / format.channels() / format.sampleSize();
+	}
+
+}
+
 using namespace khopper::codec;
 using khopper::plugin::createReader;
 
@@ -37,18 +49,13 @@ bool RangedReader::atEnd() const {
 	return this->client_->atEnd();
 }
 
-qint64 RangedReader::pos() const {
-	return this->client_->pos() - this->msBegin_;
-}
-
 void RangedReader::setRange( qint64 msBegin, qint64 msDuration ) {
 	this->msBegin_ = msBegin;
 	this->msDuration_ = msDuration;
-	this->setDuration( msDuration );
 }
 
 qint64 RangedReader::size() const {
-	return this->msDuration_;
+	return posFromMs( this->msDuration_, this->getAudioFormat() );
 }
 
 void RangedReader::doOpen() {
@@ -67,7 +74,7 @@ void RangedReader::doOpen() {
 	this->setTitle( this->client_->getTitle() );
 	this->setYear( this->client_->getYear() );
 
-	this->client_->seek( this->msBegin_ );
+	this->client_->seek( posFromMs( this->msBegin_, this->getAudioFormat() ) );
 }
 
 void RangedReader::doClose() {
@@ -77,26 +84,30 @@ void RangedReader::doClose() {
 	this->client_->close();
 }
 
-QByteArray RangedReader::readFrame() {
-	int unit = this->getAudioFormat().frequency() * this->getAudioFormat().channels() * this->getAudioFormat().sampleSize();
-	QByteArray frame( this->client_->read( unit ) );
-	qint64 msDuration = frame.size() * 1000 / unit;
-	qint64 msBegin = this->pos() - msDuration;
+qint64 RangedReader::readData( char * data, qint64 maxSize ) {
+	qint64 frameBegin = this->client_->pos();
+	QByteArray frame( this->client_->read( maxSize ) );
+	qint64 frameLength = frame.size();
+	qint64 begin = posFromMs( this->msBegin_, this->getAudioFormat() );
+	qint64 length = posFromMs( this->msDuration_, this->getAudioFormat() );
 
-	qint64 begin = 0, duration = -1;
+	qint64 bufferBegin = 0, bufferLength = frameLength;
 	
-	if( msBegin < this->msBegin_ && msBegin + msDuration >= this->msBegin_ ) {
-		begin = ( this->msBegin_ - msBegin ) * unit / 1000;
+	if( frameBegin < begin && frameBegin + frameLength >= begin ) {
+		bufferBegin = ( begin - frameBegin );
 	}
-	if( msBegin < this->msBegin_ + this->msDuration_ && msBegin + msDuration >= this->msBegin_ + this->msDuration_ ) {
-		duration = ( ( msBegin + msDuration ) - ( this->msBegin_ + this->msDuration_ ) ) * unit / 1000;
+	if( frameBegin < begin + length && frameBegin + frameLength >= begin + length ) {
+		bufferLength = ( ( frameBegin + frameLength ) - ( begin + length ) );
 	}
-	return frame.mid( begin, duration );
+	std::memcpy( data, frame.constData() + bufferBegin, bufferLength );
+	return bufferLength;
 }
 
-bool RangedReader::seekFrame( qint64 msPos ) {
-	if( msPos >= this->msBegin_ && this->msBegin_ + msPos < this->msDuration_ ) {
-		return this->client_->seek( this->msBegin_ + msPos );
+bool RangedReader::seek( qint64 pos ) {
+	qint64 begin = posFromMs( this->msBegin_, this->getAudioFormat() );
+	qint64 length = posFromMs( this->msDuration_, this->getAudioFormat() );
+	if( pos >= begin && begin + pos < length ) {
+		return this->client_->seek( begin + pos );
 	}
 	return false;
 }

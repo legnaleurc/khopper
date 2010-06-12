@@ -23,9 +23,11 @@
 
 using namespace khopper::album;
 using khopper::codec::ReaderSP;
+using khopper::codec::RangedReader;
 
-CueSheetTrack::CueSheetTrack( ReaderSP reader ):
-Track( reader ) {
+CueSheetTrack::CueSheetTrack( RangedReader * reader ):
+Track( ReaderSP( reader ) ),
+reader_( reader ) {
 }
 
 const QStringList & CueSheetTrack::getComments() const {
@@ -34,6 +36,10 @@ const QStringList & CueSheetTrack::getComments() const {
 
 const QStringList & CueSheetTrack::getGarbage() const {
 	return this->garbage_;
+}
+
+RangedReader * CueSheetTrack::getRangedReader() const {
+	return this->reader_;
 }
 
 const Timestamp & CueSheetTrack::getStartTime() const {

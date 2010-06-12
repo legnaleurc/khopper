@@ -47,12 +47,10 @@ namespace khopper {
 			explicit FfmpegReader( const QUrl & uri );
 
 			virtual bool atEnd() const;
-			virtual qint64 pos() const;
 			virtual bool seek( qint64 pos );
 			virtual qint64 size() const;
 
 		protected:
-			//virtual bool seekFrame( qint64 msPos );
 			virtual void doOpen();
 			virtual void doClose();
 			virtual qint64 readData( char * data, qint64 maxSize );

@@ -22,6 +22,8 @@
 #ifndef KHOPPER_ALBUM_CUESHEETTRACK_HPP
 #define KHOPPER_ALBUM_CUESHEETTRACK_HPP
 
+#include "rangedreader.hpp"
+
 #include "khopper/track.hpp"
 
 #include <QtCore/QStringList>
@@ -31,10 +33,11 @@ namespace khopper {
 
 		class CueSheetTrack : public Track {
 		public:
-			explicit CueSheetTrack( codec::ReaderSP reader );
+			explicit CueSheetTrack( codec::RangedReader * reader );
 
 			const QStringList & getComments() const;
 			const QStringList & getGarbage() const;
+			codec::RangedReader * getRangedReader() const;
 			const Timestamp & getStartTime() const;
 
 			void setComments( const QStringList & comments );
@@ -54,6 +57,7 @@ namespace khopper {
 			QString isrc_;
 			Timestamp postgap_;
 			Timestamp pregap_;
+			codec::RangedReader * reader_;
 			Timestamp startTime_;
 		};
 

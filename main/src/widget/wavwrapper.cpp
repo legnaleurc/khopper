@@ -36,6 +36,11 @@ bool WavWrapper::atEnd() const {
 	return this->QIODevice::atEnd() || this->reader_->atEnd();
 }
 
+void WavWrapper::close() {
+	this->QIODevice::close();
+	this->reader_->close();
+}
+
 bool WavWrapper::open( OpenMode mode ) {
 	bool ret = this->QIODevice::open( mode );
 	ret &= this->reader_->open( mode );
@@ -63,11 +68,6 @@ bool WavWrapper::open( OpenMode mode ) {
 	std::memcpy( this->header_.data() + 40, &dword, sizeof( dword ) );
 
 	return ret;
-}
-
-void WavWrapper::close() {
-	this->QIODevice::close();
-	this->reader_->close();
 }
 
 bool WavWrapper::seek( qint64 pos ) {

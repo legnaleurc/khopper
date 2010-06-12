@@ -96,20 +96,33 @@ void FlacReader::doClose() {
 	this->offset_ = 0;
 }
 
-bool FlacReader::seekFrame( qint64 ms ) {
-	FLAC__uint64 ts = ms * this->getAudioFormat().frequency() / 1000;
-	FLAC__bool ok = FLAC__stream_decoder_seek_absolute( this->pFD_.get(), ts );
-	if( ok ) {
-		this->offset_ = ts;
+bool FlacReader::seek( qint64 pos ) {
+	bool ret = this->AbstractReader::seek( pos );
+	FLAC__bool ok = FLAC__stream_decoder_seek_absolute( this->pFD_.get(), pos );
+	if( ok && ret ) {
+		this->offset_ = pos;
+		this->buffer_.clear();
 	}
-	return ok;
+	return ok && ret;
 }
 
-QByteArray FlacReader::readFrame() {
-	//stop = false;
+qint64 FlacReader::size() const {
+	return FLAC__stream_decoder_get_total_samples( this->pFD_.get() );
+}
+
+qint64 FlacReader::readData( char * data, qint64 maxSize ) {
+	while( !this->atEnd() && this->buffer_.size() < maxSize ) {
+		this->buffer_.append( this->readFrame_() );
+	}
+	maxSize = qMin( maxSize, static_cast< qint64 >( this->buffer_.size() ) );
+	std::memcpy( data, this->buffer_, maxSize );
+	this->buffer_.remove( 0, maxSize );
+	return maxSize;
+}
+
+QByteArray FlacReader::readFrame_() {
 	FLAC__bool ok = FLAC__stream_decoder_process_single( this->pFD_.get() );
-	if( !ok || FLAC__stream_decoder_get_state( this->pFD_.get() ) == FLAC__STREAM_DECODER_END_OF_STREAM ) {
-		//stop = true;
+	if( !ok || this->atEnd() ) {
 		return QByteArray();
 	} else {
 		return this->buffer_;
@@ -126,7 +139,7 @@ void FlacReader::parseVorbisComments_( const FLAC__StreamMetadata_VorbisComment 
 		if( it.key() == "TITLE" ) {
 			this->setTitle( QStringList( tags.values( it.key() ) ).join( " & " ).toUtf8().constData() );
 		} else if( it.key() == "ALBUM" ) {
-			this->setAlbum( QStringList( tags.values( it.key() ) ).join( " & " ).toUtf8().constData() );
+			this->setAlbumTitle( QStringList( tags.values( it.key() ) ).join( " & " ).toUtf8().constData() );
 		} else if( it.key() == "TRACKNUMBER" ) {
 			this->setIndex( it.value().toInt() );
 		} else if( it.key() == "ARTIST" ) {
@@ -196,50 +209,43 @@ FLAC__StreamDecoderWriteStatus FlacReader::writeCallback_(
 	const FLAC__int32 * const buffer[],
 	void * client_data ) {
 	FlacReader * self = static_cast< FlacReader * >( client_data );
-	self->buffer_.clear();
 
 	unsigned int decoded = 0;
 	for( unsigned int i = 0; i < frame->header.blocksize; ++i ) {
 		uint64_t ts = static_cast< uint64_t >( self->offset_ + i ) * 1000 / frame->header.sample_rate;
-		//if( self->afterBegin( ts ) ) {
-			//if( self->afterEnd( ts ) ) {
-			//	return FLAC__STREAM_DECODER_WRITE_STATUS_ABORT;
-			//}
-			for( unsigned int c = 0; c < frame->header.channels; ++c ) {
-				const uint8_t * tmp = static_cast< const uint8_t * >( static_cast< const void * >( &buffer[c][i] ) );
-				switch( frame->header.bits_per_sample ) {
-				case 8:
+		for( unsigned int c = 0; c < frame->header.channels; ++c ) {
+			const uint8_t * tmp = static_cast< const uint8_t * >( static_cast< const void * >( &buffer[c][i] ) );
+			switch( frame->header.bits_per_sample ) {
+			case 8:
 #if Q_BYTE_ORDER == Q_LITTLE_ENDIAN
-					self->buffer_.push_back( tmp[0] );
+				self->buffer_.push_back( tmp[0] );
 #else
-					self->buffer_.push_back( tmp[3] );
+				self->buffer_.push_back( tmp[3] );
 #endif
-					break;
-				case 16:
+				break;
+			case 16:
 #if Q_BYTE_ORDER == Q_LITTLE_ENDIAN
-					self->buffer_.push_back( tmp[0] );
-					self->buffer_.push_back( tmp[1] );
+				self->buffer_.push_back( tmp[0] );
+				self->buffer_.push_back( tmp[1] );
 #else
-					self->buffer_.push_back( tmp[2] );
-					self->buffer_.push_back( tmp[3] );
+				self->buffer_.push_back( tmp[2] );
+				self->buffer_.push_back( tmp[3] );
 #endif
-					break;
-				case 32:
-					self->buffer_.push_back( tmp[0] );
-					self->buffer_.push_back( tmp[1] );
-					self->buffer_.push_back( tmp[2] );
-					self->buffer_.push_back( tmp[3] );
-					break;
-				default:
-					throw error::CodecError( "Unsupported sample resolution (from khopper::codec::FlacReader)" );
-				}
-			//}
+				break;
+			case 32:
+				self->buffer_.push_back( tmp[0] );
+				self->buffer_.push_back( tmp[1] );
+				self->buffer_.push_back( tmp[2] );
+				self->buffer_.push_back( tmp[3] );
+				break;
+			default:
+				throw error::CodecError( "Unsupported sample resolution (from khopper::codec::FlacReader)" );
+			}
 			++decoded;
 		}
 	}
 
 	self->offset_ += decoded;
-	//self->msDecoded_ = decoded * 1000LL / frame->header.sample_rate;
 
 	return FLAC__STREAM_DECODER_WRITE_STATUS_CONTINUE;
 }

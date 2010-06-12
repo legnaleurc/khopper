@@ -36,20 +36,21 @@ namespace khopper {
 
 			virtual bool atEnd() const;
 			virtual qint64 pos() const;
+			virtual bool seek( qint64 pos );
+			virtual qint64 size() const;
 
 		protected:
-			virtual QByteArray readFrame();
-			virtual bool seekFrame( qint64 msPos );
+			virtual qint64 readData( char * data, qint64 maxSize );
 			virtual void doOpen();
 			virtual void doClose();
 
 		private:
-
 			static void metadataCallback_( const FLAC__StreamDecoder *, const FLAC__StreamMetadata *, void * );
 			static FLAC__StreamDecoderWriteStatus writeCallback_( const FLAC__StreamDecoder *, const FLAC__Frame *, const FLAC__int32 * const [], void * );
 			static void errorCallback_( const FLAC__StreamDecoder *, FLAC__StreamDecoderErrorStatus, void * );
 
 			void parseVorbisComments_( const FLAC__StreamMetadata_VorbisComment & );
+			QByteArray readFrame_();
 
 			std::tr1::shared_ptr< FLAC__StreamDecoder > pFD_;
 			QByteArray buffer_;

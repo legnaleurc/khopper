@@ -146,7 +146,7 @@ void CueSheetParser::parseFlags_( const QString & flag ) {
 }
 
 void CueSheetParser::parseIndex_( const QString & type, const QString & num, const QString & m, const QString & s, const QString & f ) {
-	Timestamp tmp( m.toInt(), s.toShort(), f.toShort() / 75.0 * 100 );
+	Timestamp tmp( m.toInt(), s.toShort(), f.toInt() * 1000 / 75 );
 
 	if( type == "INDEX" ) {
 		short int n = num.toShort();
@@ -155,6 +155,7 @@ void CueSheetParser::parseIndex_( const QString & type, const QString & num, con
 			// starting time of pregap
 			if( this->trackIndex_ > 1 ) {
 				this->previousTrack_->setDuration( tmp - this->previousTrack_->getStartTime() );
+				this->previousTrack_->getRangedReader()->setRange( this->previousTrack_->getStartTime().toMillisecond(), this->previousTrack_->getDuration().toMillisecond() );
 			}
 			break;
 		case 1:
@@ -162,6 +163,7 @@ void CueSheetParser::parseIndex_( const QString & type, const QString & num, con
 			this->currentTrack_->setStartTime( tmp );
 			if( this->trackIndex_ > 1 && this->previousTrack_->getDuration().isZero() ) {
 				this->previousTrack_->setDuration( this->currentTrack_->getStartTime() - this->previousTrack_->getStartTime() );
+				this->previousTrack_->getRangedReader()->setRange( this->previousTrack_->getStartTime().toMillisecond(), this->previousTrack_->getDuration().toMillisecond() );
 			}
 			break;
 		default:
@@ -189,7 +191,7 @@ void CueSheetParser::parseComment_( const QString & key, const QString & value )
 
 void CueSheetParser::parseTrack_( const QString & num, const QString & type ) {
 	this->previousTrack_ = this->currentTrack_;
-	this->currentTrack_.reset( new CueSheetTrack( ReaderSP( new RangedReader( QUrl::fromLocalFile( this->currentFilePath_ ) ) ) ) );
+	this->currentTrack_.reset( new CueSheetTrack( new RangedReader( QUrl::fromLocalFile( this->currentFilePath_ ) ) ) );
 
 	this->trackIndex_ = num.toUInt();
 	this->currentTrack_->setIndex( num.toShort() );
@@ -228,6 +230,7 @@ void CueSheetParser::updateLastTrack_() {
 		}
 
 		this->currentTrack_->setDuration( Timestamp::fromMillisecond( decoder->getDuration() ) - this->currentTrack_->getStartTime() );
+		this->currentTrack_->getRangedReader()->setRange( this->currentTrack_->getStartTime().toMillisecond(), this->currentTrack_->getDuration().toMillisecond() );
 
 		decoder->close();
 	}

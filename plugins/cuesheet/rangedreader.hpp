@@ -32,15 +32,14 @@ namespace khopper {
 			explicit RangedReader( const QUrl & uri );
 
 			virtual bool atEnd() const;
-			virtual qint64 pos() const;
+			bool seek( qint64 pos );
 			void setRange( qint64 msBegin, qint64 msDuration );
 			virtual qint64 size() const;
 
 		protected:
 			virtual void doOpen();
 			virtual void doClose();
-			virtual QByteArray readFrame();
-			virtual bool seekFrame( qint64 msPos );
+			virtual qint64 readData( char * data, qint64 maxSize );
 
 		private:
 			ReaderSP client_;
