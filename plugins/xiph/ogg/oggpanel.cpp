@@ -77,8 +77,10 @@ WriterSP OggPanel::createWriter( const QUrl & uri ) const {
 		qDebug( "%d\n", id );
 	}
 
-	//tmp->setChannels( this->ui_->channels->itemData( this->ui_->channels->currentIndex() ).toInt() );
-	//tmp->setSampleRate( this->ui_->sampleRate->itemData( this->ui_->sampleRate->currentIndex() ).toInt() );
+	if( this->ui_->custom->isChecked() ) {
+		//tmp->setChannels( this->ui_->channels->itemData( this->ui_->channels->currentIndex() ).toInt() );
+		//tmp->setSampleRate( this->ui_->sampleRate->itemData( this->ui_->sampleRate->currentIndex() ).toInt() );
+	}
 
 	return tmp;
 }
