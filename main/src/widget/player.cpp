@@ -20,7 +20,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "player.hpp"
-#include "songlist.hpp"
+#include "playlistview.hpp"
 #include "wavwrapper.hpp"
 
 #include "ui_player.h"
@@ -59,10 +59,10 @@ currentTrack_() {
 	connect( this->ui_->playOrPause, SIGNAL( clicked() ), this, SLOT( playOrPause_() ) );
 	connect( this->ui_->stop, SIGNAL( clicked() ), this, SLOT( stop_() ) );
 
-	connect( this->ui_->songList, SIGNAL( fileDropped( const QList< QUrl > & ) ), this, SIGNAL( fileDropped( const QList< QUrl > & ) ) );
-	connect( this->ui_->songList, SIGNAL( requireConvert( const khopper::album::PlayList & ) ), this, SIGNAL( requireConvert( const khopper::album::PlayList & ) ) );
-	connect( this->ui_->songList, SIGNAL( requirePlay() ), this, SLOT( play_() ) );
-	connect( this->ui_->songList, SIGNAL( errorOccured( const QString &, const QString & ) ), this, SIGNAL( errorOccured( const QString &, const QString & ) ) );
+	connect( this->ui_->playListView, SIGNAL( fileDropped( const QList< QUrl > & ) ), this, SIGNAL( fileDropped( const QList< QUrl > & ) ) );
+	connect( this->ui_->playListView, SIGNAL( requireConvert( const khopper::album::PlayList & ) ), this, SIGNAL( requireConvert( const khopper::album::PlayList & ) ) );
+	connect( this->ui_->playListView, SIGNAL( requirePlay() ), this, SLOT( play_() ) );
+	connect( this->ui_->playListView, SIGNAL( errorOccured( const QString &, const QString & ) ), this, SIGNAL( errorOccured( const QString &, const QString & ) ) );
 }
 
 void Player::setQueue_( const PlayList & tracks ) {
@@ -75,15 +75,15 @@ void Player::setQueue_( const PlayList & tracks ) {
 }
 
 PlayList Player::getSelectedTracks() const {
-	return this->ui_->songList->getSelectedTracks();
+	return this->ui_->playListView->getSelectedTracks();
 }
 
 const PlayList & Player::getTracks() const {
-	return this->ui_->songList->getTracks();
+	return this->ui_->playListView->getTracks();
 }
 
 void Player::append( const PlayList & playList ) {
-	this->ui_->songList->append( playList );
+	this->ui_->playListView->append( playList );
 }
 
 void Player::play_() {
@@ -92,10 +92,10 @@ void Player::play_() {
 		return;
 	}
 
-	const PlayList & tracks( this->ui_->songList->getTracks() );
+	const PlayList & tracks( this->ui_->playListView->getTracks() );
 
 	if( !tracks.empty() ) {
-		const PlayList selected( this->ui_->songList->getSelectedTracks() );
+		const PlayList selected( this->ui_->playListView->getSelectedTracks() );
 		if( selected.empty() ) {
 			this->setQueue_( tracks );
 		} else {

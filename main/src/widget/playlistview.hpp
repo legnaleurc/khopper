@@ -1,5 +1,5 @@
 /**
- * @file songlist.hpp
+ * @file playlistview.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -42,7 +42,7 @@ namespace khopper {
 		/**
 		 * @brief The song list view in the center widget
 		 */
-		class SongList : public QTableView {
+		class PlayListView : public QTableView {
 			Q_OBJECT
 
 		public:
@@ -50,7 +50,7 @@ namespace khopper {
 			 * @brief Default constructor
 			 * @param [in] parent Parent widget
 			 */
-			explicit SongList( QWidget * parent );
+			explicit PlayListView( QWidget * parent );
 
 			/**
 			 * @brief Append tracks to the song list

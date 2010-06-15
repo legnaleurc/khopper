@@ -35,9 +35,6 @@ namespace khopper {
 
 	namespace widget {
 
-		class SeekSlider;
-		class SongList;
-
 		/// Audio player
 		class Player : public QWidget {
 			Q_OBJECT

@@ -39,7 +39,7 @@
     </layout>
    </item>
    <item>
-    <widget class="khopper::widget::SongList" name="songList"/>
+    <widget class="khopper::widget::PlayListView" name="playListView"/>
    </item>
   </layout>
  </widget>
@@ -56,9 +56,9 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>khopper::widget::SongList</class>
+   <class>khopper::widget::PlayListView</class>
    <extends>QTableView</extends>
-   <header>songlist.hpp</header>
+   <header>playlistview.hpp</header>
   </customwidget>
  </customwidgets>
  <resources/>
