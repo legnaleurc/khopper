@@ -21,6 +21,8 @@
  */
 #include "rangedreader.hpp"
 
+#include <cstring>
+
 namespace {
 
 	inline static qint64 posFromMs( qint64 ms, const QAudioFormat & format ) {

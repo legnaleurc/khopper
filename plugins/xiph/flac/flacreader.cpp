@@ -27,6 +27,8 @@
 #include <QtCore/QStringList>
 #include <QtDebug>
 
+#include <cstring>
+
 namespace {
 
 	static inline FILE * fileHelper( const QUrl & uri ) {
