@@ -77,6 +77,7 @@ currentTrack_() {
 	connect( this->ui_->playListView, SIGNAL( fileDropped( const QList< QUrl > & ) ), this, SIGNAL( fileDropped( const QList< QUrl > & ) ) );
 	connect( this->ui_->playListView, SIGNAL( requireConvert() ), this, SLOT( convertHelper_() ) );
 	connect( this->ui_->playListView, SIGNAL( requirePlay() ), this, SLOT( play_() ) );
+	connect( this->ui_->playListView, SIGNAL( requireProperty( const QModelIndex & ) ), this, SLOT( propertyHelper_( const QModelIndex & ) ) );
 	connect( this->ui_->playListView, SIGNAL( errorOccured( const QString &, const QString & ) ), this, SIGNAL( errorOccured( const QString &, const QString & ) ) );
 }
 
@@ -153,6 +154,10 @@ void Player::playOrPause_() {
 		this->ui_->playOrPause->setText( tr( "Play" ) );
 		this->player_->pause();
 	}
+}
+
+void Player::propertyHelper_( const QModelIndex & index ) {
+	this->prop_->exec( this->model_->getPlayList()[index.row()] );
 }
 
 void Player::handleState_( Phonon::State newState, Phonon::State /*oldState*/ ) {

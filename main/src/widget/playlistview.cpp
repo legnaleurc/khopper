@@ -41,7 +41,8 @@ using khopper::album::PlayList;
 PlayListView::PlayListView( QWidget * parent ):
 QTableView( parent ),
 contextMenu_( new QMenu( this ) ),
-droppingFiles_() {
+droppingFiles_(),
+cmPos_() {
 	// Set drag and drop
 	this->setAcceptDrops( true );
 
@@ -71,7 +72,7 @@ droppingFiles_() {
 	this->contextMenu_->addSeparator();
 
 	QAction * properties = new QAction( tr( "Properties" ), this );
-	connect( properties, SIGNAL( triggered() ), this, SIGNAL( requireProperty() ) );
+	connect( properties, SIGNAL( triggered() ), this, SLOT( propertyHelper_() ) );
 	this->contextMenu_->addAction( properties );
 
 	this->contextMenu_->addSeparator();
@@ -81,6 +82,10 @@ droppingFiles_() {
 	connect( convert, SIGNAL( triggered() ), this, SIGNAL( requireConvert() ) );
 	this->addAction( convert );
 	this->contextMenu_->addAction( convert );
+}
+
+void PlayListView::propertyHelper_() {
+	emit this->requireProperty( this->indexAt( this->cmPos_ ) );
 }
 
 //void PlayListView::changeTextCodec_( int mib ) {
@@ -110,6 +115,7 @@ droppingFiles_() {
 void PlayListView::contextMenuEvent( QContextMenuEvent * event ) {
 	QModelIndex index( this->indexAt( event->pos() ) );
 	if( index.isValid() ) {
+		this->cmPos_ = event->pos();
 		this->contextMenu_->exec( event->globalPos() );
 	}
 }

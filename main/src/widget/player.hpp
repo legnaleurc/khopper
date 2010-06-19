@@ -25,6 +25,7 @@
 #include "khopper/playlist.hpp"
 
 #include <Phonon/MediaObject>
+#include <QtCore/QModelIndex>
 #include <QtGui/QWidget>
 
 namespace Ui {
@@ -74,6 +75,7 @@ namespace khopper {
 			void convertHelper_();
 			void play_();
 			void playOrPause_();
+			void propertyHelper_( const QModelIndex & );
 			void stop_();
 			void handleState_( Phonon::State, Phonon::State );
 

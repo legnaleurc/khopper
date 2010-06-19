@@ -63,7 +63,7 @@ namespace khopper {
 			 * @todo Add parameter.
 			 */
 			void requirePlay();
-			void requireProperty();
+			void requireProperty( const QModelIndex & index );
 
 		protected:
 			/// See the documention of Qt toolkit
@@ -80,10 +80,12 @@ namespace khopper {
 		private slots:
 			//void changeTextCodec_( int );
 			void dropFiles_();
+			void propertyHelper_();
 
 		private:
 			QMenu * contextMenu_;
 			QList< QUrl > droppingFiles_;
+			QPoint cmPos_;
 		};
 
 	}
