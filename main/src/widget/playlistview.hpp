@@ -24,9 +24,6 @@
 
 #include "khopper/playlist.hpp"
 
-#include <QtCore/QList>
-#include <QtCore/QUrl>
-#include <QtGui/QStandardItemModel>
 #include <QtGui/QTableView>
 
 namespace khopper {
@@ -36,8 +33,6 @@ namespace khopper {
 	}
 
 	namespace widget {
-
-		class PropertiesWidget;
 
 		/**
 		 * @brief The song list view in the center widget
@@ -52,32 +47,6 @@ namespace khopper {
 			 */
 			explicit PlayListView( QWidget * parent );
 
-			/**
-			 * @brief Append tracks to the song list
-			 * @param [in] tracks Tracks
-			 */
-			void append( const album::PlayList & playList );
-			/**
-			 * @brief Get all tracks
-			 */
-			const album::PlayList & getTracks() const {
-				return this->tracks_;
-			}
-			/**
-			 * @brief Get selected tracks
-			 *
-			 * The cost may be expansive.
-			 */
-			album::PlayList getSelectedTracks() const;
-
-			/// Test if no track
-			bool isEmpty() const {
-				return this->tracks_.empty();
-			}
-
-		public slots:
-			void removeSelectedTracks();
-
 		signals:
 			void errorOccured( const QString & title, const QString & message );
 			/**
@@ -88,12 +57,13 @@ namespace khopper {
 			/**
 			 * @brief Emitted when convert action is required.
 			 */
-			void requireConvert( const khopper::album::PlayList & tracks );
+			void requireConvert();
 			/**
 			 * @brief Emitted when play is required.
 			 * @todo Add parameter.
 			 */
 			void requirePlay();
+			void requireProperty();
 
 		protected:
 			/// See the documention of Qt toolkit
@@ -108,16 +78,11 @@ namespace khopper {
 			virtual void mouseDoubleClickEvent( QMouseEvent * event );
 
 		private slots:
-			void changeTextCodec_( int );
-			void convertHelper_();
+			//void changeTextCodec_( int );
 			void dropFiles_();
-			void propertiesHelper_();
 
 		private:
-			QStandardItemModel * model_;
 			QMenu * contextMenu_;
-			PropertiesWidget * propWidget_;
-			album::PlayList tracks_;
 			QList< QUrl > droppingFiles_;
 		};
 

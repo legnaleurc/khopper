@@ -35,6 +35,9 @@ namespace khopper {
 
 	namespace widget {
 
+		class PlayListModel;
+		class PropertyDialog;
+
 		/// Audio player
 		class Player : public QWidget {
 			Q_OBJECT
@@ -59,7 +62,7 @@ namespace khopper {
 			/**
 			 * @brief Emmited when convert action is required.
 			 */
-			void requireConvert( const khopper::album::PlayList & );
+			void requireConvert( const khopper::album::PlayList & playList );
 			/**
 			 * @brief Error message
 			 * @param title Error title
@@ -68,6 +71,7 @@ namespace khopper {
 			void errorOccured( const QString & title, const QString & message );
 
 		private slots:
+			void convertHelper_();
 			void play_();
 			void playOrPause_();
 			void stop_();
@@ -77,7 +81,9 @@ namespace khopper {
 			void setQueue_( const album::PlayList & );
 
 			std::tr1::shared_ptr< Ui::Player > ui_;
+			PlayListModel * model_;
 			Phonon::MediaObject * player_;
+			PropertyDialog * prop_;
 			album::Timestamp duration_;
 			album::TrackSP currentTrack_;
 		};

@@ -1,5 +1,5 @@
 /**
- * @file propertieswidget.hpp
+ * @file propertydialog.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,42 +19,38 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_WIDGET_PROPERTIESWIDGET_HPP
-#define KHOPPER_WIDGET_PROPERTIESWIDGET_HPP
+#ifndef KHOPPER_WIDGET_PROPERTYDIALOG_HPP
+#define KHOPPER_WIDGET_PROPERTYDIALOG_HPP
 
-#include "khopper/playlist.hpp"
+#include "khopper/track.hpp"
 
 #include <QtGui/QDialog>
+#include <QtGui/QAbstractButton>
 
-class QAbstractButton;
-class QDialogButtonBox;
-class QGridLayout;
-class QLineEdit;
+namespace Ui {
+	class PropertyDialog;
+}
 
 namespace khopper {
 	namespace widget {
-		class PropertiesWidget : public QDialog {
+		class PropertyDialog : public QDialog {
 			Q_OBJECT
 
 		public:
-			explicit PropertiesWidget( QWidget * parent );
+			explicit PropertyDialog( QWidget * parent );
 
 			using QDialog::exec;
-			int exec( const album::PlayList & tracks );
+			int exec( album::TrackSP track );
 
 		private slots:
 			void perform_( QAbstractButton * );
 
 		private:
-			void initFieldLayout_( QGridLayout * );
 			void write_();
 
-			QLineEdit * albumInput_;
-			QLineEdit * artistInput_;
-			QDialogButtonBox * buttonBox_;
-			QLineEdit * titleInput_;
+			std::tr1::shared_ptr< Ui::PropertyDialog > ui_;
 		};
 	}
 }
 
-#endif // KHOPPER_WIDGET_PROPERTIESWIDGET_HPP
+#endif

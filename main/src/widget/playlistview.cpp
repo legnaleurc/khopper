@@ -20,7 +20,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "playlistview.hpp"
-#include "propertieswidget.hpp"
 
 #include "khopper/playlist.hpp"
 
@@ -36,45 +35,17 @@
 #include <QtGui/QDropEvent>
 #include <QtGui/QMenu>
 
-#include <algorithm>
-
-namespace {
-
-	inline bool indexRowCompD( const QModelIndex & l, const QModelIndex & r ) {
-		return l.row() > r.row();
-	}
-
-}
-
 using namespace khopper::widget;
 using khopper::album::PlayList;
 
 PlayListView::PlayListView( QWidget * parent ):
 QTableView( parent ),
-model_( new QStandardItemModel( this ) ),
 contextMenu_( new QMenu( this ) ),
-propWidget_( new PropertiesWidget( this ) ),
-tracks_(),
 droppingFiles_() {
 	// Set drag and drop
 	this->setAcceptDrops( true );
 
-	// Set selection behavior
-	this->setSelectionBehavior( SelectRows );
-	this->setEditTriggers( NoEditTriggers );
-
-	this->setWordWrap( false );
-	this->setShowGrid( false );
-
-	// Set header
-	this->model_->setHorizontalHeaderLabels( QStringList()
-		<< QObject::tr( "Title" )
-		<< QObject::tr( "Artist" )
-		<< QObject::tr( "Album" )
-		<< QObject::tr( "Duration" ) );
-
 	// Set model
-	this->setModel( this->model_ );
 	QAction * delSong = new QAction( this );
 	delSong->setShortcut( QKeySequence::Delete );
 	this->addAction( delSong );
@@ -100,101 +71,47 @@ droppingFiles_() {
 	this->contextMenu_->addSeparator();
 
 	QAction * properties = new QAction( tr( "Properties" ), this );
-	connect( properties, SIGNAL( triggered() ), this, SLOT( propertiesHelper_() ) );
+	connect( properties, SIGNAL( triggered() ), this, SIGNAL( requireProperty() ) );
 	this->contextMenu_->addAction( properties );
 
 	this->contextMenu_->addSeparator();
 
 	QAction * convert = new QAction( tr( "Convert" ), this );
 	convert->setShortcut( Qt::CTRL + Qt::Key_Return );
-	connect( convert, SIGNAL( triggered() ), this, SLOT( convertHelper_() ) );
+	connect( convert, SIGNAL( triggered() ), this, SIGNAL( requireConvert() ) );
 	this->addAction( convert );
 	this->contextMenu_->addAction( convert );
 }
 
-void PlayListView::propertiesHelper_() {
-	QModelIndexList selected = this->selectionModel()->selectedRows();
-	if( selected.isEmpty() ) {
-		// no track selected
-		emit this->errorOccured( tr( "No track selected!" ), tr( "Please select at least one track." ) );
-		return;
-	}
-	this->propWidget_->exec( this->getSelectedTracks() );
-}
+//void PlayListView::changeTextCodec_( int mib ) {
+//	QTextCodec * codec = QTextCodec::codecForMib( mib );
+//	QModelIndexList selected = this->selectionModel()->selectedRows();
+//	foreach( QModelIndex index, selected ) {
+//		album::TrackSP track( this->tracks_[index.row()] );
+//		track->setTextCodec( codec );
+//
+//		// FIXME: generic
+//		this->model_->item( index.row(), 0 )->setText( track->getTitle() );
+//		this->model_->item( index.row(), 1 )->setText( track->getArtist() );
+//		this->model_->item( index.row(), 2 )->setText( track->getAlbum()->getTitle() );
+//	}
+//}
 
-void PlayListView::convertHelper_() {
-	QModelIndexList selected = this->selectionModel()->selectedRows();
-	if( selected.isEmpty() ) {
-		emit this->errorOccured( tr( "No track selected!" ), tr( "Please select at least one track." ) );
-		return;
-	}
-
-	std::sort( selected.begin(), selected.end(), indexRowCompD );
-	PlayList result;
-
-	for( int i = 0; i < selected.size(); ++i ) {
-		result.push_back( this->tracks_.at( selected[i].row() ) );
-	}
-
-	emit this->requireConvert( result );
-}
-
-void PlayListView::append( const PlayList & playList ) {
-	this->tracks_.append( playList );
-
-	// get last row number
-	int offset = this->model_->rowCount();
-	// add all tracks
-	for( int row = 0; row < playList.size(); ++row ) {
-		const int currentRow = row + offset;
-
-		this->model_->setItem( currentRow, 0, new QStandardItem( playList[row]->getTitle() ) );
-		this->model_->setItem( currentRow, 1, new QStandardItem( playList[row]->getArtist() ) );
-		this->model_->setItem( currentRow, 2, new QStandardItem( playList[row]->getAlbum()->getTitle() ) );
-		this->model_->setItem( currentRow, 3, new QStandardItem( playList[row]->getDuration().toString() ) );
-
-		this->resizeRowToContents( currentRow );
-	}
-}
-
-PlayList PlayListView::getSelectedTracks() const {
-	QModelIndexList selected = this->selectionModel()->selectedRows( 0 );
-	std::sort( selected.begin(), selected.end(), ::indexRowCompD );
-	PlayList result;
-
-	for( int i = 0; i < selected.size(); ++i ) {
-		result.push_back( this->tracks_.at( selected[i].row() ) );
-	}
-
-	return result;
-}
-
-void PlayListView::changeTextCodec_( int mib ) {
-	QTextCodec * codec = QTextCodec::codecForMib( mib );
-	QModelIndexList selected = this->selectionModel()->selectedRows();
-	foreach( QModelIndex index, selected ) {
-		album::TrackSP track( this->tracks_[index.row()] );
-		track->setTextCodec( codec );
-
-		// FIXME: generic
-		this->model_->item( index.row(), 0 )->setText( track->getTitle() );
-		this->model_->item( index.row(), 1 )->setText( track->getArtist() );
-		this->model_->item( index.row(), 2 )->setText( track->getAlbum()->getTitle() );
-	}
-}
-
-void PlayListView::removeSelectedTracks() {
-	QModelIndexList selected = this->selectionModel()->selectedRows();
-	std::sort( selected.begin(), selected.end(), ::indexRowCompD );
-	foreach( QModelIndex index, selected ) {
-		this->tracks_.erase( this->tracks_.begin() + index.row() );
-		this->model_->removeRow( index.row() );
-	}
-	this->selectionModel()->clear();
-}
+//void PlayListView::removeSelectedTracks() {
+//	QModelIndexList selected = this->selectionModel()->selectedRows();
+//	std::sort( selected.begin(), selected.end(), ::indexRowCompD );
+//	foreach( QModelIndex index, selected ) {
+//		this->tracks_.erase( this->tracks_.begin() + index.row() );
+//		this->model_->removeRow( index.row() );
+//	}
+//	this->selectionModel()->clear();
+//}
 
 void PlayListView::contextMenuEvent( QContextMenuEvent * event ) {
-	this->contextMenu_->exec( event->globalPos() );
+	QModelIndex index( this->indexAt( event->pos() ) );
+	if( index.isValid() ) {
+		this->contextMenu_->exec( event->globalPos() );
+	}
 }
 
 void PlayListView::dragEnterEvent( QDragEnterEvent * event ) {
@@ -218,23 +135,10 @@ void PlayListView::dropEvent( QDropEvent * event ) {
 }
 
 void PlayListView::mouseDoubleClickEvent( QMouseEvent * event ) {
-// 			this->QTableView::mouseDoubleClickEvent( event );
 	emit this->requirePlay();
 	qDebug() << "Double Clicked Item:" << this->rowAt( event->y() );
 	event->accept();
 }
-
-// 		void PlayListView::mousePressEvent( QMouseEvent * event ) {
-// 			this->QTableView::mousePressEvent( event );
-// 			qDebug() << "press";
-// 			event->accept();
-// 		}
-// 
-// 		void PlayListView::mouseReleaseEvent( QMouseEvent * event ) {
-// 			this->QTableView::mouseReleaseEvent( event );
-// 			qDebug() << "release";
-// 			event->accept();
-// 		}
 
 void PlayListView::dropFiles_() {
 	emit this->fileDropped( this->droppingFiles_ );

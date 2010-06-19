@@ -20,18 +20,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "player.hpp"
+#include "playlistmodel.hpp"
 #include "playlistview.hpp"
+#include "propertydialog.hpp"
 #include "wavwrapper.hpp"
 
 #include "ui_player.h"
 
 #include <Phonon/AudioOutput>
+//#include <QtCore/QModelIndex>
 #include <QtDebug>
 
 namespace {
 
 	static inline QString fromTimestamp( const khopper::album::Timestamp & ts ) {
 		return QString( "%1:%2" ).arg( ts.getMinute() ).arg( ts.getSecond(), 2L, 10L, QChar( '0' ) );
+	}
+
+	static inline bool decRowComp( const QModelIndex & l, const QModelIndex & r ) {
+		return l.row() > r.row();
+	}
+
+	static inline bool incRowComp( const QModelIndex & l, const QModelIndex & r ) {
+		return l.row() < r.row();
 	}
 
 }
@@ -43,10 +54,14 @@ using khopper::album::TrackSP;
 Player::Player( QWidget * parent ):
 QWidget( parent, 0 ),
 ui_( new Ui::Player ),
+model_( new PlayListModel( this ) ),
 player_( new Phonon::MediaObject( this ) ),
+prop_( new PropertyDialog( this ) ),
 duration_(),
 currentTrack_() {
 	this->ui_->setupUi( this );
+
+	this->ui_->playListView->setModel( this->model_ );
 
 	// Set player
 	Phonon::AudioOutput * ao = new Phonon::AudioOutput( Phonon::MusicCategory, this );
@@ -60,30 +75,41 @@ currentTrack_() {
 	connect( this->ui_->stop, SIGNAL( clicked() ), this, SLOT( stop_() ) );
 
 	connect( this->ui_->playListView, SIGNAL( fileDropped( const QList< QUrl > & ) ), this, SIGNAL( fileDropped( const QList< QUrl > & ) ) );
-	connect( this->ui_->playListView, SIGNAL( requireConvert( const khopper::album::PlayList & ) ), this, SIGNAL( requireConvert( const khopper::album::PlayList & ) ) );
+	connect( this->ui_->playListView, SIGNAL( requireConvert() ), this, SLOT( convertHelper_() ) );
 	connect( this->ui_->playListView, SIGNAL( requirePlay() ), this, SLOT( play_() ) );
 	connect( this->ui_->playListView, SIGNAL( errorOccured( const QString &, const QString & ) ), this, SIGNAL( errorOccured( const QString &, const QString & ) ) );
 }
 
 void Player::setQueue_( const PlayList & tracks ) {
+	if( tracks.empty() ) {
+		return;
+	}
 	QList< Phonon::MediaSource > queue;
 	foreach( TrackSP track, tracks ) {
 		queue.push_back( new WavWrapper( track->getReader() ) );
 		queue.back().setAutoDelete( true );
 	}
-	this->player_->setQueue( queue );
+	this->player_->setCurrentSource( queue.first() );
+	this->player_->setQueue( queue.mid( 1 ) );
 }
 
 PlayList Player::getSelectedTracks() const {
-	return this->ui_->playListView->getSelectedTracks();
+	QModelIndexList selected( this->ui_->playListView->selectionModel()->selectedRows() );
+	qSort( selected.begin(), selected.end(), incRowComp );
+	PlayList playList;
+	foreach( const QModelIndex & i, selected ) {
+		playList.push_back( this->model_->getPlayList()[i.row()] );
+	}
+	return playList;
 }
 
 const PlayList & Player::getTracks() const {
-	return this->ui_->playListView->getTracks();
+	return this->model_->getPlayList();
 }
 
 void Player::append( const PlayList & playList ) {
-	this->ui_->playListView->append( playList );
+	this->model_->append( playList );
+	this->ui_->playListView->resizeRowsToContents();
 }
 
 void Player::play_() {
@@ -92,10 +118,10 @@ void Player::play_() {
 		return;
 	}
 
-	const PlayList & tracks( this->ui_->playListView->getTracks() );
+	const PlayList & tracks( this->model_->getPlayList() );
 
 	if( !tracks.empty() ) {
-		const PlayList selected( this->ui_->playListView->getSelectedTracks() );
+		const PlayList selected( this->getSelectedTracks() );
 		if( selected.empty() ) {
 			this->setQueue_( tracks );
 		} else {
@@ -149,6 +175,10 @@ void Player::handleState_( Phonon::State newState, Phonon::State /*oldState*/ ) 
 	}
 }
 
+void Player::convertHelper_() {
+	emit this->requireConvert( this->getSelectedTracks() );
+}
+
 //void Player::tick_( qint64 time ) {
 //	this->currentTimeStamp_ = album::Timestamp::fromMillisecond( time - this->currentBeginTime_ );
 //	this->ui_->passedTime->setText( fromTimestamp( this->currentTimeStamp_ ) );
@@ -158,7 +188,7 @@ void Player::handleState_( Phonon::State newState, Phonon::State /*oldState*/ ) 
 //		this->stop_();
 //	}
 //}
-//
+
 //void Player::updateTimestamp_( int ms ) {
 //	this->currentTimeStamp_ = album::Timestamp::fromMillisecond( this->currentBeginTime_ + ms );
 //	this->ui_->passedTime->setText( fromTimestamp( this->currentTimeStamp_ ) );
