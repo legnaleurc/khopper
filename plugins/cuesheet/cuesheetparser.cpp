@@ -47,6 +47,7 @@ namespace {
 
 using namespace khopper::album;
 using khopper::error::CodecError;
+using khopper::error::ParsingError;
 using khopper::codec::ReaderSP;
 using khopper::codec::RangedReader;
 using khopper::plugin::createReader;
@@ -65,7 +66,7 @@ album_( new CueSheet ) {
 void CueSheetParser::parseCue_( QString content, const QDir & dir ) {
 	QRegExp COMMENT( "\\s*REM\\s+(.*)\\s+(.*)\\s*" );
 	QRegExp SINGLE( "\\s*(CATALOG|CDTEXTFILE|ISRC|PERFORMER|SONGWRITER|TITLE)\\s+(.*)\\s*" );
-	QRegExp FILES( "\\s*FILE\\s+(.*)\\s+(WAVE)\\s*" );
+	QRegExp FILES( "\\s*FILE\\s+(.*)\\s+(WAVE|BINARY)\\s*" );
 	QRegExp FLAGS( "\\s*FLAGS\\s+(DATA|DCP|4CH|PRE|SCMS)\\s*" );
 	QRegExp TRACK( "\\s*TRACK\\s+(\\d+)\\s+(AUDIO)\\s*" );
 	QRegExp INDEX( "\\s*(INDEX|PREGAP|POSTGAP)\\s+((\\d+)\\s+)?(\\d+):(\\d+):(\\d+)\\s*" );
