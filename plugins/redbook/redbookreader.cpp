@@ -22,6 +22,7 @@
 #include "redbookreader.hpp"
 
 using namespace khopper::codec;
+using khopper::error::IOError;
 
 RedbookReader::RedbookReader( const QUrl & uri ):
 AbstractReader( uri ),
@@ -50,7 +51,10 @@ qint64 RedbookReader::size() const {
 }
 
 void RedbookReader::doOpen() {
-	this->file_.open( QIODevice::ReadOnly );
+	bool ret = this->file_.open( QIODevice::ReadOnly );
+	if( !ret ) {
+		throw IOError( QString( "%1 : %2 (from khopper::codec::RedbookReader)" ).arg( this->file_.fileName() ).arg( this->file_.errorString() ) );
+	}
 	this->setDuration( this->file_.size() * 1000 / 44100 / 2 / 2 );
 }
 

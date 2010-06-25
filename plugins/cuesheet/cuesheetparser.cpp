@@ -68,7 +68,7 @@ void CueSheetParser::parseCue_( QString content, const QDir & dir ) {
 	QRegExp SINGLE( "\\s*(CATALOG|CDTEXTFILE|ISRC|PERFORMER|SONGWRITER|TITLE)\\s+(.*)\\s*" );
 	QRegExp FILES( "\\s*FILE\\s+(.*)\\s+(WAVE|BINARY)\\s*" );
 	QRegExp FLAGS( "\\s*FLAGS\\s+(DATA|DCP|4CH|PRE|SCMS)\\s*" );
-	QRegExp TRACK( "\\s*TRACK\\s+(\\d+)\\s+(AUDIO)\\s*" );
+	QRegExp TRACK( "\\s*TRACK\\s+(\\d+)\\s+(AUDIO|CDG|MODE1/2048|MODE1/2352|MODE2/2336|MODE2/2352|CDI/2336|CDI/2352)\\s*" );
 	QRegExp INDEX( "\\s*(INDEX|PREGAP|POSTGAP)\\s+((\\d+)\\s+)?(\\d+):(\\d+):(\\d+)\\s*" );
 
 	this->trackIndex_ = 0;
@@ -162,7 +162,7 @@ void CueSheetParser::parseIndex_( const QString & type, const QString & num, con
 		case 1:
 			// track start time
 			this->currentTrack_->setStartTime( tmp );
-			if( this->trackIndex_ > 1 && this->previousTrack_->getDuration().isZero() ) {
+			if( this->trackIndex_ > 1 && this->previousTrack_->getDuration().toMillisecond() < 0 ) {
 				this->previousTrack_->setDuration( this->currentTrack_->getStartTime() - this->previousTrack_->getStartTime() );
 				this->previousTrack_->getRangedReader()->setRange( this->previousTrack_->getStartTime().toMillisecond(), this->previousTrack_->getDuration().toMillisecond() );
 			}
@@ -224,12 +224,6 @@ void CueSheetParser::updateLastTrack_() {
 		qDebug() << e.getMessage();
 	}
 	if( decoder->isOpen() ) {
-		// set bit rate, channels, sample rate
-		foreach( TrackSP track, this->playList_ ) {
-			track->setBitRate( decoder->getBitRate() );
-			track->setAudioFormat( decoder->getAudioFormat() );
-		}
-
 		this->currentTrack_->setDuration( Timestamp::fromMillisecond( decoder->getDuration() ) - this->currentTrack_->getStartTime() );
 		this->currentTrack_->getRangedReader()->setRange( this->currentTrack_->getStartTime().toMillisecond(), this->currentTrack_->getDuration().toMillisecond() );
 
