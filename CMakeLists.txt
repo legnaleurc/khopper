@@ -25,6 +25,7 @@ if(CMAKE_COMPILER_IS_GNUCXX)
 elseif(MSVC)
     add_definitions(/Zc:wchar_t-)
 endif()
+set(CMAKE_DEBUG_POSTFIX d)
 
 add_subdirectory(core)
 add_subdirectory(main)
