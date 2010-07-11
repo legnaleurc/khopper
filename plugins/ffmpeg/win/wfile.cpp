@@ -82,7 +82,7 @@ namespace {
 		return nBytes;
 	}
 
-	static int wfile_write( URLContext * h, unsigned char * buf, int size ) {
+	static int wfile_write( URLContext * h, const unsigned char * buf, int size ) {
 		int fd = ( size_t )h->priv_data;
 		int nBytes = _write( fd, buf, size );
 		return nBytes;

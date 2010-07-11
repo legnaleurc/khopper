@@ -11,6 +11,10 @@ if(WIN32)
 	include_directories("win")
 endif()
 
+if(MSVC)
+    add_definitions(-D__STDC_CONSTANT_MACROS)
+endif()
+
 include_directories(${CMAKE_CURRENT_BINARY_DIR} ${FFMPEG_INCLUDE_DIR})
 
 qt4_wrap_ui(KHOPPER_PLUGIN_FFMPEG_UIC_HEADERS ${KHOPPER_PLUGIN_FFMPEG_FORMS})
