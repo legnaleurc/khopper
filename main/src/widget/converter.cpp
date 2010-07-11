@@ -57,14 +57,6 @@ void Converter::convert( TrackCSP track, WriterSP encoder ) {
 		throw RunTimeError( "Can not open decoder or encoder!" );
 	}
 
-//	int64_t begin = track->getStartTime().toMillisecond();
-//	int64_t end = begin + track->getDuration().toMillisecond();
-//	decoder->setRange( begin, end );
-//	if( !decoder->seek( begin ) ) {
-//		throw CodecError( "Invalid start point" );
-//	}
-
-	//int64_t decoded;
 	int sec = decoder->getAudioFormat().frequency() * decoder->getAudioFormat().channels() * decoder->getAudioFormat().sampleSize() / 8;
 	while( !decoder->atEnd() ) {
 		if( this->canceled_ ) {

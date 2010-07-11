@@ -24,7 +24,9 @@
 #define KHOPPER_UTIL_TR1_HPP
 
 // for stdint.h in C99
+#ifndef __STDC_CONSTANT_MACROS
 #define __STDC_CONSTANT_MACROS
+#endif
 
 #ifdef _MSC_VER
 # ifdef KHOPPER_LIBRARY
@@ -36,18 +38,18 @@
 #  include <memory>
 #  include <stdint.h>
 # else
-// reserved for older msvc
+// FIXME: reserved for older msvc
 # endif
-# elif defined( __GNUC__ )
+#elif defined( __GNUC__ )
 # define KHOPPER_DLL
 # if __GNUC__ >= 4
-# include <tr1/memory>
-# include <cstdint>
+#  include <tr1/memory>
+#  include <cstdint>
 # else
-// reserved for older gcc
+// FIXME: reserved for older gcc
 # endif
 #else
-// reserved for other compilers
+// FIXME: reserved for other compilers
 #endif
 
 #endif
