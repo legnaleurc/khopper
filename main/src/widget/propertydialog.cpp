@@ -38,6 +38,9 @@ int PropertyDialog::exec( TrackSP track ) {
 	this->ui_->title->setText( track->getTitle() );
 	this->ui_->artist->setText( track->getArtist() );
 	this->ui_->albumTitle->setText( track->getAlbum()->getTitle() );
+	this->ui_->bitRate->setText( QString( "%1 bps" ).arg( track->getBitRate() ) );
+	this->ui_->channels->setNum( track->getAudioFormat().channels() );
+	this->ui_->frequency->setText( QString( "%1 Hz" ).arg( track->getAudioFormat().frequency() ) );
 	return this->exec();
 }
 
