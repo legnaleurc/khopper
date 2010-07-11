@@ -30,6 +30,7 @@ using khopper::plugin::PluginManager;
 Application::Application( int & argc, char * * argv ):
 QApplication( argc, argv ),
 p_( new ApplicationPrivate ) {
+	QObject::connect( this->p_->pm.get(), SIGNAL( errorOccured( const QString &, const QString & ) ), this, SIGNAL( errorOccured( const QString &, const QString & ) ) );
 }
 
 void Application::addPanel( AbstractPanel * panel ) {

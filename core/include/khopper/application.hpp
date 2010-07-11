@@ -50,6 +50,7 @@ namespace khopper {
 	signals:
 		void panelAdded( khopper::widget::AbstractPanel * panel );
 		void panelRemoved( khopper::widget::AbstractPanel * panel );
+		void errorOccured( const QString & title, const QString & message );
 
 	private:
 		struct ApplicationPrivate;

@@ -45,7 +45,11 @@
       </widget>
      </item>
      <item>
-      <widget class="Phonon::SeekSlider" name="seeker"/>
+      <widget class="Phonon::SeekSlider" name="seeker">
+       <property name="iconVisible">
+        <bool>true</bool>
+       </property>
+      </widget>
      </item>
      <item>
       <widget class="Phonon::VolumeSlider" name="volume"/>
