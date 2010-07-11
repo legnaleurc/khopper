@@ -264,7 +264,7 @@ namespace khopper {
 		 * @return Smart pointer of Product
 		 * @throws RunTimeError Can not load any plugin
 		 */
-		codec::ReaderSP KHOPPER_DLL createReader( const QUrl & uri );
+		ReaderCreator KHOPPER_DLL getReaderCreator( const QUrl & uri );
 
 	}
 

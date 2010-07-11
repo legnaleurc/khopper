@@ -29,11 +29,11 @@ namespace khopper {
 
 		class RangedReader : public AbstractReader {
 		public:
-			explicit RangedReader( const QUrl & uri );
+			explicit RangedReader( const QUrl & uri, qint64 msBegin, qint64 msDuration );
 
 			virtual bool atEnd() const;
 			bool seek( qint64 pos );
-			void setRange( qint64 msBegin, qint64 msDuration );
+			//void setRange( qint64 msBegin, qint64 msDuration );
 			virtual qint64 size() const;
 
 		protected:

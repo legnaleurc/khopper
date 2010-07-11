@@ -32,7 +32,6 @@ using namespace khopper::widget;
 using khopper::album::TrackCSP;
 using khopper::codec::WriterSP;
 using khopper::codec::ReaderSP;
-using khopper::plugin::createReader;
 using khopper::error::RunTimeError;
 using khopper::error::CodecError;
 
@@ -43,7 +42,7 @@ canceled_( false ) {
 
 void Converter::convert( TrackCSP track, WriterSP encoder ) {
 	// FIXME: not always local file
-	ReaderSP decoder( track->getReader() );
+	ReaderSP decoder( track->createReader() );
 	qDebug() << track->getURI();
 	decoder->open( QIODevice::ReadOnly );
 

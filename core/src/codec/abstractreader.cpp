@@ -65,11 +65,11 @@ void khopper::plugin::unregisterReader( ReaderVerifier v ) {
 	}
 }
 
-ReaderSP khopper::plugin::createReader( const QUrl & uri ) {
+ReaderCreator khopper::plugin::getReaderCreator( const QUrl & uri ) {
 	const std::list< ReaderFactoryPrivate::Pair > & l( ReaderFactory::Instance().l );
 
 	if( !l.empty() ) {
-		return std::max_element( l.begin(), l.end(), Helper( uri ) )->second( uri );
+		return std::max_element( l.begin(), l.end(), Helper( uri ) )->second;
 	} else {
 		throw khopper::error::SystemError( QObject::tr( "No reader can be used." ) );
 	}

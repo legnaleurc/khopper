@@ -46,7 +46,7 @@ namespace khopper {
 			/**
 			 * @brief Default constructor.
 			 */
-			explicit Track( codec::ReaderSP reader );
+			explicit Track( const QUrl & uri );
 			virtual ~Track();
 
 			AlbumSP getAlbum() const;
@@ -55,7 +55,7 @@ namespace khopper {
 			unsigned int getBitRate() const;
 			const Timestamp & getDuration() const;
 			unsigned int getIndex() const;
-			codec::ReaderSP getReader() const;
+			virtual codec::ReaderSP createReader() const;
 			QString getTitle() const;
 			/**
 			 * @brief Get url.
