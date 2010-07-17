@@ -31,10 +31,10 @@ ConverterThread::ConverterThread( QObject * parent ):
 QThread( parent ),
 tracks_(),
 outs_(),
-canceled_( false ),
-converter_( new Converter( this ) ) {
-	connect( this->converter_, SIGNAL( decodedTime( qint64 ) ), this, SIGNAL( step( qint64 ) ) );
-	connect( this, SIGNAL( canceled() ), this->converter_, SLOT( cancel() ) );
+canceled_( false )/*,
+converter_( new Converter( this ) )*/ {
+	//connect( this->converter_, SIGNAL( decodedTime( qint64 ) ), this, SIGNAL( step( qint64 ) ) );
+	//connect( this, SIGNAL( canceled() ), this->converter_, SLOT( cancel() ) );
 }
 
 void ConverterThread::setOutput( const QList< WriterSP > & outs ) {
@@ -60,7 +60,7 @@ void ConverterThread::run() {
 			emit taskGoal( this->tracks_[i]->getDuration().toMillisecond() );
 			emit currentTask( i + 1 );
 
-			this->converter_->convert( this->tracks_[i], this->outs_[i] );
+			//this->converter_->convert( this->tracks_[i], this->outs_[i] );
 			if( this->canceled_ ) {
 				this->canceled_ = false;
 				break;

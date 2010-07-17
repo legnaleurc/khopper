@@ -22,16 +22,29 @@
 #ifndef KHOPPER_WIDGET_PROGRESSVIEWER_HPP
 #define KHOPPER_WIDGET_PROGRESSVIEWER_HPP
 
+#include "khopper/playlist.hpp"
+#include "khopper/abstractwriter.hpp"
+
+#include <QtCore/QList>
+#include <QtCore/QQueue>
 #include <QtGui/QWidget>
 
 namespace khopper {
 	namespace widget {
 
+		class ProgressBar;
+		class Converter;
+
 		class ProgressViewer : public QWidget {
 		public:
 			explicit ProgressViewer( QWidget * parent );
 
-			void start( const PlayList & tracks, const QList< WriterSP > & encoders );
+			void start( const album::PlayList & tracks, const QList< codec::WriterSP > & encoders );
+			Converter * take();
+
+		private:
+			QList< ProgressBar * > lp_;
+			QQueue< Converter * > queue_;
 		};
 
 	}

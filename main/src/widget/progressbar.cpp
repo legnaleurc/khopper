@@ -1,5 +1,5 @@
 /**
- * @file progressviewer.cpp
+ * @file progressbar.cpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,43 +19,39 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "progressviewer.hpp"
 #include "progressbar.hpp"
+#include "ui_progressbar.h"
+#include "progressviewer.hpp"
 #include "converter.hpp"
 
-#include <QtCore/QTimer>
-#include <QtGui/QVBoxLayout>
-
 using namespace khopper::widget;
-using khopper::album::PlayList;
+using khopper::album::TrackSP;
+using khopper::codec::ReaderSP;
 using khopper::codec::WriterSP;
+using khopper::error::RunTimeError;
 
-ProgressViewer::ProgressViewer( QWidget * parent ):
-QWidget( parent, Qt::Window ),
-lp_(),
-queue_() {
-	this->setLayout( new QVBoxLayout );
-	for( int i = 0; i < 2; ++i ) {
-		this->lp_.append( new ProgressBar( this ) );
-		this->layout()->addWidget( this->lp_.last() );
+ProgressBar::ProgressBar( QWidget * parent ):
+QWidget( parent ),
+canceled_( false ),
+ui_( new Ui::ProgressBar ) {
+	this->ui_->setupUi( this );
+
+	this->hide();
+}
+
+void ProgressBar::start() {
+	Converter * task( dynamic_cast< ProgressViewer * >( this->parent() )->take() );
+
+	while( task ) {
+		QObject::connect( task, SIGNAL( decodedTime( qint64 ) ), this, SLOT( increase_( qint64 ) ) );
+
+		this->ui_->label->setText( task->getTitle() );
+		this->ui_->progressBar->setRange( 0, task->getMaximumValue() );
+
+		task->start();
 	}
 }
 
-void ProgressViewer::start( const PlayList & tracks, const QList< WriterSP > & encoders ) {
-	for( int i = 0; i < tracks.size(); ++i ) {
-		this->queue_.enqueue( new Converter( tracks[i], encoders[i], this ) );
-	}
-	for( int i = 0; i < this->lp_.size(); ++i ) {
-		QTimer::singleShot( 0, this->lp_[i], SLOT( start() ) );
-	}
-
-	this->show();
-}
-
-Converter * ProgressViewer::take() {
-	if( !this->queue_.isEmpty() ) {
-		return this->queue_.dequeue();
-	} else {
-		return NULL;
-	}
+void ProgressBar::increase_( qint64 value ) {
+	this->ui_->progressBar->setValue( this->ui_->progressBar->value() + value );
 }

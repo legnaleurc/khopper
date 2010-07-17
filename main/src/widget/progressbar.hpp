@@ -22,6 +22,9 @@
 #ifndef KHOPPER_WIDGET_PROGRESSBAR_HPP
 #define KHOPPER_WIDGET_PROGRESSBAR_HPP
 
+#include "khopper/track.hpp"
+#include "khopper/abstractwriter.hpp"
+
 #include <QtGui/QWidget>
 
 namespace Ui {
@@ -32,10 +35,17 @@ namespace khopper {
 	namespace widget {
 
 		class ProgressBar : public QWidget {
+			Q_OBJECT
 		public:
-			ProgressBar();
+			explicit ProgressBar( QWidget * parent );
+
+			void start();
+
+		private slots:
+			void increase_( qint64 );
 
 		private:
+			bool canceled_;
 			std::tr1::shared_ptr< Ui::ProgressBar > ui_;
 		};
 
