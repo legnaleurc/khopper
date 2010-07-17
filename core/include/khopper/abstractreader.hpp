@@ -28,10 +28,7 @@
 #include <QtCore/QUrl>
 #include <QtMultimedia/QAudioFormat>
 
-#ifndef LOKI_CLASS_LEVEL_THREADING
-# define LOKI_CLASS_LEVEL_THREADING
-#endif
-#include <loki/Functor.h>
+#include <functional>
 
 namespace khopper {
 
@@ -237,16 +234,8 @@ namespace khopper {
 
 	namespace plugin {
 
-		typedef Loki::Functor<
-			unsigned int,
-			LOKI_TYPELIST_1( const QUrl & ),
-			Loki::ClassLevelLockable
-		> ReaderVerifier;
-		typedef Loki::Functor<
-			codec::ReaderSP,
-			LOKI_TYPELIST_1( const QUrl & ),
-			Loki::ClassLevelLockable
-		> ReaderCreator;
+		typedef std::tr1::function< int ( const QUrl & ) > ReaderVerifier;
+		typedef std::tr1::function< codec::ReaderSP ( const QUrl & ) > ReaderCreator;
 
 		/**
 		 * @ingroup Plugins
@@ -255,8 +244,8 @@ namespace khopper {
 		 * @param name plugin name
 		 * @return if registered in factory
 		 */
-		bool KHOPPER_DLL registerReader( ReaderVerifier v, ReaderCreator c );
-		void KHOPPER_DLL unregisterReader( ReaderVerifier v );
+		bool KHOPPER_DLL registerReader( const QString & id, ReaderVerifier v, ReaderCreator c );
+		bool KHOPPER_DLL unregisterReader( const QString & id );
 		/**
 		 * @ingroup Plugins
 		 * @brief Create reader

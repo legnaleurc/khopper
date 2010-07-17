@@ -58,9 +58,9 @@ RedbookPlugin::~RedbookPlugin() {
 }
 
 void RedbookPlugin::doInstall() {
-	registerReader( verifier, creator );
+	registerReader( this->getID(), verifier, creator );
 }
 
 void RedbookPlugin::doUninstall() {
-	unregisterReader( verifier );
+	unregisterReader( this->getID() );
 }
