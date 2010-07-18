@@ -7,7 +7,7 @@ License:
 	others:
 		GPLv3 or later
 
-Build dependency：
+Required build dependencies:
 	CMake:
 		http://www.cmake.org/
 	Loki:
@@ -16,17 +16,18 @@ Build dependency：
 		http://www.qtsoftware.com/products
 	Boost C++ Libraries:
 		http://www.boost.org/
+Optional for plugins:
 	FFmpeg Libraries >= 0.5:
 		http://www.ffmpeg.org/
 	libFLAC >= 1.2.1:
 		http://flac.sourceforge.net/
-	libvorbis:
+	libvorbis and libogg:
 		http://www.xiph.org/downloads/
 	LAME:
 		http://lame.sourceforge.net/
 	TagLib:
 		http://developer.kde.org/~wheeler/taglib.html
-On Debian-based system:
+For Debian-based system users:
 	# apt-get install cmake libloki-dev libqt4-dev libphonon-dev \
 		libboost-dev libavcodec-dev libavformat-dev libflac-dev pkg-config \
 		libvorbis-dev libmp3lame-dev libtag1-dev
@@ -38,14 +39,15 @@ Build step:
 		$ cmake -DCMAKE_BUILD_TYPE=Release ..
 		$ make
 	Windows:
-		Please use CMake GUI to generate building system.
+		Please use CMake GUI to generate the building system.
 
 Supported formats:
 	Converting:
-		Depends on FFmpeg, and may extend by plugin.
-		At least, wav, ape, flac, tta ... should be available.
+		The FFmpeg plugin will handle most formats for you, such as wav, ape ...
+		Please enable the FFmpeg plugin at least or this application will has
+		poor support.
 	Playing:
-		Depends on Phonon's backend.
+		Any formats which are supported by plugins.
 
 Contact:
 	mail:
