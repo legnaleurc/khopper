@@ -40,6 +40,9 @@ QThread( 0 ),
 canceled_( false ),
 track_( track ),
 writer_( writer ) {
+	this->writer_->setAlbum( this->track_->getAlbum()->getTitle().toUtf8() );
+	this->writer_->setArtist( this->track_->getArtist().toUtf8() );
+	this->writer_->setTitle( this->track_->getTitle().toUtf8() );
 }
 
 void Converter::run() {
