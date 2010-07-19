@@ -20,12 +20,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "progressviewer.hpp"
+#include "ui_progressviewer.h"
 #include "progressbar.hpp"
 #include "converter.hpp"
 
-#include <QtCore/QMutex>
 #include <QtCore/QMutexLocker>
-#include <QtGui/QVBoxLayout>
 
 namespace {
 	static QMutex mutex;
@@ -39,24 +38,40 @@ ProgressViewer::ProgressViewer( QWidget * parent ):
 QWidget( parent, Qt::Window ),
 rc_( 0 ),
 lp_(),
-tasks_() {
-	this->setLayout( new QVBoxLayout );
+tasks_(),
+ui_( new Ui::ProgressViewer ) {
+	this->ui_->setupUi( this );
+	QObject::connect( this->ui_->cancel, SIGNAL( clicked() ), this, SLOT( cancel_() ) );
+
 	for( int i = 0; i < 2; ++i ) {
 		this->lp_.append( new ProgressBar( this ) );
-		this->layout()->addWidget( this->lp_.last() );
+		this->ui_->layout->addWidget( this->lp_.last() );
 		QObject::connect( this->lp_.last(), SIGNAL( finished() ), this, SLOT( dispatch_() ) );
 	}
 }
 
 void ProgressViewer::start( const QList< Converter * > & tasks ) {
 	this->tasks_ = tasks;
-	for( int i = 0; i < this->lp_.size(); ++i ) {
-		this->lp_[i]->show();
-		this->dispatch_( this->lp_[i] );
+	foreach( ProgressBar * pb, this->lp_ ) {
+		pb->show();
+		this->dispatch_( pb );
 		++this->rc_;
 	}
 
 	this->show();
+}
+
+void ProgressViewer::cancel_() {
+	QMutexLocker locker( &mutex );
+
+	foreach( Converter * task, this->tasks_ ) {
+		delete task;
+	}
+	this->tasks_.clear();
+
+	foreach( ProgressBar * pb, this->lp_ ) {
+		pb->cancel();
+	}
 }
 
 void ProgressViewer::dispatch_() {

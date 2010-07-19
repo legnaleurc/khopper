@@ -41,6 +41,7 @@ namespace khopper {
 		public:
 			explicit ProgressBar( QWidget * parent );
 
+			void cancel();
 			void start( Converter * task );
 
 		signals:
@@ -51,7 +52,6 @@ namespace khopper {
 			void onFinished_();
 
 		private:
-			bool canceled_;
 			Converter * task_;
 			std::tr1::shared_ptr< Ui::ProgressBar > ui_;
 		};

@@ -29,6 +29,10 @@
 #include <QtCore/QQueue>
 #include <QtGui/QWidget>
 
+namespace Ui {
+	class ProgressViewer;
+}
+
 namespace khopper {
 	namespace widget {
 
@@ -43,6 +47,7 @@ namespace khopper {
 			void start( const QList< Converter * > & tasks );
 
 		private slots:
+			void cancel_();
 			void dispatch_();
 
 		private:
@@ -51,6 +56,7 @@ namespace khopper {
 			int rc_;
 			QList< ProgressBar * > lp_;
 			QList< Converter * > tasks_;
+			std::tr1::shared_ptr< Ui::ProgressViewer > ui_;
 		};
 
 	}

@@ -32,10 +32,15 @@ using khopper::error::RunTimeError;
 
 ProgressBar::ProgressBar( QWidget * parent ):
 QWidget( parent ),
-canceled_( false ),
 task_( NULL ),
 ui_( new Ui::ProgressBar ) {
 	this->ui_->setupUi( this );
+}
+
+void ProgressBar::cancel() {
+	if( this->task_ ) {
+		this->task_->cancel();
+	}
 }
 
 void ProgressBar::start( Converter * task ) {
@@ -47,6 +52,7 @@ void ProgressBar::start( Converter * task ) {
 
 	this->ui_->label->setText( task->getTitle() );
 	this->ui_->progressBar->setRange( 0, task->getMaximumValue() );
+	this->ui_->progressBar->setValue( 0 );
 
 	task->start();
 }
@@ -56,7 +62,7 @@ void ProgressBar::increase_( qint64 value ) {
 }
 
 void ProgressBar::onFinished_() {
-	this->task_->disconnect();
 	delete this->task_;
+	this->task_ = NULL;
 	emit this->finished();
 }
