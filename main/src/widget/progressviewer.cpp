@@ -54,8 +54,8 @@ void ProgressViewer::start( const QList< Converter * > & tasks ) {
 	this->tasks_ = tasks;
 	foreach( ProgressBar * pb, this->lp_ ) {
 		pb->show();
-		this->dispatch_( pb );
 		++this->rc_;
+		this->dispatch_( pb );
 	}
 
 	this->show();
