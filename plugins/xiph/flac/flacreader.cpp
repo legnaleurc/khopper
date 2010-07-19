@@ -62,10 +62,6 @@ bool FlacReader::atEnd() const {
 	return FLAC__stream_decoder_get_state( this->pFD_.get() ) == FLAC__STREAM_DECODER_END_OF_STREAM;
 }
 
-qint64 FlacReader::pos() const {
-	return this->offset_ * 1000LL / this->getAudioFormat().frequency() / this->getAudioFormat().sampleSize();
-}
-
 void FlacReader::doOpen() {
 	if( !FLAC__stream_decoder_set_md5_checking( this->pFD_.get(), true ) ) {
 		throw error::CodecError( "Can\'t check md5! (from khopper::codec::FlacReader)" );
@@ -95,21 +91,21 @@ void FlacReader::doOpen() {
 void FlacReader::doClose() {
 	FLAC__stream_decoder_finish( this->pFD_.get() );
 	this->buffer_.clear();
-	this->offset_ = 0;
+	//this->offset_ = 0;
 }
 
 bool FlacReader::seek( qint64 pos ) {
 	bool ret = this->AbstractReader::seek( pos );
 	FLAC__bool ok = FLAC__stream_decoder_seek_absolute( this->pFD_.get(), pos );
 	if( ok && ret ) {
-		this->offset_ = pos;
+		//this->offset_ = pos;
 		this->buffer_.clear();
 	}
 	return ok && ret;
 }
 
 qint64 FlacReader::size() const {
-	return FLAC__stream_decoder_get_total_samples( this->pFD_.get() );
+	return FLAC__stream_decoder_get_total_samples( this->pFD_.get() ) * this->getAudioFormat().sampleSize() / 8;
 }
 
 qint64 FlacReader::readData( char * data, qint64 maxSize ) {
@@ -212,9 +208,7 @@ FLAC__StreamDecoderWriteStatus FlacReader::writeCallback_(
 	void * client_data ) {
 	FlacReader * self = static_cast< FlacReader * >( client_data );
 
-	unsigned int decoded = 0;
 	for( unsigned int i = 0; i < frame->header.blocksize; ++i ) {
-		uint64_t ts = static_cast< uint64_t >( self->offset_ + i ) * 1000 / frame->header.sample_rate;
 		for( unsigned int c = 0; c < frame->header.channels; ++c ) {
 			const uint8_t * tmp = static_cast< const uint8_t * >( static_cast< const void * >( &buffer[c][i] ) );
 			switch( frame->header.bits_per_sample ) {
@@ -243,11 +237,8 @@ FLAC__StreamDecoderWriteStatus FlacReader::writeCallback_(
 			default:
 				throw error::CodecError( "Unsupported sample resolution (from khopper::codec::FlacReader)" );
 			}
-			++decoded;
 		}
 	}
-
-	self->offset_ += decoded;
 
 	return FLAC__STREAM_DECODER_WRITE_STATUS_CONTINUE;
 }

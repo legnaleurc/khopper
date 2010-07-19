@@ -65,7 +65,7 @@ void Converter::run() {
 	}
 	this->canceled_ = false;
 
-	int sec = decoder->getAudioFormat().frequency() * decoder->getAudioFormat().channels() * decoder->getAudioFormat().sampleSize() / 8;
+	const int sec = decoder->getAudioFormat().frequency() * decoder->getAudioFormat().channels() * decoder->getAudioFormat().sampleSize() / 8;
 	while( !decoder->atEnd() ) {
 		if( this->canceled_ ) {
 			break;

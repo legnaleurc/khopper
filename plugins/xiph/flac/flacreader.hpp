@@ -35,7 +35,6 @@ namespace khopper {
 			explicit FlacReader( const QUrl & uri );
 
 			virtual bool atEnd() const;
-			virtual qint64 pos() const;
 			virtual bool seek( qint64 pos );
 			virtual qint64 size() const;
 
