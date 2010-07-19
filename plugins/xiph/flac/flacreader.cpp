@@ -105,7 +105,7 @@ bool FlacReader::seek( qint64 pos ) {
 }
 
 qint64 FlacReader::size() const {
-	return FLAC__stream_decoder_get_total_samples( this->pFD_.get() ) * this->getAudioFormat().sampleSize() / 8;
+	return FLAC__stream_decoder_get_total_samples( this->pFD_.get() ) * this->getAudioFormat().channels() * this->getAudioFormat().sampleSize() / 8;
 }
 
 qint64 FlacReader::readData( char * data, qint64 maxSize ) {
