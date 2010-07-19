@@ -23,8 +23,13 @@
 #include "progressbar.hpp"
 #include "converter.hpp"
 
-#include <QtCore/QTimer>
+#include <QtCore/QMutex>
+#include <QtCore/QMutexLocker>
 #include <QtGui/QVBoxLayout>
+
+namespace {
+	static QMutex mutex;
+}
 
 using namespace khopper::widget;
 using khopper::album::PlayList;
@@ -32,30 +37,50 @@ using khopper::codec::WriterSP;
 
 ProgressViewer::ProgressViewer( QWidget * parent ):
 QWidget( parent, Qt::Window ),
+rc_( 0 ),
 lp_(),
-queue_() {
+tasks_() {
 	this->setLayout( new QVBoxLayout );
 	for( int i = 0; i < 2; ++i ) {
 		this->lp_.append( new ProgressBar( this ) );
 		this->layout()->addWidget( this->lp_.last() );
+		QObject::connect( this->lp_.last(), SIGNAL( finished() ), this, SLOT( dispatch_() ) );
 	}
 }
 
-void ProgressViewer::start( const PlayList & tracks, const QList< WriterSP > & encoders ) {
-	for( int i = 0; i < tracks.size(); ++i ) {
-		this->queue_.enqueue( new Converter( tracks[i], encoders[i], this ) );
-	}
+void ProgressViewer::start( const QList< Converter * > & tasks ) {
+	this->tasks_ = tasks;
 	for( int i = 0; i < this->lp_.size(); ++i ) {
-		QTimer::singleShot( 0, this->lp_[i], SLOT( start() ) );
+		this->lp_[i]->show();
+		this->dispatch_( this->lp_[i] );
 	}
 
 	this->show();
 }
 
-Converter * ProgressViewer::take() {
-	if( !this->queue_.isEmpty() ) {
-		return this->queue_.dequeue();
+void ProgressViewer::dispatch_() {
+	ProgressBar * pb = dynamic_cast< ProgressBar * >( this->sender() );
+	if( pb ) {
+		this->dispatch_( pb );
+	}
+}
+
+void ProgressViewer::dispatch_( ProgressBar * pb ) {
+	Converter * task = NULL;
+
+	QMutexLocker locker( &mutex );
+	if( !this->tasks_.isEmpty() ) {
+		task = this->tasks_.front();
+		this->tasks_.pop_front();
+	}
+
+	if( task ) {
+		pb->start( task );
+		++this->rc_;
+	} else if( this->rc_ > 1 ) {
+		pb->hide();
+		--this->rc_;
 	} else {
-		return NULL;
+		this->hide();
 	}
 }

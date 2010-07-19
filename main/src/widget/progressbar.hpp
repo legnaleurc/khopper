@@ -34,18 +34,25 @@ namespace Ui {
 namespace khopper {
 	namespace widget {
 
+		class Converter;
+
 		class ProgressBar : public QWidget {
 			Q_OBJECT
 		public:
 			explicit ProgressBar( QWidget * parent );
 
-			void start();
+			void start( Converter * task );
+
+		signals:
+			void finished();
 
 		private slots:
 			void increase_( qint64 );
+			void onFinished_();
 
 		private:
 			bool canceled_;
+			Converter * task_;
 			std::tr1::shared_ptr< Ui::ProgressBar > ui_;
 		};
 

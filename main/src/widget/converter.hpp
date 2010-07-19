@@ -41,7 +41,7 @@ namespace khopper {
 			/**
 			 * @brief Default constructor
 			 */
-			Converter( album::TrackCSP track, codec::WriterSP encoder, QObject * parent );
+			Converter( album::TrackCSP track, codec::WriterSP encoder );
 
 			QString getTitle() const;
 			qint64 getMaximumValue() const;

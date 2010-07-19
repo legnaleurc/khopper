@@ -36,15 +36,21 @@ namespace khopper {
 		class Converter;
 
 		class ProgressViewer : public QWidget {
+			Q_OBJECT
 		public:
 			explicit ProgressViewer( QWidget * parent );
 
-			void start( const album::PlayList & tracks, const QList< codec::WriterSP > & encoders );
-			Converter * take();
+			void start( const QList< Converter * > & tasks );
+
+		private slots:
+			void dispatch_();
 
 		private:
+			void dispatch_( ProgressBar * );
+
+			int rc_;
 			QList< ProgressBar * > lp_;
-			QQueue< Converter * > queue_;
+			QList< Converter * > tasks_;
 		};
 
 	}

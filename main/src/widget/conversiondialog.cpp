@@ -22,6 +22,7 @@
 #include "conversiondialog.hpp"
 #include "ui_conversiondialog.h"
 #include "progressviewer.hpp"
+#include "converter.hpp"
 
 #include "khopper/abstractpanel.hpp"
 #include "khopper/application.hpp"
@@ -66,12 +67,14 @@ void ConversionDialog::convert( const PlayList & tracks ) {
 
 	AbstractPanel * panel = this->getCurrent();
 
-	QList< WriterSP > outs;
+	QList< Converter * > outs;
 	foreach( album::TrackSP track, tracks ) {
-		outs.push_back( panel->createWriter( QUrl::fromLocalFile( QString( "%1/%2.%3" ).arg( this->getOutputPath_( track ) ).arg( this->getOutputName_( track ) ).arg( panel->getSuffix() ) ) ) );
+		QString path = QString( "%1/%2.%3" ).arg( this->getOutputPath_( track ) ).arg( this->getOutputName_( track ) ).arg( panel->getSuffix() );
+		Converter * conv = new Converter( track, panel->createWriter( QUrl::fromLocalFile( path ) ) );
+		outs.push_back( conv );
 	}
 
-	this->progress_->start( tracks, outs );
+	this->progress_->start( outs );
 }
 
 AbstractPanel * ConversionDialog::getCurrent() const {

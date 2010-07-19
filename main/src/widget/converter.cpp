@@ -36,8 +36,8 @@ using khopper::plugin::createReader;
 using khopper::error::RunTimeError;
 using khopper::error::CodecError;
 
-Converter::Converter( TrackCSP track, WriterSP writer, QObject * parent ):
-QThread( parent ),
+Converter::Converter( TrackCSP track, WriterSP writer ):
+QThread( 0 ),
 canceled_( false ),
 track_( track ),
 writer_( writer ) {

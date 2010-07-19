@@ -33,25 +33,30 @@ using khopper::error::RunTimeError;
 ProgressBar::ProgressBar( QWidget * parent ):
 QWidget( parent ),
 canceled_( false ),
+task_( NULL ),
 ui_( new Ui::ProgressBar ) {
 	this->ui_->setupUi( this );
-
-	this->hide();
 }
 
-void ProgressBar::start() {
-	Converter * task( dynamic_cast< ProgressViewer * >( this->parent() )->take() );
+void ProgressBar::start( Converter * task ) {
+	this->task_ = task;
 
-	while( task ) {
-		QObject::connect( task, SIGNAL( decodedTime( qint64 ) ), this, SLOT( increase_( qint64 ) ) );
+	QObject::connect( this->ui_->pushButton, SIGNAL( clicked() ), task, SLOT( cancel() ) );
+	QObject::connect( task, SIGNAL( decodedTime( qint64 ) ), this, SLOT( increase_( qint64 ) ) );
+	QObject::connect( task, SIGNAL( finished() ), this, SLOT( onFinished_() ) );
 
-		this->ui_->label->setText( task->getTitle() );
-		this->ui_->progressBar->setRange( 0, task->getMaximumValue() );
+	this->ui_->label->setText( task->getTitle() );
+	this->ui_->progressBar->setRange( 0, task->getMaximumValue() );
 
-		task->start();
-	}
+	task->start();
 }
 
 void ProgressBar::increase_( qint64 value ) {
 	this->ui_->progressBar->setValue( this->ui_->progressBar->value() + value );
+}
+
+void ProgressBar::onFinished_() {
+	this->task_->disconnect();
+	delete this->task_;
+	emit this->finished();
 }
