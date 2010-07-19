@@ -44,20 +44,22 @@ bool khopper::plugin::unregisterReader( const QString & id ) {
 	return ReaderFactory::Instance().l.erase( id ) == 1;
 }
 
-ReaderSP khopper::plugin::createReader( const QUrl & uri ) {
+ReaderCreator khopper::plugin::getReaderCreator( const QUrl & uri ) {
+	typedef ReaderFactoryPrivate::Map Map;
+
 	struct Helper {
 		Helper( const QUrl & uri ) : uri( uri ) {
 		}
-		bool operator ()( const khopper::plugin::ReaderFactoryPrivate::Map::value_type & l, const khopper::plugin::ReaderFactoryPrivate::Map::value_type & r ) {
+		bool operator ()( const Map::value_type & l, const Map::value_type & r ) {
 			return l.second.first( this->uri ) < r.second.first( this->uri );
 		}
 		const QUrl & uri;
 	};
-	typedef ReaderFactoryPrivate::Map Map;
+
 	const Map & m( ReaderFactory::Instance().l );
 
 	if( !m.empty() ) {
-		return std::max_element( m.begin(), m.end(), Helper( uri ) )->second.second( uri );
+		return std::max_element( m.begin(), m.end(), Helper( uri ) )->second.second;
 	} else {
 		throw khopper::error::SystemError( QObject::tr( "No reader can be used." ) );
 	}

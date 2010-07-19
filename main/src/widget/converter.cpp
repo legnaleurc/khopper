@@ -32,7 +32,6 @@ using namespace khopper::widget;
 using khopper::album::TrackCSP;
 using khopper::codec::WriterSP;
 using khopper::codec::ReaderSP;
-using khopper::plugin::createReader;
 using khopper::error::RunTimeError;
 using khopper::error::CodecError;
 
@@ -44,7 +43,7 @@ writer_( writer ) {
 }
 
 void Converter::run() {
-	ReaderSP decoder( this->track_->getReader() );
+	ReaderSP decoder( this->track_->createReader() );
 	decoder->open( QIODevice::ReadOnly );
 
 	this->writer_->setAudioFormat( decoder->getAudioFormat() );

@@ -87,7 +87,7 @@ void Player::setQueue_( const PlayList & tracks ) {
 	}
 	QList< Phonon::MediaSource > queue;
 	foreach( TrackSP track, tracks ) {
-		queue.push_back( new WavWrapper( track->getReader() ) );
+		queue.push_back( new WavWrapper( track->createReader() ) );
 		queue.back().setAutoDelete( true );
 	}
 	this->player_->setCurrentSource( queue.first() );
