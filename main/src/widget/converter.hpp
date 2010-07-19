@@ -58,6 +58,7 @@ namespace khopper {
 			 * @param ms Time in second * 1000
 			 */
 			void decodedTime( qint64 ms );
+			void errorOccured( const QString & title, const QString & message );
 
 		protected:
 			void run();

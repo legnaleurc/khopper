@@ -67,14 +67,15 @@ void ConversionDialog::convert( const PlayList & tracks ) {
 
 	AbstractPanel * panel = this->getCurrent();
 
-	QList< Converter * > outs;
+	QList< Converter * > tasks;
 	foreach( album::TrackSP track, tracks ) {
 		QString path = QString( "%1/%2.%3" ).arg( this->getOutputPath_( track ) ).arg( this->getOutputName_( track ) ).arg( panel->getSuffix() );
-		Converter * conv = new Converter( track, panel->createWriter( QUrl::fromLocalFile( path ) ) );
-		outs.push_back( conv );
+		Converter * task = new Converter( track, panel->createWriter( QUrl::fromLocalFile( path ) ) );
+		QObject::connect( task, SIGNAL( errorOccured( const QString &, const QString & ) ), this, SIGNAL( errorOccured( const QString &, const QString & ) ) );
+		tasks.push_back( task );
 	}
 
-	this->progress_->start( outs );
+	this->progress_->start( tasks );
 }
 
 AbstractPanel * ConversionDialog::getCurrent() const {

@@ -32,7 +32,7 @@ using namespace khopper::widget;
 using khopper::album::TrackCSP;
 using khopper::codec::WriterSP;
 using khopper::codec::ReaderSP;
-using khopper::error::RunTimeError;
+using khopper::error::BaseError;
 using khopper::error::CodecError;
 
 Converter::Converter( TrackCSP track, WriterSP writer ):
@@ -47,17 +47,23 @@ writer_( writer ) {
 
 void Converter::run() {
 	ReaderSP decoder( this->track_->createReader() );
+	try {
 	decoder->open( QIODevice::ReadOnly );
+	} catch( BaseError & e ) {
+		emit this->errorOccured( tr( "Decoder Error" ), e.getMessage() );
+		return;
+	}
 
 	this->writer_->setAudioFormat( decoder->getAudioFormat() );
 	this->writer_->setChannelLayout( decoder->getChannelLayout() );
 
-	this->writer_->open( QIODevice::WriteOnly );
-	this->canceled_ = false;
-
-	if( !decoder->isOpen() || !this->writer_->isOpen() ) {
-		throw RunTimeError( "Can not open decoder or encoder!" );
+	try {
+		this->writer_->open( QIODevice::WriteOnly );
+	} catch( BaseError & e ) {
+		emit this->errorOccured( tr( "Encoder Error" ), e.getMessage() );
+		return;
 	}
+	this->canceled_ = false;
 
 	int sec = decoder->getAudioFormat().frequency() * decoder->getAudioFormat().channels() * decoder->getAudioFormat().sampleSize() / 8;
 	while( !decoder->atEnd() ) {

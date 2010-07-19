@@ -107,7 +107,6 @@ void FlacWriter::doOpen() {
 
 	// setup encoder setting
 	ok &= FLAC__stream_encoder_set_channels( this->pFE_.get(), this->getAudioFormat().channels() );
-	// TODO: forcing sample format S16LE, but may cause other problems.
 	ok &= FLAC__stream_encoder_set_bits_per_sample( this->pFE_.get(), this->getAudioFormat().sampleSize() );
 	ok &= FLAC__stream_encoder_set_sample_rate( this->pFE_.get(), this->getAudioFormat().frequency() );
 	// if ogg mode is set
@@ -151,8 +150,7 @@ void FlacWriter::writeFrame( const QByteArray & sample ) {
 	if( sample.isEmpty() ) {
 		return;
 	}
-	// TODO: assumed that sample format is S16LE, please fix the interface later
-	const int32_t bufSize = sample.size() / this->getAudioFormat().sampleSize();
+	const int32_t bufSize = sample.size() / ( this->getAudioFormat().sampleSize() / 8 );
 	// TODO: big or little endian
 	const int16_t * audio = static_cast< const int16_t * >( static_cast< const void * >( sample.data() ) );
 	std::vector< int32_t > buffer( bufSize );
