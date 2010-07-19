@@ -53,6 +53,7 @@ void ProgressViewer::start( const QList< Converter * > & tasks ) {
 	for( int i = 0; i < this->lp_.size(); ++i ) {
 		this->lp_[i]->show();
 		this->dispatch_( this->lp_[i] );
+		++this->rc_;
 	}
 
 	this->show();
@@ -76,11 +77,11 @@ void ProgressViewer::dispatch_( ProgressBar * pb ) {
 
 	if( task ) {
 		pb->start( task );
-		++this->rc_;
 	} else if( this->rc_ > 1 ) {
 		pb->hide();
 		--this->rc_;
 	} else {
 		this->hide();
+		this->rc_ = 0;
 	}
 }
