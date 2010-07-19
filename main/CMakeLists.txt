@@ -21,12 +21,12 @@ include_directories(
 set(KHOPPER_MAIN_MOC_HEADERS
     src/widget/conversiondialog.hpp
     src/widget/converter.hpp
-    src/widget/converterthread.hpp
     src/widget/mainwindow.hpp
     src/widget/player.hpp
     src/widget/playlistview.hpp
     src/widget/preference.hpp
-    src/widget/progress.hpp
+    src/widget/progressbar.hpp
+    src/widget/progressviewer.hpp
     src/widget/propertydialog.hpp)
 
 qt4_wrap_cpp(KHOPPER_MAIN_MOC_SOURCES ${KHOPPER_MAIN_MOC_HEADERS})

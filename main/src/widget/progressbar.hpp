@@ -1,5 +1,5 @@
 /**
- * @file converter.hpp
+ * @file progressbar.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,57 +19,44 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_WIDGET_CONVERTER_HPP
-#define KHOPPER_WIDGET_CONVERTER_HPP
+#ifndef KHOPPER_WIDGET_PROGRESSBAR_HPP
+#define KHOPPER_WIDGET_PROGRESSBAR_HPP
 
-#include "khopper/abstractwriter.hpp"
 #include "khopper/track.hpp"
+#include "khopper/abstractwriter.hpp"
 
-#include <QtCore/QThread>
+#include <QtGui/QWidget>
+
+namespace Ui {
+	class ProgressBar;
+}
 
 namespace khopper {
-
 	namespace widget {
 
-		/**
-		 * @brief Controller of converting
-		 */
-		class Converter : public QThread {
+		class Converter;
+
+		class ProgressBar : public QWidget {
 			Q_OBJECT
-
 		public:
-			/**
-			 * @brief Default constructor
-			 */
-			Converter( album::TrackCSP track, codec::WriterSP encoder );
+			explicit ProgressBar( QWidget * parent );
 
-			QString getTitle() const;
-			qint64 getMaximumValue() const;
-
-		public slots:
-			/**
-			 * @brief Cancel converting
-			 */
 			void cancel();
+			void start( Converter * task );
 
 		signals:
-			/**
-			 * @brief Decoded duration
-			 * @param ms Time in second * 1000
-			 */
-			void decodedTime( qint64 ms );
+			void finished();
 
-		protected:
-			void run();
+		private slots:
+			void increase_( qint64 );
+			void onFinished_();
 
 		private:
-			bool canceled_;
-			album::TrackCSP track_;
-			codec::WriterSP writer_;
+			Converter * task_;
+			std::tr1::shared_ptr< Ui::ProgressBar > ui_;
 		};
 
 	}
-
 }
 
 #endif

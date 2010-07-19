@@ -36,24 +36,24 @@ using khopper::plugin::createReader;
 using khopper::error::RunTimeError;
 using khopper::error::CodecError;
 
-Converter::Converter( QObject * parent ):
-QObject( parent ),
-canceled_( false ) {
+Converter::Converter( TrackCSP track, WriterSP writer ):
+QThread( 0 ),
+canceled_( false ),
+track_( track ),
+writer_( writer ) {
 }
 
-void Converter::convert( TrackCSP track, WriterSP encoder ) {
-	// FIXME: not always local file
-	ReaderSP decoder( track->getReader() );
-	qDebug() << track->getURI();
+void Converter::run() {
+	ReaderSP decoder( this->track_->getReader() );
 	decoder->open( QIODevice::ReadOnly );
 
-	encoder->setAudioFormat( decoder->getAudioFormat() );
-	encoder->setChannelLayout( decoder->getChannelLayout() );
+	this->writer_->setAudioFormat( decoder->getAudioFormat() );
+	this->writer_->setChannelLayout( decoder->getChannelLayout() );
 
-	encoder->open( QIODevice::WriteOnly );
+	this->writer_->open( QIODevice::WriteOnly );
 	this->canceled_ = false;
 
-	if( !decoder->isOpen() || !encoder->isOpen() ) {
+	if( !decoder->isOpen() || !this->writer_->isOpen() ) {
 		throw RunTimeError( "Can not open decoder or encoder!" );
 	}
 
@@ -63,14 +63,22 @@ void Converter::convert( TrackCSP track, WriterSP encoder ) {
 			break;
 		}
 		QByteArray frame( decoder->read( sec ) );
-		encoder->write( frame );
+		this->writer_->write( frame );
 		emit this->decodedTime( frame.size() * 1000 / sec );
 	}
 
-	encoder->close();
+	this->writer_->close();
 	decoder->close();
 }
 
 void Converter::cancel() {
 	this->canceled_ = true;
+}
+
+qint64 Converter::getMaximumValue() const {
+	return this->track_->getDuration().toMillisecond();
+}
+
+QString Converter::getTitle() const {
+	return this->track_->getTitle();
 }

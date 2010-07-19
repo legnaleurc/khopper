@@ -1,5 +1,5 @@
 /**
- * @file progress.hpp
+ * @file progressviewer.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,65 +19,47 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_WIDGET_PROGRESS_HPP
-#define KHOPPER_WIDGET_PROGRESS_HPP
+#ifndef KHOPPER_WIDGET_PROGRESSVIEWER_HPP
+#define KHOPPER_WIDGET_PROGRESSVIEWER_HPP
 
-#include "khopper/tr1.hpp"
+#include "khopper/playlist.hpp"
+#include "khopper/abstractwriter.hpp"
 
+#include <QtCore/QList>
+#include <QtCore/QQueue>
 #include <QtGui/QWidget>
 
 namespace Ui {
-	class Progress;
+	class ProgressViewer;
 }
 
 namespace khopper {
-
 	namespace widget {
 
-		/**
-		 * @brief Show the progress
-		 */
-		class Progress : public QWidget {
+		class ProgressBar;
+		class Converter;
+
+		class ProgressViewer : public QWidget {
 			Q_OBJECT
-
 		public:
-			/**
-			 * @brief Pass arguments to QDialog
-			 */
-			explicit Progress( QWidget * parent );
+			explicit ProgressViewer( QWidget * parent );
 
-		public slots:
-			void increase( qint64 value );
-			/**
-			 * @brief Set maximum progress
-			 */
-			void setMaximum( qint64 maximum );
-			/**
-			 * @brief Set current item name
-			 */
-			void setItemName( const QString & name );
-			/**
-			 * @brief Set current task count
-			 */
-			void setCurrent( int current );
-			/**
-			 * @brief Set total tasks
-			 */
-			void setTotal( int total );
+			void start( const QList< Converter * > & tasks );
 
-		signals:
-			void canceled();
+		private slots:
+			void cancel_();
+			void dispatch_();
 
 		private:
-			void updateIndex_();
+			void dispatch_( ProgressBar * );
 
-			std::tr1::shared_ptr< Ui::Progress > ui_;
-			int current_;
-			int total_;
+			int rc_;
+			QList< ProgressBar * > lp_;
+			QList< Converter * > tasks_;
+			std::tr1::shared_ptr< Ui::ProgressViewer > ui_;
 		};
 
 	}
-
 }
 
 #endif
