@@ -49,7 +49,6 @@ namespace khopper {
 			static void errorCallback_( const FLAC__StreamDecoder *, FLAC__StreamDecoderErrorStatus, void * );
 
 			void parseVorbisComments_( const FLAC__StreamMetadata_VorbisComment & );
-			QByteArray readFrame_();
 
 			std::tr1::shared_ptr< FLAC__StreamDecoder > pFD_;
 			QByteArray buffer_;
