@@ -22,6 +22,9 @@
 #include "trackprivate.hpp"
 #include "error.hpp"
 
+#include <fileref.h>
+#include <tag.h>
+
 #include <QHash>
 
 using namespace khopper::album;
@@ -88,6 +91,20 @@ QString Track::getTitle() const {
 
 const QUrl & Track::getURI() const {
 	return this->p_->uri;
+}
+
+void Track::save() const {
+	if( this->p_->uri.scheme() != "file" ) {
+		return;
+	}
+
+	TagLib::FileRef fout( this->p_->uri.toLocalFile().toUtf8().constData() );
+	fout.tag()->setAlbum( this->getAlbum()->getTitle().toUtf8().constData() );
+	fout.tag()->setArtist( this->getArtist().toUtf8().constData() );
+	fout.tag()->setTitle( this->getTitle().toUtf8().constData() );
+	fout.tag()->setTrack( this->getIndex() );
+
+	fout.save();
 }
 
 void Track::setAlbum( AlbumSP album ) {
