@@ -28,8 +28,6 @@
 #include <QtCore/QUrl>
 #include <QtMultimedia/QAudioFormat>
 
-#include <functional>
-
 namespace khopper {
 
 	namespace codec {

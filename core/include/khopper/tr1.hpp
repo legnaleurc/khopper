@@ -44,6 +44,7 @@
 # define KHOPPER_DLL
 # if __GNUC__ >= 4
 #  include <tr1/memory>
+#  include <tr1/functional>
 #  include <cstdint>
 # else
 // FIXME: reserved for older gcc
