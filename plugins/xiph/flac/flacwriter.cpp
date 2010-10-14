@@ -26,6 +26,8 @@
 
 #include <QtDebug>
 
+#include <cstdint>
+
 namespace {
 
 	static inline FILE * fileHelper( const QUrl & uri ) {

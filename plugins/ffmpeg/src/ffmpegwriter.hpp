@@ -71,7 +71,7 @@ namespace khopper {
 			AVStream * pStream_;
 			QByteArray queue_;
 			double quality_;
-			std::size_t frameSize_;
+			int frameSize_;
 		};
 
 	}

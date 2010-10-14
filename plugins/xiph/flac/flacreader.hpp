@@ -26,6 +26,8 @@
 
 #include <FLAC/stream_decoder.h>
 
+#include <cstdint>
+
 namespace khopper {
 
 	namespace codec {

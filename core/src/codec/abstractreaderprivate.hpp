@@ -26,6 +26,7 @@
 
 #include <loki/Singleton.h>
 
+#include <cstdint>
 #include <map>
 
 namespace khopper {
