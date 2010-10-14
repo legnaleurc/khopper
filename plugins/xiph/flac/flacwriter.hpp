@@ -50,8 +50,8 @@ namespace khopper {
 		private:
 			static void progressCallback_( const FLAC__StreamEncoder *, FLAC__uint64, FLAC__uint64, unsigned, unsigned, void * );
 
-			std::tr1::shared_ptr< FLAC__StreamEncoder > pFE_;
-			std::vector< std::tr1::shared_ptr< FLAC__StreamMetadata > > metadataOwner_;
+			std::shared_ptr< FLAC__StreamEncoder > pFE_;
+			std::vector< std::shared_ptr< FLAC__StreamMetadata > > metadataOwner_;
 			bool ogg_;
 		};
 

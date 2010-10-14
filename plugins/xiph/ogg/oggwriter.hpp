@@ -53,12 +53,12 @@ namespace khopper {
 			virtual void writeFrame( const QByteArray & sample );
 
 		private:
-			std::tr1::shared_ptr< FILE > fout_;
-			std::tr1::shared_ptr< vorbis_info > encoder_;
-			std::tr1::shared_ptr< ogg_stream_state > muxer_;
-			std::tr1::shared_ptr< vorbis_dsp_state > dsp_;
-			std::tr1::shared_ptr< vorbis_block > block_;
-			std::tr1::shared_ptr< vorbis_comment > comments_;
+			std::shared_ptr< FILE > fout_;
+			std::shared_ptr< vorbis_info > encoder_;
+			std::shared_ptr< ogg_stream_state > muxer_;
+			std::shared_ptr< vorbis_dsp_state > dsp_;
+			std::shared_ptr< vorbis_block > block_;
+			std::shared_ptr< vorbis_comment > comments_;
 			float quality_;
 		};
 

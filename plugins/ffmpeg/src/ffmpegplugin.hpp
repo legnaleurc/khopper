@@ -49,7 +49,7 @@ namespace khopper {
 			virtual void doUninstall();
 
 		private:
-			std::tr1::shared_ptr< widget::WavPanel > panel_;
+			std::shared_ptr< widget::WavPanel > panel_;
 		};
 
 	}

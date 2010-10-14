@@ -82,7 +82,7 @@ namespace khopper {
 		private:
 			void setQueue_( const album::PlayList & );
 
-			std::tr1::shared_ptr< Ui::Player > ui_;
+			std::shared_ptr< Ui::Player > ui_;
 			PlayListModel * model_;
 			Phonon::MediaObject * player_;
 			PropertyDialog * prop_;

@@ -26,6 +26,8 @@
 
 #include <QtCore/QString>
 
+#include <memory>
+
 namespace khopper {
 
 	namespace album {
@@ -44,10 +46,10 @@ namespace khopper {
 
 		private:
 			struct AlbumPrivate;
-			std::tr1::shared_ptr< AlbumPrivate > p_;
+			std::shared_ptr< AlbumPrivate > p_;
 		};
 
-		typedef std::tr1::shared_ptr< Album > AlbumSP;
+		typedef std::shared_ptr< Album > AlbumSP;
 
 	}
 

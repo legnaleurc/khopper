@@ -63,9 +63,9 @@ namespace khopper {
 			void readHeader_();
 			QByteArray readFrame_();
 
-			std::tr1::shared_ptr< AVFormatContext > pFormatContext_;
-			std::tr1::shared_ptr< AVCodecContext > pCodecContext_;
-			std::tr1::shared_ptr< AVPacket > pPacket_;
+			std::shared_ptr< AVFormatContext > pFormatContext_;
+			std::shared_ptr< AVCodecContext > pCodecContext_;
+			std::shared_ptr< AVPacket > pPacket_;
 			AVStream * pStream_;
 			qint64 curPos_;
 			bool eof_;

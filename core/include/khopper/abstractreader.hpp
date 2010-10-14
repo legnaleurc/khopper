@@ -28,6 +28,9 @@
 #include <QtCore/QUrl>
 #include <QtMultimedia/QAudioFormat>
 
+#include <functional>
+#include <memory>
+
 namespace khopper {
 
 	namespace codec {
@@ -40,7 +43,7 @@ namespace khopper {
 		 *
 		 * Use TR1 shared pointer.
 		 */
-		typedef std::tr1::shared_ptr< AbstractReader > ReaderSP;
+		typedef std::shared_ptr< AbstractReader > ReaderSP;
 		/**
 		 * @ingroup Codecs
 		 * @brief AbstractReader const smart pointer
@@ -48,7 +51,7 @@ namespace khopper {
 		 *
 		 * Use TR1 shared pointer.
 		 */
-		typedef std::tr1::shared_ptr< const AbstractReader > ReaderCSP;
+		typedef std::shared_ptr< const AbstractReader > ReaderCSP;
 
 		/**
 		 * @ingroup Codecs
@@ -225,15 +228,15 @@ namespace khopper {
 			AbstractReader & operator =( const AbstractReader & );
 
 			struct AbstractReaderPrivate;
-			std::tr1::shared_ptr< AbstractReaderPrivate > p_;
+			std::shared_ptr< AbstractReaderPrivate > p_;
 		};
 
 	}
 
 	namespace plugin {
 
-		typedef std::tr1::function< int ( const QUrl & ) > ReaderVerifier;
-		typedef std::tr1::function< codec::ReaderSP ( const QUrl & ) > ReaderCreator;
+		typedef std::function< int ( const QUrl & ) > ReaderVerifier;
+		typedef std::function< codec::ReaderSP ( const QUrl & ) > ReaderCreator;
 
 		/**
 		 * @ingroup Plugins

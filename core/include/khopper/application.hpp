@@ -26,6 +26,8 @@
 
 #include <QtGui/QApplication>
 
+#include <memory>
+
 namespace khopper {
 
 	namespace plugin {
@@ -54,7 +56,7 @@ namespace khopper {
 
 	private:
 		struct ApplicationPrivate;
-		std::tr1::shared_ptr< ApplicationPrivate > p_;
+		std::shared_ptr< ApplicationPrivate > p_;
 	};
 
 }

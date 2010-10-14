@@ -48,7 +48,7 @@ namespace khopper {
 		private:
 			void write_();
 
-			std::tr1::shared_ptr< Ui::PropertyDialog > ui_;
+			std::shared_ptr< Ui::PropertyDialog > ui_;
 		};
 	}
 }

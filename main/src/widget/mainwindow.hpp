@@ -72,7 +72,7 @@ namespace khopper {
 			void open( const QList< QUrl > & uris );
 
 		private:
-			std::tr1::shared_ptr< Ui::MainWindow > ui_;
+			std::shared_ptr< Ui::MainWindow > ui_;
 			ConversionDialog * conversion_;
 			Preference * preference_;
 			AboutWidget * about_;

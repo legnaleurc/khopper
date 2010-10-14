@@ -53,7 +53,7 @@ namespace khopper {
 
 		private:
 			Converter * task_;
-			std::tr1::shared_ptr< Ui::ProgressBar > ui_;
+			std::shared_ptr< Ui::ProgressBar > ui_;
 		};
 
 	}

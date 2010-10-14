@@ -26,6 +26,8 @@
 
 #include <QtGui/QDialog>
 
+#include <memory>
+
 namespace Ui {
 	class CodecSelector;
 }
@@ -54,7 +56,7 @@ namespace khopper {
 			 */
 			explicit CodecSelector( const QByteArray & encoded );
 
-			std::tr1::shared_ptr< Ui::CodecSelector > ui_;
+			std::shared_ptr< Ui::CodecSelector > ui_;
 			QByteArray encoded_;
 			QString decoded_;
 		};

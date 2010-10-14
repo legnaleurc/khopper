@@ -23,31 +23,25 @@
 #ifndef KHOPPER_UTIL_TR1_HPP
 #define KHOPPER_UTIL_TR1_HPP
 
-// for stdint.h in C99
-#ifndef __STDC_CONSTANT_MACROS
-#define __STDC_CONSTANT_MACROS
-#endif
-
+// Microsoft Visual C++ settings
 #ifdef _MSC_VER
+// for dll symbol export/import
 # ifdef KHOPPER_LIBRARY
 #  define KHOPPER_DLL __declspec(dllexport)
 # else
 #  define KHOPPER_DLL __declspec(dllimport)
 # endif
-# if _MSC_FULL_VER >= 150030729
-#  include <memory>
-#  include <stdint.h>
-# else
-// FIXME: reserved for older msvc
+// supports C++0x since Visual C++ 10
+# if _MSC_VER < 1600
+#  error Must use Microsoft Visual C++ 10 or newer toolchain.
 # endif
+// GNU GCC settings
 #elif defined( __GNUC__ )
+// need not dll symbol trick
 # define KHOPPER_DLL
-# if __GNUC__ >= 4
-#  include <tr1/memory>
-#  include <tr1/functional>
-#  include <cstdint>
-# else
-// FIXME: reserved for older gcc
+// supports C++0x since GCC 4.5
+# if __GNUC__ < 4 || __GNUC_MINOR__ < 5
+#  error Must use GNU GCC 4.5 or newer toolchain.
 # endif
 #else
 // FIXME: reserved for other compilers

@@ -66,7 +66,7 @@ namespace khopper {
 
 		private:
 			struct AbstractPanelPrivate;
-			std::tr1::shared_ptr< AbstractPanelPrivate > p_;
+			std::shared_ptr< AbstractPanelPrivate > p_;
 		};
 
 	}
