@@ -60,6 +60,10 @@ lastOpenedDir_( QDir::homePath() ) {
 	QObject::connect( this->ui_->player, SIGNAL( errorOccured( const QString &, const QString & ) ), this, SLOT( showErrorMessage_( const QString &, const QString & ) ) );
 
 	QObject::connect( this->conversion_, SIGNAL( errorOccured( const QString &, const QString & ) ), this, SLOT( showErrorMessage_( const QString &, const QString & ) ) );
+
+	if( !this->ui_->player->isPlayable() ) {
+		this->showErrorMessage_( tr( "Backend Capability Error" ), tr( "Phonon Backend is down." ) );;
+	}
 }
 
 void MainWindow::initMenuBar_() {
