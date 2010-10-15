@@ -27,6 +27,7 @@
 #include "pluginviewer.hpp"
 #include "preference.hpp"
 
+#include "khopper/application.hpp"
 #include "khopper/error.hpp"
 #include "khopper/playlist.hpp"
 
@@ -54,9 +55,11 @@ lastOpenedDir_( QDir::homePath() ) {
 	// Setting menu bar
 	this->initMenuBar_();
 
+	QObject::connect( KHOPPER_APPLICATION, SIGNAL( errorOccured( const QString &, const QString & ) ), this, SLOT( showErrorMessage_( const QString &, const QString & ) ) );
+
 	QObject::connect( this->ui_->player, SIGNAL( fileDropped( const QList< QUrl > & ) ), this, SLOT( open( const QList< QUrl > & ) ) );
 	QObject::connect( this->ui_->player, SIGNAL( requireConvert( const khopper::album::PlayList & ) ), this, SLOT( fire_( const khopper::album::PlayList & ) ) );
-	QObject::connect( this->ui_->player, SIGNAL( error( const QString &, const QString & ) ), this, SLOT( showErrorMessage_( const QString &, const QString & ) ) );
+	QObject::connect( this->ui_->player, SIGNAL( errorOccured( const QString &, const QString & ) ), this, SLOT( showErrorMessage_( const QString &, const QString & ) ) );
 
 	QObject::connect( this->conversion_, SIGNAL( errorOccured( const QString &, const QString & ) ), this, SLOT( showErrorMessage_( const QString &, const QString & ) ) );
 }

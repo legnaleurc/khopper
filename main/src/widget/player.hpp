@@ -25,6 +25,7 @@
 #include "khopper/playlist.hpp"
 
 #include <Phonon/MediaObject>
+#include <QtCore/QModelIndex>
 #include <QtGui/QWidget>
 
 namespace Ui {
@@ -35,8 +36,8 @@ namespace khopper {
 
 	namespace widget {
 
-		class SeekSlider;
-		class SongList;
+		class PlayListModel;
+		class PropertyDialog;
 
 		/// Audio player
 		class Player : public QWidget {
@@ -62,31 +63,31 @@ namespace khopper {
 			/**
 			 * @brief Emmited when convert action is required.
 			 */
-			void requireConvert( const khopper::album::PlayList & );
+			void requireConvert( const khopper::album::PlayList & playList );
 			/**
 			 * @brief Error message
 			 * @param title Error title
-			 * @param errMsg Error masage
+			 * @param message Error masage
 			 */
-			void error( const QString & title, const QString & errMsg );
+			void errorOccured( const QString & title, const QString & message );
 
 		private slots:
+			void convertHelper_();
 			void play_();
 			void playOrPause_();
+			void propertyHelper_( const QModelIndex & );
 			void stop_();
 			void handleState_( Phonon::State, Phonon::State );
-			//void tick_( qint64 );
-			//void updateTimestamp_( int ms );
 
 		private:
-			std::tr1::shared_ptr< Ui::Player > ui_;
+			void setQueue_( const album::PlayList & );
+
+			std::shared_ptr< Ui::Player > ui_;
+			PlayListModel * model_;
 			Phonon::MediaObject * player_;
-			album::Timestamp currentTimeStamp_;
+			PropertyDialog * prop_;
 			album::Timestamp duration_;
 			album::TrackSP currentTrack_;
-			qint64 currentBeginTime_;
-			qint64 currentEndTime_;
-			bool starting_;
 		};
 
 	}

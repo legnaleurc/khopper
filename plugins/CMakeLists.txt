@@ -15,7 +15,27 @@ macro(KHOPPER_ADD_PLUGIN target)
 endmacro()
 
 add_subdirectory(cuesheet)
-add_subdirectory(ffmpeg)
-add_subdirectory(mp3lame)
+
+find_package(FFmpeg)
+if(FFMPEG_FOUND)
+    message(STATUS "Found fallowing OPTIONAL package, FFmpeg plugin will be build.")
+    add_subdirectory(ffmpeg)
+endif()
+
+find_package(Lame)
+find_package(TagLib)
+if(LAME_FOUND AND TAGLIB_FOUND)
+    message(STATUS "Found fallowing OPTIONAL package, mp3Lame plugin will be build.")
+    add_subdirectory(mp3lame)
+endif()
+
+add_subdirectory(redbook)
+
 add_subdirectory(single)
-add_subdirectory(xiph)
+
+find_package(Flac)
+find_package(OggVorbis)
+if(FLAC_FOUND AND OGGVORBIS_FOUND)
+    message(STATUS "Found fallowing OPTIONAL package, Xiph plugin will be build.")
+    add_subdirectory(xiph)
+endif()

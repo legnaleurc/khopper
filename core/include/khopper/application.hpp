@@ -26,6 +26,8 @@
 
 #include <QtGui/QApplication>
 
+#include <memory>
+
 namespace khopper {
 
 	namespace plugin {
@@ -50,10 +52,11 @@ namespace khopper {
 	signals:
 		void panelAdded( khopper::widget::AbstractPanel * panel );
 		void panelRemoved( khopper::widget::AbstractPanel * panel );
+		void errorOccured( const QString & title, const QString & message );
 
 	private:
 		struct ApplicationPrivate;
-		std::tr1::shared_ptr< ApplicationPrivate > p_;
+		std::shared_ptr< ApplicationPrivate > p_;
 	};
 
 }

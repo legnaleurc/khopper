@@ -29,8 +29,9 @@ using khopper::codec::ReaderSP;
 using khopper::error::RunTimeError;
 using khopper::error::CodecError;
 
-Track::Track( ReaderSP reader ):
-p_( new TrackPrivate ) {
+Track::Track( const QUrl & uri ):
+p_( new TrackPrivate( uri ) ) {
+	ReaderSP reader( this->createReader() );
 	if( !reader ) {
 		throw RunTimeError( "Invalid reader" );
 	}
@@ -52,11 +53,13 @@ p_( new TrackPrivate ) {
 	this->setURI( reader->getURI() );
 
 	reader->close();
-
-	this->p_->reader = reader;
 }
 
 Track::~Track() {
+}
+
+ReaderSP Track::createReader() const {
+	return this->p_->creator( this->p_->uri );
 }
 
 AlbumSP Track::getAlbum() const {
@@ -77,10 +80,6 @@ const Timestamp & Track::getDuration() const {
 
 unsigned int Track::getIndex() const {
 	return this->p_->index;
-}
-
-ReaderSP Track::getReader() const {
-	return this->p_->reader;
 }
 
 QString Track::getTitle() const {
@@ -149,17 +148,17 @@ void Track::setAudioFormat( const QAudioFormat & format ) {
 	this->p_->format = format;
 }
 
-Track::TrackPrivate::TrackPrivate():
+Track::TrackPrivate::TrackPrivate( const QUrl & uri ):
 album(),
 artist(),
 bitRate( 0 ),
+creator( plugin::getReaderCreator( uri ) ),
 duration(),
 format(),
-reader(),
 songWriter(),
 title(),
 textCodec( QTextCodec::codecForName( "UTF-8" ) ),
-uri() {
+uri( uri ) {
 }
 
 uint qHash( TrackCSP key ) {

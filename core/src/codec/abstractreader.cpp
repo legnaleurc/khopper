@@ -25,7 +25,6 @@
 # define LOKI_CLASS_LEVEL_THREADING
 #endif
 
-#include <loki/Factory.h>
 #include <loki/Singleton.h>
 
 #include <QtDebug>
@@ -34,42 +33,25 @@
 #include <cmath>
 #include <cstring>
 
-namespace {
-
-	struct Helper {
-		Helper( const QUrl & uri ) : uri( uri ) {
-		}
-		bool operator ()( const khopper::plugin::ReaderFactoryPrivate::Pair & l, const khopper::plugin::ReaderFactoryPrivate::Pair & r ) {
-			return l.first( this->uri ) < r.first( this->uri );
-		}
-		const QUrl & uri;
-	};
-
-}
-
 using namespace khopper::codec;
 using namespace khopper::plugin;
 
-bool khopper::plugin::registerReader( ReaderVerifier v, ReaderCreator c ) {
-	ReaderFactory::Instance().l.push_back( std::make_pair( v, c ) );
-	return true;
+bool khopper::plugin::registerReader( const QString & id, ReaderVerifier v, ReaderCreator c ) {
+	return ReaderFactory::Instance().l.insert( std::make_pair( id, std::make_pair( v, c ) ) ).second;
 }
 
-void khopper::plugin::unregisterReader( ReaderVerifier v ) {
-	std::list< ReaderFactoryPrivate::Pair > & l( ReaderFactory::Instance().l );
-	for( std::list< ReaderFactoryPrivate::Pair >::iterator it = l.begin(); it != l.end(); ++it ) {
-		if( it->first == v ) {
-			l.erase( it );
-			break;
-		}
-	}
+bool khopper::plugin::unregisterReader( const QString & id ) {
+	return ReaderFactory::Instance().l.erase( id ) == 1;
 }
 
-ReaderSP khopper::plugin::createReader( const QUrl & uri ) {
-	const std::list< ReaderFactoryPrivate::Pair > & l( ReaderFactory::Instance().l );
+ReaderCreator khopper::plugin::getReaderCreator( const QUrl & uri ) {
+	typedef ReaderFactoryPrivate::Map Map;
+	const Map & m( ReaderFactory::Instance().l );
 
-	if( !l.empty() ) {
-		return std::max_element( l.begin(), l.end(), Helper( uri ) )->second( uri );
+	if( !m.empty() ) {
+		return std::max_element( m.begin(), m.end(), [&uri]( const Map::value_type & l, const Map::value_type & r ) {
+			return l.second.first( uri ) < r.second.first( uri );
+		} )->second.second;
 	} else {
 		throw khopper::error::SystemError( QObject::tr( "No reader can be used." ) );
 	}

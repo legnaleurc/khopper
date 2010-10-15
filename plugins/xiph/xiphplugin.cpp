@@ -70,11 +70,11 @@ XiphPlugin::~XiphPlugin() {
 void XiphPlugin::doInstall() {
 	KHOPPER_APPLICATION->addPanel( this->flacPanel_ );
 	KHOPPER_APPLICATION->addPanel( this->oggPanel_ );
-	registerReader( verifier, creator );
+	registerReader( this->getID(), verifier, creator );
 }
 
 void XiphPlugin::doUninstall() {
 	KHOPPER_APPLICATION->removePanel( this->flacPanel_ );
 	KHOPPER_APPLICATION->removePanel( this->oggPanel_ );
-	unregisterReader( verifier );
+	unregisterReader( this->getID() );
 }

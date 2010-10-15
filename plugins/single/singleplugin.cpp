@@ -41,7 +41,7 @@ namespace {
 	}
 
 	khopper::album::PlayList creator( const QUrl & uri ) {
-		khopper::album::TrackSP track( new khopper::album::Track( khopper::plugin::createReader( uri ) ) );
+		khopper::album::TrackSP track( new khopper::album::Track( uri ) );
 
 		khopper::album::PlayList tmp;
 		tmp.push_back( track );

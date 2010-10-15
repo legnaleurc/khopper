@@ -77,11 +77,11 @@ namespace khopper {
 			//void setMedia_( const QUrl & uri );
 
 			PlayList playList_;
-			std::tr1::shared_ptr< CueSheet > album_;
+			std::shared_ptr< CueSheet > album_;
 			QString currentFilePath_;
 			QString currentFileType_;
-			std::tr1::shared_ptr< CueSheetTrack > previousTrack_;
-			std::tr1::shared_ptr< CueSheetTrack > currentTrack_;
+			std::shared_ptr< CueSheetTrack > previousTrack_;
+			std::shared_ptr< CueSheetTrack > currentTrack_;
 			unsigned int trackIndex_;
 		};
 

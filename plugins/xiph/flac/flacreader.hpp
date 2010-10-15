@@ -26,6 +26,8 @@
 
 #include <FLAC/stream_decoder.h>
 
+#include <cstdint>
+
 namespace khopper {
 
 	namespace codec {
@@ -35,7 +37,6 @@ namespace khopper {
 			explicit FlacReader( const QUrl & uri );
 
 			virtual bool atEnd() const;
-			virtual qint64 pos() const;
 			virtual bool seek( qint64 pos );
 			virtual qint64 size() const;
 
@@ -50,9 +51,8 @@ namespace khopper {
 			static void errorCallback_( const FLAC__StreamDecoder *, FLAC__StreamDecoderErrorStatus, void * );
 
 			void parseVorbisComments_( const FLAC__StreamMetadata_VorbisComment & );
-			QByteArray readFrame_();
 
-			std::tr1::shared_ptr< FLAC__StreamDecoder > pFD_;
+			std::shared_ptr< FLAC__StreamDecoder > pFD_;
 			QByteArray buffer_;
 			uint64_t offset_;
 		};

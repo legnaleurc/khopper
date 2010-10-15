@@ -21,6 +21,8 @@
  */
 #include "rangedreader.hpp"
 
+#include <cstring>
+
 namespace {
 
 	inline static qint64 posFromMs( qint64 ms, const QAudioFormat & format ) {
@@ -34,25 +36,25 @@ namespace {
 }
 
 using namespace khopper::codec;
-using khopper::plugin::createReader;
+using khopper::plugin::getReaderCreator;
 
-RangedReader::RangedReader( const QUrl & uri ):
+RangedReader::RangedReader( const QUrl & uri, qint64 msBegin, qint64 msDuration ):
 AbstractReader( uri ),
 client_(),
-msBegin_( 0 ),
+msBegin_( msBegin ),
 msCurrent_( 0 ),
-msDuration_( -1 ) {
-	this->client_ = createReader( uri );
+msDuration_( msDuration ) {
+	this->client_ = getReaderCreator( uri )( uri );
 }
 
 bool RangedReader::atEnd() const {
-	return this->client_->atEnd();
+	return this->client_->atEnd() || this->client_->pos() >= posFromMs( this->msDuration_, this->getAudioFormat() );
 }
 
-void RangedReader::setRange( qint64 msBegin, qint64 msDuration ) {
-	this->msBegin_ = msBegin;
-	this->msDuration_ = msDuration;
-}
+//void RangedReader::setRange( qint64 msBegin, qint64 msDuration ) {
+//	this->msBegin_ = msBegin;
+//	this->msDuration_ = msDuration;
+//}
 
 qint64 RangedReader::size() const {
 	return posFromMs( this->msDuration_, this->getAudioFormat() );

@@ -28,10 +28,8 @@
 #include <QtCore/QUrl>
 #include <QtMultimedia/QAudioFormat>
 
-#ifndef LOKI_CLASS_LEVEL_THREADING
-# define LOKI_CLASS_LEVEL_THREADING
-#endif
-#include <loki/Functor.h>
+#include <functional>
+#include <memory>
 
 namespace khopper {
 
@@ -45,7 +43,7 @@ namespace khopper {
 		 *
 		 * Use TR1 shared pointer.
 		 */
-		typedef std::tr1::shared_ptr< AbstractReader > ReaderSP;
+		typedef std::shared_ptr< AbstractReader > ReaderSP;
 		/**
 		 * @ingroup Codecs
 		 * @brief AbstractReader const smart pointer
@@ -53,7 +51,7 @@ namespace khopper {
 		 *
 		 * Use TR1 shared pointer.
 		 */
-		typedef std::tr1::shared_ptr< const AbstractReader > ReaderCSP;
+		typedef std::shared_ptr< const AbstractReader > ReaderCSP;
 
 		/**
 		 * @ingroup Codecs
@@ -230,23 +228,15 @@ namespace khopper {
 			AbstractReader & operator =( const AbstractReader & );
 
 			struct AbstractReaderPrivate;
-			std::tr1::shared_ptr< AbstractReaderPrivate > p_;
+			std::shared_ptr< AbstractReaderPrivate > p_;
 		};
 
 	}
 
 	namespace plugin {
 
-		typedef Loki::Functor<
-			unsigned int,
-			LOKI_TYPELIST_1( const QUrl & ),
-			Loki::ClassLevelLockable
-		> ReaderVerifier;
-		typedef Loki::Functor<
-			codec::ReaderSP,
-			LOKI_TYPELIST_1( const QUrl & ),
-			Loki::ClassLevelLockable
-		> ReaderCreator;
+		typedef std::function< int ( const QUrl & ) > ReaderVerifier;
+		typedef std::function< codec::ReaderSP ( const QUrl & ) > ReaderCreator;
 
 		/**
 		 * @ingroup Plugins
@@ -255,8 +245,8 @@ namespace khopper {
 		 * @param name plugin name
 		 * @return if registered in factory
 		 */
-		bool KHOPPER_DLL registerReader( ReaderVerifier v, ReaderCreator c );
-		void KHOPPER_DLL unregisterReader( ReaderVerifier v );
+		bool KHOPPER_DLL registerReader( const QString & id, ReaderVerifier v, ReaderCreator c );
+		bool KHOPPER_DLL unregisterReader( const QString & id );
 		/**
 		 * @ingroup Plugins
 		 * @brief Create reader
@@ -264,7 +254,7 @@ namespace khopper {
 		 * @return Smart pointer of Product
 		 * @throws RunTimeError Can not load any plugin
 		 */
-		codec::ReaderSP KHOPPER_DLL createReader( const QUrl & uri );
+		ReaderCreator KHOPPER_DLL getReaderCreator( const QUrl & uri );
 
 	}
 

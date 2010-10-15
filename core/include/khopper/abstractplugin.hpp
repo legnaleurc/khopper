@@ -27,6 +27,8 @@
 #include <QtCore/QFileInfo>
 #include <QtCore/QString>
 
+#include <memory>
+
 namespace khopper {
 	namespace plugin {
 
@@ -64,7 +66,7 @@ namespace khopper {
 			AbstractPlugin & operator =( const AbstractPlugin & );
 
 			struct AbstractPluginPrivate;
-			std::tr1::shared_ptr< AbstractPluginPrivate > p_;
+			std::shared_ptr< AbstractPluginPrivate > p_;
 		};
 
 	}

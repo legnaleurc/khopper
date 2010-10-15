@@ -51,7 +51,7 @@ namespace khopper {
 			virtual codec::WriterSP createWriter( const QUrl & uri ) const;
 
 		private:
-			std::tr1::shared_ptr< Ui::WavPanel > ui_;
+			std::shared_ptr< Ui::WavPanel > ui_;
 		};
 
 	}

@@ -46,7 +46,7 @@ namespace khopper {
 			/**
 			 * @brief Default constructor.
 			 */
-			explicit Track( codec::ReaderSP reader );
+			explicit Track( const QUrl & uri );
 			virtual ~Track();
 
 			AlbumSP getAlbum() const;
@@ -55,7 +55,7 @@ namespace khopper {
 			unsigned int getBitRate() const;
 			const Timestamp & getDuration() const;
 			unsigned int getIndex() const;
-			codec::ReaderSP getReader() const;
+			virtual codec::ReaderSP createReader() const;
 			QString getTitle() const;
 			/**
 			 * @brief Get url.
@@ -88,17 +88,17 @@ namespace khopper {
 
 		private:
 			struct TrackPrivate;
-			std::tr1::shared_ptr< TrackPrivate > p_;
+			std::shared_ptr< TrackPrivate > p_;
 		};
 
 		/**
 		 * @brief Smart pointer of Track.
 		 */
-		typedef std::tr1::shared_ptr< Track > TrackSP;
+		typedef std::shared_ptr< Track > TrackSP;
 		/**
 		 * @brief Smart pointer of const Track.
 		 */
-		typedef std::tr1::shared_ptr< const Track > TrackCSP;
+		typedef std::shared_ptr< const Track > TrackCSP;
 
 	}
 

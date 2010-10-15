@@ -25,7 +25,7 @@
 #include "khopper/abstractwriter.hpp"
 #include "khopper/track.hpp"
 
-#include <QtCore/QObject>
+#include <QtCore/QThread>
 
 namespace khopper {
 
@@ -34,22 +34,17 @@ namespace khopper {
 		/**
 		 * @brief Controller of converting
 		 */
-		class Converter : public QObject {
+		class Converter : public QThread {
 			Q_OBJECT
 
 		public:
 			/**
 			 * @brief Default constructor
 			 */
-			explicit Converter( QObject * parent );
+			Converter( album::TrackCSP track, codec::WriterSP encoder );
 
-			/**
-			 * @brief Convert @p track
-			 * @param [in] track track to convert
-			 * @param [in] targetPath output file path
-			 * @param [in] encoder encoder setting
-			 */
-			void convert( album::TrackCSP track, codec::WriterSP encoder );
+			QString getTitle() const;
+			qint64 getMaximumValue() const;
 
 		public slots:
 			/**
@@ -62,10 +57,16 @@ namespace khopper {
 			 * @brief Decoded duration
 			 * @param ms Time in second * 1000
 			 */
-			void decodedTime( qint64 ms ) const;
+			void decodedTime( qint64 ms );
+			void errorOccured( const QString & title, const QString & message );
+
+		protected:
+			void run();
 
 		private:
 			bool canceled_;
+			album::TrackCSP track_;
+			codec::WriterSP writer_;
 		};
 
 	}

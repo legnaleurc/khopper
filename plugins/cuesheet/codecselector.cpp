@@ -28,7 +28,7 @@
 using namespace khopper::widget;
 
 QString CodecSelector::selectTextCodec( const QByteArray & encoded ) {
-	std::tr1::shared_ptr< CodecSelector > dialog( new CodecSelector( encoded ) );
+	std::shared_ptr< CodecSelector > dialog( new CodecSelector( encoded ) );
 	if( dialog->exec() == QDialog::Rejected ) {
 		return "";
 	} else {

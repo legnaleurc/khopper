@@ -26,7 +26,8 @@
 
 #include <loki/Singleton.h>
 
-#include <list>
+#include <cstdint>
+#include <map>
 
 namespace khopper {
 
@@ -56,8 +57,10 @@ namespace khopper {
 	namespace plugin {
 
 		struct ReaderFactoryPrivate {
-			typedef std::pair< ReaderVerifier, ReaderCreator > Pair;
-			std::list< Pair > l;
+			typedef QString Key;
+			typedef std::pair< ReaderVerifier, ReaderCreator > Value;
+			typedef std::map< Key, Value > Map;
+			std::map< Key, Value > l;
 		};
 
 		typedef Loki::SingletonHolder<

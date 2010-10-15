@@ -32,53 +32,61 @@ using namespace khopper::widget;
 using khopper::album::TrackCSP;
 using khopper::codec::WriterSP;
 using khopper::codec::ReaderSP;
-using khopper::plugin::createReader;
-using khopper::error::RunTimeError;
+using khopper::error::BaseError;
 using khopper::error::CodecError;
 
-Converter::Converter( QObject * parent ):
-QObject( parent ),
-canceled_( false ) {
+Converter::Converter( TrackCSP track, WriterSP writer ):
+QThread( 0 ),
+canceled_( false ),
+track_( track ),
+writer_( writer ) {
+	this->writer_->setAlbum( this->track_->getAlbum()->getTitle().toUtf8() );
+	this->writer_->setArtist( this->track_->getArtist().toUtf8() );
+	this->writer_->setTitle( this->track_->getTitle().toUtf8() );
 }
 
-void Converter::convert( TrackCSP track, WriterSP encoder ) {
-	// FIXME: not always local file
-	ReaderSP decoder( track->getReader() );
-	qDebug() << track->getURI();
+void Converter::run() {
+	ReaderSP decoder( this->track_->createReader() );
+	try {
 	decoder->open( QIODevice::ReadOnly );
-
-	encoder->setAudioFormat( decoder->getAudioFormat() );
-	encoder->setChannelLayout( decoder->getChannelLayout() );
-
-	encoder->open( QIODevice::WriteOnly );
-	this->canceled_ = false;
-
-	if( !decoder->isOpen() || !encoder->isOpen() ) {
-		throw RunTimeError( "Can not open decoder or encoder!" );
+	} catch( BaseError & e ) {
+		emit this->errorOccured( tr( "Decoder Error" ), e.getMessage() );
+		return;
 	}
 
-//	int64_t begin = track->getStartTime().toMillisecond();
-//	int64_t end = begin + track->getDuration().toMillisecond();
-//	decoder->setRange( begin, end );
-//	if( !decoder->seek( begin ) ) {
-//		throw CodecError( "Invalid start point" );
-//	}
+	this->writer_->setAudioFormat( decoder->getAudioFormat() );
+	this->writer_->setChannelLayout( decoder->getChannelLayout() );
 
-	//int64_t decoded;
-	int sec = decoder->getAudioFormat().frequency() * decoder->getAudioFormat().channels() * decoder->getAudioFormat().sampleSize() / 8;
+	try {
+		this->writer_->open( QIODevice::WriteOnly );
+	} catch( BaseError & e ) {
+		emit this->errorOccured( tr( "Encoder Error" ), e.getMessage() );
+		return;
+	}
+	this->canceled_ = false;
+
+	const int sec = decoder->getAudioFormat().frequency() * decoder->getAudioFormat().channels() * decoder->getAudioFormat().sampleSize() / 8;
 	while( !decoder->atEnd() ) {
 		if( this->canceled_ ) {
 			break;
 		}
 		QByteArray frame( decoder->read( sec ) );
-		encoder->write( frame );
+		this->writer_->write( frame );
 		emit this->decodedTime( frame.size() * 1000 / sec );
 	}
 
-	encoder->close();
+	this->writer_->close();
 	decoder->close();
 }
 
 void Converter::cancel() {
 	this->canceled_ = true;
+}
+
+qint64 Converter::getMaximumValue() const {
+	return this->track_->getDuration().toMillisecond();
+}
+
+QString Converter::getTitle() const {
+	return this->track_->getTitle();
 }

@@ -70,10 +70,10 @@ void FfmpegPlugin::doInstall() {
 #ifdef _WIN32
 	av_register_protocol( &khopper::codec::wfileProtocol );
 #endif
-	registerReader( verifier, creator );
+	registerReader( this->getID(), verifier, creator );
 }
 
 void FfmpegPlugin::doUninstall() {
 	KHOPPER_APPLICATION->removePanel( this->panel_.get() );
-	unregisterReader( verifier );
+	unregisterReader( this->getID() );
 }

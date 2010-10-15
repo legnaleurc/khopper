@@ -47,9 +47,9 @@ namespace {
 
 using namespace khopper::album;
 using khopper::error::CodecError;
+using khopper::error::ParsingError;
 using khopper::codec::ReaderSP;
 using khopper::codec::RangedReader;
-using khopper::plugin::createReader;
 
 PlayList CueSheetParser::load( const QString & content, const QDir & dir ) {
 	CueSheetParser parser( content, dir );
@@ -65,9 +65,9 @@ album_( new CueSheet ) {
 void CueSheetParser::parseCue_( QString content, const QDir & dir ) {
 	QRegExp COMMENT( "\\s*REM\\s+(.*)\\s+(.*)\\s*" );
 	QRegExp SINGLE( "\\s*(CATALOG|CDTEXTFILE|ISRC|PERFORMER|SONGWRITER|TITLE)\\s+(.*)\\s*" );
-	QRegExp FILES( "\\s*FILE\\s+(.*)\\s+(WAVE)\\s*" );
+	QRegExp FILES( "\\s*FILE\\s+(.*)\\s+(WAVE|BINARY)\\s*" );
 	QRegExp FLAGS( "\\s*FLAGS\\s+(DATA|DCP|4CH|PRE|SCMS)\\s*" );
-	QRegExp TRACK( "\\s*TRACK\\s+(\\d+)\\s+(AUDIO)\\s*" );
+	QRegExp TRACK( "\\s*TRACK\\s+(\\d+)\\s+(AUDIO|CDG|MODE1/2048|MODE1/2352|MODE2/2336|MODE2/2352|CDI/2336|CDI/2352)\\s*" );
 	QRegExp INDEX( "\\s*(INDEX|PREGAP|POSTGAP)\\s+((\\d+)\\s+)?(\\d+):(\\d+):(\\d+)\\s*" );
 
 	this->trackIndex_ = 0;
@@ -155,15 +155,15 @@ void CueSheetParser::parseIndex_( const QString & type, const QString & num, con
 			// starting time of pregap
 			if( this->trackIndex_ > 1 ) {
 				this->previousTrack_->setDuration( tmp - this->previousTrack_->getStartTime() );
-				this->previousTrack_->getRangedReader()->setRange( this->previousTrack_->getStartTime().toMillisecond(), this->previousTrack_->getDuration().toMillisecond() );
+//				this->previousTrack_->getRangedReader()->setRange( this->previousTrack_->getStartTime().toMillisecond(), this->previousTrack_->getDuration().toMillisecond() );
 			}
 			break;
 		case 1:
 			// track start time
 			this->currentTrack_->setStartTime( tmp );
-			if( this->trackIndex_ > 1 && this->previousTrack_->getDuration().isZero() ) {
+			if( this->trackIndex_ > 1 && this->previousTrack_->getDuration().toMillisecond() < 0 ) {
 				this->previousTrack_->setDuration( this->currentTrack_->getStartTime() - this->previousTrack_->getStartTime() );
-				this->previousTrack_->getRangedReader()->setRange( this->previousTrack_->getStartTime().toMillisecond(), this->previousTrack_->getDuration().toMillisecond() );
+				//this->previousTrack_->getRangedReader()->setRange( this->previousTrack_->getStartTime().toMillisecond(), this->previousTrack_->getDuration().toMillisecond() );
 			}
 			break;
 		default:
@@ -191,7 +191,7 @@ void CueSheetParser::parseComment_( const QString & key, const QString & value )
 
 void CueSheetParser::parseTrack_( const QString & num, const QString & type ) {
 	this->previousTrack_ = this->currentTrack_;
-	this->currentTrack_.reset( new CueSheetTrack( new RangedReader( QUrl::fromLocalFile( this->currentFilePath_ ) ) ) );
+	this->currentTrack_.reset( new CueSheetTrack( QUrl::fromLocalFile( this->currentFilePath_ ) ) );
 
 	this->trackIndex_ = num.toUInt();
 	this->currentTrack_->setIndex( num.toShort() );
@@ -215,7 +215,7 @@ void CueSheetParser::parseGarbage_( const QString & line ) {
 
 void CueSheetParser::updateLastTrack_() {
 	// get the total length, because cue sheet don't provide it
-	ReaderSP decoder( createReader( QUrl::fromLocalFile( this->currentFilePath_ ) ) );
+	ReaderSP decoder( this->currentTrack_->createReader() );
 	try {
 		// NOTE: may throw exception
 		decoder->open( QIODevice::ReadOnly );
@@ -223,14 +223,8 @@ void CueSheetParser::updateLastTrack_() {
 		qDebug() << e.getMessage();
 	}
 	if( decoder->isOpen() ) {
-		// set bit rate, channels, sample rate
-		foreach( TrackSP track, this->playList_ ) {
-			track->setBitRate( decoder->getBitRate() );
-			track->setAudioFormat( decoder->getAudioFormat() );
-		}
-
 		this->currentTrack_->setDuration( Timestamp::fromMillisecond( decoder->getDuration() ) - this->currentTrack_->getStartTime() );
-		this->currentTrack_->getRangedReader()->setRange( this->currentTrack_->getStartTime().toMillisecond(), this->currentTrack_->getDuration().toMillisecond() );
+		//this->currentTrack_->getRangedReader()->setRange( this->currentTrack_->getStartTime().toMillisecond(), this->currentTrack_->getDuration().toMillisecond() );
 
 		decoder->close();
 	}

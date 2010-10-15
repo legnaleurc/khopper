@@ -77,8 +77,10 @@ WriterSP Mp3Panel::createWriter( const QUrl & uri ) const {
 	default:
 		;
 	}
-	//encoder->setSampleRate( this->ui_->sampleRate->itemData( this->ui_->sampleRate->currentIndex() ).toInt() );
-	//encoder->setChannels( this->ui_->channels->itemData( this->ui_->channels->currentIndex() ).toInt() );
+	if( this->ui_->custom->isChecked() ) {
+		//encoder->setSampleRate( this->ui_->sampleRate->itemData( this->ui_->sampleRate->currentIndex() ).toInt() );
+		//encoder->setChannels( this->ui_->channels->itemData( this->ui_->channels->currentIndex() ).toInt() );
+	}
 
 	return WriterSP( encoder );
 }

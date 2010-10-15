@@ -31,15 +31,15 @@ namespace khopper {
 	namespace album {
 
 		struct Track::TrackPrivate {
-			TrackPrivate();
+			TrackPrivate( const QUrl & uri );
 
 			AlbumSP album;
 			QByteArray artist;
 			unsigned int bitRate;
+			plugin::ReaderCreator creator;
 			Timestamp duration;
 			QAudioFormat format;
 			unsigned int index;
-			codec::ReaderSP reader;
 			QByteArray songWriter;
 			QByteArray title;
 			QTextCodec * textCodec;

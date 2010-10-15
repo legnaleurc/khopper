@@ -26,6 +26,8 @@
 
 #include <QtCore/QString>
 
+#include <cstdint>
+
 namespace khopper {
 
 	namespace album {

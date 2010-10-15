@@ -33,11 +33,12 @@ namespace khopper {
 
 		class CueSheetTrack : public Track {
 		public:
-			explicit CueSheetTrack( codec::RangedReader * reader );
+			explicit CueSheetTrack( const QUrl & url );
+
+			virtual codec::ReaderSP createReader() const;
 
 			const QStringList & getComments() const;
 			const QStringList & getGarbage() const;
-			codec::RangedReader * getRangedReader() const;
 			const Timestamp & getStartTime() const;
 
 			void setComments( const QStringList & comments );

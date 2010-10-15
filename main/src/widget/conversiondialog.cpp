@@ -21,8 +21,8 @@
  */
 #include "conversiondialog.hpp"
 #include "ui_conversiondialog.h"
-#include "progress.hpp"
-#include "converterthread.hpp"
+#include "progressviewer.hpp"
+#include "converter.hpp"
 
 #include "khopper/abstractpanel.hpp"
 #include "khopper/application.hpp"
@@ -42,8 +42,7 @@ using khopper::codec::WriterSP;
 ConversionDialog::ConversionDialog( QWidget * parent ):
 QDialog( parent ),
 ui_( new Ui::ConversionDialog ),
-progress_( new Progress( this ) ),
-thread_( new ConverterThread( this ) ),
+progress_( new ProgressViewer( this ) ),
 table_() {
 	this->ui_->setupUi( this );
 	this->ui_->outputPath->setText( QDir::homePath() );
@@ -58,16 +57,6 @@ table_() {
 
 	connect( KHOPPER_APPLICATION, SIGNAL( panelAdded( khopper::widget::AbstractPanel * ) ), this, SLOT( addPanel( khopper::widget::AbstractPanel * ) ) );
 	connect( KHOPPER_APPLICATION, SIGNAL( panelRemoved( khopper::widget::AbstractPanel * ) ), this, SLOT( removePanel( khopper::widget::AbstractPanel * ) ) );
-
-	// Converter thread
-	connect( this->thread_, SIGNAL( taskName( const QString & ) ), this->progress_, SLOT( setItemName( const QString & ) ) );
-	connect( this->thread_, SIGNAL( taskGoal( qint64 ) ), this->progress_, SLOT( setMaximum( qint64 ) ) );
-	connect( this->thread_, SIGNAL( currentTask( int ) ), this->progress_, SLOT( setCurrent( int ) ) );
-	connect( this->thread_, SIGNAL( step( qint64 ) ), this->progress_, SLOT( increase( qint64 ) ) );
-	connect( this->thread_, SIGNAL( finished() ), this->progress_, SLOT( hide() ) );
-	connect( this->thread_, SIGNAL( errorOccured( const QString &, const QString & ) ), this, SIGNAL( errorOccured( const QString &, const QString & ) ) );
-	// NOTE: works, but danger
-	connect( this->progress_, SIGNAL( canceled() ), this->thread_, SLOT( cancel() ) );
 }
 
 void ConversionDialog::convert( const PlayList & tracks ) {
@@ -78,18 +67,15 @@ void ConversionDialog::convert( const PlayList & tracks ) {
 
 	AbstractPanel * panel = this->getCurrent();
 
-	QList< WriterSP > outs;
+	QList< Converter * > tasks;
 	foreach( album::TrackSP track, tracks ) {
-		outs.push_back( panel->createWriter( QUrl::fromLocalFile( QString( "%1/%2.%3" ).arg( this->getOutputPath_( track ) ).arg( this->getOutputName_( track ) ).arg( panel->getSuffix() ) ) ) );
+		QString path = QString( "%1/%2.%3" ).arg( this->getOutputPath_( track ) ).arg( this->getOutputName_( track ) ).arg( panel->getSuffix() );
+		Converter * task = new Converter( track, panel->createWriter( QUrl::fromLocalFile( path ) ) );
+		QObject::connect( task, SIGNAL( errorOccured( const QString &, const QString & ) ), this, SIGNAL( errorOccured( const QString &, const QString & ) ) );
+		tasks.push_back( task );
 	}
 
-	// set progress bar
-	this->progress_->setTotal( tracks.size() );
-	// set output information
-	this->thread_->setOutput( outs );
-	this->thread_->setTracks( tracks );
-	this->thread_->start();
-	this->progress_->show();
+	this->progress_->start( tasks );
 }
 
 AbstractPanel * ConversionDialog::getCurrent() const {

@@ -36,8 +36,7 @@ namespace khopper {
 
 	namespace widget {
 
-		class Progress;
-		class ConverterThread;
+		class ProgressViewer;
 		class AbstractPanel;
 
 		/// Output format option widget
@@ -65,9 +64,8 @@ namespace khopper {
 			QString getOutputPath_( album::TrackSP );
 			QString getOutputName_( album::TrackSP );
 
-			std::tr1::shared_ptr< Ui::ConversionDialog > ui_;
-			Progress * progress_;
-			ConverterThread * thread_;
+			std::shared_ptr< Ui::ConversionDialog > ui_;
+			ProgressViewer * progress_;
 			std::map< int, widget::AbstractPanel * > table_;
 		};
 
