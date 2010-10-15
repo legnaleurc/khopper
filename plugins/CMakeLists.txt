@@ -22,7 +22,7 @@ if(FFMPEG_FOUND)
     add_subdirectory(ffmpeg)
 endif()
 
-find_package(Lame)
+find_package(Mp3Lame)
 find_package(TagLib)
 if(LAME_FOUND AND TAGLIB_FOUND)
     message(STATUS "Found fallowing OPTIONAL package, mp3Lame plugin will be build.")

@@ -335,7 +335,9 @@ QByteArray FfmpegReader::readFrame_() {
 }
 
 bool FfmpegReader::seek( qint64 pos ) {
+	qDebug() << "khopper::codec::FfmpegReader::seek( " << pos <<  " )";
 	bool succeed = this->AbstractReader::seek( pos );
+	qDebug() << "DID I SEEKED OVER STREAM?" << ( ( this->atEnd() ) ? "Yes" : "No" ) << "!";
 	// internal position = pos / frequency / channels / samplesize/ AVStream::time_base
 	int64_t internalPos = av_rescale( pos, this->pStream_->time_base.den, this->pStream_->time_base.num * this->getAudioFormat().frequency() * this->getAudioFormat().channels() * this->getAudioFormat().sampleSize() / 8 );
 	int ret = av_seek_frame( this->pFormatContext_.get(), this->pStream_->index, internalPos, AVSEEK_FLAG_ANY | AVSEEK_FLAG_BACKWARD );

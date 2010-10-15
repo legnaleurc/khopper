@@ -23,6 +23,8 @@
 
 #include <cstring>
 
+#include <QtDebug>
+
 using namespace khopper::widget;
 using khopper::codec::ReaderSP;
 
@@ -71,6 +73,7 @@ bool WavWrapper::open( OpenMode mode ) {
 }
 
 bool WavWrapper::seek( qint64 pos ) {
+	qDebug() << "khopper::widget::WavWrapper( " << pos << " );";
 	bool ret = this->QIODevice::seek( pos );
 	if( pos < 44 ) {
 	} else {
