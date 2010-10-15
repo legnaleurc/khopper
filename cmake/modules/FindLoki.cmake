@@ -13,7 +13,7 @@ else()
     find_path(LOKI_INCLUDE_DIR
         NAMES loki/Factory.h loki/Singleton.h)
     find_library(LOKI_LIBRARIES_RELEASE loki)
-    find_library(LOKI_LIBRARIES_DEBUG loki_D)
+    find_library(LOKI_LIBRARIES_DEBUG lokid)
     if(LOKI_LIBRARIES_RELEASE AND LOKI_LIBRARIES_DEBUG)
         set(LOKI_LIBRARIES optimized ${LOKI_LIBRARIES_RELEASE} debug ${LOKI_LIBRARIES_DEBUG})
     elseif(LOKI_LIBRARIES_RELEASE)
