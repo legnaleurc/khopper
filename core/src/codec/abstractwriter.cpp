@@ -21,8 +21,6 @@
  */
 #include "abstractwriterprivate.hpp"
 
-#include <QtDebug>
-
 #include <cassert>
 
 using namespace khopper::codec;

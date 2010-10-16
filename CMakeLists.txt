@@ -21,7 +21,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "MinSizeRel"
     add_definitions(-DQT_NO_DEBUG -DQT_NO_DEBUG_OUTPUT)
 endif()
 if(CMAKE_COMPILER_IS_GNUCXX)
-    add_definitions(-std=c++0x)
+    add_definitions(-std=c++0x -Wall)
 elseif(MSVC)
     add_definitions(/Zc:wchar_t- "/wd4127;4819")
     if(CMAKE_CXX_FLAGS MATCHES "/W[0-4]")

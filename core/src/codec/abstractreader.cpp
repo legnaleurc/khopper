@@ -27,8 +27,6 @@
 
 #include <loki/Singleton.h>
 
-#include <QtDebug>
-
 #include <cassert>
 #include <cmath>
 #include <cstring>

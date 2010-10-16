@@ -22,7 +22,7 @@
 #ifndef KHOPPER_WIDGET_WAVWRAPPER_HPP
 #define KHOPPER_WIDGET_WAVWRAPPER_HPP
 
-#include <QIODevice>
+#include <QtCore/QIODevice>
 
 #include "khopper/abstractreader.hpp"
 

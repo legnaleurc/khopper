@@ -26,8 +26,6 @@
 #include "khopper/error.hpp"
 #include "khopper/text.hpp"
 
-#include <QtDebug>
-
 using namespace khopper::widget;
 using khopper::album::TrackCSP;
 using khopper::codec::WriterSP;

@@ -28,8 +28,6 @@ extern "C" {
 #include <libavformat/avformat.h>
 }
 
-#include <QtDebug>
-
 #include <cstring>
 
 namespace {

@@ -28,7 +28,6 @@
 #include "khopper/application.hpp"
 
 #include <QtCore/QSettings>
-#include <QtDebug>
 #include <QtGui/QFileDialog>
 
 #include <boost/format.hpp>

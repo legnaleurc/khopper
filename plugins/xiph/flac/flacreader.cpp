@@ -25,7 +25,7 @@
 
 #include <QtCore/QMultiMap>
 #include <QtCore/QStringList>
-#include <QtDebug>
+#include <QtCore/QtDebug>
 
 #include <cstring>
 

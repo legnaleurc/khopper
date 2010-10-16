@@ -26,9 +26,9 @@
 #include "khopper/text.hpp"
 #include "khopper/track.hpp"
 
-#include <QtDebug>
 #include <QtCore/QRegExp>
 #include <QtCore/QStringList>
+#include <QtCore/QtDebug>
 #include <QtCore/QTextStream>
 
 #include <algorithm>

@@ -33,7 +33,6 @@
 #include <QtCore/QDir>
 #include <QtCore/QFile>
 #include <QtCore/QFileInfo>
-#include <QtDebug>
 #include <QtGui/QFileDialog>
 #include <QtGui/QMessageBox>
 

@@ -23,8 +23,8 @@
 #include "abstractplugin.hpp"
 
 #include <QtCore/QPluginLoader>
-#include <QtDebug>
-#include <QtGlobal>
+#include <QtCore/QtDebug>
+#include <QtCore/QtGlobal>
 #include <QtGui/QApplication>
 
 #include <algorithm>

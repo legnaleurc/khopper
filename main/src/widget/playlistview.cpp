@@ -28,7 +28,6 @@
 #include <QtCore/QTextCodec>
 #include <QtCore/QTimer>
 #include <QtCore/QUrl>
-#include <QtDebug>
 #include <QtGui/QAction>
 #include <QtGui/QDragEnterEvent>
 #include <QtGui/QDragMoveEvent>
@@ -142,7 +141,6 @@ void PlayListView::dropEvent( QDropEvent * event ) {
 
 void PlayListView::mouseDoubleClickEvent( QMouseEvent * event ) {
 	emit this->requirePlay();
-	qDebug() << "Double Clicked Item:" << this->rowAt( event->y() );
 	event->accept();
 }
 

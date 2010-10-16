@@ -28,8 +28,6 @@
 #include "ui_player.h"
 
 #include <Phonon/AudioOutput>
-//#include <QtCore/QModelIndex>
-#include <QtDebug>
 #include <Phonon/BackendCapabilities>
 
 namespace {
