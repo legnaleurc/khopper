@@ -24,7 +24,7 @@ endif()
 
 find_package(Mp3Lame)
 find_package(TagLib)
-if(LAME_FOUND AND TAGLIB_FOUND)
+if(MP3LAME_FOUND AND TAGLIB_FOUND)
     message(STATUS "Found fallowing OPTIONAL package, mp3Lame plugin will be build.")
     add_subdirectory(mp3lame)
 endif()
