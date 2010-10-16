@@ -69,7 +69,7 @@ ui_( new Ui::Player ) {
 	connect( this->ui_->playListView, SIGNAL( errorOccured( const QString &, const QString & ) ), this, SIGNAL( errorOccured( const QString &, const QString & ) ) );
 	connect( this->ui_->playListView, SIGNAL( requireProperty( const QModelIndex & ) ), this, SLOT( propertyHelper_( const QModelIndex & ) ) );
 
-	if( !Phonon::BackendCapabilities::isMimeTypeAvailable( "audio/pcm" ) ) {
+	if( Phonon::BackendCapabilities::availableMimeTypes().empty() ) {
 		this->playable_ = false;
 		this->ui_->next->setEnabled( false );
 		this->ui_->playOrPause->setEnabled( false );
