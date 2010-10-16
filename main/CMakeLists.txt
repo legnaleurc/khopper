@@ -1,7 +1,5 @@
 # main
 
-# use phonon
-set(QT_USE_PHONON TRUE)
 # hack MSVC path
 if(MSVC)
     set(EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}")
