@@ -92,9 +92,9 @@ void CueSheetParser::parseCue_( QString content, const QDir & dir ) {
 	}
 
 	// set track album
-	foreach( TrackSP track, this->playList_ ) {
+	std::for_each( this->playList_.begin(), this->playList_.end(), [&]( TrackSP track ) {
 		track->setAlbum( this->album_ );
-	}
+	} );
 
 	this->updateLastTrack_();
 }

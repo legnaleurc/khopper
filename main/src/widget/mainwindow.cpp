@@ -91,9 +91,9 @@ void MainWindow::showOpenFilesDialog() {
 	this->lastOpenedDir_ = QFileInfo( filePaths[0] ).absolutePath();
 
 	QList< QUrl > tmp;
-	foreach( QString path, filePaths ) {
+	std::for_each( filePaths.begin(), filePaths.end(), [&tmp]( const QString & path ) {
 		tmp.push_back( QUrl::fromLocalFile( path ) );
-	}
+	} );
 	this->open( tmp );
 }
 
@@ -104,9 +104,9 @@ void MainWindow::open( const QList< QUrl > & uris ) {
 
 	PlayList tracks;
 
-	foreach( QUrl uri, uris ) {
+	std::for_each( uris.begin(), uris.end(), [&]( const QUrl & uri ) {
 		if( uri.isEmpty() ) {
-			continue;
+			return;
 		}
 
 		try {
@@ -114,7 +114,7 @@ void MainWindow::open( const QList< QUrl > & uris ) {
 		} catch( BaseError & e ) {
 			this->showErrorMessage_( tr( "Can not decode this file!" ), e.getMessage() );
 		}
-	}
+	} );
 
 	this->ui_->player->append( tracks );
 }

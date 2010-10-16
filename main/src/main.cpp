@@ -51,12 +51,13 @@ int main( int argc, char * argv[] ) {
 	app.reloadPlugins();
 
 	QList< QUrl > tmp;
-	foreach( QString path, QApplication::arguments().mid( 1 ) ) {
+	QStringList args( QApplication::arguments().mid( 1 ) );
+	std::for_each( args.begin(), args.end(), [&tmp]( const QString & path ) {
 		tmp.push_back( path );
 		if( tmp.back().scheme().isEmpty() ) {
 			tmp.back().setScheme( "file" );
 		}
-	}
+	} );
 
 	window.open( tmp );
 

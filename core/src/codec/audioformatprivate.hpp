@@ -1,5 +1,5 @@
 /**
- * @file abstractwriterprivate.hpp
+ * @file audioformatprivate.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,24 +19,24 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_CODEC_ABSTRACTWRITERPRIVATE_HPP
-#define KHOPPER_CODEC_ABSTRACTWRITERPRIVATE_HPP
+#ifndef KHOPPER_CODEC_AUDIOFORMATPRIVATE_HPP
+#define KHOPPER_CODEC_AUDIOFORMATPRIVATE_HPP
 
-#include "abstractwriter.hpp"
+#include "codecutil.hpp"
 
 namespace khopper {
 	namespace codec {
 
-		struct AbstractWriter::AbstractWriterPrivate {
-			AbstractWriterPrivate( const QUrl & uri );
+		class AudioFormat::AudioFormatPrivate {
+		public:
+			AudioFormatPrivate();
 
-			QByteArray album;
-			QByteArray artist;
-			unsigned int bitRate;
-			ChannelLayout channelLayout;
-			AudioFormat format;
-			QUrl uri;
-			QByteArray title;
+			Endian byteOrder;
+			int channels;
+			QString codec;
+			int frequency;
+			int sampleSize;
+			SampleType sampleType;
 		};
 
 	}

@@ -140,7 +140,7 @@ void FfmpegReader::setupDecoder_() {
 	AVCodecContext * pCC = this->pStream_->codec;
 	// getting codec information
 	this->setBitRate( pCC->bit_rate );
-	QAudioFormat format;
+	AudioFormat format;
 	format.setFrequency( pCC->sample_rate );
 	format.setChannels( pCC->channels );
 	switch( pCC->channels ) {
@@ -155,23 +155,23 @@ void FfmpegReader::setupDecoder_() {
 	}
 	switch( pCC->sample_fmt ) {
 	case SAMPLE_FMT_U8:
-		format.setSampleType( QAudioFormat::UnSignedInt );
+		format.setSampleType( AudioFormat::UnSignedInt );
 		format.setSampleSize( 8 );
 		break;
 	case SAMPLE_FMT_S16:
-		format.setSampleType( QAudioFormat::SignedInt );
+		format.setSampleType( AudioFormat::SignedInt );
 		format.setSampleSize( 16 );
 		break;
 	case SAMPLE_FMT_S32:
-		format.setSampleType( QAudioFormat::SignedInt );
+		format.setSampleType( AudioFormat::SignedInt );
 		format.setSampleSize( 32 );
 		break;
 	case SAMPLE_FMT_FLT:
-		format.setSampleType( QAudioFormat::Float );
+		format.setSampleType( AudioFormat::Float );
 		format.setSampleSize( 32 );
 		break;
 	case SAMPLE_FMT_DBL:
-		format.setSampleType( QAudioFormat::Float );
+		format.setSampleType( AudioFormat::Float );
 		format.setSampleSize( 64 );
 		break;
 	default:
