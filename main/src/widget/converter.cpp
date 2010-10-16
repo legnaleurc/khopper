@@ -48,7 +48,7 @@ writer_( writer ) {
 void Converter::run() {
 	ReaderSP decoder( this->track_->createReader() );
 	try {
-	decoder->open( QIODevice::ReadOnly );
+		decoder->open( QIODevice::ReadOnly );
 	} catch( BaseError & e ) {
 		emit this->errorOccured( tr( "Decoder Error" ), e.getMessage() );
 		return;
