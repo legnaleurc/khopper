@@ -16,7 +16,7 @@ void PlayListModel::append( const PlayList & playList ) {
 	this->endInsertRows();
 }
 
-int PlayListModel::columnCount( const QModelIndex & parent ) const {
+int PlayListModel::columnCount( const QModelIndex & /*parent*/ ) const {
 	return 4;
 }
 
@@ -74,6 +74,6 @@ QVariant PlayListModel::headerData( int section, Qt::Orientation orientation, in
 	}
 }
 
-int PlayListModel::rowCount( const QModelIndex & parent ) const {
+int PlayListModel::rowCount( const QModelIndex & /*parent*/ ) const {
 	return this->list_.size();
 }

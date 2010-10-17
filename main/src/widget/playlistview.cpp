@@ -57,12 +57,13 @@ cmPos_() {
 	QSignalMapper * sm = new QSignalMapper( this );
 
 	// generate codec menu
-	foreach( int mib, QTextCodec::availableMibs() ) {
+	QList< int > mibs( QTextCodec::availableMibs() );
+	std::for_each( mibs.begin(), mibs.end(), [&]( int mib ) {
 		QAction * codec = new QAction( QTextCodec::codecForMib( mib )->name(), this );
 		codecs->addAction( codec );
-		connect( codec, SIGNAL( triggered() ), sm, SLOT( map() ) );
+		QObject::connect( codec, SIGNAL( triggered() ), sm, SLOT( map() ) );
 		sm->setMapping( codec, mib );
-	}
+	} );
 
 	connect( sm, SIGNAL( mapped( int ) ), this, SLOT( changeTextCodec_( int ) ) );
 

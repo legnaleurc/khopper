@@ -54,13 +54,13 @@ void ProgressViewer::start( const QList< Converter * > & tasks ) {
 	QMutexLocker locker( &mutex );
 	this->tasks_.append( tasks );
 	locker.unlock();
-	foreach( ProgressBar * pb, this->lp_ ) {
+	std::for_each( this->lp_.begin(), this->lp_.end(), [&]( ProgressBar * pb ) {
 		if( !pb->isVisible() ) {
 			pb->show();
 			++this->rc_;
 			this->dispatch_( pb );
 		}
-	}
+	} );
 
 	this->show();
 }
@@ -68,14 +68,14 @@ void ProgressViewer::start( const QList< Converter * > & tasks ) {
 void ProgressViewer::cancel_() {
 	QMutexLocker locker( &mutex );
 
-	foreach( Converter * task, this->tasks_ ) {
+	std::for_each( this->tasks_.begin(), this->tasks_.end(), []( Converter * task ) {
 		delete task;
-	}
+	} );
 	this->tasks_.clear();
 
-	foreach( ProgressBar * pb, this->lp_ ) {
+	std::for_each( this->lp_.begin(), this->lp_.end(), []( ProgressBar * pb ) {
 		pb->cancel();
-	}
+	} );
 }
 
 void ProgressViewer::dispatch_() {

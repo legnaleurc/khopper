@@ -97,10 +97,10 @@ void Player::setQueue_( const PlayList & tracks ) {
 		return;
 	}
 	QList< Phonon::MediaSource > queue;
-	foreach( TrackSP track, tracks ) {
+	std::for_each( tracks.begin(), tracks.end(), [&queue]( TrackSP track ) {
 		queue.push_back( new WavWrapper( track->createReader() ) );
 		queue.back().setAutoDelete( true );
-	}
+	} );
 	this->player_->setCurrentSource( queue.first() );
 	this->player_->setQueue( queue.mid( 1 ) );
 }
@@ -109,9 +109,9 @@ PlayList Player::getSelectedTracks() const {
 	QModelIndexList selected( this->ui_->playListView->selectionModel()->selectedRows() );
 	qSort( selected.begin(), selected.end(), incRowComp );
 	PlayList playList;
-	foreach( const QModelIndex & i, selected ) {
+	std::for_each( selected.begin(), selected.end(), [&]( const QModelIndex & i ) {
 		playList.push_back( this->model_->getPlayList()[i.row()] );
-	}
+	} );
 	return playList;
 }
 
