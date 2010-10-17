@@ -51,11 +51,15 @@ ui_( new Ui::ProgressViewer ) {
 }
 
 void ProgressViewer::start( const QList< Converter * > & tasks ) {
-	this->tasks_ = tasks;
+	QMutexLocker locker( &mutex );
+	this->tasks_.append( tasks );
+	locker.unlock();
 	foreach( ProgressBar * pb, this->lp_ ) {
-		pb->show();
-		++this->rc_;
-		this->dispatch_( pb );
+		if( !pb->isVisible() ) {
+			pb->show();
+			++this->rc_;
+			this->dispatch_( pb );
+		}
 	}
 
 	this->show();
