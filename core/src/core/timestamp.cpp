@@ -20,95 +20,148 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "timestamp.hpp"
+#include "timestampprivate.hpp"
 
 #include <cmath>
 #include <sstream>
 
-namespace khopper {
+using namespace khopper::album;
 
-	namespace album {
+Timestamp::TimestampPrivate::TimestampPrivate( int min, int sec, int ms ):
+millisecond( ms ),
+minute( min ),
+second( sec ) {
+}
 
-		Timestamp::Timestamp():
-		minute_( 0 ),
-		second_( 0 ),
-		millisecond_( 0 ) {
-		}
+Timestamp::Timestamp() : p_( new TimestampPrivate( 0, 0, 0 ) ) {
+}
 
-		Timestamp::Timestamp( int m, short int s, short int ms ):
-		minute_( m ),
-		second_( s ),
-		millisecond_( ms ) {
-		}
+Timestamp::Timestamp( int m, int s, int ms ) : p_( new TimestampPrivate( m, s, ms ) ) {
+}
 
-		bool Timestamp::isZero() const {
-			return ( this->minute_ == 0 ) && ( this->second_ == 0 ) && ( this->millisecond_ == 0 );
-		}
+Timestamp::Timestamp( const Timestamp & that ) : p_( new TimestampPrivate( *that.p_ ) ) {
+}
 
-		Timestamp & Timestamp::operator +=( const Timestamp & that ) {
-			this->millisecond_ += that.millisecond_;
-			if( this->millisecond_ >= 1000 ) {
-				this->millisecond_ -= 1000;
-				this->second_ += 1;
-			}
-			this->second_ += that.second_;
-			if( this->second_ >= 60 ) {
-				this->second_ -= 60;
-				this->minute_ += 1;
-			}
-			this->minute_ += that.minute_;
+bool Timestamp::isZero() const {
+	return ( this->p_->minute == 0 ) && ( this->p_->second == 0 ) && ( this->p_->millisecond == 0 );
+}
 
-			return *this;
-		}
+bool Timestamp::isValid() const {
+	return ( this->p_->minute >= 0 ) && ( this->p_->second >= 0 ) && ( this->p_->millisecond >= 0 );
+}
 
-		Timestamp & Timestamp::operator -=( const Timestamp & that ) {
-			if( this->millisecond_ < that.millisecond_ ) {
-				--this->second_;
-				this->millisecond_ += 1000 - that.millisecond_;
-			} else {
-				this->millisecond_ -= that.millisecond_;
-			}
-			if( this->second_ < that.second_ ) {
-				--this->minute_;
-				this->second_ += 60 - that.second_;
-			} else {
-				this->second_ -= that.second_;
-			}
-			// FIXME: may be negative
-			this->minute_ -= that.minute_;
+bool Timestamp::operator !=( const Timestamp & that ) const {
+	return !( *this == that );
+}
 
-			return *this;
-		}
+Timestamp Timestamp::operator +( const Timestamp & that ) const {
+	return Timestamp( *this ) += that;
+}
 
-		Timestamp Timestamp::operator -( const Timestamp & that ) const {
-			return Timestamp( *this ) -= that;
-		}
-
-		int64_t Timestamp::toMillisecond() const {
-			return ( static_cast< int64_t >( this->minute_ ) * 60 + this->second_ ) * 1000 + this->millisecond_;
-		}
-
-		double Timestamp::toSecond() const {
-			return 60 * this->minute_ + this->second_ + this->millisecond_ / 1000.0;
-		}
-
-		QString Timestamp::toString() const {
-			return QString( "%1:%2.%3" ).arg( this->minute_ ).arg( this->second_, 2L, 10L, QChar( '0' ) ).arg( this->millisecond_, 3L, 10L, QChar( '0' ) );
-		}
-
-		Timestamp Timestamp::fromMillisecond( int64_t millisecond ) {
-			Timestamp tmp;
-			tmp.millisecond_ = millisecond % 1000;
-			millisecond /= 1000;
-			tmp.second_ = millisecond % 60;
-			millisecond /= 60;
-			tmp.minute_ = millisecond;
-			return tmp;
-		}
-
-		Timestamp Timestamp::fromSecond( double second ) {
-			return fromMillisecond( static_cast< int >( second * 1000 ) );
-		}
-
+Timestamp & Timestamp::operator +=( const Timestamp & that ) {
+	this->p_->millisecond += that.p_->millisecond;
+	if( this->p_->millisecond >= 1000 ) {
+		this->p_->millisecond -= 1000;
+		this->p_->second += 1;
 	}
+	this->p_->second += that.p_->second;
+	if( this->p_->second >= 60 ) {
+		this->p_->second -= 60;
+		this->p_->minute += 1;
+	}
+	this->p_->minute += that.p_->minute;
 
+	return *this;
+}
+
+Timestamp Timestamp::operator -( const Timestamp & that ) const {
+	return Timestamp( *this ) -= that;
+}
+
+Timestamp & Timestamp::operator -=( const Timestamp & that ) {
+	if( this->p_->millisecond < that.p_->millisecond ) {
+		--this->p_->second;
+		this->p_->millisecond += 1000 - that.p_->millisecond;
+	} else {
+		this->p_->millisecond -= that.p_->millisecond;
+	}
+	if( this->p_->second < that.p_->second ) {
+		--this->p_->minute;
+		this->p_->second += 60 - that.p_->second;
+	} else {
+		this->p_->second -= that.p_->second;
+	}
+	// FIXME: may be negative
+	this->p_->minute -= that.p_->minute;
+
+	return *this;
+}
+
+bool Timestamp::operator <( const Timestamp & that ) const {
+	if( this->p_->minute == that.p_->minute ) {
+		if( this->p_->second == that.p_->second ) {
+			return this->p_->millisecond < that.p_->millisecond;
+		} else {
+			return this->p_->second < that.p_->second;
+		}
+	} else {
+		return this->p_->minute < that.p_->minute;
+	}
+}
+
+bool Timestamp::operator <=( const Timestamp & that ) const {
+	return *this < that || *this == that;
+}
+
+Timestamp & Timestamp::operator =( const Timestamp & that ) {
+	if( this != &that ) {
+		*this->p_ = *that.p_;
+	}
+	return *this;
+}
+
+bool Timestamp::operator ==( const Timestamp & that ) const {
+	return ( this->p_->minute >= that.p_->minute ) && ( this->p_->second >= that.p_->second ) && ( this->p_->millisecond >= that.p_->millisecond );;
+}
+
+bool Timestamp::operator >( const Timestamp & that ) const {
+	if( this->p_->minute == that.p_->minute ) {
+		if( this->p_->second == that.p_->second ) {
+			return this->p_->millisecond > that.p_->millisecond;
+		} else {
+			return this->p_->second > that.p_->second;
+		}
+	} else {
+		return this->p_->minute > that.p_->minute;
+	}
+}
+
+bool Timestamp::operator >=( const Timestamp & that ) const {
+	return *this > that || *this == that;
+}
+
+int64_t Timestamp::toMillisecond() const {
+	return ( static_cast< int64_t >( this->p_->minute ) * 60 + this->p_->second ) * 1000 + this->p_->millisecond;
+}
+
+double Timestamp::toSecond() const {
+	return 60 * this->p_->minute + this->p_->second + this->p_->millisecond / 1000.0;
+}
+
+QString Timestamp::toString() const {
+	return QString( "%1:%2.%3" ).arg( this->p_->minute ).arg( this->p_->second, 2L, 10L, QChar( '0' ) ).arg( this->p_->millisecond, 3L, 10L, QChar( '0' ) );
+}
+
+Timestamp Timestamp::fromMillisecond( int64_t millisecond ) {
+	Timestamp tmp;
+	tmp.p_->millisecond = millisecond % 1000;
+	millisecond /= 1000;
+	tmp.p_->second = millisecond % 60;
+	millisecond /= 60;
+	tmp.p_->minute = millisecond;
+	return tmp;
+}
+
+Timestamp Timestamp::fromSecond( double second ) {
+	return fromMillisecond( static_cast< int >( second * 1000 ) );
 }

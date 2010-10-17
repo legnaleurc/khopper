@@ -26,7 +26,7 @@
 
 #include <QtCore/QString>
 
-#include <cstdint>
+#include <memory>
 
 namespace khopper {
 
@@ -51,43 +51,43 @@ namespace khopper {
 			 *
 			 * Initialize to m:s.ms.
 			 */
-			Timestamp( int m, short int s, short int ms );
+			Timestamp( int m, int s, int ms );
+			Timestamp( const Timestamp & that );
 
+			int getMillisecond() const;
+			int getMinute() const;
+			int getSecond() const;
 			/// if equals to zero
+			bool isValid() const;
 			bool isZero() const;
-			int getMinute() const {
-				return this->minute_;
-			}
-			short getSecond() const {
-				return this->second_;
-			}
-			short getMillisecond() const {
-				return this->millisecond_;
-			}
+			void swap( Timestamp & that );
+			/// Convert to millisecond
+			int64_t toMillisecond() const;
+			/// Convert to second
+			double toSecond() const;
+			QString toString() const;
 
+			bool operator !=( const Timestamp & that ) const;
+			Timestamp operator +( const Timestamp & that ) const;
 			Timestamp & operator +=( const Timestamp & that );
-			/**
-			 * @brief Subtract assign operator
-			 * @param that Subtrahend
-			 * @return self
-			 */
-			Timestamp & operator -=( const Timestamp & that );
 			/**
 			 * @brief Subtract operator
 			 * @param that Subtrahend
 			 * @return result
 			 */
 			Timestamp operator -( const Timestamp & that ) const;
-
 			/**
-			 * @brief Convert to millisecond
+			 * @brief Subtract assign operator
+			 * @param that Subtrahend
+			 * @return self
 			 */
-			int64_t toMillisecond() const;
-			/**
-			 * @brief Convert to second
-			 */
-			double toSecond() const;
-			QString toString() const;
+			Timestamp & operator -=( const Timestamp & that );
+			bool operator <( const Timestamp & that ) const;
+			bool operator <=( const Timestamp & that ) const;
+			Timestamp & operator =( const Timestamp & that );
+			bool operator ==( const Timestamp & that ) const;
+			bool operator >( const Timestamp & that ) const;
+			bool operator >=( const Timestamp & that ) const;
 
 			/**
 			 * @brief Convert from int
@@ -101,9 +101,8 @@ namespace khopper {
 			static Timestamp fromSecond( double second );
 
 		private:
-			int minute_;
-			short int second_;
-			short int millisecond_;
+			class TimestampPrivate;
+			std::shared_ptr< TimestampPrivate > p_;
 		};
 
 	}

@@ -161,7 +161,7 @@ void CueSheetParser::parseIndex_( const QString & type, const QString & num, con
 		case 1:
 			// track start time
 			this->currentTrack_->setStartTime( tmp );
-			if( this->trackIndex_ > 1 && this->previousTrack_->getDuration().toMillisecond() < 0 ) {
+			if( this->trackIndex_ > 1 && ( this->previousTrack_->getStartTime() + this->previousTrack_->getDuration() > tmp || this->previousTrack_->getDuration().toMillisecond() < 0 ) ) {
 				this->previousTrack_->setDuration( this->currentTrack_->getStartTime() - this->previousTrack_->getStartTime() );
 				//this->previousTrack_->getRangedReader()->setRange( this->previousTrack_->getStartTime().toMillisecond(), this->previousTrack_->getDuration().toMillisecond() );
 			}
