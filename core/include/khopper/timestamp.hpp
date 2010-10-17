@@ -26,6 +26,7 @@
 
 #include <QtCore/QString>
 
+#include <cstdint>
 #include <memory>
 
 namespace khopper {
