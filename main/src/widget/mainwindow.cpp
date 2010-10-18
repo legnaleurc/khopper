@@ -30,9 +30,9 @@
 #include "khopper/error.hpp"
 #include "khopper/playlist.hpp"
 
-#include <QtCore/QDir>
 #include <QtCore/QFile>
 #include <QtCore/QFileInfo>
+#include <QtGui/QDesktopServices>
 #include <QtGui/QFileDialog>
 #include <QtGui/QMessageBox>
 
@@ -47,7 +47,7 @@ ui_( new Ui::MainWindow ),
 conversion_( new ConversionDialog( this ) ),
 preference_( new Preference( this ) ),
 about_( new AboutWidget( this ) ),
-lastOpenedDir_( QDir::homePath() ) {
+lastOpenedDir_( QDesktopServices::storageLocation( QDesktopServices::MusicLocation ) ) {
 	this->ui_->setupUi( this );
 	// Setting menu bar
 	this->initMenuBar_();
