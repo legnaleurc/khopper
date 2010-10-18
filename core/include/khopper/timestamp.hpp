@@ -24,6 +24,7 @@
 
 #include "tr1.hpp"
 
+#include <QtCore/QMetaType>
 #include <QtCore/QString>
 
 #include <cstdint>
@@ -109,5 +110,7 @@ namespace khopper {
 	}
 
 }
+
+Q_DECLARE_METATYPE( khopper::album::Timestamp )
 
 #endif

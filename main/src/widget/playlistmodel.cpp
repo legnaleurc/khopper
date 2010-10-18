@@ -52,6 +52,33 @@ int PlayListModel::columnCount( const QModelIndex & /*parent*/ ) const {
 	return 4;
 }
 
+bool PlayListModel::setData( const QModelIndex & index, const QVariant & value, int role ) {
+	if( !index.isValid() || !value.isValid() ) {
+		return false;
+	}
+	switch( role ) {
+	case Qt::EditRole:
+		switch( index.column() ) {
+		case 0:
+			this->list_[index.row()]->setTitle( value.toString() );
+			break;
+		case 1:
+			this->list_[index.row()]->setArtist( value.toString() );
+			break;
+		case 2:
+			this->list_[index.row()]->getAlbum()->setTitle( value.toString() );
+			break;
+		case 3:
+			this->list_[index.row()]->setDuration( value.value< album::Timestamp >() );
+			break;
+		}
+		break;
+	default:
+		return false;
+	}
+	return true;
+}
+
 QVariant PlayListModel::data( const QModelIndex & index, int role ) const {
 	if( !index.isValid() ) {
 		return QVariant();
