@@ -20,6 +20,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "playlistview.hpp"
+#include "playlistmodel.hpp"
 
 #include "khopper/playlist.hpp"
 
@@ -49,7 +50,7 @@ cmPos_() {
 	QAction * delSong = new QAction( this );
 	delSong->setShortcut( QKeySequence::Delete );
 	this->addAction( delSong );
-	connect( delSong, SIGNAL( triggered() ), this, SLOT( removeSelectedTracks() ) );
+	connect( delSong, SIGNAL( triggered() ), this, SLOT( removeHelper_() ) );
 
 	// Set context menu
 	QMenu * codecs = new QMenu( tr( "Change Text Codec" ), this );
@@ -102,15 +103,10 @@ void PlayListView::propertyHelper_() {
 //	}
 //}
 
-//void PlayListView::removeSelectedTracks() {
-//	QModelIndexList selected = this->selectionModel()->selectedRows();
-//	std::sort( selected.begin(), selected.end(), ::indexRowCompD );
-//	foreach( QModelIndex index, selected ) {
-//		this->tracks_.erase( this->tracks_.begin() + index.row() );
-//		this->model_->removeRow( index.row() );
-//	}
-//	this->selectionModel()->clear();
-//}
+void PlayListView::removeHelper_() {
+	static_cast< PlayListModel * >( this->model() )->remove( this->selectionModel()->selectedRows() );
+	this->selectionModel()->clear();
+}
 
 void PlayListView::contextMenuEvent( QContextMenuEvent * event ) {
 	QModelIndex index( this->indexAt( event->pos() ) );
