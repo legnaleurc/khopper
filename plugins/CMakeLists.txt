@@ -1,3 +1,5 @@
+# plugins
+
 if(MSVC)
     set(LIBRARY_OUTPUT_PATH "${CMAKE_BINARY_DIR}/plugins")
 else()
@@ -12,6 +14,9 @@ macro(KHOPPER_ADD_PLUGIN target)
     add_dependencies(${target} khopper_core)
     target_link_libraries(${target} khopper_core)
     set_target_properties(${target} PROPERTIES VERSION ${KHOPPER_VERSION} SOVERSION ${KHOPPER_VERSION})
+    install(TARGETS ${target}
+        RUNTIME DESTINATION "plugins"
+        LIBRARY DESTINATION "lib/khopper/plugins")
 endmacro()
 
 add_subdirectory(cuesheet)

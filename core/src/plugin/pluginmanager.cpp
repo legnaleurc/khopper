@@ -77,6 +77,7 @@ loadedPlugins_() {
 	if( tmp.cd( ".khopper/plugins" ) ) {
 		this->searchPaths_.push_back( tmp );
 	}
+	// last search system-wide settings
 	tmp = QDir( "/usr/local/lib/khopper/plugins" );
 	if( tmp.exists() ) {
 		this->searchPaths_.push_back( tmp );
