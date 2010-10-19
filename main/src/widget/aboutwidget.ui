@@ -117,7 +117,7 @@ Wei-Ru Zeng&lt;br/&gt;
           <string/>
          </property>
          <property name="pixmap">
-          <pixmap resource="../../main.qrc">:/image/womm.png</pixmap>
+          <pixmap resource="../../main.qrc">:/share/pixmap/womm.png</pixmap>
          </property>
         </widget>
        </item>
