@@ -45,19 +45,22 @@
       </widget>
      </item>
      <item>
-      <widget class="Phonon::SeekSlider" name="seeker">
-       <property name="iconVisible">
+      <widget class="Phonon::SeekSlider" name="seeker" native="true">
+       <property name="iconVisible" stdset="0">
         <bool>true</bool>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="Phonon::VolumeSlider" name="volume"/>
+      <widget class="Phonon::VolumeSlider" name="volume" native="true"/>
      </item>
     </layout>
    </item>
    <item>
     <widget class="khopper::widget::PlayListView" name="playListView">
+     <property name="acceptDrops">
+      <bool>true</bool>
+     </property>
      <property name="editTriggers">
       <set>QAbstractItemView::NoEditTriggers</set>
      </property>
@@ -80,18 +83,6 @@
       <bool>false</bool>
      </attribute>
      <attribute name="verticalHeaderVisible">
-      <bool>false</bool>
-     </attribute>
-     <attribute name="verticalHeaderHighlightSections">
-      <bool>false</bool>
-     </attribute>
-     <attribute name="verticalHeaderStretchLastSection">
-      <bool>false</bool>
-     </attribute>
-     <attribute name="verticalHeaderVisible">
-      <bool>false</bool>
-     </attribute>
-     <attribute name="horizontalHeaderHighlightSections">
       <bool>false</bool>
      </attribute>
      <attribute name="verticalHeaderHighlightSections">

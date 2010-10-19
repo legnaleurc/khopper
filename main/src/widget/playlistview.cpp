@@ -33,6 +33,7 @@
 #include <QtGui/QDragEnterEvent>
 #include <QtGui/QDragMoveEvent>
 #include <QtGui/QDropEvent>
+#include <QtGui/QHeaderView>
 #include <QtGui/QMenu>
 
 using namespace khopper::widget;
@@ -43,8 +44,8 @@ QTableView( parent ),
 contextMenu_( new QMenu( this ) ),
 droppingFiles_(),
 cmPos_() {
-	// Set drag and drop
-	this->setAcceptDrops( true );
+	// Set header
+	this->horizontalHeader()->setMovable( true );
 
 	// Set model
 	QAction * delSong = new QAction( this );
