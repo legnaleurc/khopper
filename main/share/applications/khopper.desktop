@@ -2,7 +2,8 @@
 Type=Application
 Name=Khopper
 Exec=khopper %U
-Categories=AudioVideo;Audio;Qt;
+GenericName=Khopper
+Categories=AudioVideo;Audio;Music;Qt;
 Encoding=UTF-8
 Icon=__ICON__
 Terminal=false
