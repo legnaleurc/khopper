@@ -48,7 +48,7 @@ void CueSheet::setComments( const QStringList & comments ) {
 }
 
 void CueSheet::setFlags( const QSet< QString > & flags ) {
-	this->flags_ = flags_;
+	this->flags_ = flags;
 }
 
 void CueSheet::setGarbage( const QStringList & garbage ) {
