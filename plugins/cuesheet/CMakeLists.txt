@@ -15,8 +15,3 @@ source_group("Form Files" REGULAR_EXPRESSION .*\\.ui)
 
 add_library(khopper_plugin_cuesheet SHARED ${KHOPPER_PLUGIN_CUESHEET_HEADERS} ${KHOPPER_PLUGIN_CUESHEET_SOURCES} ${KHOPPER_PLUGIN_CUESHEET_MOC_SOURCES} ${KHOPPER_PLUGIN_CUESHEET_UIC_HEADERS})
 khopper_add_plugin(khopper_plugin_cuesheet)
-
-install(TARGETS khopper_plugin_cuesheet DESTINATION
-    RUNTIME DESTINATION "plugins"
-    LIBRARY DESTINATION "plugins"
-    ARCHIVE DESTINATION "lib")

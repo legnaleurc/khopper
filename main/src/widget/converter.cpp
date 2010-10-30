@@ -26,8 +26,6 @@
 #include "khopper/error.hpp"
 #include "khopper/text.hpp"
 
-#include <QtDebug>
-
 using namespace khopper::widget;
 using khopper::album::TrackCSP;
 using khopper::codec::WriterSP;
@@ -48,7 +46,7 @@ writer_( writer ) {
 void Converter::run() {
 	ReaderSP decoder( this->track_->createReader() );
 	try {
-	decoder->open( QIODevice::ReadOnly );
+		decoder->open( QIODevice::ReadOnly );
 	} catch( BaseError & e ) {
 		emit this->errorOccured( tr( "Decoder Error" ), e.getMessage() );
 		return;

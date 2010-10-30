@@ -67,11 +67,11 @@ namespace khopper {
 			virtual void writeFrame( const QByteArray & sample );
 
 		private:
-			std::tr1::shared_ptr< AVFormatContext > pFormatContext_;
+			std::shared_ptr< AVFormatContext > pFormatContext_;
 			AVStream * pStream_;
 			QByteArray queue_;
 			double quality_;
-			std::size_t frameSize_;
+			int frameSize_;
 		};
 
 	}

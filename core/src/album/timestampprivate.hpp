@@ -1,5 +1,5 @@
 /**
- * @file wavpanel.hpp
+ * @file timestampprivate.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,43 +19,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_WIDGET_WAVPANEL_HPP
-#define KHOPPER_WIDGET_WAVPANEL_HPP
+#ifndef KHOPPER_ALBUM_TIMESTAMPPRIVATE_HPP
+#define KHOPPER_ALBUM_TIMESTAMPPRIVATE_HPP
 
-#include "khopper/abstractpanel.hpp"
-
-namespace Ui {
-	class WavPanel;
-}
+#include "timestamp.hpp"
 
 namespace khopper {
+	namespace album {
 
-	namespace widget {
-
-		/**
-		 * @brief Wav option widget
-		 */
-		class WavPanel : public AbstractPanel {
+		class Timestamp::TimestampPrivate {
 		public:
-			/**
-			 * @brief Default constructor
-			 * @param parent Parent widget
-			 * @param f Window flags
-			 */
-			WavPanel();
+			TimestampPrivate( int min, int second, int ms );
 
-			/**
-			 * @brief Get encoder setting object
-			 * @return Smart pointer contains AbstractWriter
-			 */
-			virtual codec::WriterSP createWriter( const QUrl & uri ) const;
-
-		private:
-			std::shared_ptr< Ui::WavPanel > ui_;
+			int millisecond;
+			int minute;
+			int second;
 		};
-
 	}
-
 }
 
 #endif

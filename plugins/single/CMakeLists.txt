@@ -5,8 +5,3 @@ file(GLOB_RECURSE KHOPPER_PLUGIN_SINGLE_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_
 
 add_library(khopper_plugin_single SHARED ${KHOPPER_PLUGIN_SINGLE_HEADERS} ${KHOPPER_PLUGIN_SINGLE_SOURCES})
 khopper_add_plugin(khopper_plugin_single)
-
-install(TARGETS khopper_plugin_single DESTINATION
-    RUNTIME DESTINATION "plugins"
-    LIBRARY DESTINATION "plugins"
-    ARCHIVE DESTINATION "lib")

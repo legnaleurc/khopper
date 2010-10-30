@@ -44,8 +44,8 @@ namespace khopper {
 			virtual void writeFrame( const QByteArray & sample );
 
 		private:
-			std::tr1::shared_ptr< FILE > fout_;
-			std::tr1::shared_ptr< lame_global_flags > gfp_;
+			std::shared_ptr< FILE > fout_;
+			std::shared_ptr< lame_global_flags > gfp_;
 			int quality_;
 			long id3v2Offset_;
 		};

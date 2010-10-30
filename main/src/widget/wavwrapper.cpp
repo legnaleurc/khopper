@@ -44,7 +44,7 @@ void WavWrapper::close() {
 bool WavWrapper::open( OpenMode mode ) {
 	bool ret = this->QIODevice::open( mode );
 	ret &= this->reader_->open( mode );
-	const QAudioFormat & format( this->reader_->getAudioFormat() );
+	const codec::AudioFormat & format( this->reader_->getAudioFormat() );
 
 	qint32 dword;
 	qint16 word;

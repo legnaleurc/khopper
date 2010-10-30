@@ -29,7 +29,7 @@ QWidget( parent, Qt::Dialog ),
 ui_( new Ui::AboutWidget ){
 	this->ui_->setupUi( this );
 
-	this->ui_->logo->setPixmap( QPixmap( ":/image/logo.png" ).scaled( 60, 60 ) );
+	this->ui_->logo->setPixmap( QPixmap( ":/share/pixmap/logo.png" ).scaled( 60, 60 ) );
 	this->ui_->version->setText( tr(
 		"<h1>%1</h1>"
 		"Version %2<br/>"

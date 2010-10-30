@@ -9,8 +9,3 @@ include_directories(
 
 add_library(khopper_plugin_redbook SHARED ${KHOPPER_PLUGIN_REDBOOK_HEADERS} ${KHOPPER_PLUGIN_REDBOOK_SOURCES})
 khopper_add_plugin(khopper_plugin_redbook)
-
-install(TARGETS khopper_plugin_redbook DESTINATION
-    RUNTIME DESTINATION "plugins"
-    LIBRARY DESTINATION "plugins"
-    ARCHIVE DESTINATION "lib")

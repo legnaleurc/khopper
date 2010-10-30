@@ -25,11 +25,11 @@
 
 namespace {
 
-	inline static qint64 posFromMs( qint64 ms, const QAudioFormat & format ) {
+	inline static qint64 posFromMs( qint64 ms, const khopper::codec::AudioFormat & format ) {
 		return ms * format.frequency() * format.channels() * format.sampleSize() / 8 / 1000;
 	}
 
-	inline static qint64 msFromPos( qint64 pos, const QAudioFormat & format ) {
+	inline static qint64 msFromPos( qint64 pos, const khopper::codec::AudioFormat & format ) {
 		return pos * 8 * 1000 / format.frequency() / format.channels() / format.sampleSize();
 	}
 
@@ -48,7 +48,7 @@ msDuration_( msDuration ) {
 }
 
 bool RangedReader::atEnd() const {
-	return this->client_->atEnd() || this->client_->pos() >= posFromMs( this->msDuration_, this->getAudioFormat() );
+	return this->client_->atEnd() || this->client_->pos() >= posFromMs( this->msBegin_ + this->msDuration_, this->getAudioFormat() );
 }
 
 //void RangedReader::setRange( qint64 msBegin, qint64 msDuration ) {

@@ -28,7 +28,6 @@
 #include "khopper/application.hpp"
 
 #include <QtCore/QSettings>
-#include <QtDebug>
 #include <QtGui/QFileDialog>
 
 #include <boost/format.hpp>
@@ -68,12 +67,12 @@ void ConversionDialog::convert( const PlayList & tracks ) {
 	AbstractPanel * panel = this->getCurrent();
 
 	QList< Converter * > tasks;
-	foreach( album::TrackSP track, tracks ) {
+	std::for_each( tracks.begin(), tracks.end(), [&]( album::TrackSP track ) {
 		QString path = QString( "%1/%2.%3" ).arg( this->getOutputPath_( track ) ).arg( this->getOutputName_( track ) ).arg( panel->getSuffix() );
 		Converter * task = new Converter( track, panel->createWriter( QUrl::fromLocalFile( path ) ) );
 		QObject::connect( task, SIGNAL( errorOccured( const QString &, const QString & ) ), this, SIGNAL( errorOccured( const QString &, const QString & ) ) );
 		tasks.push_back( task );
-	}
+	} );
 
 	this->progress_->start( tasks );
 }

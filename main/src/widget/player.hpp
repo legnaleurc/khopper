@@ -47,12 +47,13 @@ namespace khopper {
 			/// Default constructor
 			explicit Player( QWidget * parent );
 
+			/// Append tracks
+			void append( const album::PlayList & playList );
+			bool isPlayable() const;
 			/// Get selected tracks
 			album::PlayList getSelectedTracks() const;
 			/// Get all tracks
 			const album::PlayList & getTracks() const;
-			/// Append tracks
-			void append( const album::PlayList & playList );
 
 		signals:
 			/**
@@ -82,12 +83,13 @@ namespace khopper {
 		private:
 			void setQueue_( const album::PlayList & );
 
-			std::tr1::shared_ptr< Ui::Player > ui_;
+			album::TrackSP currentTrack_;
+			album::Timestamp duration_;
 			PlayListModel * model_;
+			bool playable_;
 			Phonon::MediaObject * player_;
 			PropertyDialog * prop_;
-			album::Timestamp duration_;
-			album::TrackSP currentTrack_;
+			std::shared_ptr< Ui::Player > ui_;
 		};
 
 	}

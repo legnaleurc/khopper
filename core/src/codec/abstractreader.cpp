@@ -27,8 +27,6 @@
 
 #include <loki/Singleton.h>
 
-#include <QtDebug>
-
 #include <cassert>
 #include <cmath>
 #include <cstring>
@@ -46,20 +44,12 @@ bool khopper::plugin::unregisterReader( const QString & id ) {
 
 ReaderCreator khopper::plugin::getReaderCreator( const QUrl & uri ) {
 	typedef ReaderFactoryPrivate::Map Map;
-
-	struct Helper {
-		Helper( const QUrl & uri ) : uri( uri ) {
-		}
-		bool operator ()( const Map::value_type & l, const Map::value_type & r ) {
-			return l.second.first( this->uri ) < r.second.first( this->uri );
-		}
-		const QUrl & uri;
-	};
-
 	const Map & m( ReaderFactory::Instance().l );
 
 	if( !m.empty() ) {
-		return std::max_element( m.begin(), m.end(), Helper( uri ) )->second.second;
+		return std::max_element( m.begin(), m.end(), [&uri]( const Map::value_type & l, const Map::value_type & r ) {
+			return l.second.first( uri ) < r.second.first( uri );
+		} )->second.second;
 	} else {
 		throw khopper::error::SystemError( QObject::tr( "No reader can be used." ) );
 	}
@@ -193,11 +183,11 @@ const QByteArray & AbstractReader::getComment() const {
 	return this->p_->comment;
 }
 
-const QAudioFormat & AbstractReader::getAudioFormat() const {
+const AudioFormat & AbstractReader::getAudioFormat() const {
 	return this->p_->format;
 }
 
-void AbstractReader::setAudioFormat( const QAudioFormat & format ) {
+void AbstractReader::setAudioFormat( const AudioFormat & format ) {
 	this->p_->format = format;
 	this->p_->format.setCodec( "audio/pcm" );
 }

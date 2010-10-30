@@ -56,7 +56,7 @@ namespace khopper {
 			int rc_;
 			QList< ProgressBar * > lp_;
 			QList< Converter * > tasks_;
-			std::tr1::shared_ptr< Ui::ProgressViewer > ui_;
+			std::shared_ptr< Ui::ProgressViewer > ui_;
 		};
 
 	}

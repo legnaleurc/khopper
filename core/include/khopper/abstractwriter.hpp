@@ -26,7 +26,8 @@
 
 #include <QtCore/QIODevice>
 #include <QtCore/QUrl>
-#include <QtMultimedia/QAudioFormat>
+
+#include <memory>
 
 namespace khopper {
 
@@ -78,7 +79,7 @@ namespace khopper {
 			 * @sa getArtist
 			 */
 			void setArtist( const QByteArray & artist );
-			void setAudioFormat( const QAudioFormat & format );
+			void setAudioFormat( const AudioFormat & format );
 			/**
 			 * @brief Set bitRate
 			 * @sa getBitRate
@@ -107,7 +108,7 @@ namespace khopper {
 			 * @sa setArtist
 			 */
 			const QByteArray & getArtist() const;
-			const QAudioFormat & getAudioFormat() const;
+			const AudioFormat & getAudioFormat() const;
 			/**
 			 * @brief Get bit rate
 			 * @sa setBitRate
@@ -138,7 +139,7 @@ namespace khopper {
 			AbstractWriter & operator =( const AbstractWriter & );
 
 			struct AbstractWriterPrivate;
-			std::tr1::shared_ptr< AbstractWriterPrivate > p_;
+			std::shared_ptr< AbstractWriterPrivate > p_;
 		};
 
 		/**
@@ -148,7 +149,7 @@ namespace khopper {
 		 *
 		 * Use TR1 shared pointer.
 		 */
-		typedef std::tr1::shared_ptr< AbstractWriter > WriterSP;
+		typedef std::shared_ptr< AbstractWriter > WriterSP;
 		/**
 		 * @ingroup Codecs
 		 * @brief AbstractWriter const smart pointer
@@ -156,7 +157,7 @@ namespace khopper {
 		 *
 		 * Use TR1 shared pointer.
 		 */
-		typedef std::tr1::shared_ptr< const AbstractWriter > WriterCSP;
+		typedef std::shared_ptr< const AbstractWriter > WriterCSP;
 
 	}
 

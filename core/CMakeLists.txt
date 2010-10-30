@@ -1,8 +1,6 @@
 # core
 
 find_package(Loki REQUIRED)
-# use QtMultimedia
-set(QT_USE_QTMULTIMEDIA TRUE)
 find_package(TagLib REQUIRED)
 
 # hack MSCV path
@@ -26,9 +24,8 @@ qt4_wrap_cpp(KHOPPER_CORE_MOC_SOURCES ${KHOPPER_CORE_MOC_HEADERS})
 include_directories("include/khopper" src ${LOKI_INCLUDE_DIR} ${TAGLIB_INCLUDE_DIR})
 
 source_group("Generated Files" FILES ${KHOPPER_CORE_MOC_SOURCES})
-
 add_library(khopper_core SHARED ${KHOPPER_CORE_HEADERS} ${KHOPPER_CORE_SOURCES} ${KHOPPER_CORE_MOC_SOURCES})
-target_link_libraries(khopper_core ${LOKI_LIBRARIES} ${TAGLIB_LIBRARIES} ${QT_LIBRARIES} ${QT_QTMULTIMEDIA_LIBRARY})
+target_link_libraries(khopper_core ${LOKI_LIBRARIES} ${TAGLIB_LIBRARIES} ${QT_LIBRARIES})
 set_target_properties(khopper_core
     PROPERTIES
         VERSION ${KHOPPER_VERSION}

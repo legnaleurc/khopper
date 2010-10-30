@@ -35,7 +35,7 @@
 int main( int argc, char * argv[] ) {
 	khopper::Application app( argc, argv );
 
-	QApplication::setWindowIcon( QIcon( ":/image/logo.png" ) );
+	QApplication::setWindowIcon( QIcon( ":/share/pixmap/logo.png" ) );
 	QApplication::setOrganizationName( "FoolproofProject" );
 	QApplication::setApplicationName( "Khopper" );
 	QApplication::setApplicationVersion( KHOPPER_STRINGIZE(KHOPPER_VERSION) );
@@ -51,12 +51,13 @@ int main( int argc, char * argv[] ) {
 	app.reloadPlugins();
 
 	QList< QUrl > tmp;
-	foreach( QString path, QApplication::arguments().mid( 1 ) ) {
+	QStringList args( QApplication::arguments().mid( 1 ) );
+	std::for_each( args.begin(), args.end(), [&tmp]( const QString & path ) {
 		tmp.push_back( path );
 		if( tmp.back().scheme().isEmpty() ) {
 			tmp.back().setScheme( "file" );
 		}
-	}
+	} );
 
 	window.open( tmp );
 

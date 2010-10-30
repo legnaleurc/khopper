@@ -20,6 +20,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "playlistview.hpp"
+#include "playlistmodel.hpp"
 
 #include "khopper/playlist.hpp"
 
@@ -28,11 +29,11 @@
 #include <QtCore/QTextCodec>
 #include <QtCore/QTimer>
 #include <QtCore/QUrl>
-#include <QtDebug>
 #include <QtGui/QAction>
 #include <QtGui/QDragEnterEvent>
 #include <QtGui/QDragMoveEvent>
 #include <QtGui/QDropEvent>
+#include <QtGui/QHeaderView>
 #include <QtGui/QMenu>
 
 using namespace khopper::widget;
@@ -43,14 +44,14 @@ QTableView( parent ),
 contextMenu_( new QMenu( this ) ),
 droppingFiles_(),
 cmPos_() {
-	// Set drag and drop
-	this->setAcceptDrops( true );
+	// Set header
+	this->horizontalHeader()->setMovable( true );
 
 	// Set model
 	QAction * delSong = new QAction( this );
 	delSong->setShortcut( QKeySequence::Delete );
 	this->addAction( delSong );
-	connect( delSong, SIGNAL( triggered() ), this, SLOT( removeSelectedTracks() ) );
+	connect( delSong, SIGNAL( triggered() ), this, SLOT( removeHelper_() ) );
 
 	// Set context menu
 	QMenu * codecs = new QMenu( tr( "Change Text Codec" ), this );
@@ -58,12 +59,13 @@ cmPos_() {
 	QSignalMapper * sm = new QSignalMapper( this );
 
 	// generate codec menu
-	foreach( int mib, QTextCodec::availableMibs() ) {
+	QList< int > mibs( QTextCodec::availableMibs() );
+	std::for_each( mibs.begin(), mibs.end(), [&]( int mib ) {
 		QAction * codec = new QAction( QTextCodec::codecForMib( mib )->name(), this );
 		codecs->addAction( codec );
-		connect( codec, SIGNAL( triggered() ), sm, SLOT( map() ) );
+		QObject::connect( codec, SIGNAL( triggered() ), sm, SLOT( map() ) );
 		sm->setMapping( codec, mib );
-	}
+	} );
 
 	connect( sm, SIGNAL( mapped( int ) ), this, SLOT( changeTextCodec_( int ) ) );
 
@@ -102,15 +104,10 @@ void PlayListView::propertyHelper_() {
 //	}
 //}
 
-//void PlayListView::removeSelectedTracks() {
-//	QModelIndexList selected = this->selectionModel()->selectedRows();
-//	std::sort( selected.begin(), selected.end(), ::indexRowCompD );
-//	foreach( QModelIndex index, selected ) {
-//		this->tracks_.erase( this->tracks_.begin() + index.row() );
-//		this->model_->removeRow( index.row() );
-//	}
-//	this->selectionModel()->clear();
-//}
+void PlayListView::removeHelper_() {
+	static_cast< PlayListModel * >( this->model() )->remove( this->selectionModel()->selectedRows() );
+	this->selectionModel()->clear();
+}
 
 void PlayListView::contextMenuEvent( QContextMenuEvent * event ) {
 	QModelIndex index( this->indexAt( event->pos() ) );
@@ -142,7 +139,6 @@ void PlayListView::dropEvent( QDropEvent * event ) {
 
 void PlayListView::mouseDoubleClickEvent( QMouseEvent * event ) {
 	emit this->requirePlay();
-	qDebug() << "Double Clicked Item:" << this->rowAt( event->y() );
 	event->accept();
 }
 

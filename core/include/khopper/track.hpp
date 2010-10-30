@@ -51,7 +51,7 @@ namespace khopper {
 
 			AlbumSP getAlbum() const;
 			QString getArtist() const;
-			const QAudioFormat & getAudioFormat() const;
+			const codec::AudioFormat & getAudioFormat() const;
 			unsigned int getBitRate() const;
 			const Timestamp & getDuration() const;
 			unsigned int getIndex() const;
@@ -68,7 +68,7 @@ namespace khopper {
 			void setAlbum( AlbumSP album );
 			void setArtist( const QByteArray & artist );
 			void setArtist( const QString & artist );
-			void setAudioFormat( const QAudioFormat & format );
+			void setAudioFormat( const codec::AudioFormat & format );
 			void setBitRate( unsigned int bitRate );
 			void setChannels( unsigned int channels );
 			void setDuration( const Timestamp & duration );
@@ -90,17 +90,17 @@ namespace khopper {
 
 		private:
 			struct TrackPrivate;
-			std::tr1::shared_ptr< TrackPrivate > p_;
+			std::shared_ptr< TrackPrivate > p_;
 		};
 
 		/**
 		 * @brief Smart pointer of Track.
 		 */
-		typedef std::tr1::shared_ptr< Track > TrackSP;
+		typedef std::shared_ptr< Track > TrackSP;
 		/**
 		 * @brief Smart pointer of const Track.
 		 */
-		typedef std::tr1::shared_ptr< const Track > TrackCSP;
+		typedef std::shared_ptr< const Track > TrackCSP;
 
 	}
 

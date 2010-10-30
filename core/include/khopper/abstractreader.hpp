@@ -26,9 +26,9 @@
 
 #include <QtCore/QIODevice>
 #include <QtCore/QUrl>
-#include <QtMultimedia/QAudioFormat>
 
 #include <functional>
+#include <memory>
 
 namespace khopper {
 
@@ -42,7 +42,7 @@ namespace khopper {
 		 *
 		 * Use TR1 shared pointer.
 		 */
-		typedef std::tr1::shared_ptr< AbstractReader > ReaderSP;
+		typedef std::shared_ptr< AbstractReader > ReaderSP;
 		/**
 		 * @ingroup Codecs
 		 * @brief AbstractReader const smart pointer
@@ -50,7 +50,7 @@ namespace khopper {
 		 *
 		 * Use TR1 shared pointer.
 		 */
-		typedef std::tr1::shared_ptr< const AbstractReader > ReaderCSP;
+		typedef std::shared_ptr< const AbstractReader > ReaderCSP;
 
 		/**
 		 * @ingroup Codecs
@@ -88,7 +88,7 @@ namespace khopper {
 			 * @sa setArtist
 			 */
 			const QByteArray & getArtist() const;
-			const QAudioFormat & getAudioFormat() const;
+			const AudioFormat & getAudioFormat() const;
 			/**
 			 * @brief Get bit rate
 			 * @sa setBitRate
@@ -162,7 +162,7 @@ namespace khopper {
 			 * @sa getArtist
 			 */
 			void setArtist( const QByteArray & artist );
-			void setAudioFormat( const QAudioFormat & format );
+			void setAudioFormat( const AudioFormat & format );
 			/**
 			 * @brief Set bit rate
 			 * @sa getBitRate
@@ -227,15 +227,15 @@ namespace khopper {
 			AbstractReader & operator =( const AbstractReader & );
 
 			struct AbstractReaderPrivate;
-			std::tr1::shared_ptr< AbstractReaderPrivate > p_;
+			std::shared_ptr< AbstractReaderPrivate > p_;
 		};
 
 	}
 
 	namespace plugin {
 
-		typedef std::tr1::function< int ( const QUrl & ) > ReaderVerifier;
-		typedef std::tr1::function< codec::ReaderSP ( const QUrl & ) > ReaderCreator;
+		typedef std::function< int ( const QUrl & ) > ReaderVerifier;
+		typedef std::function< codec::ReaderSP ( const QUrl & ) > ReaderCreator;
 
 		/**
 		 * @ingroup Plugins

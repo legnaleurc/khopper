@@ -23,9 +23,11 @@
 #include "abstractplugin.hpp"
 
 #include <QtCore/QPluginLoader>
-#include <QtDebug>
-#include <QtGlobal>
+#include <QtCore/QtDebug>
+#include <QtCore/QtGlobal>
 #include <QtGui/QApplication>
+
+#include <algorithm>
 
 namespace {
 
@@ -75,6 +77,7 @@ loadedPlugins_() {
 	if( tmp.cd( ".khopper/plugins" ) ) {
 		this->searchPaths_.push_back( tmp );
 	}
+	// last search system-wide settings
 	tmp = QDir( "/usr/local/lib/khopper/plugins" );
 	if( tmp.exists() ) {
 		this->searchPaths_.push_back( tmp );
@@ -92,7 +95,8 @@ PluginManager::~PluginManager() {
 void PluginManager::reloadPlugins() {
 	this->unloadPlugins();
 
-	foreach( QFileInfo fileInfo, this->getPluginsFileInfo_() ) {
+	QFileInfoList pfi( this->getPluginsFileInfo_() );
+	std::for_each( pfi.begin(), pfi.end(), [&]( const QFileInfo & fileInfo ) {
 		qDebug() << fileInfo.absoluteFilePath();
 		QPluginLoader loader( fileInfo.absoluteFilePath() );
 		AbstractPlugin * pPlugin = dynamic_cast< AbstractPlugin * >( loader.instance() );
@@ -102,7 +106,7 @@ void PluginManager::reloadPlugins() {
 			} else {
 				emit this->errorOccured( QObject::tr( "Plugin load error" ), loader.errorString() );
 			}
-			continue;
+			return;
 		}
 
 		std::string id = pPlugin->getID().toStdString();
@@ -113,14 +117,14 @@ void PluginManager::reloadPlugins() {
 			} catch( error::BaseError & e ) {
 				emit this->errorOccured( QObject::tr( "Plugin install error" ), e.getMessage() );
 				loader.unload();
-				continue;
+				return;
 			}
 			this->loadedPlugins_.insert( std::make_pair( id, pPlugin ) );
 		} else {
 			bool unloaded = loader.unload();
 			qDebug() << "unload deprecated plugin:" << unloaded;
 		}
-	}
+	} );
 }
 
 void PluginManager::unloadPlugins() {
@@ -141,8 +145,8 @@ AbstractPlugin * PluginManager::getPluginInstance( const QString & name ) const 
 
 QFileInfoList PluginManager::getPluginsFileInfo_() const {
 	QFileInfoList list;
-	foreach( QDir d, this->searchPaths_ ) {
+	std::for_each( this->searchPaths_.begin(), this->searchPaths_.end(), [&list]( const QDir & d ) {
 		list.append( d.entryInfoList( getPluginNameFilter(), QDir::Files ) );
-	}
+	} );
 	return list;
 }

@@ -23,19 +23,6 @@
 
 #include <algorithm>
 
-namespace {
-
-	struct Helper {
-		Helper( const QUrl & uri ) : uri( uri ) {
-		}
-		bool operator ()( const khopper::plugin::PlayListFactoryPrivate::Pair & l, const khopper::plugin::PlayListFactoryPrivate::Pair & r ) {
-			return l.first( this->uri ) < r.first( this->uri );
-		}
-		const QUrl & uri;
-	};
-
-}
-
 using namespace khopper::album;
 using namespace khopper::plugin;
 
@@ -43,7 +30,10 @@ PlayList khopper::plugin::createPlayList( const QUrl & uri ) {
 	const std::list< PlayListFactoryPrivate::Pair > & fList( PlayListFactory::Instance().fList );
 
 	if( !fList.empty() ) {
-		return std::max_element( fList.begin(), fList.end(), Helper( uri ) )->second( uri );
+		typedef PlayListFactoryPrivate::Pair PLFPPair;
+		return std::max_element( fList.begin(), fList.end(), [&uri]( const PLFPPair & l, const PLFPPair & r ) {
+			return l.first( uri ) < r.first( uri );
+		} )->second( uri );
 	} else {
 		throw khopper::error::SystemError( QObject::tr( "No playlist can be created." ) );
 	}

@@ -26,6 +26,8 @@
 
 #include <FLAC/stream_decoder.h>
 
+#include <cstdint>
+
 namespace khopper {
 
 	namespace codec {
@@ -50,7 +52,7 @@ namespace khopper {
 
 			void parseVorbisComments_( const FLAC__StreamMetadata_VorbisComment & );
 
-			std::tr1::shared_ptr< FLAC__StreamDecoder > pFD_;
+			std::shared_ptr< FLAC__StreamDecoder > pFD_;
 			QByteArray buffer_;
 			uint64_t offset_;
 		};

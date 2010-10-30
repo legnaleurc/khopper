@@ -33,7 +33,7 @@ namespace khopper {
 	struct Application::ApplicationPrivate {
 		ApplicationPrivate();
 
-		std::tr1::shared_ptr< plugin::PluginManager > pm;
+		std::shared_ptr< plugin::PluginManager > pm;
 	};
 }
 

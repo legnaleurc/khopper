@@ -24,7 +24,9 @@
 #include "khopper/text.hpp"
 #include "khopper/error.hpp"
 
-#include <QtDebug>
+#include <QtCore/QtDebug>
+
+#include <cstdint>
 
 namespace {
 
@@ -79,7 +81,7 @@ void FlacWriter::doOpen() {
 	if( !ok ) {
 		throw error::CodecError( "encoder vorbis comment error" );
 	}
-	this->metadataOwner_.push_back( std::tr1::shared_ptr< FLAC__StreamMetadata >( tmp, FLAC__metadata_object_delete ) );
+	this->metadataOwner_.push_back( std::shared_ptr< FLAC__StreamMetadata >( tmp, FLAC__metadata_object_delete ) );
 	metadata.push_back( tmp );
 
 	tmp = FLAC__metadata_object_new( FLAC__METADATA_TYPE_SEEKTABLE );
@@ -88,7 +90,7 @@ void FlacWriter::doOpen() {
 	}
 	// FIXME: dirty hack, I don't know how to rescale seek table size
 	FLAC__metadata_object_seektable_template_append_spaced_points_by_samples( tmp, this->getAudioFormat().frequency(), this->getAudioFormat().frequency() * 7200 );
-	this->metadataOwner_.push_back( std::tr1::shared_ptr< FLAC__StreamMetadata >( tmp, FLAC__metadata_object_delete ) );
+	this->metadataOwner_.push_back( std::shared_ptr< FLAC__StreamMetadata >( tmp, FLAC__metadata_object_delete ) );
 	metadata.push_back( tmp );
 
 //			tmp = FLAC__metadata_object_new( FLAC__METADATA_TYPE_PADDING );

@@ -25,7 +25,7 @@
 
 #include <QtCore/QMultiMap>
 #include <QtCore/QStringList>
-#include <QtDebug>
+#include <QtCore/QtDebug>
 
 #include <cstring>
 
@@ -151,7 +151,7 @@ void FlacReader::parseVorbisComments_( const FLAC__StreamMetadata_VorbisComment 
 
 void FlacReader::metadataCallback_( const FLAC__StreamDecoder * /*decoder*/, const FLAC__StreamMetadata * metadata, void * client_data ) {
 	FlacReader * self = static_cast< FlacReader * >( client_data );
-	QAudioFormat format;
+	AudioFormat format;
 	switch( metadata->type ) {
 	case FLAC__METADATA_TYPE_STREAMINFO:
 		qDebug( "FLAC__METADATA_TYPE_STREAMINFO" );
@@ -159,7 +159,7 @@ void FlacReader::metadataCallback_( const FLAC__StreamDecoder * /*decoder*/, con
 		self->setBitRate( 0 );
 		format.setFrequency( metadata->data.stream_info.sample_rate );
 		format.setChannels( metadata->data.stream_info.channels );
-		format.setSampleType( QAudioFormat::SignedInt );
+		format.setSampleType( AudioFormat::SignedInt );
 		format.setSampleSize( metadata->data.stream_info.bits_per_sample );
 		self->setAudioFormat( format );
 		break;

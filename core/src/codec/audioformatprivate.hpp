@@ -1,5 +1,5 @@
 /**
- * @file wavwrapper.hpp
+ * @file audioformatprivate.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,33 +19,24 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_WIDGET_WAVWRAPPER_HPP
-#define KHOPPER_WIDGET_WAVWRAPPER_HPP
+#ifndef KHOPPER_CODEC_AUDIOFORMATPRIVATE_HPP
+#define KHOPPER_CODEC_AUDIOFORMATPRIVATE_HPP
 
-#include <QtCore/QIODevice>
-
-#include "khopper/abstractreader.hpp"
+#include "codecutil.hpp"
 
 namespace khopper {
-	namespace widget {
+	namespace codec {
 
-		class WavWrapper : public QIODevice {
+		class AudioFormat::AudioFormatPrivate {
 		public:
-			explicit WavWrapper( codec::ReaderSP reader );
+			AudioFormatPrivate();
 
-			virtual bool atEnd() const;
-			virtual void close();
-			virtual bool open( OpenMode mode );
-			virtual bool seek( qint64 pos );
-			virtual qint64 size() const;
-
-		protected:
-			virtual qint64 readData( char * data, qint64 maxlen );
-			virtual qint64 writeData( const char * data, qint64 maxlen );
-
-		private:
-			codec::ReaderSP reader_;
-			QByteArray header_;
+			Endian byteOrder;
+			int channels;
+			QString codec;
+			int frequency;
+			int sampleSize;
+			SampleType sampleType;
 		};
 
 	}

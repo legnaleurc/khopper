@@ -1,6 +1,6 @@
 <!DOCTYPE RCC><RCC version="1.0">
 	<qresource prefix="/">
-		<file>image/logo.png</file>
-		<file>image/womm.png</file>
+		<file>share/pixmap/logo.png</file>
+		<file>share/pixmap/womm.png</file>
 	</qresource>
 </RCC>

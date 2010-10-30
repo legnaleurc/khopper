@@ -26,6 +26,7 @@
 
 #include <loki/Singleton.h>
 
+#include <cstdint>
 #include <map>
 
 namespace khopper {
@@ -42,7 +43,7 @@ namespace khopper {
 			ChannelLayout channelLayout;
 			QByteArray comment;
 			QByteArray copyright;
-			QAudioFormat format;
+			AudioFormat format;
 			int64_t msDuration;
 			QUrl uri;
 			QByteArray genre;

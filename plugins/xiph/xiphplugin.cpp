@@ -27,7 +27,7 @@
 #include "khopper/text.hpp"
 #include "khopper/application.hpp"
 
-#include <QtPlugin>
+#include <QtCore/QtPlugin>
 
 Q_EXPORT_PLUGIN2( KHOPPER_PLUGIN_ID, khopper::plugin::XiphPlugin )
 

@@ -64,7 +64,7 @@ namespace khopper {
 			QString getOutputPath_( album::TrackSP );
 			QString getOutputName_( album::TrackSP );
 
-			std::tr1::shared_ptr< Ui::ConversionDialog > ui_;
+			std::shared_ptr< Ui::ConversionDialog > ui_;
 			ProgressViewer * progress_;
 			std::map< int, widget::AbstractPanel * > table_;
 		};

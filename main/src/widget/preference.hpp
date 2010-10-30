@@ -27,6 +27,8 @@
 #include <QtGui/QAbstractButton>
 #include <QtGui/QDialog>
 
+#include <memory>
+
 namespace Ui {
 	class Preference;
 }
@@ -50,7 +52,7 @@ namespace khopper {
 			void perform_( QAbstractButton * );
 
 		private:
-			std::tr1::shared_ptr< Ui::Preference > ui_;
+			std::shared_ptr< Ui::Preference > ui_;
 			QFont currentFont_;
 
 			void apply_();

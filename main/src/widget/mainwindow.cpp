@@ -30,10 +30,9 @@
 #include "khopper/error.hpp"
 #include "khopper/playlist.hpp"
 
-#include <QtCore/QDir>
 #include <QtCore/QFile>
 #include <QtCore/QFileInfo>
-#include <QtDebug>
+#include <QtGui/QDesktopServices>
 #include <QtGui/QFileDialog>
 #include <QtGui/QMessageBox>
 
@@ -48,7 +47,7 @@ ui_( new Ui::MainWindow ),
 conversion_( new ConversionDialog( this ) ),
 preference_( new Preference( this ) ),
 about_( new AboutWidget( this ) ),
-lastOpenedDir_( QDir::homePath() ) {
+lastOpenedDir_( QDesktopServices::storageLocation( QDesktopServices::MusicLocation ) ) {
 	this->ui_->setupUi( this );
 	// Setting menu bar
 	this->initMenuBar_();
@@ -60,6 +59,10 @@ lastOpenedDir_( QDir::homePath() ) {
 	QObject::connect( this->ui_->player, SIGNAL( errorOccured( const QString &, const QString & ) ), this, SLOT( showErrorMessage_( const QString &, const QString & ) ) );
 
 	QObject::connect( this->conversion_, SIGNAL( errorOccured( const QString &, const QString & ) ), this, SLOT( showErrorMessage_( const QString &, const QString & ) ) );
+
+	if( !this->ui_->player->isPlayable() ) {
+		this->showErrorMessage_( tr( "Backend Capability Error" ), tr( "Phonon Backend is down." ) );;
+	}
 }
 
 void MainWindow::initMenuBar_() {
@@ -87,9 +90,9 @@ void MainWindow::showOpenFilesDialog() {
 	this->lastOpenedDir_ = QFileInfo( filePaths[0] ).absolutePath();
 
 	QList< QUrl > tmp;
-	foreach( QString path, filePaths ) {
+	std::for_each( filePaths.begin(), filePaths.end(), [&tmp]( const QString & path ) {
 		tmp.push_back( QUrl::fromLocalFile( path ) );
-	}
+	} );
 	this->open( tmp );
 }
 
@@ -100,9 +103,9 @@ void MainWindow::open( const QList< QUrl > & uris ) {
 
 	PlayList tracks;
 
-	foreach( QUrl uri, uris ) {
+	std::for_each( uris.begin(), uris.end(), [&]( const QUrl & uri ) {
 		if( uri.isEmpty() ) {
-			continue;
+			return;
 		}
 
 		try {
@@ -110,7 +113,7 @@ void MainWindow::open( const QList< QUrl > & uris ) {
 		} catch( BaseError & e ) {
 			this->showErrorMessage_( tr( "Can not decode this file!" ), e.getMessage() );
 		}
-	}
+	} );
 
 	this->ui_->player->append( tracks );
 }
