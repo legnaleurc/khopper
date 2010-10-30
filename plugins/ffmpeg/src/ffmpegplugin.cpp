@@ -37,25 +37,10 @@ extern "C" {
 
 Q_EXPORT_PLUGIN2( KHOPPER_PLUGIN_ID, khopper::plugin::FfmpegPlugin )
 
-namespace {
-
-	unsigned int verifier( const QUrl & uri ) {
-		if( guess_format( NULL, uri.toLocalFile().toStdString().c_str(), NULL ) != NULL ) {
-			return 100;
-		}
-		return 0;
-	}
-
-	khopper::codec::ReaderSP creator( const QUrl & uri ) {
-		return khopper::codec::ReaderSP( new khopper::codec::FfmpegReader( uri ) );
-	}
-
-}
-
 using namespace khopper::plugin;
-using khopper::widget::WavPanel;
 using khopper::plugin::registerReader;
 using khopper::plugin::unregisterReader;
+using khopper::widget::WavPanel;
 
 FfmpegPlugin::FfmpegPlugin():
 AbstractPlugin(),
@@ -70,7 +55,14 @@ void FfmpegPlugin::doInstall() {
 #ifdef _WIN32
 	av_register_protocol( &khopper::codec::wfileProtocol );
 #endif
-	registerReader( this->getID(), verifier, creator );
+	registerReader( this->getID(), []( const QUrl & uri ) {
+		if( av_guess_format( NULL, uri.toLocalFile().toStdString().c_str(), NULL ) != NULL ) {
+			return 100;
+		}
+		return 0;
+	}, []( const QUrl & uri ) {
+		return khopper::codec::ReaderSP( new khopper::codec::FfmpegReader( uri ) );
+	} );
 }
 
 void FfmpegPlugin::doUninstall() {

@@ -263,49 +263,25 @@ QByteArray FfmpegReader::readFrame_() {
 	//		this->pStream_->time_base.den
 	//	);
 	//}
-#if LIBAVCODEC_VERSION_MAJOR < 53
-	uint8_t * audio_pkt_data = this->pPacket_->data;
-	int audio_pkt_size = this->pPacket_->size;
-	while( audio_pkt_size > 0 ) {
-#else
 	// backup buffer pointer
 	uint8_t * pktDataBackup = this->pPacket_->data;
 	while( this->pPacket_->size > 0 ) {
-#endif
 		//if( this->afterEnd( toMS( curPts ) ) ) {
 		//	stop = true;
 		//	break;
 		//}
 		int sampleByteLength = sizeof( sampleBuffer );
-#if LIBAVCODEC_VERSION_MAJOR < 53
-		int decodedPacketSize = avcodec_decode_audio2(
-			this->pCodecContext_.get(),
-			sampleBuffer,
-			&sampleByteLength,
-			audio_pkt_data,
-			audio_pkt_size
-		);
-#else
 		int decodedPacketSize = avcodec_decode_audio3(
 			this->pCodecContext_.get(),
 			sampleBuffer,
 			&sampleByteLength,
 			this->pPacket_.get()
 		);
-#endif
 		if( decodedPacketSize < 0 ) {
-#if LIBAVCODEC_VERSION_MAJOR < 53
-			audio_pkt_size = 0;
-#endif
 			break;
 		}
-#if LIBAVCODEC_VERSION_MAJOR < 53
-		audio_pkt_data += decodedPacketSize;
-		audio_pkt_size -= decodedPacketSize;
-#else
 		this->pPacket_->data += decodedPacketSize;
 		this->pPacket_->size -= decodedPacketSize;
-#endif
 		if( sampleByteLength <= 0 ) {
 			continue;
 		}
@@ -318,12 +294,8 @@ QByteArray FfmpegReader::readFrame_() {
 		//}
 		//curPts += ptsDiff;
 	}
-#if LIBAVCODEC_VERSION_MAJOR < 53
-	if( this->pPacket_->data ) {
-#else
 	if( pktDataBackup ) {
 		this->pPacket_->data = pktDataBackup;
-#endif
 		av_free_packet( this->pPacket_.get() );
 	}
 
