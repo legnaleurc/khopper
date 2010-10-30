@@ -1,7 +1,5 @@
 # main
 
-# use phonon
-set(QT_USE_PHONON TRUE)
 # hack MSVC path
 if(MSVC)
     set(EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}")
@@ -48,3 +46,11 @@ add_dependencies(khopper khopper_core)
 set_target_properties(khopper PROPERTIES VERSION ${KHOPPER_VERSION})
 
 install(TARGETS khopper DESTINATION "bin")
+if(UNIX)
+    install(FILES share/applications/khopper.desktop DESTINATION "share/applications")
+    install(CODE "file(READ ${CMAKE_INSTALL_PREFIX}/share/applications/khopper.desktop desktop)")
+    install(CODE "string(REPLACE \";\" \"\\;\" desktop \"\${desktop}\")")
+    install(CODE "string(REPLACE \"__ICON__\" \"${CMAKE_INSTALL_PREFIX}/share/pixmap/khopper.png\" desktop \"\${desktop}\")")
+    install(CODE "file(WRITE ${CMAKE_INSTALL_PREFIX}/share/applications/khopper.desktop \${desktop})")
+    install(FILES share/pixmap/logo.png DESTINATION "share/pixmap" RENAME "khopper.png")
+endif()

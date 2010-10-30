@@ -81,6 +81,7 @@ namespace khopper {
 			//void changeTextCodec_( int );
 			void dropFiles_();
 			void propertyHelper_();
+			void removeHelper_();
 
 		private:
 			QMenu * contextMenu_;

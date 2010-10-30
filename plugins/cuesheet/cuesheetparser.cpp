@@ -26,9 +26,9 @@
 #include "khopper/text.hpp"
 #include "khopper/track.hpp"
 
-#include <QtDebug>
 #include <QtCore/QRegExp>
 #include <QtCore/QStringList>
+#include <QtCore/QtDebug>
 #include <QtCore/QTextStream>
 
 #include <algorithm>
@@ -92,9 +92,9 @@ void CueSheetParser::parseCue_( QString content, const QDir & dir ) {
 	}
 
 	// set track album
-	foreach( TrackSP track, this->playList_ ) {
+	std::for_each( this->playList_.begin(), this->playList_.end(), [&]( TrackSP track ) {
 		track->setAlbum( this->album_ );
-	}
+	} );
 
 	this->updateLastTrack_();
 }
@@ -155,15 +155,13 @@ void CueSheetParser::parseIndex_( const QString & type, const QString & num, con
 			// starting time of pregap
 			if( this->trackIndex_ > 1 ) {
 				this->previousTrack_->setDuration( tmp - this->previousTrack_->getStartTime() );
-//				this->previousTrack_->getRangedReader()->setRange( this->previousTrack_->getStartTime().toMillisecond(), this->previousTrack_->getDuration().toMillisecond() );
 			}
 			break;
 		case 1:
 			// track start time
 			this->currentTrack_->setStartTime( tmp );
-			if( this->trackIndex_ > 1 && this->previousTrack_->getDuration().toMillisecond() < 0 ) {
-				this->previousTrack_->setDuration( this->currentTrack_->getStartTime() - this->previousTrack_->getStartTime() );
-				//this->previousTrack_->getRangedReader()->setRange( this->previousTrack_->getStartTime().toMillisecond(), this->previousTrack_->getDuration().toMillisecond() );
+			if( this->trackIndex_ > 1 && ( this->previousTrack_->getStartTime() + this->previousTrack_->getDuration() > tmp || !this->previousTrack_->getDuration().isValid() ) ) {
+				this->previousTrack_->setDuration( tmp - this->previousTrack_->getStartTime() );
 			}
 			break;
 		default:
@@ -224,7 +222,6 @@ void CueSheetParser::updateLastTrack_() {
 	}
 	if( decoder->isOpen() ) {
 		this->currentTrack_->setDuration( Timestamp::fromMillisecond( decoder->getDuration() ) - this->currentTrack_->getStartTime() );
-		//this->currentTrack_->getRangedReader()->setRange( this->currentTrack_->getStartTime().toMillisecond(), this->currentTrack_->getDuration().toMillisecond() );
 
 		decoder->close();
 	}

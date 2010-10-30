@@ -24,7 +24,7 @@
 #include "khopper/text.hpp"
 #include "khopper/error.hpp"
 
-#include <QtDebug>
+#include <QtCore/QtDebug>
 
 #include <cstdint>
 

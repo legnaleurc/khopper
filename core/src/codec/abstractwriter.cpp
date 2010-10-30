@@ -21,8 +21,6 @@
  */
 #include "abstractwriterprivate.hpp"
 
-#include <QtDebug>
-
 #include <cassert>
 
 using namespace khopper::codec;
@@ -66,7 +64,7 @@ void AbstractWriter::close() {
 	this->QIODevice::close();
 }
 
-qint64 AbstractWriter::readData( char * data, qint64 maxlen ) {
+qint64 AbstractWriter::readData( char * /*data*/, qint64 /*maxlen*/ ) {
 	return -1;
 }
 
@@ -119,11 +117,11 @@ void AbstractWriter::setChannelLayout( ChannelLayout channelLayout ) {
 	this->p_->channelLayout = channelLayout;
 }
 
-const QAudioFormat & AbstractWriter::getAudioFormat() const {
+const AudioFormat & AbstractWriter::getAudioFormat() const {
 	return this->p_->format;
 }
 
-void AbstractWriter::setAudioFormat( const QAudioFormat & format ) {
+void AbstractWriter::setAudioFormat( const AudioFormat & format ) {
 	this->p_->format = format;
 }
 

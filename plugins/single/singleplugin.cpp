@@ -26,7 +26,7 @@
 #include "khopper/text.hpp"
 
 #include <QtCore/QDir>
-#include <QtPlugin>
+#include <QtCore/QtPlugin>
 
 Q_EXPORT_PLUGIN2( KHOPPER_PLUGIN_ID, khopper::plugin::SinglePlugin )
 

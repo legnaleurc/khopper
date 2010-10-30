@@ -38,7 +38,7 @@ namespace khopper {
 			unsigned int bitRate;
 			plugin::ReaderCreator creator;
 			Timestamp duration;
-			QAudioFormat format;
+			codec::AudioFormat format;
 			unsigned int index;
 			QByteArray songWriter;
 			QByteArray title;

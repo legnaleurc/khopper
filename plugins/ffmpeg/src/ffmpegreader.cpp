@@ -31,8 +31,6 @@ extern "C" {
 #include <cstdlib>
 #include <cstring>
 
-#include <QtDebug>
-
 namespace {
 
 	static inline std::string wHelper( const QUrl & uri ) {
@@ -140,7 +138,7 @@ void FfmpegReader::setupDecoder_() {
 	AVCodecContext * pCC = this->pStream_->codec;
 	// getting codec information
 	this->setBitRate( pCC->bit_rate );
-	QAudioFormat format;
+	AudioFormat format;
 	format.setFrequency( pCC->sample_rate );
 	format.setChannels( pCC->channels );
 	switch( pCC->channels ) {
@@ -155,23 +153,23 @@ void FfmpegReader::setupDecoder_() {
 	}
 	switch( pCC->sample_fmt ) {
 	case SAMPLE_FMT_U8:
-		format.setSampleType( QAudioFormat::UnSignedInt );
+		format.setSampleType( AudioFormat::UnSignedInt );
 		format.setSampleSize( 8 );
 		break;
 	case SAMPLE_FMT_S16:
-		format.setSampleType( QAudioFormat::SignedInt );
+		format.setSampleType( AudioFormat::SignedInt );
 		format.setSampleSize( 16 );
 		break;
 	case SAMPLE_FMT_S32:
-		format.setSampleType( QAudioFormat::SignedInt );
+		format.setSampleType( AudioFormat::SignedInt );
 		format.setSampleSize( 32 );
 		break;
 	case SAMPLE_FMT_FLT:
-		format.setSampleType( QAudioFormat::Float );
+		format.setSampleType( AudioFormat::Float );
 		format.setSampleSize( 32 );
 		break;
 	case SAMPLE_FMT_DBL:
-		format.setSampleType( QAudioFormat::Float );
+		format.setSampleType( AudioFormat::Float );
 		format.setSampleSize( 64 );
 		break;
 	default:
@@ -335,9 +333,7 @@ QByteArray FfmpegReader::readFrame_() {
 }
 
 bool FfmpegReader::seek( qint64 pos ) {
-	qDebug() << "khopper::codec::FfmpegReader::seek( " << pos <<  " )";
 	bool succeed = this->AbstractReader::seek( pos );
-	qDebug() << "DID I SEEKED OVER STREAM?" << ( ( this->atEnd() ) ? "Yes" : "No" ) << "!";
 	// internal position = pos / frequency / channels / samplesize/ AVStream::time_base
 	int64_t internalPos = av_rescale( pos, this->pStream_->time_base.den, this->pStream_->time_base.num * this->getAudioFormat().frequency() * this->getAudioFormat().channels() * this->getAudioFormat().sampleSize() / 8 );
 	int ret = av_seek_frame( this->pFormatContext_.get(), this->pStream_->index, internalPos, AVSEEK_FLAG_ANY | AVSEEK_FLAG_BACKWARD );

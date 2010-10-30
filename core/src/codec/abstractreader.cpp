@@ -27,8 +27,6 @@
 
 #include <loki/Singleton.h>
 
-#include <QtDebug>
-
 #include <cassert>
 #include <cmath>
 #include <cstring>
@@ -185,11 +183,11 @@ const QByteArray & AbstractReader::getComment() const {
 	return this->p_->comment;
 }
 
-const QAudioFormat & AbstractReader::getAudioFormat() const {
+const AudioFormat & AbstractReader::getAudioFormat() const {
 	return this->p_->format;
 }
 
-void AbstractReader::setAudioFormat( const QAudioFormat & format ) {
+void AbstractReader::setAudioFormat( const AudioFormat & format ) {
 	this->p_->format = format;
 	this->p_->format.setCodec( "audio/pcm" );
 }

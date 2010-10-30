@@ -22,9 +22,10 @@
 #include "trackprivate.hpp"
 #include "error.hpp"
 
-#include <QHash>
+#include <QtCore/QHash>
 
 using namespace khopper::album;
+using khopper::codec::AudioFormat;
 using khopper::codec::ReaderSP;
 using khopper::error::RunTimeError;
 using khopper::error::CodecError;
@@ -140,11 +141,11 @@ void Track::setURI( const QUrl & uri ) {
 	this->p_->uri = uri;
 }
 
-const QAudioFormat & Track::getAudioFormat() const {
+const AudioFormat & Track::getAudioFormat() const {
 	return this->p_->format;
 }
 
-void Track::setAudioFormat( const QAudioFormat & format ) {
+void Track::setAudioFormat( const AudioFormat & format ) {
 	this->p_->format = format;
 }
 

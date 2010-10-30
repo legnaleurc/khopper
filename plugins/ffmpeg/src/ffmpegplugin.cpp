@@ -33,7 +33,7 @@ extern "C" {
 #include <libavformat/avformat.h>
 }
 
-#include <QtPlugin>
+#include <QtCore/QtPlugin>
 
 Q_EXPORT_PLUGIN2( KHOPPER_PLUGIN_ID, khopper::plugin::FfmpegPlugin )
 

@@ -23,8 +23,6 @@
 
 #include <cstring>
 
-#include <QtDebug>
-
 using namespace khopper::widget;
 using khopper::codec::ReaderSP;
 
@@ -46,7 +44,7 @@ void WavWrapper::close() {
 bool WavWrapper::open( OpenMode mode ) {
 	bool ret = this->QIODevice::open( mode );
 	ret &= this->reader_->open( mode );
-	const QAudioFormat & format( this->reader_->getAudioFormat() );
+	const codec::AudioFormat & format( this->reader_->getAudioFormat() );
 
 	qint32 dword;
 	qint16 word;
@@ -73,7 +71,6 @@ bool WavWrapper::open( OpenMode mode ) {
 }
 
 bool WavWrapper::seek( qint64 pos ) {
-	qDebug() << "khopper::widget::WavWrapper( " << pos << " );";
 	bool ret = this->QIODevice::seek( pos );
 	if( pos < 44 ) {
 	} else {

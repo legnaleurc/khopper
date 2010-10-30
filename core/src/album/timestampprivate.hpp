@@ -1,5 +1,5 @@
 /**
- * @file aboutwidget.cpp
+ * @file timestampprivate.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,24 +19,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "aboutwidget.hpp"
-#include "ui_aboutwidget.h"
+#ifndef KHOPPER_ALBUM_TIMESTAMPPRIVATE_HPP
+#define KHOPPER_ALBUM_TIMESTAMPPRIVATE_HPP
 
-using namespace khopper::widget;
+#include "timestamp.hpp"
 
-AboutWidget::AboutWidget( QWidget * parent ):
-QWidget( parent, Qt::Dialog ),
-ui_( new Ui::AboutWidget ){
-	this->ui_->setupUi( this );
+namespace khopper {
+	namespace album {
 
-	this->ui_->logo->setPixmap( QPixmap( ":/share/pixmap/logo.png" ).scaled( 60, 60 ) );
-	this->ui_->version->setText( tr(
-		"<h1>%1</h1>"
-		"Version %2<br/>"
-		"Part of %3<br/>"
-	).arg( qApp->applicationName() ).arg( qApp->applicationVersion() ).arg( qApp->organizationName() ) );
+		class Timestamp::TimestampPrivate {
+		public:
+			TimestampPrivate( int min, int second, int ms );
+
+			int millisecond;
+			int minute;
+			int second;
+		};
+	}
 }
 
-AboutWidget::~AboutWidget() {
-	delete this->ui_;
-}
+#endif

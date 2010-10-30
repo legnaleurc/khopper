@@ -27,12 +27,12 @@ using khopper::error::IOError;
 RedbookReader::RedbookReader( const QUrl & uri ):
 AbstractReader( uri ),
 file_( uri.toLocalFile() ) {
-	QAudioFormat format;
-	format.setByteOrder( QAudioFormat::LittleEndian );
+	AudioFormat format;
+	format.setByteOrder( AudioFormat::LittleEndian );
 	format.setChannels( 2 );
 	format.setFrequency( 44100 );
 	format.setSampleSize( 2 );
-	format.setSampleType( QAudioFormat::SignedInt );
+	format.setSampleType( AudioFormat::SignedInt );
 	this->setAudioFormat( format );
 }
 

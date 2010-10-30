@@ -26,7 +26,6 @@
 
 #include <QtCore/QIODevice>
 #include <QtCore/QUrl>
-#include <QtMultimedia/QAudioFormat>
 
 #include <functional>
 #include <memory>
@@ -89,7 +88,7 @@ namespace khopper {
 			 * @sa setArtist
 			 */
 			const QByteArray & getArtist() const;
-			const QAudioFormat & getAudioFormat() const;
+			const AudioFormat & getAudioFormat() const;
 			/**
 			 * @brief Get bit rate
 			 * @sa setBitRate
@@ -163,7 +162,7 @@ namespace khopper {
 			 * @sa getArtist
 			 */
 			void setArtist( const QByteArray & artist );
-			void setAudioFormat( const QAudioFormat & format );
+			void setAudioFormat( const AudioFormat & format );
 			/**
 			 * @brief Set bit rate
 			 * @sa getBitRate

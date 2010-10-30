@@ -51,7 +51,7 @@ namespace khopper {
 
 			AlbumSP getAlbum() const;
 			QString getArtist() const;
-			const QAudioFormat & getAudioFormat() const;
+			const codec::AudioFormat & getAudioFormat() const;
 			unsigned int getBitRate() const;
 			const Timestamp & getDuration() const;
 			unsigned int getIndex() const;
@@ -66,7 +66,7 @@ namespace khopper {
 			void setAlbum( AlbumSP album );
 			void setArtist( const QByteArray & artist );
 			void setArtist( const QString & artist );
-			void setAudioFormat( const QAudioFormat & format );
+			void setAudioFormat( const codec::AudioFormat & format );
 			void setBitRate( unsigned int bitRate );
 			void setChannels( unsigned int channels );
 			void setDuration( const Timestamp & duration );

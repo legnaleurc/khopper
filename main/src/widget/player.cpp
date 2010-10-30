@@ -28,8 +28,7 @@
 #include "ui_player.h"
 
 #include <Phonon/AudioOutput>
-//#include <QtCore/QModelIndex>
-#include <QtDebug>
+#include <Phonon/BackendCapabilities>
 
 namespace {
 
@@ -53,15 +52,31 @@ using khopper::album::TrackSP;
 
 Player::Player( QWidget * parent ):
 QWidget( parent, 0 ),
-ui_( new Ui::Player ),
+currentTrack_(),
+duration_(),
 model_( new PlayListModel( this ) ),
+playable_( true ),
 player_( new Phonon::MediaObject( this ) ),
 prop_( new PropertyDialog( this ) ),
-duration_(),
-currentTrack_() {
+ui_( new Ui::Player ) {
 	this->ui_->setupUi( this );
 
 	this->ui_->playListView->setModel( this->model_ );
+	connect( this->ui_->playListView, SIGNAL( fileDropped( const QList< QUrl > & ) ), this, SIGNAL( fileDropped( const QList< QUrl > & ) ) );
+	connect( this->ui_->playListView, SIGNAL( requireConvert() ), this, SLOT( convertHelper_() ) );
+	connect( this->ui_->playListView, SIGNAL( errorOccured( const QString &, const QString & ) ), this, SIGNAL( errorOccured( const QString &, const QString & ) ) );
+	connect( this->ui_->playListView, SIGNAL( requireProperty( const QModelIndex & ) ), this, SLOT( propertyHelper_( const QModelIndex & ) ) );
+
+	if( Phonon::BackendCapabilities::availableMimeTypes().empty() ) {
+		this->playable_ = false;
+		this->ui_->next->setEnabled( false );
+		this->ui_->playOrPause->setEnabled( false );
+		this->ui_->previous->setEnabled( false );
+		this->ui_->seeker->setEnabled( false );
+		this->ui_->stop->setEnabled( false );
+		this->ui_->volume->setEnabled( false );
+		return;
+	}
 
 	// Set player
 	Phonon::AudioOutput * ao = new Phonon::AudioOutput( Phonon::MusicCategory, this );
@@ -74,11 +89,7 @@ currentTrack_() {
 	connect( this->ui_->playOrPause, SIGNAL( clicked() ), this, SLOT( playOrPause_() ) );
 	connect( this->ui_->stop, SIGNAL( clicked() ), this, SLOT( stop_() ) );
 
-	connect( this->ui_->playListView, SIGNAL( fileDropped( const QList< QUrl > & ) ), this, SIGNAL( fileDropped( const QList< QUrl > & ) ) );
-	connect( this->ui_->playListView, SIGNAL( requireConvert() ), this, SLOT( convertHelper_() ) );
 	connect( this->ui_->playListView, SIGNAL( requirePlay() ), this, SLOT( play_() ) );
-	connect( this->ui_->playListView, SIGNAL( requireProperty( const QModelIndex & ) ), this, SLOT( propertyHelper_( const QModelIndex & ) ) );
-	connect( this->ui_->playListView, SIGNAL( errorOccured( const QString &, const QString & ) ), this, SIGNAL( errorOccured( const QString &, const QString & ) ) );
 }
 
 void Player::setQueue_( const PlayList & tracks ) {
@@ -86,10 +97,10 @@ void Player::setQueue_( const PlayList & tracks ) {
 		return;
 	}
 	QList< Phonon::MediaSource > queue;
-	foreach( TrackSP track, tracks ) {
+	std::for_each( tracks.begin(), tracks.end(), [&queue]( TrackSP track ) {
 		queue.push_back( new WavWrapper( track->createReader() ) );
 		queue.back().setAutoDelete( true );
-	}
+	} );
 	this->player_->setCurrentSource( queue.first() );
 	this->player_->setQueue( queue.mid( 1 ) );
 }
@@ -98,9 +109,9 @@ PlayList Player::getSelectedTracks() const {
 	QModelIndexList selected( this->ui_->playListView->selectionModel()->selectedRows() );
 	qSort( selected.begin(), selected.end(), incRowComp );
 	PlayList playList;
-	foreach( const QModelIndex & i, selected ) {
+	std::for_each( selected.begin(), selected.end(), [&]( const QModelIndex & i ) {
 		playList.push_back( this->model_->getPlayList()[i.row()] );
-	}
+	} );
 	return playList;
 }
 
@@ -182,6 +193,10 @@ void Player::handleState_( Phonon::State newState, Phonon::State /*oldState*/ ) 
 
 void Player::convertHelper_() {
 	emit this->requireConvert( this->getSelectedTracks() );
+}
+
+bool Player::isPlayable() const {
+	return this->playable_;
 }
 
 //void Player::tick_( qint64 time ) {
