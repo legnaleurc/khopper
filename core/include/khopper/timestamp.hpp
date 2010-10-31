@@ -22,7 +22,7 @@
 #ifndef KHOPPER_ALBUM_TIMESTAMP_HPP
 #define KHOPPER_ALBUM_TIMESTAMP_HPP
 
-#include "tr1.hpp"
+#include "config.hpp"
 
 #include <QtCore/QMetaType>
 #include <QtCore/QString>

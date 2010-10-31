@@ -22,7 +22,7 @@
 #ifndef KHOPPER_CODEC_ABSTRACTWRITER_HPP
 #define KHOPPER_CODEC_ABSTRACTWRITER_HPP
 
-#include "codecutil.hpp"
+#include "audioformat.hpp"
 
 #include <QtCore/QIODevice>
 #include <QtCore/QUrl>

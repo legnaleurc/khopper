@@ -1,5 +1,5 @@
 /**
- * @file tr1.hpp
+ * @file config.hpp
  * @author Wei-Cheng Pan
  * @attention If you need me, include me FIRST!
  *
