@@ -1,5 +1,5 @@
 /**
- * @file audioformatprivate.cpp
+ * @file audioformat.cpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
