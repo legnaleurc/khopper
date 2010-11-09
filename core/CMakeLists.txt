@@ -29,6 +29,7 @@ set_target_properties(libkhopper
     PROPERTIES
         VERSION ${KHOPPER_VERSION}
         SOVERSION ${KHOPPER_VERSION}
+        PREFIX ""
         FRAMEWORK TRUE
         PUBLIC_HEADER "${KHOPPER_CORE_PUBLIC_HEADERS}")
 
