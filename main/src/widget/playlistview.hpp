@@ -78,7 +78,7 @@ namespace khopper {
 			virtual void mouseDoubleClickEvent( QMouseEvent * event );
 
 		private slots:
-			//void changeTextCodec_( int );
+			void changeTextCodec_( int );
 			void dropFiles_();
 			void propertyHelper_();
 			void removeHelper_();

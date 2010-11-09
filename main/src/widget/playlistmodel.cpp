@@ -29,6 +29,10 @@ QAbstractTableModel( parent ),
 list_() {
 }
 
+void PlayListModel::changeTextCodec( const QModelIndex & index, QTextCodec * codec ) {
+	this->list_[index.row()]->setTextCodec( codec );
+}
+
 void PlayListModel::append( const PlayList & playList ) {
 	int start = this->list_.size();
 	int end = this->list_.size() + playList.size() - 1;
