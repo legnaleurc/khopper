@@ -40,12 +40,12 @@ using namespace khopper::widget;
 using khopper::album::PlayList;
 
 PlayListView::PlayListView( QWidget * parent ):
-QTableView( parent ),
+QTreeView( parent ),
 contextMenu_( new QMenu( this ) ),
 droppingFiles_(),
 cmPos_() {
 	// Set header
-	this->horizontalHeader()->setMovable( true );
+	this->header()->setMovable( true );
 
 	// Set model
 	QAction * delSong = new QAction( this );
