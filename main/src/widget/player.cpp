@@ -121,7 +121,6 @@ const PlayList & Player::getTracks() const {
 
 void Player::append( const PlayList & playList ) {
 	this->model_->append( playList );
-	this->ui_->playListView->resizeRowsToContents();
 }
 
 void Player::play_() {

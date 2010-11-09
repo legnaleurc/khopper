@@ -1,5 +1,5 @@
 /**
- * @file audioformatprivate.cpp
+ * @file audioformat.cpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,7 +19,7 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
-#include "codecutil.hpp"
+#include "audioformat.hpp"
 #include "audioformatprivate.hpp"
 
 using namespace khopper::codec;

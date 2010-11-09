@@ -64,33 +64,21 @@
      <property name="editTriggers">
       <set>QAbstractItemView::NoEditTriggers</set>
      </property>
-     <property name="selectionBehavior">
-      <enum>QAbstractItemView::SelectRows</enum>
+     <property name="tabKeyNavigation">
+      <bool>true</bool>
+     </property>
+     <property name="dragDropOverwriteMode">
+      <bool>true</bool>
+     </property>
+     <property name="selectionMode">
+      <enum>QAbstractItemView::ExtendedSelection</enum>
      </property>
      <property name="verticalScrollMode">
       <enum>QAbstractItemView::ScrollPerPixel</enum>
      </property>
-     <property name="horizontalScrollMode">
-      <enum>QAbstractItemView::ScrollPerPixel</enum>
-     </property>
-     <property name="showGrid">
+     <property name="rootIsDecorated">
       <bool>false</bool>
      </property>
-     <property name="wordWrap">
-      <bool>false</bool>
-     </property>
-     <attribute name="horizontalHeaderHighlightSections">
-      <bool>false</bool>
-     </attribute>
-     <attribute name="verticalHeaderVisible">
-      <bool>false</bool>
-     </attribute>
-     <attribute name="verticalHeaderHighlightSections">
-      <bool>false</bool>
-     </attribute>
-     <attribute name="verticalHeaderStretchLastSection">
-      <bool>false</bool>
-     </attribute>
     </widget>
    </item>
   </layout>
@@ -99,17 +87,17 @@
   <customwidget>
    <class>Phonon::SeekSlider</class>
    <extends>QWidget</extends>
-   <header location="global">phonon/seekslider.h</header>
+   <header>phonon/seekslider.h</header>
   </customwidget>
   <customwidget>
    <class>Phonon::VolumeSlider</class>
    <extends>QWidget</extends>
-   <header location="global">phonon/volumeslider.h</header>
+   <header>phonon/volumeslider.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>khopper::widget::PlayListView</class>
-   <extends>QTableView</extends>
+   <extends>QTreeView</extends>
    <header>playlistview.hpp</header>
   </customwidget>
  </customwidgets>
