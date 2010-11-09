@@ -11,8 +11,8 @@ include_directories("${CMAKE_SOURCE_DIR}/core/include")
 macro(KHOPPER_ADD_PLUGIN target)
     add_definitions(${QT_DEFINITIONS} -DQT_PLUGIN -DQT_SHARED)
     add_definitions(-DKHOPPER_PLUGIN_ID=${target})
-    add_dependencies(${target} khopper_core)
-    target_link_libraries(${target} khopper_core)
+    add_dependencies(${target} libkhopper)
+    target_link_libraries(${target} libkhopper)
     set_target_properties(${target} PROPERTIES VERSION ${KHOPPER_VERSION} SOVERSION ${KHOPPER_VERSION})
     install(TARGETS ${target}
         RUNTIME DESTINATION "plugins"
