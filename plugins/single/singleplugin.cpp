@@ -40,13 +40,13 @@ AbstractPlugin() {
 }
 
 void SinglePlugin::doInstall() {
-	registerPlayList( this->getID(), []( const QUrl & uri ) {
+	registerPlayList( this->getID(), []( const QUrl & uri )->unsigned int {
 		if( uri.scheme() != "file" ) {
 			// TODO: network support
 			return 0;
 		}
 		return 100;
-	}, []( const QUrl & uri ) {
+	}, []( const QUrl & uri )->PlayList {
 		khopper::album::TrackSP track( new khopper::album::Track( uri ) );
 
 		khopper::album::PlayList tmp;

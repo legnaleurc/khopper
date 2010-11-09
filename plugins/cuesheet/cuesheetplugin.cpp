@@ -41,7 +41,7 @@ AbstractPlugin() {
 }
 
 void CueSheetPlugin::doInstall() {
-	registerPlayList( this->getID(), []( const QUrl & uri ) {
+	registerPlayList( this->getID(), []( const QUrl & uri )->unsigned int {
 		if( uri.scheme() != "file" ) {
 			// TODO: network support
 			return 0U;
@@ -54,7 +54,7 @@ void CueSheetPlugin::doInstall() {
 		} else {
 			return 0U;
 		}
-	}, []( const QUrl & uri ) {
+	}, []( const QUrl & uri )->PlayList {
 		QFileInfo info( uri.toLocalFile() );
 		QFile fin;
 		if( info.suffix().toLower() == "cue" ) {
