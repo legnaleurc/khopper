@@ -25,8 +25,22 @@ using namespace khopper::widget;
 using khopper::album::PlayList;
 
 PlayListModel::PlayListModel( QObject * parent ):
-QAbstractTableModel( parent ),
+QAbstractItemModel( parent ),
 list_() {
+}
+
+QModelIndex PlayListModel::index( int row, int column, const QModelIndex & parent ) const {
+	if( row >= this->rowCount( parent ) ) {
+		return QModelIndex();
+	}
+	if( column >= this->columnCount( parent ) ) {
+		return QModelIndex();
+	}
+	return this->createIndex( row, column, const_cast< void * >( static_cast< const void * >( &this->list_[row] ) ) );
+}
+
+QModelIndex PlayListModel::parent( const QModelIndex & /*index*/ ) const {
+	return QModelIndex();
 }
 
 void PlayListModel::changeTextCodec( const QModelIndex & index, QTextCodec * codec ) {
