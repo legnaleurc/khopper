@@ -21,6 +21,8 @@
  */
 #include "playlistmodel.hpp"
 
+#include <algorithm>
+
 using namespace khopper::widget;
 using khopper::album::PlayList;
 

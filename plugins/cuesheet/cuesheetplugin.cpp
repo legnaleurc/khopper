@@ -31,24 +31,30 @@
 
 Q_EXPORT_PLUGIN2( KHOPPER_PLUGIN_ID, khopper::plugin::CueSheetPlugin )
 
-namespace {
+using namespace khopper::plugin;
+using khopper::album::PlayList;
 
-	unsigned int verifier( const QUrl & uri ) {
+CueSheetPlugin::CueSheetPlugin():
+AbstractPlugin() {
+	this->setID( KHOPPER_STRINGIZE(KHOPPER_PLUGIN_ID) );
+	this->setVersion( KHOPPER_STRINGIZE(KHOPPER_VERSION) );
+}
+
+void CueSheetPlugin::doInstall() {
+	registerPlayList( this->getID(), []( const QUrl & uri ) {
 		if( uri.scheme() != "file" ) {
 			// TODO: network support
-			return 0;
+			return 0U;
 		}
 		QFileInfo info( uri.toLocalFile() );
 		if( info.suffix().toLower() == "cue" ) {
-			return 100;
+			return 100U;
 		} else if( info.dir().exists( info.baseName() + ".cue" ) ) {
-			return 200;
+			return 200U;
 		} else {
-			return 0;
+			return 0U;
 		}
-	}
-
-	khopper::album::PlayList creator( const QUrl & uri ) {
+	}, []( const QUrl & uri ) {
 		QFileInfo info( uri.toLocalFile() );
 		QFile fin;
 		if( info.suffix().toLower() == "cue" ) {
@@ -60,23 +66,9 @@ namespace {
 		QString content = khopper::widget::CodecSelector::selectTextCodec( fin.readAll() );
 		fin.close();
 		return khopper::album::CueSheetParser::load( content, info.dir() );
-	}
-
-}
-
-using namespace khopper::plugin;
-using khopper::album::PlayList;
-
-CueSheetPlugin::CueSheetPlugin():
-AbstractPlugin() {
-	this->setID( KHOPPER_STRINGIZE(KHOPPER_PLUGIN_ID) );
-	this->setVersion( KHOPPER_STRINGIZE(KHOPPER_VERSION) );
-}
-
-void CueSheetPlugin::doInstall() {
-	registerPlayList( verifier, creator );
+	} );
 }
 
 void CueSheetPlugin::doUninstall() {
-	unregisterPlayList( verifier );
+	unregisterPlayList( this->getID() );
 }

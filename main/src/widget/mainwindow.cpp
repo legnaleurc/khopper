@@ -36,6 +36,8 @@
 #include <QtGui/QFileDialog>
 #include <QtGui/QMessageBox>
 
+#include <algorithm>
+
 using namespace khopper::widget;
 using khopper::album::PlayList;
 using khopper::error::BaseError;

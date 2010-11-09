@@ -26,16 +26,17 @@
 
 #include <loki/Singleton.h>
 
-#include <list>
+#include <map>
 #include <utility>
 
 namespace khopper {
 	namespace plugin {
 
-		struct PlayListFactoryPrivate {
-			typedef std::pair< PlayListVerifier, PlayListCreator > Pair;
+		class PlayListFactoryPrivate {
+		public:
+			typedef std::map< QString, std::pair< PlayListVerifier, PlayListCreator > > TableType;
 
-			std::list< Pair > fList;
+			TableType m;
 		};
 
 		typedef Loki::SingletonHolder< PlayListFactoryPrivate > PlayListFactory;

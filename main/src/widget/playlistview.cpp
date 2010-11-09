@@ -36,6 +36,8 @@
 #include <QtGui/QHeaderView>
 #include <QtGui/QMenu>
 
+#include <algorithm>
+
 using namespace khopper::widget;
 using khopper::album::PlayList;
 

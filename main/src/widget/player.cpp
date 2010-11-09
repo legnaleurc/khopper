@@ -30,6 +30,8 @@
 #include <Phonon/AudioOutput>
 #include <Phonon/BackendCapabilities>
 
+#include <algorithm>
+
 namespace {
 
 	static inline QString fromTimestamp( const khopper::album::Timestamp & ts ) {
