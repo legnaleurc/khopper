@@ -28,10 +28,6 @@
 
 namespace khopper {
 
-	namespace album {
-		class PlayList;
-	}
-
 	namespace widget {
 
 		/**

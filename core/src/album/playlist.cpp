@@ -21,12 +21,15 @@
  */
 #include "playlistfactory.hpp"
 
+#include <QtCore/QFile>
+#include <QtXml/QXmlStreamWriter>
+
 #include <algorithm>
 
 using namespace khopper::album;
 using namespace khopper::plugin;
 
-PlayList khopper::plugin::createPlayList( const QUrl & uri ) {
+PlayList khopper::album::createPlayList( const QUrl & uri ) {
 	const PlayListFactoryPrivate::TableType & m( PlayListFactory::Instance().m );
 
 	if( !m.empty() ) {
@@ -37,6 +40,26 @@ PlayList khopper::plugin::createPlayList( const QUrl & uri ) {
 	} else {
 		throw khopper::error::SystemError( QObject::tr( "No playlist can be created." ) );
 	}
+}
+
+void khopper::album::exportPlayList( const PlayList & playList, const QUrl & fileURI ) {
+	// FIXME: local file only
+	QString filePath = fileURI.toLocalFile();
+	QFile fout( filePath );
+	fout.open( QIODevice::WriteOnly );
+	QXmlStreamWriter xout( &fout );
+
+	xout.writeStartDocument();
+
+	std::for_each( playList.begin(), playList.end(), [&xout]( TrackCSP track ) {
+		xout.writeStartElement( "item" );
+		xout.writeAttribute( "uri", track->getURI().toString() );
+		xout.writeEndElement();
+	} );
+
+	xout.writeEndDocument();
+
+	fout.close();
 }
 
 bool khopper::plugin::registerPlayList( const QString & id, PlayListVerifier v, PlayListCreator c ) {

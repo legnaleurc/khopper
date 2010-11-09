@@ -39,9 +39,9 @@
 #include <algorithm>
 
 using namespace khopper::widget;
+using khopper::album::createPlayList;
 using khopper::album::PlayList;
 using khopper::error::BaseError;
-using khopper::plugin::createPlayList;
 
 MainWindow::MainWindow():
 QMainWindow( 0, 0 ),

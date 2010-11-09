@@ -1,5 +1,5 @@
 /**
- * @file playlistprivate.hpp
+ * @file playlistfactory.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,8 +19,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_ALBUM_PLAYLISTPRIVATE_HPP
-#define KHOPPER_ALBUM_PLAYLISTPRIVATE_HPP
+#ifndef KHOPPER_ALBUM_PLAYLISTFACTORY_HPP
+#define KHOPPER_ALBUM_PLAYLISTFACTORY_HPP
 
 #include "playlist.hpp"
 

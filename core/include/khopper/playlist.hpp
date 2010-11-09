@@ -34,8 +34,10 @@ namespace khopper {
 
 	namespace album {
 
-		class KHOPPER_DLL PlayList : public QList< TrackSP > {
-		};
+		typedef QList< TrackSP > PlayList;
+
+		PlayList KHOPPER_DLL createPlayList( const QUrl & uri );
+		void exportPlayList( const PlayList & playList, const QUrl & fileURI );
 
 	}
 
@@ -44,7 +46,6 @@ namespace khopper {
 		typedef std::function< unsigned int ( const QUrl & ) > PlayListVerifier;
 		typedef std::function< album::PlayList ( const QUrl & ) > PlayListCreator;
 
-		album::PlayList KHOPPER_DLL createPlayList( const QUrl & uri );
 		bool KHOPPER_DLL registerPlayList( const QString & id, PlayListVerifier v, PlayListCreator c );
 		bool KHOPPER_DLL unregisterPlayList( const QString & id );
 
