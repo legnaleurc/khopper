@@ -21,6 +21,7 @@
  */
 #include "pluginviewer.hpp"
 #include "ui_pluginviewer.h"
+#include "pluginmodel.hpp"
 
 #include <QtGui/QStandardItemModel>
 
@@ -28,15 +29,8 @@ using namespace khopper::widget;
 
 PluginViewer::PluginViewer( QWidget * parent ):
 QWidget( parent, Qt::Dialog ),
-ui_( new Ui::PluginViewer ),
-model_( new QStandardItemModel( this ) ) {
+ui_( new Ui::PluginViewer ) {
 	this->ui_->setupUi( this );
 
-	this->ui_->tableView->setModel( this->model_ );
-
-	this->model_->setHorizontalHeaderLabels( QStringList() << "ID" << "Version" << "Path" << "Loaded" );
-}
-
-PluginViewer::~PluginViewer() {
-	delete this->ui_;
+	this->ui_->tableView->setModel( new PluginModel( this ) );
 }

@@ -24,6 +24,8 @@
 
 #include <QtGui/QWidget>
 
+#include <memory>
+
 class QStandardItemModel;
 namespace Ui {
 	class PluginViewer;
@@ -35,11 +37,9 @@ namespace khopper {
 		class PluginViewer : public QWidget {
 		public:
 			explicit PluginViewer( QWidget * parent );
-			virtual ~PluginViewer();
 
 		private:
-			Ui::PluginViewer * ui_;
-			QStandardItemModel * model_;
+			std::shared_ptr< Ui::PluginViewer > ui_;
 		};
 
 	}
