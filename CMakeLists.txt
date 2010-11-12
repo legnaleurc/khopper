@@ -10,7 +10,7 @@ set(KHOPPER_VERSION "${KHOPPER_VERSION_MAJOR}.${KHOPPER_VERSION_MINOR}.${KHOPPER
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 
-find_package(Qt4 4.6 COMPONENTS Phonon REQUIRED)
+find_package(Qt4 4.6 COMPONENTS Phonon Xml REQUIRED)
 find_package(Boost REQUIRED)
 
 include(${QT_USE_FILE})
@@ -21,10 +21,9 @@ if(CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "MinSizeRel"
     add_definitions(-DQT_NO_DEBUG -DQT_NO_DEBUG_OUTPUT)
 endif()
 if(CMAKE_COMPILER_IS_GNUCXX)
-#    add_definitions(-std=c++0x -Wall)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -Wextra -Wall")
 elseif(MSVC)
-    add_definitions(/Zc:wchar_t- "/wd4127;4819")
+    add_definitions("/D__STDC_CONSTANT_MACROS" "/Zc:wchar_t-" "/wd4127;4819")
     if(CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
         string(REGEX REPLACE "/W[0-4]" "/W4" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
     else()

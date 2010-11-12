@@ -26,6 +26,8 @@
 
 #include <QtCore/QMutexLocker>
 
+#include <algorithm>
+
 namespace {
 	static QMutex mutex;
 }

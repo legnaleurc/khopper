@@ -31,6 +31,8 @@
 #include <QtCore/QSettings>
 #include <QtCore/QTextCodec>
 
+#include <algorithm>
+
 /// Main program
 int main( int argc, char * argv[] ) {
 	khopper::Application app( argc, argv );

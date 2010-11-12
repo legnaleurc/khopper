@@ -1,5 +1,5 @@
 /**
- * @file playlistprivate.hpp
+ * @file playlistfactory.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,23 +19,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_ALBUM_PLAYLISTPRIVATE_HPP
-#define KHOPPER_ALBUM_PLAYLISTPRIVATE_HPP
+#ifndef KHOPPER_ALBUM_PLAYLISTFACTORY_HPP
+#define KHOPPER_ALBUM_PLAYLISTFACTORY_HPP
 
 #include "playlist.hpp"
 
 #include <loki/Singleton.h>
 
-#include <list>
+#include <map>
 #include <utility>
 
 namespace khopper {
 	namespace plugin {
 
-		struct PlayListFactoryPrivate {
-			typedef std::pair< PlayListVerifier, PlayListCreator > Pair;
+		class PlayListFactoryPrivate {
+		public:
+			typedef std::map< QString, std::pair< PlayListVerifier, PlayListCreator > > TableType;
 
-			std::list< Pair > fList;
+			TableType m;
 		};
 
 		typedef Loki::SingletonHolder< PlayListFactoryPrivate > PlayListFactory;

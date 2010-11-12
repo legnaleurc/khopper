@@ -24,20 +24,16 @@
 
 #include "khopper/playlist.hpp"
 
-#include <QtGui/QTableView>
+#include <QtGui/QTreeView>
 
 namespace khopper {
-
-	namespace album {
-		class PlayList;
-	}
 
 	namespace widget {
 
 		/**
 		 * @brief The song list view in the center widget
 		 */
-		class PlayListView : public QTableView {
+		class PlayListView : public QTreeView {
 			Q_OBJECT
 
 		public:
@@ -78,7 +74,7 @@ namespace khopper {
 			virtual void mouseDoubleClickEvent( QMouseEvent * event );
 
 		private slots:
-			//void changeTextCodec_( int );
+			void changeTextCodec_( int );
 			void dropFiles_();
 			void propertyHelper_();
 			void removeHelper_();

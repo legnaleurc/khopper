@@ -22,7 +22,7 @@
 #ifndef KHOPPER_UTIL_ERROR_HPP
 #define KHOPPER_UTIL_ERROR_HPP
 
-#include "tr1.hpp"
+#include "config.hpp"
 
 #include <QtCore/QString>
 

@@ -24,19 +24,22 @@
 
 #include "khopper/playlist.hpp"
 
-#include <QtCore/QAbstractTableModel>
+#include <QtCore/QAbstractItemModel>
 
 namespace khopper {
 	namespace widget {
-		class PlayListModel : public QAbstractTableModel {
+		class PlayListModel : public QAbstractItemModel {
 		public:
 			explicit PlayListModel( QObject * parent );
 
 			void append( const album::PlayList & playList );
+			void changeTextCodec( const QModelIndex & index, QTextCodec * codec );
 			virtual int columnCount( const QModelIndex & parent = QModelIndex() ) const;
 			virtual QVariant data( const QModelIndex & index, int role = Qt::DisplayRole ) const;
 			const album::PlayList & getPlayList() const;
 			virtual QVariant headerData( int section, Qt::Orientation orientation, int role = Qt::DisplayRole ) const;
+			virtual QModelIndex index( int row, int column, const QModelIndex & parent = QModelIndex() ) const;
+			virtual QModelIndex parent( const QModelIndex & index ) const;
 			virtual bool setData( const QModelIndex & index, const QVariant & value, int role = Qt::EditRole );
 			void remove( QModelIndexList indexes );
 			virtual int rowCount( const QModelIndex & parent = QModelIndex() ) const;
