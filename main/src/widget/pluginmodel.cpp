@@ -24,10 +24,10 @@
 using namespace khopper::widget;
 
 PluginModel::PluginModel( QObject * parent ) : QAbstractTableModel( parent ) {
-	this->setHeaderData( 0, Qt::Horizontal, "ID", Qt::DisplayRole );
-	this->setHeaderData( 1, Qt::Horizontal, "Version", Qt::DisplayRole );
-	this->setHeaderData( 2, Qt::Horizontal, "Path", Qt::DisplayRole );
-	this->setHeaderData( 3, Qt::Horizontal, "Loaded", Qt::DisplayRole );
+	this->setHeaderData( 0, Qt::Horizontal, tr( "ID" ), Qt::DisplayRole );
+	this->setHeaderData( 1, Qt::Horizontal, tr( "Version" ), Qt::DisplayRole );
+	this->setHeaderData( 2, Qt::Horizontal, tr( "Path" ), Qt::DisplayRole );
+	this->setHeaderData( 3, Qt::Horizontal, tr( "Loaded" ), Qt::DisplayRole );
 }
 
 int PluginModel::columnCount( const QModelIndex & /*parent*/ ) const {
