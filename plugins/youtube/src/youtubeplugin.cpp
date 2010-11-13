@@ -50,3 +50,6 @@ void YouTubePlugin::doInstall() {
 		return tmp;
 	} );
 }
+
+void YouTubePlugin::doUninstall() {
+}

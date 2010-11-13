@@ -61,7 +61,12 @@ else()
     endif()
 endif()
 
-add_subdirectory(youtube)
+if(QT_QTWEBKIT_FOUND)
+    list(APPEND KHOPPER_OPTIONAL_FOUND "Found QtWebKit module, YouTube plugin will be build.")
+    add_subdirectory(youtube)
+else()
+    list(APPEND KHOPPER_OPTIONAL_NOT_FOUND "QtWebKit not found for YouTube plugin.")
+endif()
 
 set(KHOPPER_OPTIONAL_FOUND ${KHOPPER_OPTIONAL_FOUND} PARENT_SCOPE)
 set(KHOPPER_OPTIONAL_NOT_FOUND ${KHOPPER_OPTIONAL_NOT_FOUND} PARENT_SCOPE)
