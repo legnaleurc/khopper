@@ -36,16 +36,18 @@
 #include <QtGui/QHeaderView>
 #include <QtGui/QMenu>
 
+#include <algorithm>
+
 using namespace khopper::widget;
 using khopper::album::PlayList;
 
 PlayListView::PlayListView( QWidget * parent ):
-QTableView( parent ),
+QTreeView( parent ),
 contextMenu_( new QMenu( this ) ),
 droppingFiles_(),
 cmPos_() {
 	// Set header
-	this->horizontalHeader()->setMovable( true );
+	this->header()->setMovable( true );
 
 	// Set model
 	QAction * delSong = new QAction( this );
@@ -90,19 +92,13 @@ void PlayListView::propertyHelper_() {
 	emit this->requireProperty( this->indexAt( this->cmPos_ ) );
 }
 
-//void PlayListView::changeTextCodec_( int mib ) {
-//	QTextCodec * codec = QTextCodec::codecForMib( mib );
-//	QModelIndexList selected = this->selectionModel()->selectedRows();
-//	foreach( QModelIndex index, selected ) {
-//		album::TrackSP track( this->tracks_[index.row()] );
-//		track->setTextCodec( codec );
-//
-//		// FIXME: generic
-//		this->model_->item( index.row(), 0 )->setText( track->getTitle() );
-//		this->model_->item( index.row(), 1 )->setText( track->getArtist() );
-//		this->model_->item( index.row(), 2 )->setText( track->getAlbum()->getTitle() );
-//	}
-//}
+void PlayListView::changeTextCodec_( int mib ) {
+	QTextCodec * codec = QTextCodec::codecForMib( mib );
+	QModelIndexList selected = this->selectionModel()->selectedRows();
+	std::for_each( selected.begin(), selected.end(), [&]( const QModelIndex & index ) {
+		static_cast< PlayListModel * >( this->model() )->changeTextCodec( index, codec );
+	} );
+}
 
 void PlayListView::removeHelper_() {
 	static_cast< PlayListModel * >( this->model() )->remove( this->selectionModel()->selectedRows() );

@@ -30,6 +30,8 @@
 #include <Phonon/AudioOutput>
 #include <Phonon/BackendCapabilities>
 
+#include <algorithm>
+
 namespace {
 
 	static inline QString fromTimestamp( const khopper::album::Timestamp & ts ) {
@@ -121,7 +123,6 @@ const PlayList & Player::getTracks() const {
 
 void Player::append( const PlayList & playList ) {
 	this->model_->append( playList );
-	this->ui_->playListView->resizeRowsToContents();
 }
 
 void Player::play_() {

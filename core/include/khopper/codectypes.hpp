@@ -1,5 +1,5 @@
 /**
- * @file codec_base.hpp
+ * @file codectypes.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,15 +19,15 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_CODEC_BASE_HPP
-#define KHOPPER_CODEC_BASE_HPP
+#ifndef KHOPPER_CODECTYPES_HPP
+#define KHOPPER_CODECTYPES_HPP
 
 /// @defgroup Codecs De/Muxers and De/Encoders
 // @{
 // @}
 
 
-#include "tr1.hpp"
+#include "config.hpp"
 #include "error.hpp"
 
 #include <memory>
@@ -83,45 +83,6 @@ namespace khopper {
 			LayoutStereoDownmix = StereoLeft | StereoRight,
 
 			LayoutNative        = 0x00000000
-		};
-
-		class KHOPPER_DLL AudioFormat {
-		public:
-			enum Endian {
-				BigEndian = QSysInfo::BigEndian,
-				LittleEndian = QSysInfo::LittleEndian
-			};
-			enum SampleType {
-				Unknown,
-				SignedInt,
-				UnSignedInt,
-				Float
-			};
-
-			AudioFormat();
-			AudioFormat( const AudioFormat & that );
-
-			Endian byteOrder() const;
-			int channels() const;
-			QString codec() const;
-			int frequency() const;
-			bool isValid() const;
-			int sampleSize() const;
-			SampleType sampleType() const;
-			void setByteOrder( Endian byteOrder );
-			void setChannels( int channels );
-			void setCodec( const QString & codec );
-			void setFrequency( int frequency );
-			void setSampleSize( int sampleSize );
-			void setSampleType( SampleType sampleType );
-
-			bool operator !=( const AudioFormat & that ) const;
-			AudioFormat & operator =( const AudioFormat & that );
-			bool operator ==( const AudioFormat & that ) const;
-
-		private:
-			class AudioFormatPrivate;
-			std::shared_ptr< AudioFormatPrivate > p_;
 		};
 
 	}

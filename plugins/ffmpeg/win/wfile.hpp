@@ -22,8 +22,6 @@
 #ifndef KHOPPER_CODEC_WFILE_HPP
 #define KHOPPER_CODEC_WFILE_HPP
 
-#include "khopper/tr1.hpp"
-
 extern "C" {
 #include <libavformat/avformat.h>
 }
