@@ -26,10 +26,12 @@
 #include <algorithm>
 
 using namespace khopper::plugin;
+using khopper::widget::YouTubeDialog;
 
 YouTubeLoader::YouTubeLoader():
-page_(),
-formats_() {
+dialog_( new YouTubeDialog ),
+formats_(),
+page_() {
 	// '5':'FLV 240p','18':'MP4 360p','22':'MP4 720p (HD)','34':'FLV 360p','35':'FLV 480p','37':'MP4 1080p (HD)','38':'MP4 Original (HD)','43':'WebM 480p','45':'WebM 720p (HD)'
 	// '5':'flv','18':'mp4','22':'mp4','34':'flv','35':'flv','37':'mp4','38':'mp4','43':'webm','45':'webm'
 	this->formats_.insert( std::make_pair( "5", std::make_pair( "flv", "FLV 240p" ) ) );
@@ -72,14 +74,17 @@ void YouTubeLoader::parse_( bool /*finished*/ ) {
 		QStringList pair( format.split( "%7C" ) );
 		videoURL.insert( pair[0], QUrl::fromEncoded( pair[1].toUtf8() ) );
 	} );
-	
-	QList< QUrl > downloadCodeList;
+
 	std::for_each( this->formats_.begin(), this->formats_.end(), [&]( const std::pair< QString, std::pair< QString, QString > > & format ) {
 		if( format.first == "5" && ( videoURL.contains( "34" ) || videoURL.contains( "35" ) ) ) {
 			return;
 		}
 		if( videoURL.contains( format.first ) ) {
-			downloadCodeList.push_back( videoURL[format.first] );
+			this->dialog_->addFormat( format.first );
 		}
 	} );
+	if( this->dialog_->exec() != QDialog::Accepted ) {
+		return;
+	}
+	this->dialog_->clearFormat();
 }

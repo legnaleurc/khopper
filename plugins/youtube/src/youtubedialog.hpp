@@ -1,5 +1,5 @@
 /**
- * @file youtubeloader.hpp
+ * @file youtubedialog.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,32 +19,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_PLUGIN_YOUTUBELOADER_HPP
-#define KHOPPER_PLUGIN_YOUTUBELOADER_HPP
+#ifndef KHOPPER_WIDGET_YOUTUBEDIALOG_HPP
+#define KHOPPER_WIDGET_YOUTUBEDIALOG_HPP
 
-#include "youtubedialog.hpp"
-
-#include <QtWebKit/QWebPage>
+#include <QtGui/QDialog>
+#include <QtGui/QRadioButton>
 
 #include <map>
+#include <memory>
+
+namespace Ui {
+	class YouTubeDialog;
+}
 
 namespace khopper {
-	namespace plugin {
+	namespace widget {
 
-		class YouTubeLoader : public QObject {
-			Q_OBJECT
+		class YouTubeDialog : public QDialog {
 		public:
-			YouTubeLoader();
+			YouTubeDialog();
 
-			QUrl operator ()( const QUrl & uri );
-
-		private slots:
-			void parse_( bool );
+			void addFormat( const QString & format );
+			void clearFormat();
 
 		private:
-			std::shared_ptr< widget::YouTubeDialog > dialog_;
-			std::map< QString, std::pair< QString, QString > > formats_;
-			QWebPage page_;
+			std::map< QString, QRadioButton * > buttons_;
+			std::shared_ptr< Ui::YouTubeDialog > ui_;
 		};
 
 	}
