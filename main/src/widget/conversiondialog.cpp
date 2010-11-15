@@ -30,7 +30,7 @@
 #include <QtCore/QSettings>
 #include <QtGui/QFileDialog>
 
-#include <boost/format.hpp>
+#include <algorithm>
 
 using namespace khopper::widget;
 using khopper::album::TrackCSP;
@@ -100,11 +100,17 @@ QString ConversionDialog::getOutputPath_( TrackSP track ) {
 
 QString ConversionDialog::getOutputName_( TrackSP track ) {
 	QString tmp = this->ui_->tpl->text();
-	tmp.replace( "%t", "%1%" );
-	tmp.replace( "%a", "%2%" );
-	tmp.replace( QRegExp( "%(\\d*)i" ), "%|3$0\\1|" );
+	tmp.replace( "%t", track->getTitle() );
+	tmp.replace( "%a", track->getArtist() );
+	QRegExp pattern( "%(\\d*)i" );
+	int offset = 0;
+	while( ( offset = pattern.indexIn( tmp, offset ) ) >= 0 ) {
+		QString newString( QString( "%1" ).arg( QString::number( track->getIndex() ), pattern.cap( 1 ).toInt(), '0' ) );
+		tmp.replace( offset, pattern.matchedLength(), newString );
+		offset += newString.length() - pattern.matchedLength();
+	}
 	tmp.replace( "%%", "%" );
-	return QString::fromStdString( ( boost::format( tmp.toStdString() ) % track->getTitle().toStdString() % track->getArtist().toStdString() % track->getIndex() ).str() );
+	return tmp;
 }
 
 void ConversionDialog::changeOutputPath_() {
