@@ -63,9 +63,11 @@ namespace khopper {
 
 			QByteArray content_;
 			std::shared_ptr< widget::YouTubeDialog > dialog_;
+			QUrl downloadURI_;
 			std::map< QString, std::pair< QString, QString > > formats_;
 			QFile fout_;
 			QNetworkAccessManager * link_;
+			bool needGo_;
 			std::shared_ptr< QProgressDialog > progress_;
 			QNetworkReply * transfer_;
 		};
