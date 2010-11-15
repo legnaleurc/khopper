@@ -24,6 +24,7 @@
 
 #include "youtubedialog.hpp"
 
+#include <QtCore/QFile>
 #include <QtCore/QUrl>
 #include <QtGui/QProgressDialog>
 #include <QtNetwork/QNetworkAccessManager>
@@ -51,16 +52,22 @@ namespace khopper {
 			void finished();
 
 		private slots:
-			void download_( QNetworkReply * );
-			void parse_( QNetworkReply * );
+			void finish_();
+			void finishDownload_();
 			void updateProgress_( qint64, qint64 );
+			void read_();
+			void readAndWrite_();
 
 		private:
+			QUrl parse_();
+
+			QByteArray content_;
 			std::shared_ptr< widget::YouTubeDialog > dialog_;
-			QNetworkAccessManager * downloadLink_;
 			std::map< QString, std::pair< QString, QString > > formats_;
-			QNetworkAccessManager * parseLink_;
+			QFile fout_;
+			QNetworkAccessManager * link_;
 			std::shared_ptr< QProgressDialog > progress_;
+			QNetworkReply * transfer_;
 		};
 
 	}
