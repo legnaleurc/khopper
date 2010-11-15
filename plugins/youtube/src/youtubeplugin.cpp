@@ -24,11 +24,13 @@
 #include "khopper/playlist.hpp"
 
 #include <QtCore/QtPlugin>
+#include <QtCore/QtDebug>
 
 Q_EXPORT_PLUGIN2( KHOPPER_PLUGIN_ID, khopper::plugin::YouTubePlugin )
 
 using namespace khopper::plugin;
 using khopper::plugin::registerPlayList;
+using khopper::plugin::unregisterPlayList;
 using khopper::album::PlayList;
 
 YouTubePlugin::YouTubePlugin() : AbstractPlugin() {
@@ -38,12 +40,14 @@ YouTubePlugin::YouTubePlugin() : AbstractPlugin() {
 
 void YouTubePlugin::doInstall() {
 	registerPlayList( this->getID(), []( const QUrl & uri )->unsigned int {
-		if( uri.scheme() == "http" && uri.host() == "www.youtube.com/watch" ) {
+		if( uri.scheme() == "http" && uri.host() == "www.youtube.com" && uri.path() == "/watch" ) {
+			qDebug() << "YouTubePlugin returned 100" << uri;
 			return 100;
 		}
+		qDebug() << "YouTubePlugin returned 0" << uri;
 		return 0;
 	}, [&]( const QUrl & uri )->PlayList {
-		khopper::album::TrackSP track( new khopper::album::Track( this->loader( uri ) ) );
+		khopper::album::TrackSP track( new khopper::album::Track( YouTubeLoader::load( uri ) ) );
 
 		khopper::album::PlayList tmp;
 		tmp.push_back( track );
@@ -52,4 +56,5 @@ void YouTubePlugin::doInstall() {
 }
 
 void YouTubePlugin::doUninstall() {
+	unregisterPlayList( this->getID() );
 }

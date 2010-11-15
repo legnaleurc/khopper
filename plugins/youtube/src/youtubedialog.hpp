@@ -22,8 +22,9 @@
 #ifndef KHOPPER_WIDGET_YOUTUBEDIALOG_HPP
 #define KHOPPER_WIDGET_YOUTUBEDIALOG_HPP
 
+#include <QtCore/QUrl>
+#include <QtGui/QButtonGroup>
 #include <QtGui/QDialog>
-#include <QtGui/QRadioButton>
 
 #include <map>
 #include <memory>
@@ -36,14 +37,20 @@ namespace khopper {
 	namespace widget {
 
 		class YouTubeDialog : public QDialog {
+			Q_OBJECT
 		public:
 			YouTubeDialog();
 
 			void addFormat( const QString & format );
 			void clearFormat();
+			QString getSelectedFormat() const;
+			QString getLocalLocation() const;
+
+		private slots:
+			void getLocation_();
 
 		private:
-			std::map< QString, QRadioButton * > buttons_;
+			QButtonGroup * group_;
 			std::shared_ptr< Ui::YouTubeDialog > ui_;
 		};
 

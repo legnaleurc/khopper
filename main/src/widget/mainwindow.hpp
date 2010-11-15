@@ -65,6 +65,7 @@ namespace khopper {
 			 * @brief Open the file widget
 			 */
 			void showOpenFilesDialog();
+			void showLineInputDialog();
 			/**
 			 * @brief Open files
 			 * @param [in] filePaths file path

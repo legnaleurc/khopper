@@ -34,6 +34,7 @@
 #include <QtCore/QFileInfo>
 #include <QtGui/QDesktopServices>
 #include <QtGui/QFileDialog>
+#include <QtGui/QInputDialog>
 #include <QtGui/QMessageBox>
 
 #include <algorithm>
@@ -69,6 +70,7 @@ lastOpenedDir_( QDesktopServices::storageLocation( QDesktopServices::MusicLocati
 
 void MainWindow::initMenuBar_() {
 	QObject::connect( this->ui_->action_Open, SIGNAL( triggered() ), this, SLOT( showOpenFilesDialog() ) );
+	QObject::connect( this->ui_->action_Load_By_Url, SIGNAL( triggered() ), this, SLOT( showLineInputDialog() ) );
 	QObject::connect( this->ui_->action_Preference, SIGNAL( triggered() ), this->preference_, SLOT( exec() ) );
 	QObject::connect( this->ui_->actionAbout_Khopper, SIGNAL( triggered() ), this->about_, SLOT( show() ) );
 	QObject::connect( this->ui_->actionAbout_Qt, SIGNAL( triggered() ), qApp, SLOT( aboutQt() ) );
@@ -122,4 +124,14 @@ void MainWindow::open( const QList< QUrl > & uris ) {
 
 void MainWindow::showErrorMessage_( const QString & title, const QString & msg ) {
 	QMessageBox::critical( this, title, msg );
+}
+
+void MainWindow::showLineInputDialog() {
+	QString input = QInputDialog::getText( this, tr( "Type a URL" ), tr( "URL to Open" ) );
+	if( !input.isEmpty() ) {
+		QList< QUrl > uris;
+		qDebug() << input << QUrl( input );
+		uris.append( QUrl( input ) );
+		this->open( uris );
+	}
 }

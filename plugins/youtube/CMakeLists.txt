@@ -3,7 +3,7 @@
 file(GLOB_RECURSE KHOPPER_PLUGIN_YOUTUBE_HEADERS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} src/*.hpp)
 file(GLOB_RECURSE KHOPPER_PLUGIN_YOUTUBE_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} src/*.cpp)
 file(GLOB_RECURSE KHOPPER_PLUGIN_YOUTUBE_FORMS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} src/*.ui)
-set(KHOPPER_PLUGIN_YOUTUBE_MOC_HEADERS src/youtubeloader.hpp)
+set(KHOPPER_PLUGIN_YOUTUBE_MOC_HEADERS src/youtubeloader.hpp src/youtubedialog.hpp)
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
@@ -14,5 +14,5 @@ source_group("Generated Files" FILES ${KHOPPER_PLUGIN_YOUTUBE_MOC_SOURCES} ${KHO
 source_group("Form Files" REGULAR_EXPRESSION .*\\.ui)
 
 add_library(khopper_plugin_youtube SHARED ${KHOPPER_PLUGIN_YOUTUBE_HEADERS} ${KHOPPER_PLUGIN_YOUTUBE_SOURCES} ${KHOPPER_PLUGIN_YOUTUBE_MOC_SOURCES} ${KHOPPER_PLUGIN_YOUTUBE_UI_HEADERS})
-target_link_libraries(khopper_plugin_youtube ${QT_QTWEBKIT_LIBRARY})
+target_link_libraries(khopper_plugin_youtube ${QT_QTNETWORK_LIBRARY})
 khopper_add_plugin(khopper_plugin_youtube)

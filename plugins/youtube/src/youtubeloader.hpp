@@ -24,27 +24,44 @@
 
 #include "youtubedialog.hpp"
 
-#include <QtWebKit/QWebPage>
+#include <QtCore/QMutex>
+#include <QtCore/QUrl>
+#include <QtCore/QWaitCondition>
+#include <QtGui/QProgressDialog>
+#include <QtNetwork/QNetworkAccessManager>
 
 #include <map>
 
 namespace khopper {
 	namespace plugin {
 
+		struct VideoParameter {
+			QString id;
+			QString ticket;
+			std::map< QString, QUrl > formatURLs;
+		};
+
 		class YouTubeLoader : public QObject {
 			Q_OBJECT
 		public:
+			static QUrl load( const QUrl & url );
+			static VideoParameter parse( const QString & content );
+
 			YouTubeLoader();
 
-			QUrl operator ()( const QUrl & uri );
-
 		private slots:
-			void parse_( bool );
+			void download_( QNetworkReply * );
+			void parse_( QNetworkReply * );
+			void updateProgress_( qint64, qint64 );
 
 		private:
 			std::shared_ptr< widget::YouTubeDialog > dialog_;
+			QNetworkAccessManager * downloadLink_;
 			std::map< QString, std::pair< QString, QString > > formats_;
-			QWebPage page_;
+			QMutex lock_;
+			QNetworkAccessManager * parseLink_;
+			std::shared_ptr< QProgressDialog > progress_;
+			QWaitCondition wait_;
 		};
 
 	}

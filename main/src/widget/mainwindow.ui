@@ -26,7 +26,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>23</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_Tools">
@@ -47,6 +47,7 @@
      <string>&amp;File</string>
     </property>
     <addaction name="action_Open"/>
+    <addaction name="action_Load_By_Url"/>
    </widget>
    <addaction name="menu_File"/>
    <addaction name="menu_Tools"/>
@@ -73,6 +74,11 @@
   <action name="actionAbout_Qt">
    <property name="text">
     <string>About &amp;Qt ...</string>
+   </property>
+  </action>
+  <action name="action_Load_By_Url">
+   <property name="text">
+    <string>&amp;Load By Url</string>
    </property>
   </action>
  </widget>

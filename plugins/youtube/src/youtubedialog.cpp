@@ -22,35 +22,58 @@
 #include "youtubedialog.hpp"
 #include "ui_youtubedialog.h"
 
+#include <QtGui/QDesktopServices>
+#include <QtGui/QFileDialog>
+
 #include <algorithm>
 
 using namespace khopper::widget;
 
 YouTubeDialog::YouTubeDialog():
 QDialog( 0 ),
-buttons_(),
+group_( new QButtonGroup( this ) ),
 ui_( new Ui::YouTubeDialog ) {
 	this->ui_->setupUi( this );
 
-	this->buttons_.insert( std::make_pair( "5", this->ui_->radioButton ) );
-	this->buttons_.insert( std::make_pair( "18", this->ui_->radioButton_2 ) );
-	this->buttons_.insert( std::make_pair( "22", this->ui_->radioButton_3 ) );
-	this->buttons_.insert( std::make_pair( "34", this->ui_->radioButton_4 ) );
-	this->buttons_.insert( std::make_pair( "35", this->ui_->radioButton_5 ) );
-	this->buttons_.insert( std::make_pair( "37", this->ui_->radioButton_6 ) );
-	this->buttons_.insert( std::make_pair( "38", this->ui_->radioButton_7 ) );
-	this->buttons_.insert( std::make_pair( "43", this->ui_->radioButton_8 ) );
-	this->buttons_.insert( std::make_pair( "45", this->ui_->radioButton_9 ) );
+	this->group_->addButton( this->ui_->radioButton, 5 );
+	this->group_->addButton( this->ui_->radioButton_2, 18 );
+	this->group_->addButton( this->ui_->radioButton_3, 22 );
+	this->group_->addButton( this->ui_->radioButton_4, 34 );
+	this->group_->addButton( this->ui_->radioButton_5, 35 );
+	this->group_->addButton( this->ui_->radioButton_6, 37 );
+	this->group_->addButton( this->ui_->radioButton_7, 38 );
+	this->group_->addButton( this->ui_->radioButton_8, 43 );
+	this->group_->addButton( this->ui_->radioButton_9, 45 );
 
 	this->clearFormat();
+
+	this->ui_->lineEdit->setText( QDesktopServices::displayName( QDesktopServices::MoviesLocation ) );
+
+	this->connect( this->ui_->pushButton, SIGNAL( clicked() ), SLOT( getLocation_() ) );
 }
 
 void YouTubeDialog::addFormat( const QString & format ) {
-	this->buttons_[format]->setEnabled( true );
+	this->group_->button( format.toInt() )->setEnabled( true );
 }
 
 void YouTubeDialog::clearFormat() {
-	std::for_each( this->buttons_.begin(), this->buttons_.end(), []( std::pair< QString, QRadioButton * > p ) {
-		p.second->setDisabled( true );
+	QList< QAbstractButton * > buttons( this->group_->buttons() );
+	std::for_each( buttons.begin(), buttons.end(), []( QAbstractButton * button ) {
+		button->setDisabled( true );
 	} );
+}
+
+QString YouTubeDialog::getSelectedFormat() const {
+	return QString::number( this->group_->checkedId() );
+}
+
+QString YouTubeDialog::getLocalLocation() const {
+	return this->ui_->lineEdit->text();
+}
+
+void YouTubeDialog::getLocation_() {
+	QString path = QFileDialog::getSaveFileName( 0, "Save file", this->ui_->lineEdit->text() );
+	if( !path.isEmpty() ) {
+		this->ui_->lineEdit->setText( path );
+	}
 }
