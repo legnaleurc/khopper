@@ -24,9 +24,7 @@
 
 #include "youtubedialog.hpp"
 
-#include <QtCore/QMutex>
 #include <QtCore/QUrl>
-#include <QtCore/QWaitCondition>
 #include <QtGui/QProgressDialog>
 #include <QtNetwork/QNetworkAccessManager>
 
@@ -49,6 +47,9 @@ namespace khopper {
 
 			YouTubeLoader();
 
+		signals:
+			void finished();
+
 		private slots:
 			void download_( QNetworkReply * );
 			void parse_( QNetworkReply * );
@@ -58,10 +59,8 @@ namespace khopper {
 			std::shared_ptr< widget::YouTubeDialog > dialog_;
 			QNetworkAccessManager * downloadLink_;
 			std::map< QString, std::pair< QString, QString > > formats_;
-			QMutex lock_;
 			QNetworkAccessManager * parseLink_;
 			std::shared_ptr< QProgressDialog > progress_;
-			QWaitCondition wait_;
 		};
 
 	}

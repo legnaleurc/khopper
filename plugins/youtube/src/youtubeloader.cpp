@@ -21,6 +21,7 @@
  */
 #include "youtubeloader.hpp"
 
+#include <QtCore/QEventLoop>
 #include <QtCore/QFile>
 #include <QtNetwork/QNetworkReply>
 #include <QtNetwork/QNetworkRequest>
@@ -60,10 +61,8 @@ YouTubeLoader::YouTubeLoader():
 dialog_( new YouTubeDialog ),
 downloadLink_( new QNetworkAccessManager( this ) ),
 formats_(),
-lock_(),
 parseLink_( new QNetworkAccessManager( this ) ),
-progress_( new QProgressDialog() ),
-wait_() {
+progress_( new QProgressDialog() ) {
 	// '5':'FLV 240p','18':'MP4 360p','22':'MP4 720p (HD)','34':'FLV 360p','35':'FLV 480p','37':'MP4 1080p (HD)','38':'MP4 Original (HD)','43':'WebM 480p','45':'WebM 720p (HD)'
 	// '5':'flv','18':'mp4','22':'mp4','34':'flv','35':'flv','37':'mp4','38':'mp4','43':'webm','45':'webm'
 	this->formats_.insert( std::make_pair( "5", std::make_pair( "flv", "FLV 240p" ) ) );
@@ -82,8 +81,9 @@ wait_() {
 QUrl YouTubeLoader::load( const QUrl & uri ) {
 	YouTubeLoader self;
 	self.parseLink_->get( QNetworkRequest( uri ) );
-	self.lock_.lock();
-	self.wait_.wait( &self.lock_ );
+	QEventLoop wait;
+	wait.connect( &self, SIGNAL( finished() ), SLOT( quit() ) );
+	wait.exec();
 	return QUrl::fromLocalFile( self.dialog_->getLocalLocation() );
 }
 
@@ -100,7 +100,7 @@ void YouTubeLoader::download_( QNetworkReply * reply ) {
 	fout.close();
 
 	reply->disconnect( this );
-	this->wait_.wakeAll();
+	emit this->finished();
 }
 
 void YouTubeLoader::parse_( QNetworkReply * reply ) {
