@@ -77,12 +77,15 @@ transfer_( NULL ) {
 	this->formats_.insert( std::make_pair( "38", std::make_pair( "mp4", "MP4 Original (HD)" ) ) );
 	this->formats_.insert( std::make_pair( "43", std::make_pair( "webm", "WebM 480p" ) ) );
 	this->formats_.insert( std::make_pair( "45", std::make_pair( "webm", "WebM 720p (HD)" ) ) );
+
+	this->progress_->setLabelText( tr( "Downloading progress" ) );
 }
 
 QUrl YouTubeLoader::load( const QUrl & uri ) {
 	YouTubeLoader self;
 
-	self.progress_->setRange( 0, 0 );
+	self.progress_->setValue( 0 );
+	self.progress_->show();
 	self.transfer_ = self.link_->get( QNetworkRequest( uri ) );
 	self.connect( self.transfer_, SIGNAL( readyRead() ), SLOT( read_() ) );
 	self.connect( self.transfer_, SIGNAL( downloadProgress( qint64, qint64 ) ), SLOT( updateProgress_( qint64, qint64 ) ) );
@@ -97,15 +100,14 @@ QUrl YouTubeLoader::load( const QUrl & uri ) {
 		qDebug() << self.downloadURI_.host() << self.downloadURI_.queryItems();
 		self.fout_.setFileName( self.dialog_->getLocalLocation() );
 		self.fout_.open( QIODevice::WriteOnly );
-		self.progress_->setRange( 0, 0 );
+		self.progress_->setValue( 0 );
+		self.progress_->show();
 		self.transfer_ = self.link_->get( QNetworkRequest( self.downloadURI_ ) );
 		self.connect( self.transfer_, SIGNAL( error( QNetworkReply::NetworkError ) ), SLOT( onError_( QNetworkReply::NetworkError ) ) );
 		self.connect( self.transfer_, SIGNAL( readyRead() ), SLOT( readAndWrite_() ) );
 		self.connect( self.transfer_, SIGNAL( downloadProgress( qint64, qint64 ) ), SLOT( updateProgress_( qint64, qint64 ) ) );
 		self.connect( self.transfer_, SIGNAL( finished() ), SLOT( finishDownload_() ) );
-		QEventLoop wait2;
-		wait2.connect( &self, SIGNAL( finished() ), SLOT( quit() ) );
-		wait2.exec();
+		wait.exec();
 	}
 
 	return QUrl::fromLocalFile( self.dialog_->getLocalLocation() );
@@ -122,10 +124,12 @@ void YouTubeLoader::updateProgress_( qint64 bytesReceived, qint64 bytesTotal ) {
 
 void YouTubeLoader::finish_() {
 	this->transfer_->deleteLater();
+	this->progress_->hide();
 	emit this->finished();
 }
 
 void YouTubeLoader::finishDownload_() {
+	this->progress_->hide();
 	this->fout_.close();
 	QUrl redirectURI = this->transfer_->attribute( QNetworkRequest::RedirectionTargetAttribute ).toUrl();
 	qDebug() << this->transfer_->attribute( QNetworkRequest::HttpStatusCodeAttribute ) << redirectURI;
