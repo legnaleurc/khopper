@@ -28,6 +28,7 @@
 #include <QtCore/QUrl>
 #include <QtGui/QProgressDialog>
 #include <QtNetwork/QNetworkAccessManager>
+#include <QtNetwork/QNetworkReply>
 
 #include <map>
 
@@ -54,9 +55,10 @@ namespace khopper {
 		private slots:
 			void finish_();
 			void finishDownload_();
-			void updateProgress_( qint64, qint64 );
+			void onError_( QNetworkReply::NetworkError );
 			void read_();
 			void readAndWrite_();
+			void updateProgress_( qint64, qint64 );
 
 		private:
 			QUrl parse_();

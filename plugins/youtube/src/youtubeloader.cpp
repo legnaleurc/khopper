@@ -23,7 +23,6 @@
 
 #include <QtCore/QEventLoop>
 #include <QtCore/QtDebug>
-#include <QtNetwork/QNetworkReply>
 #include <QtNetwork/QNetworkRequest>
 
 #include <algorithm>
@@ -51,7 +50,7 @@ VideoParameter YouTubeLoader::parse( const QString & content ) {
 	QStringList videoFormatsGroup( videoFormats.split( "%2C" ) );
 	std::for_each( videoFormatsGroup.begin(), videoFormatsGroup.end(), [&]( const QString & format ) {
 		QStringList pair( format.split( "%7C" ) );
-		param.formatURLs.insert( std::make_pair( pair[0], QUrl::fromEncoded( pair[1].toUtf8() ) ) );
+		param.formatURLs.insert( std::make_pair( pair[0], QUrl::fromEncoded( QUrl::fromPercentEncoding( pair[1].toUtf8() ).toUtf8() ) ) );
 	} );
 
 	return param;
@@ -95,10 +94,12 @@ QUrl YouTubeLoader::load( const QUrl & uri ) {
 	self.downloadURI_ = self.parse_();
 	while( self.needGo_ ) {
 		qDebug() << self.downloadURI_;
+		qDebug() << self.downloadURI_.host() << self.downloadURI_.queryItems();
 		self.fout_.setFileName( self.dialog_->getLocalLocation() );
 		self.fout_.open( QIODevice::WriteOnly );
 		self.progress_->setRange( 0, 0 );
 		self.transfer_ = self.link_->get( QNetworkRequest( self.downloadURI_ ) );
+		self.connect( self.transfer_, SIGNAL( error( QNetworkReply::NetworkError ) ), SLOT( onError_( QNetworkReply::NetworkError ) ) );
 		self.connect( self.transfer_, SIGNAL( readyRead() ), SLOT( readAndWrite_() ) );
 		self.connect( self.transfer_, SIGNAL( downloadProgress( qint64, qint64 ) ), SLOT( updateProgress_( qint64, qint64 ) ) );
 		self.connect( self.transfer_, SIGNAL( finished() ), SLOT( finishDownload_() ) );
@@ -137,6 +138,10 @@ void YouTubeLoader::finishDownload_() {
 
 void YouTubeLoader::readAndWrite_() {
 	this->fout_.write( this->transfer_->readAll() );
+}
+
+void YouTubeLoader::onError_( QNetworkReply::NetworkError error ) {
+	qDebug() << "network error:" << error;
 }
 
 QUrl YouTubeLoader::parse_() {
