@@ -36,6 +36,7 @@ namespace khopper {
 	namespace plugin {
 
 		struct VideoParameter {
+			QString title;
 			QString id;
 			QString ticket;
 			std::map< QString, QUrl > formatURLs;
@@ -61,8 +62,6 @@ namespace khopper {
 			void updateProgress_( qint64, qint64 );
 
 		private:
-			QUrl parse_();
-
 			QByteArray content_;
 			std::shared_ptr< widget::YouTubeDialog > dialog_;
 			QUrl downloadURI_;

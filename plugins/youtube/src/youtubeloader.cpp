@@ -45,7 +45,12 @@ VideoParameter YouTubeLoader::parse( const QString & content ) {
 	pattern.indexIn( content, 0 );
 	QString videoFormats( pattern.cap( 1 ) );
 
-	//QString videoTitle( this->page_.mainFrame()->title() );
+	pattern.setPattern( "<title>\\s*YouTube\\s*\\-\\s+(.*)</title>" );
+	pattern.setMinimal( true );
+	qDebug() << "pattern" << pattern.isValid();
+	pattern.indexIn( content, 0 );
+	param.title = pattern.cap( 1 ).trimmed();
+	qDebug() << pattern.capturedTexts();
 
 	QStringList videoFormatsGroup( videoFormats.split( "%2C" ) );
 	std::for_each( videoFormatsGroup.begin(), videoFormatsGroup.end(), [&]( const QString & format ) {
@@ -94,11 +99,30 @@ QUrl YouTubeLoader::load( const QUrl & uri ) {
 	wait.connect( &self, SIGNAL( finished() ), SLOT( quit() ) );
 	wait.exec();
 
-	self.downloadURI_ = self.parse_();
+	VideoParameter param( YouTubeLoader::parse( self.content_ ) );
+
+	std::for_each( self.formats_.begin(), self.formats_.end(), [&]( const std::pair< QString, std::pair< QString, QString > > & format ) {
+		if( format.first == "5" && ( param.formatURLs.find( "34" ) != param.formatURLs.end() || param.formatURLs.find( "35" ) != param.formatURLs.end() ) ) {
+			return;
+		}
+		if( param.formatURLs.find( format.first ) != param.formatURLs.end() ) {
+			self.dialog_->addFormat( format.first );
+		}
+	} );
+	if( self.dialog_->exec() != QDialog::Accepted ) {
+		// FIXME
+		return QUrl();
+	}
+	self.downloadURI_ = param.formatURLs[self.dialog_->getSelectedFormat()];
+	QString ext( self.formats_[self.dialog_->getSelectedFormat()].first );
+	self.dialog_->clearFormat();
+
+	QString path( self.dialog_->getLocalLocation() + "/" + param.title + "." + ext );
+	qDebug() << param.title << path;
 	while( self.needGo_ ) {
 		qDebug() << self.downloadURI_;
 		qDebug() << self.downloadURI_.host() << self.downloadURI_.queryItems();
-		self.fout_.setFileName( self.dialog_->getLocalLocation() );
+		self.fout_.setFileName( path );
 		self.fout_.open( QIODevice::WriteOnly );
 		self.progress_->setValue( 0 );
 		self.progress_->show();
@@ -110,7 +134,7 @@ QUrl YouTubeLoader::load( const QUrl & uri ) {
 		wait.exec();
 	}
 
-	return QUrl::fromLocalFile( self.dialog_->getLocalLocation() );
+	return QUrl::fromLocalFile( path );
 }
 
 void YouTubeLoader::read_() {
@@ -146,23 +170,4 @@ void YouTubeLoader::readAndWrite_() {
 
 void YouTubeLoader::onError_( QNetworkReply::NetworkError error ) {
 	qDebug() << "network error:" << error;
-}
-
-QUrl YouTubeLoader::parse_() {
-	VideoParameter param( YouTubeLoader::parse( this->content_ ) );
-
-	std::for_each( this->formats_.begin(), this->formats_.end(), [&]( const std::pair< QString, std::pair< QString, QString > > & format ) {
-		if( format.first == "5" && ( param.formatURLs.find( "34" ) != param.formatURLs.end() || param.formatURLs.find( "35" ) != param.formatURLs.end() ) ) {
-			return;
-		}
-		if( param.formatURLs.find( format.first ) != param.formatURLs.end() ) {
-			this->dialog_->addFormat( format.first );
-		}
-	} );
-	if( this->dialog_->exec() != QDialog::Accepted ) {
-		return QUrl();
-	}
-	QUrl result( param.formatURLs[this->dialog_->getSelectedFormat()] );
-	this->dialog_->clearFormat();
-	return result;
 }

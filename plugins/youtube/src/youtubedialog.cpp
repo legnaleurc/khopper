@@ -72,7 +72,7 @@ QString YouTubeDialog::getLocalLocation() const {
 }
 
 void YouTubeDialog::getLocation_() {
-	QString path = QFileDialog::getSaveFileName( 0, "Save file", this->ui_->lineEdit->text() );
+	QString path = QFileDialog::getExistingDirectory( 0, "Save Location", this->ui_->lineEdit->text() );
 	if( !path.isEmpty() ) {
 		this->ui_->lineEdit->setText( path );
 	}
