@@ -25,12 +25,11 @@
 #include "youtubedialog.hpp"
 
 #include <QtCore/QFile>
+#include <QtCore/QHash>
 #include <QtCore/QUrl>
 #include <QtGui/QProgressDialog>
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkReply>
-
-#include <map>
 
 namespace khopper {
 	namespace plugin {
@@ -45,6 +44,11 @@ namespace khopper {
 		class YouTubeLoader : public QObject {
 			Q_OBJECT
 		public:
+			typedef QHash< QString, QString > FormatTable;
+			typedef QHash< QNetworkReply::NetworkError, QString > ErrorTable;
+
+			static ErrorTable & errorString();
+			static FormatTable & formats();
 			static QUrl load( const QUrl & url );
 			static VideoParameter parse( const QString & content );
 
@@ -52,6 +56,7 @@ namespace khopper {
 
 		signals:
 			void finished();
+			void errorOccured( const QString & title, const QString & message );
 
 		private slots:
 			void finish_();
@@ -65,7 +70,6 @@ namespace khopper {
 			QByteArray content_;
 			std::shared_ptr< widget::YouTubeDialog > dialog_;
 			QUrl downloadURI_;
-			std::map< QString, std::pair< QString, QString > > formats_;
 			QFile fout_;
 			QNetworkAccessManager * link_;
 			bool needGo_;

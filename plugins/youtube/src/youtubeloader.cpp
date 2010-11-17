@@ -20,8 +20,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "youtubeloader.hpp"
+#include "khopper/application.hpp"
 
 #include <QtCore/QEventLoop>
+#include <QtCore/QHashIterator>
 #include <QtCore/QtDebug>
 #include <QtNetwork/QNetworkRequest>
 
@@ -61,29 +63,27 @@ VideoParameter YouTubeLoader::parse( const QString & content ) {
 	return param;
 }
 
+YouTubeLoader::ErrorTable & YouTubeLoader::errorString() {
+	static YouTubeLoader::ErrorTable errorString_;
+	return errorString_;
+}
+
+YouTubeLoader::FormatTable & YouTubeLoader::formats() {
+	static YouTubeLoader::FormatTable formats_;
+	return formats_;
+}
+
 YouTubeLoader::YouTubeLoader():
 content_(),
 dialog_( new YouTubeDialog ),
 downloadURI_(),
-formats_(),
 fout_(),
 link_( new QNetworkAccessManager( this ) ),
 needGo_( true ),
 progress_( new QProgressDialog() ),
 transfer_( NULL ) {
-	// '5':'FLV 240p','18':'MP4 360p','22':'MP4 720p (HD)','34':'FLV 360p','35':'FLV 480p','37':'MP4 1080p (HD)','38':'MP4 Original (HD)','43':'WebM 480p','45':'WebM 720p (HD)'
-	// '5':'flv','18':'mp4','22':'mp4','34':'flv','35':'flv','37':'mp4','38':'mp4','43':'webm','45':'webm'
-	this->formats_.insert( std::make_pair( "5", std::make_pair( "flv", "FLV 240p" ) ) );
-	this->formats_.insert( std::make_pair( "18", std::make_pair( "mp4", "MP4 360p" ) ) );
-	this->formats_.insert( std::make_pair( "22", std::make_pair( "mp4", "MP4 720p (HD)" ) ) );
-	this->formats_.insert( std::make_pair( "34", std::make_pair( "flv", "FLV 360p" ) ) );
-	this->formats_.insert( std::make_pair( "35", std::make_pair( "flv", "FLV 480p" ) ) );
-	this->formats_.insert( std::make_pair( "37", std::make_pair( "mp4", "MP4 1080p (HD)" ) ) );
-	this->formats_.insert( std::make_pair( "38", std::make_pair( "mp4", "MP4 Original (HD)" ) ) );
-	this->formats_.insert( std::make_pair( "43", std::make_pair( "webm", "WebM 480p" ) ) );
-	this->formats_.insert( std::make_pair( "45", std::make_pair( "webm", "WebM 720p (HD)" ) ) );
-
 	this->progress_->setLabelText( tr( "Downloading progress" ) );
+	this->connect( KHOPPER_APPLICATION, SIGNAL( errorOccured( const QString &, const QString & ) ), SIGNAL( errorOccured( const QString &, const QString & ) ) );
 }
 
 QUrl YouTubeLoader::load( const QUrl & uri ) {
@@ -92,6 +92,7 @@ QUrl YouTubeLoader::load( const QUrl & uri ) {
 	self.progress_->setValue( 0 );
 	self.progress_->show();
 	self.transfer_ = self.link_->get( QNetworkRequest( uri ) );
+	self.connect( self.transfer_, SIGNAL( error( QNetworkReply::NetworkError ) ), SLOT( onError_( QNetworkReply::NetworkError ) ) );
 	self.connect( self.transfer_, SIGNAL( readyRead() ), SLOT( read_() ) );
 	self.connect( self.transfer_, SIGNAL( downloadProgress( qint64, qint64 ) ), SLOT( updateProgress_( qint64, qint64 ) ) );
 	self.connect( self.transfer_, SIGNAL( finished() ), SLOT( finish_() ) );
@@ -101,20 +102,21 @@ QUrl YouTubeLoader::load( const QUrl & uri ) {
 
 	VideoParameter param( YouTubeLoader::parse( self.content_ ) );
 
-	std::for_each( self.formats_.begin(), self.formats_.end(), [&]( const std::pair< QString, std::pair< QString, QString > > & format ) {
-		if( format.first == "5" && ( param.formatURLs.find( "34" ) != param.formatURLs.end() || param.formatURLs.find( "35" ) != param.formatURLs.end() ) ) {
-			return;
+	for( QHashIterator< YouTubeLoader::FormatTable::key_type, YouTubeLoader::FormatTable::mapped_type > it( YouTubeLoader::formats() ); it.hasNext(); ) {
+		it.next();
+		if( it.key() == "5" && ( param.formatURLs.find( "34" ) != param.formatURLs.end() || param.formatURLs.find( "35" ) != param.formatURLs.end() ) ) {
+			continue;
 		}
-		if( param.formatURLs.find( format.first ) != param.formatURLs.end() ) {
-			self.dialog_->addFormat( format.first );
+		if( param.formatURLs.find( it.key() ) != param.formatURLs.end() ) {
+			self.dialog_->addFormat( it.key() );
 		}
-	} );
+	}
 	if( self.dialog_->exec() != QDialog::Accepted ) {
 		// FIXME
 		return QUrl();
 	}
 	self.downloadURI_ = param.formatURLs[self.dialog_->getSelectedFormat()];
-	QString ext( self.formats_[self.dialog_->getSelectedFormat()].first );
+	QString ext( YouTubeLoader::formats()[self.dialog_->getSelectedFormat()] );
 	self.dialog_->clearFormat();
 
 	QString path( self.dialog_->getLocalLocation() + "/" + param.title + "." + ext );
@@ -168,6 +170,6 @@ void YouTubeLoader::readAndWrite_() {
 	this->fout_.write( this->transfer_->readAll() );
 }
 
-void YouTubeLoader::onError_( QNetworkReply::NetworkError error ) {
-	qDebug() << "network error:" << error;
+void YouTubeLoader::onError_( QNetworkReply::NetworkError code ) {
+	emit this->errorOccured( tr( "Network Error" ), YouTubeLoader::errorString()[code] );
 }

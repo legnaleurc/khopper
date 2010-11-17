@@ -35,9 +35,6 @@ namespace khopper {
 		protected:
 			virtual void doInstall();
 			virtual void doUninstall();
-			
-		private:
-			YouTubeLoader loader;
 		};
 
 	}
