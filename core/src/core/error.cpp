@@ -21,33 +21,37 @@
  */
 #include "error.hpp"
 
-namespace khopper {
+using namespace khopper::error;
 
-	namespace error {
+BaseError::BaseError( int code ) : msg_() {
+#ifdef Q_OS_WIN
+	char tmp[1024];
+	strerror_s( tmp, code );
+	this->msg_ = QString::fromUtf8( tmp );
+#else
+	this->msg_ = QString::fromUtf8( strerror( code ) );
+#endif
+}
 
-		BaseError::BaseError( const char * msg ) : msg_( QString::fromUtf8( msg ) ) {
-		}
+BaseError::BaseError( const char * msg ) : msg_( QString::fromUtf8( msg ) ) {
+}
 
-		BaseError::BaseError( const std::string & msg ) : msg_( QString::fromUtf8( msg.c_str() ) ) {
-		}
+BaseError::BaseError( const std::string & msg ) : msg_( QString::fromUtf8( msg.c_str() ) ) {
+}
 
-		BaseError::BaseError( const std::wstring & msg ) : msg_( QString::fromStdWString( msg ) ) {
-		}
+BaseError::BaseError( const std::wstring & msg ) : msg_( QString::fromStdWString( msg ) ) {
+}
 
-		BaseError::BaseError( const QString & msg ) : msg_( msg ) {
-		}
+BaseError::BaseError( const QString & msg ) : msg_( msg ) {
+}
 
-		BaseError::~BaseError() throw() {
-		}
+BaseError::~BaseError() throw() {
+}
 
-		const char * BaseError::what() const throw() {
-			return this->msg_.toUtf8().constData();
-		}
+const char * BaseError::what() const throw() {
+	return this->msg_.toUtf8().constData();
+}
 
-		const QString & BaseError::getMessage() const {
-			return this->msg_;
-		}
-
-	}
-
+const QString & BaseError::getMessage() const {
+	return this->msg_;
 }
