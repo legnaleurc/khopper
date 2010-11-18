@@ -82,7 +82,7 @@ link_( new QNetworkAccessManager( this ) ),
 needGo_( true ),
 progress_( new QProgressDialog() ),
 transfer_( NULL ) {
-	this->progress_->setLabelText( tr( "Downloading progress" ) );
+	this->progress_->setWindowTitle( tr( "Downloading progress" ) );
 	this->connect( KHOPPER_APPLICATION, SIGNAL( errorOccured( const QString &, const QString & ) ), SIGNAL( errorOccured( const QString &, const QString & ) ) );
 }
 
@@ -90,6 +90,7 @@ QUrl YouTubeLoader::load( const QUrl & uri ) {
 	YouTubeLoader self;
 
 	self.progress_->setValue( 0 );
+	self.progress_->setLabelText( tr( "Downloading content" ) );
 	self.progress_->show();
 	self.transfer_ = self.link_->get( QNetworkRequest( uri ) );
 	self.connect( self.transfer_, SIGNAL( error( QNetworkReply::NetworkError ) ), SLOT( onError_( QNetworkReply::NetworkError ) ) );
