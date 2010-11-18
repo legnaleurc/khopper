@@ -33,13 +33,14 @@ extern "C" {
 
 namespace {
 
-	static inline std::string wHelper( const QUrl & uri ) {
-		// FIXME: not always local file
-		QString tmp( uri.toLocalFile() );
+	static inline const char * wHelper( const QUrl & uri ) {
+		QByteArray tmp( uri.toEncoded() );
 #ifdef Q_OS_WIN32
-		tmp.prepend( "wfile://" );
+		if( uri.scheme() == "file" ) {
+			tmp.push_front( 'w' );
+		}
 #endif
-		return tmp.toStdString();
+		return tmp;
 	}
 
 	static inline void p_helper( AVPacket * p ) {
@@ -99,7 +100,7 @@ void FfmpegReader::doClose() {
 
 void FfmpegReader::openResource_() {
 	AVFormatContext * pFC = NULL;
-	int ret = av_open_input_file( &pFC, wHelper( this->getURI() ).c_str(), NULL, 0, NULL );
+	int ret = av_open_input_file( &pFC, wHelper( this->getURI() ), NULL, 0, NULL );
 	if( ret != 0 ) {
 		throw IOError(
 			tr(
