@@ -41,11 +41,12 @@ namespace khopper {
 	namespace widget {
 
 		class AboutWidget;
+		class ConversionDialog;
 		class ConverterThread;
-		class Progress;
 		class Player;
 		class Preference;
-		class ConversionDialog;
+		class Progress;
+		class UriInputDialog;
 
 		/**
 		 * @class MainWindow
@@ -65,25 +66,26 @@ namespace khopper {
 			 * @brief Open the file widget
 			 */
 			void showOpenFilesDialog();
-			void showLineInputDialog();
+			void showUriInputDialog();
 			/**
 			 * @brief Open files
 			 * @param [in] filePaths file path
 			 */
 			void open( const QList< QUrl > & uris );
 
-		private:
-			std::shared_ptr< Ui::MainWindow > ui_;
-			ConversionDialog * conversion_;
-			Preference * preference_;
-			AboutWidget * about_;
-			QString lastOpenedDir_;
-
-			void initMenuBar_();
-
 		private slots:
 			void fire_( const khopper::album::PlayList & );
 			void showErrorMessage_( const QString &, const QString & );
+
+		private:
+			void initMenuBar_();
+
+			AboutWidget * about_;
+			ConversionDialog * conversion_;
+			QString lastOpenedDir_;
+			Preference * preference_;
+			std::shared_ptr< Ui::MainWindow > ui_;
+			UriInputDialog * uriInput_;
 		};
 
 	}

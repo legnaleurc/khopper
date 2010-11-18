@@ -78,7 +78,10 @@
   </action>
   <action name="action_Load_By_Url">
    <property name="text">
-    <string>&amp;Load By Url</string>
+    <string>&amp;Direct Convert By Url</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+D</string>
    </property>
   </action>
  </widget>
