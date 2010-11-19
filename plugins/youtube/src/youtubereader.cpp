@@ -88,6 +88,7 @@ bool YouTubeReader::isSequential() const {
 }
 
 void YouTubeReader::doOpen() {
+	this->buffer_.clear();
 	this->link_ = this->linker_->get( QNetworkRequest( this->realURI_ ) );
 	this->connect( this->link_, SIGNAL( error( QNetworkReply::NetworkError ) ), SLOT( onError_( QNetworkReply::NetworkError ) ) );
 	this->connect( this->link_, SIGNAL( readyRead() ), SLOT( read_() ) );

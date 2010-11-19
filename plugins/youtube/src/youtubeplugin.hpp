@@ -23,7 +23,6 @@
 #define KHOPPER_PLUGIN_YOUTUBEPLUGIN_HPP
 
 #include "khopper/abstractplugin.hpp"
-#include "youtubeloader.hpp"
 
 namespace khopper {
 	namespace plugin {

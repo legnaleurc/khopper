@@ -49,6 +49,7 @@ namespace khopper {
 
 			static ErrorTable & errorString();
 			static FormatTable & formats();
+			static QString getFormat( const QUrl & uri );
 			static QUrl load( const QUrl & url );
 			static VideoParameter parse( const QString & content );
 

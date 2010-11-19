@@ -73,6 +73,39 @@ YouTubeLoader::FormatTable & YouTubeLoader::formats() {
 	return formats_;
 }
 
+QString YouTubeLoader::getFormat( const QUrl & uri ) {
+	YouTubeLoader self;
+
+	self.progress_->setValue( 0 );
+	self.progress_->setLabelText( tr( "Downloading content" ) );
+	self.progress_->show();
+	self.transfer_ = self.link_->get( QNetworkRequest( uri ) );
+	self.connect( self.transfer_, SIGNAL( error( QNetworkReply::NetworkError ) ), SLOT( onError_( QNetworkReply::NetworkError ) ) );
+	self.connect( self.transfer_, SIGNAL( readyRead() ), SLOT( read_() ) );
+	self.connect( self.transfer_, SIGNAL( downloadProgress( qint64, qint64 ) ), SLOT( updateProgress_( qint64, qint64 ) ) );
+	self.connect( self.transfer_, SIGNAL( finished() ), SLOT( finish_() ) );
+	QEventLoop wait;
+	wait.connect( &self, SIGNAL( finished() ), SLOT( quit() ) );
+	wait.exec();
+
+	VideoParameter param( YouTubeLoader::parse( self.content_ ) );
+
+	for( QHashIterator< YouTubeLoader::FormatTable::key_type, YouTubeLoader::FormatTable::mapped_type > it( YouTubeLoader::formats() ); it.hasNext(); ) {
+		it.next();
+		if( it.key() == "5" && ( param.formatURLs.find( "34" ) != param.formatURLs.end() || param.formatURLs.find( "35" ) != param.formatURLs.end() ) ) {
+			continue;
+		}
+		if( param.formatURLs.find( it.key() ) != param.formatURLs.end() ) {
+			self.dialog_->addFormat( it.key() );
+		}
+	}
+	if( self.dialog_->exec() != QDialog::Accepted ) {
+		// FIXME
+		return QString();
+	}
+	return self.dialog_->getSelectedFormat();
+}
+
 YouTubeLoader::YouTubeLoader():
 content_(),
 dialog_( new YouTubeDialog ),
@@ -82,7 +115,7 @@ link_( new QNetworkAccessManager( this ) ),
 needGo_( true ),
 progress_( new QProgressDialog() ),
 transfer_( NULL ) {
-	this->progress_->setLabelText( tr( "Downloading progress" ) );
+	this->progress_->setWindowTitle( tr( "Downloading progress" ) );
 	this->connect( KHOPPER_APPLICATION, SIGNAL( errorOccured( const QString &, const QString & ) ), SIGNAL( errorOccured( const QString &, const QString & ) ) );
 }
 
@@ -90,6 +123,7 @@ QUrl YouTubeLoader::load( const QUrl & uri ) {
 	YouTubeLoader self;
 
 	self.progress_->setValue( 0 );
+	self.progress_->setLabelText( tr( "Downloading content" ) );
 	self.progress_->show();
 	self.transfer_ = self.link_->get( QNetworkRequest( uri ) );
 	self.connect( self.transfer_, SIGNAL( error( QNetworkReply::NetworkError ) ), SLOT( onError_( QNetworkReply::NetworkError ) ) );
