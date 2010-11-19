@@ -32,12 +32,14 @@ extern "C" {
 
 namespace {
 
-	static inline std::string wHelper( const QUrl & uri ) {
-		QString tmp( uri.toLocalFile() );
+	static inline const char * wHelper( const QUrl & uri ) {
+		QByteArray tmp( uri.toEncoded() );
 #ifdef Q_OS_WIN32
-		tmp.prepend( "wfile://" );
+		if( uri.scheme() == "file" ) {
+			tmp.prepend( 'w' );
+		}
 #endif
-		return tmp.toStdString();
+		return tmp;
 	}
 
 	static inline void fc_helper( AVFormatContext * oc ) {
@@ -84,7 +86,7 @@ void FfmpegWriter::doClose() {
 }
 
 void FfmpegWriter::setupMuxer() {
-	AVOutputFormat * pOF = guess_format( NULL, wHelper( this->getURI() ).c_str(), NULL );
+	AVOutputFormat * pOF = guess_format( NULL, wHelper( this->getURI() ), NULL );
 	if( pOF == NULL ) {
 		throw error::CodecError( "Can not recognize output format" );
 	}
@@ -173,7 +175,7 @@ void FfmpegWriter::setupEncoder() {
 void FfmpegWriter::openResource() {
 	AVOutputFormat * pOF = this->pFormatContext_->oformat;
 	if( !( pOF->flags & AVFMT_NOFILE ) ) {
-		if( url_fopen( &this->pFormatContext_->pb, wHelper( this->getURI() ).c_str(), URL_WRONLY ) < 0 ) {
+		if( url_fopen( &this->pFormatContext_->pb, wHelper( this->getURI() ), URL_WRONLY ) < 0 ) {
 			throw error::IOError( QString( "Can not open file: `%1\'" ).arg( this->getURI().toString() ) );
 		}
 	}
