@@ -43,7 +43,8 @@ QList< QUrl > UriInputDialog::getUriList() const {
 	QString plainText( this->ui_->plainTextEdit->toPlainText() );
 	QList< QUrl > uris;
 	QTextStream sin( &plainText, QIODevice::ReadOnly | QIODevice::Text );
-	for( QString line( sin.readLine() ); !sin.atEnd(); line = sin.readLine() ) {
+	for( QString line; !sin.atEnd(); ) {
+		line = sin.readLine();
 		QUrl tmp( QUrl::fromUserInput( line ) );
 		if( tmp.isValid() ) {
 			uris.push_back( tmp );
