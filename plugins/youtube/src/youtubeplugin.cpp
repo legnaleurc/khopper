@@ -21,7 +21,7 @@
  */
 #include "youtubeplugin.hpp"
 #include "youtubeloader.hpp"
-#include "youtubereader.hpp"
+#include "youtubetrack.hpp"
 #include "khopper/text.hpp"
 #include "khopper/playlist.hpp"
 
@@ -31,10 +31,8 @@
 Q_EXPORT_PLUGIN2( KHOPPER_PLUGIN_ID, khopper::plugin::YouTubePlugin )
 
 using namespace khopper::plugin;
-using khopper::codec::ReaderSP;
-using khopper::codec::YouTubeReader;
-using khopper::plugin::registerReader;
 using khopper::plugin::unregisterPlayList;
+using khopper::plugin::registerPlayList;
 
 YouTubePlugin::YouTubePlugin():
 AbstractPlugin() {
@@ -82,15 +80,19 @@ void YouTubePlugin::doInstall() {
 	errorString.insert( QNetworkReply::UnknownContentError, tr( "unknown content" ) );
 	errorString.insert( QNetworkReply::ProtocolFailure, tr( "protocol failure" ) );
 
-	registerReader( this->getID(), []( const QUrl & uri )->unsigned int {
+	registerPlayList( this->getID(), []( const QUrl & uri )->unsigned int {
 		if( uri.scheme() == "http" && uri.host() == "www.youtube.com" && uri.path() == "/watch" ) {
-			qDebug() << "YouTubePlugin returned 100" << uri;
-			return 100;
+			qDebug() << "YouTubePlugin returned 200" << uri;
+			return 200;
 		}
 		qDebug() << "YouTubePlugin returned 0" << uri;
 		return 0;
-	}, [&]( const QUrl & uri )->ReaderSP {
-		return ReaderSP( new YouTubeReader( uri, YouTubeLoader::getFormat( uri ) ) );
+	}, [&]( const QUrl & uri )->PlayList {
+		khopper::album::TrackSP track( new khopper::album::YouTubeTrack( uri, YouTubeLoader::getFormat( uri ) ) );
+
+		khopper::album::PlayList tmp;
+		tmp.push_back( track );
+		return tmp;
 	} );
 }
 
