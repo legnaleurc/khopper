@@ -27,14 +27,21 @@
 using namespace khopper::album;
 using khopper::codec::AudioFormat;
 using khopper::codec::ReaderSP;
+using khopper::error::BaseError;
 using khopper::error::RunTimeError;
 using khopper::error::CodecError;
 
 Track::Track( const QUrl & uri ):
 p_( new TrackPrivate( uri ) ) {
-	ReaderSP reader( this->createReader() );
-	if( !reader ) {
-		throw RunTimeError( "Invalid reader" );
+	// FIXME: virtual function call in constructor.
+	ReaderSP reader;
+	try {
+		reader = this->createReader();
+		if( !reader ) {
+			throw RunTimeError( "Invalid reader" );
+		}
+	} catch( BaseError & /*e*/ ) {
+		return;
 	}
 
 	reader->open( QIODevice::ReadOnly );
