@@ -32,7 +32,7 @@ using khopper::error::RunTimeError;
 using khopper::error::CodecError;
 
 Track::Track( const QUrl & uri ):
-p_( new TrackPrivate( uri ) ) {
+p_( new Private( uri ) ) {
 	// FIXME: virtual function call in constructor.
 	ReaderSP reader;
 	try {
@@ -156,7 +156,7 @@ void Track::setAudioFormat( const AudioFormat & format ) {
 	this->p_->format = format;
 }
 
-Track::TrackPrivate::TrackPrivate( const QUrl & uri ):
+Track::Private::Private( const QUrl & uri ):
 album(),
 artist(),
 bitRate( 0 ),
