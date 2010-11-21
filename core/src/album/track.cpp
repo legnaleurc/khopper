@@ -30,12 +30,14 @@ using khopper::codec::ReaderSP;
 using khopper::error::BaseError;
 using khopper::error::RunTimeError;
 using khopper::error::CodecError;
+using khopper::plugin::getReaderCreator;
 
 Track::Track( const QUrl & uri ):
 p_( new Private( uri ) ) {
 	// FIXME: virtual function call in constructor.
 	ReaderSP reader;
 	try {
+		this->p_->creator = getReaderCreator( uri );
 		reader = this->createReader();
 		if( !reader ) {
 			throw RunTimeError( "Invalid reader" );
@@ -160,7 +162,7 @@ Track::Private::Private( const QUrl & uri ):
 album(),
 artist(),
 bitRate( 0 ),
-creator( plugin::getReaderCreator( uri ) ),
+creator(),
 duration(),
 format(),
 songWriter(),
