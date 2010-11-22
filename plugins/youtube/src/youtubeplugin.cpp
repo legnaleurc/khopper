@@ -91,7 +91,10 @@ void YouTubePlugin::doInstall() {
 		qDebug() << "YouTubePlugin returned 0" << uri;
 		return 0;
 	}, [&]( const QUrl & uri )->PlayList {
-		khopper::album::TrackSP track( new khopper::album::YouTubeTrack( uri, YouTubeLoader::getFormat( uri ) ) );
+		YouTubeLoader loader( uri );
+		loader.parseHeader( true );
+		QString format( loader.selectFormat() );
+		khopper::album::TrackSP track( new khopper::album::YouTubeTrack( uri, loader.getTitle(), format ) );
 
 		khopper::album::PlayList tmp;
 		tmp.push_back( track );

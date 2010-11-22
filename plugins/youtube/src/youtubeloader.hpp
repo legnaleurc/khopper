@@ -34,13 +34,6 @@
 namespace khopper {
 	namespace plugin {
 
-		struct VideoParameter {
-			QString title;
-			QString id;
-			QString ticket;
-			std::map< QString, QUrl > formatURLs;
-		};
-
 		class YouTubeLoader : public QObject {
 			Q_OBJECT
 		public:
@@ -49,12 +42,17 @@ namespace khopper {
 
 			static ErrorTable & errorString();
 			static FormatTable & formats();
-			static QString getFormat( const QUrl & uri );
-			static QUrl download( const QUrl & url );
-			static VideoParameter parse( const QString & content );
-			static QUrl getRealUri( const QUrl & uri, const QString & format );
+//			static Parameter getParameter( const QUrl & uri, bool display );
+//			static QString selectFormat( const QUrl & uri );
+//			static QUrl download( const QUrl & url );
+//			static QUrl getRealUri( const QUrl & uri, const QString & format );
 
-			YouTubeLoader();
+			YouTubeLoader( const QUrl & uri );
+
+			void parseHeader( bool display );
+			QString getTitle() const;
+			QString selectFormat();
+			QUrl getRealURI( const QString & format ) const;
 
 		signals:
 			void finished();
@@ -70,14 +68,26 @@ namespace khopper {
 			void updateProgress_( qint64, qint64 );
 
 		private:
+			struct Parameter {
+				QString title;
+				QString id;
+				QString ticket;
+				std::map< QString, QUrl > formatURLs;
+			};
+
+			static Parameter parseHeader_( const QString & header );
+			QString getHeader_( bool display );
+
 			QByteArray content_;
+			Parameter curParam_;
 			std::shared_ptr< widget::YouTubeDialog > dialog_;
 			QUrl downloadURI_;
 			QFile fout_;
-			QNetworkAccessManager * link_;
+			QNetworkReply * link_;
+			QNetworkAccessManager * linker_;
 			bool needGo_;
+			QUrl origURI_;
 			std::shared_ptr< QProgressDialog > progress_;
-			QNetworkReply * transfer_;
 		};
 
 	}

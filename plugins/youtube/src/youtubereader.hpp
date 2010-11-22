@@ -24,38 +24,24 @@
 
 #include "khopper/abstractreader.hpp"
 
-#include <QtCore/QMutex>
-#include <QtNetwork/QNetworkAccessManager>
-#include <QtNetwork/QNetworkReply>
-
 namespace khopper {
 	namespace codec {
 
 		class YouTubeReader : public AbstractReader {
-			Q_OBJECT
 		public:
 			explicit YouTubeReader( const QUrl & uri );
 
-			virtual bool isSequential() const;
-
-		signals:
-			void finished();
+			virtual bool atEnd() const;
+			virtual bool seek( qint64 pos );
+			virtual qint64 size() const;
 
 		protected:
 			virtual void doOpen();
 			virtual void doClose();
 			virtual qint64 readData( char * data, qint64 maxSize );
 
-		private slots:
-			void onError_( QNetworkReply::NetworkError );
-			void read_();
-			void finish_();
-
 		private:
-			QByteArray buffer_;
-			QNetworkReply * link_;
-			QNetworkAccessManager * linker_;
-			QMutex lock_;
+			ReaderSP client_;
 		};
 
 	}

@@ -8,7 +8,7 @@ namespace khopper {
 
 		class YouTubeTrack : public Track {
 		public:
-			YouTubeTrack( const QUrl & uri, const QString & format );
+			YouTubeTrack( const QUrl & uri, const QString & title, const QString & format );
 
 			virtual codec::ReaderSP createReader() const;
 

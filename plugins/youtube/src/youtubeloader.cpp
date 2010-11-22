@@ -22,6 +22,7 @@
 #include "youtubeloader.hpp"
 #include "khopper/application.hpp"
 
+#include <QtCore/QDir>
 #include <QtCore/QEventLoop>
 #include <QtCore/QHashIterator>
 #include <QtCore/QtDebug>
@@ -31,37 +32,6 @@
 
 using namespace khopper::plugin;
 using khopper::widget::YouTubeDialog;
-
-VideoParameter YouTubeLoader::parse( const QString & content ) {
-	VideoParameter param;
-
-	QRegExp pattern( "\\&video_id=([^(\\&|$)]*)" );
-	pattern.indexIn( content, 0 );
-	param.id = pattern.cap( 1 );
-
-	pattern.setPattern( "\\&t=([^(\\&|$)]*)" );
-	pattern.indexIn( content, 0 );
-	param.ticket = pattern.cap( 1 );
-
-	pattern.setPattern( "\\&fmt_url_map=([^(\\&|$)]*)" );
-	pattern.indexIn( content, 0 );
-	QString videoFormats( pattern.cap( 1 ) );
-
-	pattern.setPattern( "<title>\\s*YouTube\\s*\\-\\s+(.*)</title>" );
-	pattern.setMinimal( true );
-	qDebug() << "pattern" << pattern.isValid();
-	pattern.indexIn( content, 0 );
-	param.title = pattern.cap( 1 ).trimmed();
-	qDebug() << pattern.capturedTexts();
-
-	QStringList videoFormatsGroup( videoFormats.split( "%2C" ) );
-	std::for_each( videoFormatsGroup.begin(), videoFormatsGroup.end(), [&]( const QString & format ) {
-		QStringList pair( format.split( "%7C" ) );
-		param.formatURLs.insert( std::make_pair( pair[0], QUrl::fromEncoded( QUrl::fromPercentEncoding( pair[1].toUtf8() ).toUtf8() ) ) );
-	} );
-
-	return param;
-}
 
 YouTubeLoader::ErrorTable & YouTubeLoader::errorString() {
 	static YouTubeLoader::ErrorTable errorString_;
@@ -73,124 +43,162 @@ YouTubeLoader::FormatTable & YouTubeLoader::formats() {
 	return formats_;
 }
 
-QString YouTubeLoader::getFormat( const QUrl & uri ) {
-	YouTubeLoader self;
-
-	self.progress_->setValue( 0 );
-	self.progress_->setLabelText( tr( "Downloading content" ) );
-	self.progress_->show();
-	self.transfer_ = self.link_->get( QNetworkRequest( uri ) );
-	self.connect( self.transfer_, SIGNAL( error( QNetworkReply::NetworkError ) ), SLOT( onError_( QNetworkReply::NetworkError ) ) );
-	self.connect( self.transfer_, SIGNAL( readyRead() ), SLOT( read_() ) );
-	self.connect( self.transfer_, SIGNAL( downloadProgress( qint64, qint64 ) ), SLOT( updateProgress_( qint64, qint64 ) ) );
-	self.connect( self.transfer_, SIGNAL( finished() ), SLOT( finish_() ) );
-	QEventLoop wait;
-	wait.connect( &self, SIGNAL( finished() ), SLOT( quit() ) );
-	wait.exec();
-
-	VideoParameter param( YouTubeLoader::parse( self.content_ ) );
-
-	for( QHashIterator< YouTubeLoader::FormatTable::key_type, YouTubeLoader::FormatTable::mapped_type > it( YouTubeLoader::formats() ); it.hasNext(); ) {
-		it.next();
-		if( it.key() == "5" && ( param.formatURLs.find( "34" ) != param.formatURLs.end() || param.formatURLs.find( "35" ) != param.formatURLs.end() ) ) {
-			continue;
-		}
-		if( param.formatURLs.find( it.key() ) != param.formatURLs.end() ) {
-			self.dialog_->addFormat( it.key() );
-		}
-	}
-	if( self.dialog_->exec() != QDialog::Accepted ) {
-		// FIXME
-		return QString();
-	}
-	return self.dialog_->getSelectedFormat();
-}
-
-YouTubeLoader::YouTubeLoader():
+YouTubeLoader::YouTubeLoader( const QUrl & uri ):
 content_(),
+curParam_(),
 dialog_( new YouTubeDialog ),
 downloadURI_(),
 fout_(),
-link_( new QNetworkAccessManager( this ) ),
+link_( NULL ),
+linker_( new QNetworkAccessManager( this ) ),
 needGo_( true ),
-progress_( new QProgressDialog() ),
-transfer_( NULL ) {
+origURI_( uri ),
+progress_( new QProgressDialog() ) {
 	this->progress_->setWindowTitle( tr( "Downloading progress" ) );
 	this->connect( KHOPPER_APPLICATION, SIGNAL( errorOccured( const QString &, const QString & ) ), SIGNAL( errorOccured( const QString &, const QString & ) ) );
 }
 
-QUrl YouTubeLoader::getRealUri( const QUrl & uri, const QString & format ) {
-	YouTubeLoader self;
-
-	self.transfer_ = self.link_->get( QNetworkRequest( uri ) );
-	self.connect( self.transfer_, SIGNAL( error( QNetworkReply::NetworkError ) ), SLOT( onError_( QNetworkReply::NetworkError ) ) );
-	self.connect( self.link_, SIGNAL( finished( QNetworkReply * ) ), SLOT( finish_( QNetworkReply * ) ) );
-	QEventLoop wait;
-	wait.connect( &self, SIGNAL( finished() ), SLOT( quit() ) );
-	wait.exec();
-
-	VideoParameter param( YouTubeLoader::parse( self.content_ ) );
-
-	return param.formatURLs[format];
+void YouTubeLoader::parseHeader( bool display ) {
+	this->curParam_ = YouTubeLoader::parseHeader_( this->getHeader_( display ) );
 }
 
-QUrl YouTubeLoader::download( const QUrl & uri ) {
-	YouTubeLoader self;
+QString YouTubeLoader::getTitle() const {
+	return this->curParam_.title;
+}
 
-	self.progress_->setValue( 0 );
-	self.progress_->setLabelText( tr( "Downloading content" ) );
-	self.progress_->show();
-	self.transfer_ = self.link_->get( QNetworkRequest( uri ) );
-	self.connect( self.transfer_, SIGNAL( error( QNetworkReply::NetworkError ) ), SLOT( onError_( QNetworkReply::NetworkError ) ) );
-	self.connect( self.transfer_, SIGNAL( readyRead() ), SLOT( read_() ) );
-	self.connect( self.transfer_, SIGNAL( downloadProgress( qint64, qint64 ) ), SLOT( updateProgress_( qint64, qint64 ) ) );
-	self.connect( self.transfer_, SIGNAL( finished() ), SLOT( finish_() ) );
-	QEventLoop wait;
-	wait.connect( &self, SIGNAL( finished() ), SLOT( quit() ) );
-	wait.exec();
-
-	VideoParameter param( YouTubeLoader::parse( self.content_ ) );
-
-	for( QHashIterator< YouTubeLoader::FormatTable::key_type, YouTubeLoader::FormatTable::mapped_type > it( YouTubeLoader::formats() ); it.hasNext(); ) {
-		it.next();
-		if( it.key() == "5" && ( param.formatURLs.find( "34" ) != param.formatURLs.end() || param.formatURLs.find( "35" ) != param.formatURLs.end() ) ) {
-			continue;
-		}
-		if( param.formatURLs.find( it.key() ) != param.formatURLs.end() ) {
-			self.dialog_->addFormat( it.key() );
-		}
-	}
-	if( self.dialog_->exec() != QDialog::Accepted ) {
-		// FIXME
+QUrl YouTubeLoader::getRealURI( const QString & format ) const {
+	std::map< QString, QUrl >::const_iterator it( this->curParam_.formatURLs.find( format ) );
+	if( it != this->curParam_.formatURLs.end() ) {
+		return it->second;
+	} else {
 		return QUrl();
 	}
-
-	self.downloadURI_ = param.formatURLs[self.dialog_->getSelectedFormat()];
-	QString ext( YouTubeLoader::formats()[self.dialog_->getSelectedFormat()] );
-	self.dialog_->clearFormat();
-
-	QString path( self.dialog_->getLocalLocation() + "/" + param.title + "." + ext );
-	qDebug() << param.title << path;
-	while( self.needGo_ ) {
-		qDebug() << self.downloadURI_;
-		qDebug() << self.downloadURI_.host() << self.downloadURI_.queryItems();
-		self.fout_.setFileName( path );
-		self.fout_.open( QIODevice::WriteOnly );
-		self.progress_->setValue( 0 );
-		self.progress_->show();
-		self.transfer_ = self.link_->get( QNetworkRequest( self.downloadURI_ ) );
-		self.connect( self.transfer_, SIGNAL( error( QNetworkReply::NetworkError ) ), SLOT( onError_( QNetworkReply::NetworkError ) ) );
-		self.connect( self.transfer_, SIGNAL( readyRead() ), SLOT( readAndWrite_() ) );
-		self.connect( self.transfer_, SIGNAL( downloadProgress( qint64, qint64 ) ), SLOT( updateProgress_( qint64, qint64 ) ) );
-		self.connect( self.transfer_, SIGNAL( finished() ), SLOT( finishDownload_() ) );
-		wait.exec();
-	}
-
-	return QUrl::fromLocalFile( path );
 }
 
+QString YouTubeLoader::getHeader_( bool display ) {
+	if( display ) {
+		this->progress_->setValue( 0 );
+		this->progress_->setLabelText( tr( "Downloading content" ) );
+		this->progress_->show();
+	}
+	this->link_ = this->linker_->get( QNetworkRequest( this->origURI_ ) );
+	this->connect( this->link_, SIGNAL( error( QNetworkReply::NetworkError ) ), SLOT( onError_( QNetworkReply::NetworkError ) ) );
+	if( display ) {
+		this->connect( this->link_, SIGNAL( readyRead() ), SLOT( read_() ) );
+		this->connect( this->link_, SIGNAL( downloadProgress( qint64, qint64 ) ), SLOT( updateProgress_( qint64, qint64 ) ) );
+		this->connect( this->link_, SIGNAL( finished() ), SLOT( finish_() ) );
+	} else {
+		this->connect( this->linker_, SIGNAL( finished( QNetworkReply * ) ), SLOT( finish_( QNetworkReply * ) ) );
+	}
+	QEventLoop wait;
+	wait.connect( this, SIGNAL( finished() ), SLOT( quit() ) );
+	wait.exec();
+
+	return QString::fromUtf8( this->content_ );
+}
+
+QString YouTubeLoader::selectFormat() {
+	for( QHashIterator< YouTubeLoader::FormatTable::key_type, YouTubeLoader::FormatTable::mapped_type > it( YouTubeLoader::formats() ); it.hasNext(); ) {
+		it.next();
+		if( it.key() == "5" && ( this->curParam_.formatURLs.find( "34" ) != this->curParam_.formatURLs.end() || this->curParam_.formatURLs.find( "35" ) != this->curParam_.formatURLs.end() ) ) {
+			continue;
+		}
+		if( this->curParam_.formatURLs.find( it.key() ) != this->curParam_.formatURLs.end() ) {
+			this->dialog_->addFormat( it.key() );
+		}
+	}
+	if( this->dialog_->exec() != QDialog::Accepted ) {
+		// FIXME
+		return QString();
+	}
+	return this->dialog_->getSelectedFormat();
+}
+
+YouTubeLoader::Parameter YouTubeLoader::parseHeader_( const QString & header ) {
+	YouTubeLoader::Parameter param;
+
+	QRegExp pattern( "\\&video_id=([^(\\&|$)]*)" );
+	pattern.indexIn( header, 0 );
+	param.id = pattern.cap( 1 );
+
+	pattern.setPattern( "\\&t=([^(\\&|$)]*)" );
+	pattern.indexIn( header, 0 );
+	param.ticket = pattern.cap( 1 );
+
+	pattern.setPattern( "\\&fmt_url_map=([^(\\&|$)]*)" );
+	pattern.indexIn( header, 0 );
+	QString videoFormats( pattern.cap( 1 ) );
+
+	pattern.setPattern( "<title>\\s*YouTube\\s*\\-\\s+(.*)</title>" );
+	pattern.setMinimal( true );
+	qDebug() << "pattern" << pattern.isValid();
+	pattern.indexIn( header, 0 );
+	qDebug() << pattern.capturedTexts();
+	param.title = pattern.cap( 1 ).trimmed().replace( QDir::separator(), '_' );
+	qDebug() << param.title;
+
+	QStringList videoFormatsGroup( videoFormats.split( "%2C" ) );
+	std::for_each( videoFormatsGroup.begin(), videoFormatsGroup.end(), [&]( const QString & format ) {
+		QStringList pair( format.split( "%7C" ) );
+		param.formatURLs.insert( std::make_pair( pair[0], QUrl::fromEncoded( QUrl::fromPercentEncoding( pair[1].toUtf8() ).toUtf8() ) ) );
+	} );
+
+	return param;
+}
+
+//QUrl YouTubeLoader::getRealUri( const QUrl & uri, const QString & format ) {
+//	YouTubeLoader self( uri );
+
+//	VideoParameter param( self.parseHeader( self.getHeader( false ) ) );
+
+//	return param.formatURLs[format];
+//}
+
+//QUrl YouTubeLoader::download( const QUrl & uri ) {
+//	YouTubeLoader self( uri );
+
+//	VideoParameter param( self.parseHeader( self.getHeader( true ) ) );
+
+//	for( QHashIterator< YouTubeLoader::FormatTable::key_type, YouTubeLoader::FormatTable::mapped_type > it( YouTubeLoader::formats() ); it.hasNext(); ) {
+//		it.next();
+//		if( it.key() == "5" && ( param.formatURLs.find( "34" ) != param.formatURLs.end() || param.formatURLs.find( "35" ) != param.formatURLs.end() ) ) {
+//			continue;
+//		}
+//		if( param.formatURLs.find( it.key() ) != param.formatURLs.end() ) {
+//			self.dialog_->addFormat( it.key() );
+//		}
+//	}
+//	if( self.dialog_->exec() != QDialog::Accepted ) {
+//		// FIXME
+//		return QUrl();
+//	}
+
+//	self.downloadURI_ = param.formatURLs[self.dialog_->getSelectedFormat()];
+//	QString ext( YouTubeLoader::formats()[self.dialog_->getSelectedFormat()] );
+//	self.dialog_->clearFormat();
+
+//	QString path( self.dialog_->getLocalLocation() + "/" + param.title + "." + ext );
+//	qDebug() << param.title << path;
+//	while( self.needGo_ ) {
+//		qDebug() << self.downloadURI_;
+//		qDebug() << self.downloadURI_.host() << self.downloadURI_.queryItems();
+//		self.fout_.setFileName( path );
+//		self.fout_.open( QIODevice::WriteOnly );
+//		self.progress_->setValue( 0 );
+//		self.progress_->show();
+//		self.transfer_ = self.link_->get( QNetworkRequest( self.downloadURI_ ) );
+//		self.connect( self.transfer_, SIGNAL( error( QNetworkReply::NetworkError ) ), SLOT( onError_( QNetworkReply::NetworkError ) ) );
+//		self.connect( self.transfer_, SIGNAL( readyRead() ), SLOT( readAndWrite_() ) );
+//		self.connect( self.transfer_, SIGNAL( downloadProgress( qint64, qint64 ) ), SLOT( updateProgress_( qint64, qint64 ) ) );
+//		self.connect( self.transfer_, SIGNAL( finished() ), SLOT( finishDownload_() ) );
+//		wait.exec();
+//	}
+
+//	return QUrl::fromLocalFile( path );
+//}
+
 void YouTubeLoader::read_() {
-	this->content_.append( this->transfer_->readAll() );
+	this->content_.append( this->link_->readAll() );
 }
 
 void YouTubeLoader::updateProgress_( qint64 bytesReceived, qint64 bytesTotal ) {
@@ -199,7 +207,7 @@ void YouTubeLoader::updateProgress_( qint64 bytesReceived, qint64 bytesTotal ) {
 }
 
 void YouTubeLoader::finish_() {
-	this->transfer_->deleteLater();
+	this->link_->deleteLater();
 	this->progress_->hide();
 	emit this->finished();
 }
@@ -207,17 +215,17 @@ void YouTubeLoader::finish_() {
 void YouTubeLoader::finishDownload_() {
 	this->progress_->hide();
 	this->fout_.close();
-	QUrl redirectURI = this->transfer_->attribute( QNetworkRequest::RedirectionTargetAttribute ).toUrl();
-	qDebug() << this->transfer_->attribute( QNetworkRequest::HttpStatusCodeAttribute ) << redirectURI;
+	QUrl redirectURI = this->link_->attribute( QNetworkRequest::RedirectionTargetAttribute ).toUrl();
+	qDebug() << this->link_->attribute( QNetworkRequest::HttpStatusCodeAttribute ) << redirectURI;
 	if( redirectURI.isEmpty() || redirectURI == this->downloadURI_ ) {
 		this->needGo_ = false;
 	}
-	this->transfer_->deleteLater();
+	this->link_->deleteLater();
 	emit this->finished();
 }
 
 void YouTubeLoader::readAndWrite_() {
-	this->fout_.write( this->transfer_->readAll() );
+	this->fout_.write( this->link_->readAll() );
 }
 
 void YouTubeLoader::onError_( QNetworkReply::NetworkError code ) {

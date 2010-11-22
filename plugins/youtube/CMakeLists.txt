@@ -5,8 +5,7 @@ file(GLOB_RECURSE KHOPPER_PLUGIN_YOUTUBE_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE
 file(GLOB_RECURSE KHOPPER_PLUGIN_YOUTUBE_FORMS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} src/*.ui)
 set(KHOPPER_PLUGIN_YOUTUBE_MOC_HEADERS
     src/youtubeloader.hpp
-    src/youtubedialog.hpp
-    src/youtubereader.hpp)
+	src/youtubedialog.hpp)
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 

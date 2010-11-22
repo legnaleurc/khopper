@@ -20,67 +20,39 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "youtubereader.hpp"
-#include "youtubeloader.hpp"
-
-#include <QtCore/QEventLoop>
-
-#include <cstring>
 
 using namespace khopper::codec;
+using khopper::plugin::getReaderCreator;
 using khopper::error::BaseError;
-using khopper::plugin::YouTubeLoader;
-using khopper::plugin::VideoParameter;
 
 YouTubeReader::YouTubeReader( const QUrl & uri ):
 AbstractReader( uri ),
-buffer_(),
-link_( NULL ),
-linker_( new QNetworkAccessManager( this ) ),
-lock_() {
+client_( getReaderCreator( uri )( uri ) ) {
 }
 
-void YouTubeReader::onError_( QNetworkReply::NetworkError /*code*/ ) {
+bool YouTubeReader::atEnd() const {
+	return this->client_->atEnd();
 }
 
-void YouTubeReader::read_() {
-	this->lock_.lock();
-	this->buffer_.append( this->link_->readAll() );
-	this->lock_.unlock();
+bool YouTubeReader::seek( qint64 pos ) {
+	return this->QIODevice::seek( pos ) && this->client_->seek( pos );
 }
 
-void YouTubeReader::finish_() {
-	this->link_->deleteLater();
-	QUrl uri( this->link_->attribute( QNetworkRequest::RedirectionTargetAttribute ).toUrl() );
-	if( !uri.isEmpty() && uri != this->link_->url() ) {
-		this->link_ = this->linker_->get( QNetworkRequest( uri ) );
-		this->connect( this->link_, SIGNAL( error( QNetworkReply::NetworkError ) ), SLOT( onError_( QNetworkReply::NetworkError ) ) );
-		this->connect( this->link_, SIGNAL( readyRead() ), SLOT( read_() ) );
-		this->connect( this->link_, SIGNAL( finished() ), SLOT( finish_() ) );
-	}
-	emit this->finished();
-}
-
-bool YouTubeReader::isSequential() const {
-	return true;
+qint64 YouTubeReader::size() const {
+	return this->client_->size();
 }
 
 void YouTubeReader::doOpen() {
-	this->buffer_.clear();
-	this->link_ = this->linker_->get( QNetworkRequest( this->getURI() ) );
-	this->connect( this->link_, SIGNAL( error( QNetworkReply::NetworkError ) ), SLOT( onError_( QNetworkReply::NetworkError ) ) );
-	this->connect( this->link_, SIGNAL( readyRead() ), SLOT( read_() ) );
-	this->connect( this->link_, SIGNAL( finished() ), SLOT( finish_() ) );
+	this->client_->open( QIODevice::ReadOnly );
+	this->setAudioFormat( this->client_->getAudioFormat() );
+	this->setDuration( this->client_->getDuration() );
+	this->setBitRate( this->client_->getBitRate() );
 }
 
 void YouTubeReader::doClose() {
-	this->buffer_.clear();
+	this->client_->close();
 }
 
 qint64 YouTubeReader::readData( char * data, qint64 maxSize ) {
-	this->lock_.lock();
-	maxSize = qMin( static_cast< qint64 >( this->buffer_.size() ), maxSize );
-	std::memcpy( data, this->buffer_, maxSize );
-	this->buffer_.remove( 0, maxSize );
-	this->lock_.unlock();
-	return maxSize;
+	return this->client_->read( data, maxSize );
 }

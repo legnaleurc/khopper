@@ -6,16 +6,19 @@
 
 using namespace khopper::album;
 using khopper::plugin::YouTubeLoader;
-using khopper::plugin::VideoParameter;
 using khopper::codec::ReaderSP;
 using khopper::codec::YouTubeReader;
 
-YouTubeTrack::YouTubeTrack( const QUrl & uri, const QString & format ):
+YouTubeTrack::YouTubeTrack( const QUrl & uri, const QString & title, const QString & format ):
 Track( uri ),
 format_( format ) {
 	this->setAlbum( AlbumSP( new Album ) );
+	this->setIndex( 1 );
+	this->setTitle( title );
 }
 
 ReaderSP YouTubeTrack::createReader() const {
-	return ReaderSP( new YouTubeReader( YouTubeLoader::getRealUri( this->getURI(), this->format_ ) ) );
+	YouTubeLoader loader( this->getURI() );
+	loader.parseHeader( false );
+	return ReaderSP( new YouTubeReader( loader.getRealURI( this->format_ ) ) );
 }
