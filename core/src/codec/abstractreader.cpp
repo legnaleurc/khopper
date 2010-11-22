@@ -47,9 +47,16 @@ ReaderCreator khopper::plugin::getReaderCreator( const QUrl & uri ) {
 	const Map & m( ReaderFactory::Instance().l );
 
 	if( !m.empty() ) {
-		return std::max_element( m.begin(), m.end(), [&uri]( const Map::value_type & l, const Map::value_type & r ) {
+		Map::mapped_type tmp( std::max_element( m.begin(), m.end(), [&uri]( const Map::value_type & l, const Map::value_type & r ) {
 			return l.second.first( uri ) < r.second.first( uri );
-		} )->second.second;
+		} )->second );
+		if( tmp.first( uri ) <= 0 ) {
+			return []( const QUrl & uri )->ReaderSP {
+				throw khopper::error::RunTimeError( QObject::tr( "Found no reader match `%1\'" ).arg( uri.toString() ) );
+			};
+		} else {
+			return tmp.second;
+		}
 	} else {
 		throw khopper::error::SystemError( QObject::tr( "No reader can be used." ) );
 	}
