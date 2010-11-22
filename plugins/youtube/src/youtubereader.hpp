@@ -37,6 +37,7 @@ namespace khopper {
 			explicit YouTubeReader( const QUrl & uri );
 
 			virtual bool isSequential() const;
+			virtual bool waitForReadyRead( int msecs );
 
 		signals:
 			void finished();

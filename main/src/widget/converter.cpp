@@ -44,8 +44,9 @@ writer_( writer ) {
 }
 
 void Converter::run() {
-	ReaderSP decoder( this->track_->createReader() );
+	ReaderSP decoder;
 	try {
+		decoder = this->track_->createReader();
 		decoder->open( QIODevice::ReadOnly );
 	} catch( BaseError & e ) {
 		emit this->errorOccured( tr( "Decoder Error" ), e.getMessage() );
@@ -64,7 +65,12 @@ void Converter::run() {
 	this->canceled_ = false;
 
 	const int sec = decoder->getAudioFormat().frequency() * decoder->getAudioFormat().channels() * decoder->getAudioFormat().sampleSize() / 8;
-	while( !decoder->atEnd() ) {
+	std::function< bool () > endCondition( ( decoder->isSequential() ) ? static_cast< std::function< bool () > >( [&]()->bool {
+		return decoder->waitForReadyRead( -1 );
+	} ) : static_cast< std::function< bool () > >( [&]()->bool {
+		return !decoder->atEnd();
+	} ) );
+	while( endCondition() ) {
 		if( this->canceled_ ) {
 			break;
 		}

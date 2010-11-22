@@ -23,6 +23,7 @@
 #include "youtubeloader.hpp"
 
 #include <QtCore/QEventLoop>
+#include <QtCore/QTimer>
 
 #include <cstring>
 
@@ -46,6 +47,7 @@ void YouTubeReader::read_() {
 	this->lock_.lock();
 	this->buffer_.append( this->link_->readAll() );
 	this->lock_.unlock();
+	emit this->readyRead();
 }
 
 void YouTubeReader::finish_() {
@@ -58,6 +60,16 @@ void YouTubeReader::finish_() {
 		this->connect( this->link_, SIGNAL( finished() ), SLOT( finish_() ) );
 	}
 	emit this->finished();
+}
+
+bool YouTubeReader::waitForReadyRead( int msecs ) {
+	QEventLoop wait;
+	wait.connect( this, SIGNAL( readyRead() ), SLOT( quit() ) );
+	if( msecs >= 0 ) {
+		QTimer::singleShot( msecs, &wait, SLOT( quit() ) );
+	}
+	wait.exec();
+	return !this->link_->isFinished();
 }
 
 bool YouTubeReader::isSequential() const {
