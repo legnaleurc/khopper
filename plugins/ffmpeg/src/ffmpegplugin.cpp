@@ -56,7 +56,12 @@ void FfmpegPlugin::doInstall() {
 	av_register_protocol( &khopper::codec::wfileProtocol );
 #endif
 	registerReader( this->getID(), []( const QUrl & uri )->unsigned int {
-		if( guess_format( NULL, uri.toLocalFile().toStdString().c_str(), NULL ) != NULL ) {
+		AVFormatContext * pFC = NULL;
+		if( av_open_input_file( &pFC, uri.toString().toUtf8(), NULL, 0, NULL ) == 0 ) {
+			if( av_find_stream_info( pFC ) < 0 ) {
+				return 0;
+			}
+			av_close_input_file( pFC );
 			return 100;
 		}
 		return 0;

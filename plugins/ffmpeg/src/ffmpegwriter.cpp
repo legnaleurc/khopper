@@ -33,7 +33,7 @@ extern "C" {
 namespace {
 
 	static inline const char * wHelper( const QUrl & uri ) {
-		QByteArray tmp( uri.toEncoded() );
+		QByteArray tmp( uri.toString().toUtf8() );
 #ifdef Q_OS_WIN32
 		if( uri.scheme() == "file" ) {
 			tmp.prepend( 'w' );

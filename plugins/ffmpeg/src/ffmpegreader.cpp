@@ -28,18 +28,21 @@ extern "C" {
 #include <libavformat/avformat.h>
 }
 
+#include <QtCore/QtDebug>
+
 #include <cstdlib>
 #include <cstring>
 
 namespace {
 
 	static inline const char * wHelper( const QUrl & uri ) {
-		QByteArray tmp( uri.toEncoded() );
+		QByteArray tmp( uri.toString().toUtf8() );
 #ifdef Q_OS_WIN32
 		if( uri.scheme() == "file" ) {
 			tmp.push_front( 'w' );
 		}
 #endif
+		qDebug() << "FfmpegReader: processed uri:" << tmp;
 		return tmp;
 	}
 
@@ -104,7 +107,7 @@ void FfmpegReader::openResource_() {
 	if( ret != 0 ) {
 		throw IOError(
 			tr(
-				"Can not open `%1\':\n"
+				"FfmpegReader: Can not open `%1\':\n"
 				"%2"
 			).arg( this->getURI().toString() ).arg( strerror( AVUNERROR( ret ) ) )
 		);
@@ -114,13 +117,13 @@ void FfmpegReader::openResource_() {
 
 void FfmpegReader::setupDemuxer_() {
 	if( av_find_stream_info( this->pFormatContext_.get() ) < 0 ) {
-		throw CodecError( tr( "Can not find codec info!" ) );
+		throw CodecError( tr( "FfmpegReader: Can not find codec info!" ) );
 	}
 
 	if( this->pFormatContext_->duration != static_cast< int64_t >( AV_NOPTS_VALUE ) ) {
 		this->setDuration( toMS( this->pFormatContext_->duration ) );
 	} else {
-		throw CodecError( tr( "Can not get duration!" ) );
+		throw CodecError( tr( "FfmpegReader: Can not get duration!" ) );
 	}
 }
 
@@ -133,7 +136,7 @@ void FfmpegReader::setupDecoder_() {
 		}
 	}
 	if( a_stream == -1 ) {
-		throw CodecError( "Find no audio stream!" );
+		throw CodecError( "FfmpegReader: Find no audio stream!" );
 	}
 	this->pStream_ = this->pFormatContext_->streams[a_stream];
 	AVCodecContext * pCC = this->pStream_->codec;
@@ -180,11 +183,11 @@ void FfmpegReader::setupDecoder_() {
 
 	AVCodec * pC = avcodec_find_decoder( pCC->codec_id );
 	if( pC == NULL ) {
-		throw error::CodecError( tr( "Find no decoder!" ) );
+		throw error::CodecError( tr( "FfmpegReader: Find no decoder!" ) );
 	}
 
 	if( avcodec_open( pCC, pC ) < 0 ) {
-		throw error::CodecError( tr( "Can not open decoder." ) );
+		throw error::CodecError( tr( "FfmpegReader: Can not open decoder." ) );
 	}
 	this->pCodecContext_.reset( pCC, avcodec_close );
 }
