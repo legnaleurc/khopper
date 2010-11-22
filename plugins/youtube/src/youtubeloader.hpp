@@ -50,8 +50,9 @@ namespace khopper {
 			static ErrorTable & errorString();
 			static FormatTable & formats();
 			static QString getFormat( const QUrl & uri );
-			static QUrl load( const QUrl & url );
+			static QUrl download( const QUrl & url );
 			static VideoParameter parse( const QString & content );
+			static QUrl getRealUri( const QUrl & uri, const QString & format );
 
 			YouTubeLoader();
 
@@ -61,6 +62,7 @@ namespace khopper {
 
 		private slots:
 			void finish_();
+			void finish_( QNetworkReply * );
 			void finishDownload_();
 			void onError_( QNetworkReply::NetworkError );
 			void read_();

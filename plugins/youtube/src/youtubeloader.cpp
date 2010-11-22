@@ -119,7 +119,22 @@ transfer_( NULL ) {
 	this->connect( KHOPPER_APPLICATION, SIGNAL( errorOccured( const QString &, const QString & ) ), SIGNAL( errorOccured( const QString &, const QString & ) ) );
 }
 
-QUrl YouTubeLoader::load( const QUrl & uri ) {
+QUrl YouTubeLoader::getRealUri( const QUrl & uri, const QString & format ) {
+	YouTubeLoader self;
+
+	self.transfer_ = self.link_->get( QNetworkRequest( uri ) );
+	self.connect( self.transfer_, SIGNAL( error( QNetworkReply::NetworkError ) ), SLOT( onError_( QNetworkReply::NetworkError ) ) );
+	self.connect( self.link_, SIGNAL( finished( QNetworkReply * ) ), SLOT( finish_( QNetworkReply * ) ) );
+	QEventLoop wait;
+	wait.connect( &self, SIGNAL( finished() ), SLOT( quit() ) );
+	wait.exec();
+
+	VideoParameter param( YouTubeLoader::parse( self.content_ ) );
+
+	return param.formatURLs[format];
+}
+
+QUrl YouTubeLoader::download( const QUrl & uri ) {
 	YouTubeLoader self;
 
 	self.progress_->setValue( 0 );
@@ -149,6 +164,7 @@ QUrl YouTubeLoader::load( const QUrl & uri ) {
 		// FIXME
 		return QUrl();
 	}
+
 	self.downloadURI_ = param.formatURLs[self.dialog_->getSelectedFormat()];
 	QString ext( YouTubeLoader::formats()[self.dialog_->getSelectedFormat()] );
 	self.dialog_->clearFormat();
@@ -206,4 +222,10 @@ void YouTubeLoader::readAndWrite_() {
 
 void YouTubeLoader::onError_( QNetworkReply::NetworkError code ) {
 	emit this->errorOccured( tr( "Network Error" ), YouTubeLoader::errorString()[code] );
+}
+
+void YouTubeLoader::finish_( QNetworkReply * reply ) {
+	this->content_ = reply->readAll();
+	reply->deleteLater();
+	emit this->finished();
 }

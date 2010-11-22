@@ -34,7 +34,7 @@ namespace khopper {
 		class YouTubeReader : public AbstractReader {
 			Q_OBJECT
 		public:
-			explicit YouTubeReader( const QUrl & uri, const QString & format );
+			explicit YouTubeReader( const QUrl & uri );
 
 			virtual bool isSequential() const;
 
@@ -52,22 +52,10 @@ namespace khopper {
 			void finish_();
 
 		private:
-			enum State {
-				Close,
-				Header,
-				Redirect,
-				Download
-			};
-
-			QUrl parse_();
-
 			QByteArray buffer_;
-			QString format_;
 			QNetworkReply * link_;
 			QNetworkAccessManager * linker_;
 			QMutex lock_;
-			QUrl realURI_;
-			State state_;
 		};
 
 	}

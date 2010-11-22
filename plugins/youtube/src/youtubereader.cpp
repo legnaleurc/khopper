@@ -31,38 +31,15 @@ using khopper::error::BaseError;
 using khopper::plugin::YouTubeLoader;
 using khopper::plugin::VideoParameter;
 
-YouTubeReader::YouTubeReader( const QUrl & uri, const QString & format ):
+YouTubeReader::YouTubeReader( const QUrl & uri ):
 AbstractReader( uri ),
 buffer_(),
-format_( format ),
 link_( NULL ),
 linker_( new QNetworkAccessManager( this ) ),
-lock_(),
-realURI_(),
-state_( Close ) {
-	this->realURI_ = this->parse_();
-}
-
-QUrl YouTubeReader::parse_() {
-	this->link_ = this->linker_->get( QNetworkRequest( this->getURI() ) );
-	this->state_ = Header;
-	this->connect( this->link_, SIGNAL( error( QNetworkReply::NetworkError ) ), SLOT( onError_( QNetworkReply::NetworkError ) ) );
-	this->connect( this->link_, SIGNAL( readyRead() ), SLOT( read_() ) );
-	this->connect( this->link_, SIGNAL( finished() ), SLOT( finish_() ) );
-
-	QEventLoop wait;
-	wait.connect( this, SIGNAL( finished() ), SLOT( quit() ) );
-	wait.exec();
-
-	VideoParameter param( YouTubeLoader::parse( QString::fromUtf8( this->buffer_ ) ) );
-	this->setTitle( param.title.toUtf8() );
-
-	return param.formatURLs[this->format_];
+lock_() {
 }
 
 void YouTubeReader::onError_( QNetworkReply::NetworkError /*code*/ ) {
-	this->realURI_ = this->parse_();
-	this->doOpen();
 }
 
 void YouTubeReader::read_() {
@@ -89,7 +66,7 @@ bool YouTubeReader::isSequential() const {
 
 void YouTubeReader::doOpen() {
 	this->buffer_.clear();
-	this->link_ = this->linker_->get( QNetworkRequest( this->realURI_ ) );
+	this->link_ = this->linker_->get( QNetworkRequest( this->getURI() ) );
 	this->connect( this->link_, SIGNAL( error( QNetworkReply::NetworkError ) ), SLOT( onError_( QNetworkReply::NetworkError ) ) );
 	this->connect( this->link_, SIGNAL( readyRead() ), SLOT( read_() ) );
 	this->connect( this->link_, SIGNAL( finished() ), SLOT( finish_() ) );

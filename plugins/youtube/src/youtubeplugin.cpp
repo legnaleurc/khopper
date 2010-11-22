@@ -31,6 +31,7 @@
 Q_EXPORT_PLUGIN2( KHOPPER_PLUGIN_ID, khopper::plugin::YouTubePlugin )
 
 using namespace khopper::plugin;
+using khopper::album::PlayList;
 using khopper::plugin::unregisterPlayList;
 using khopper::plugin::registerPlayList;
 
