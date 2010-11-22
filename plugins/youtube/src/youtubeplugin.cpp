@@ -63,7 +63,9 @@ void YouTubePlugin::doInstall() {
 	errorString.insert( QNetworkReply::TimeoutError, tr( "time out" ) );
 	errorString.insert( QNetworkReply::OperationCanceledError, tr( "operation canceled" ) );
 	errorString.insert( QNetworkReply::SslHandshakeFailedError, tr( "SSL handshake failed" ) );
+#if QT_VERSION >= 0x040700
 	errorString.insert( QNetworkReply::TemporaryNetworkFailureError, tr( "temporary network failure" ) );
+#endif
 	errorString.insert( QNetworkReply::ProxyConnectionRefusedError, tr( "proxy connection refused" ) );
 	errorString.insert( QNetworkReply::ProxyConnectionClosedError, tr( "proxy connection closed" ) );
 	errorString.insert( QNetworkReply::ProxyNotFoundError, tr( "proxy not found" ) );

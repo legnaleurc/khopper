@@ -13,6 +13,7 @@ using khopper::codec::YouTubeReader;
 YouTubeTrack::YouTubeTrack( const QUrl & uri, const QString & format ):
 Track( uri ),
 format_( format ) {
+	this->setAlbum( AlbumSP( new Album ) );
 }
 
 ReaderSP YouTubeTrack::createReader() const {
