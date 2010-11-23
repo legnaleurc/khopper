@@ -29,6 +29,7 @@
 
 #include <QtCore/QSettings>
 #include <QtGui/QFileDialog>
+#include <QtGui/QDesktopServices>
 
 #include <algorithm>
 
@@ -44,7 +45,7 @@ ui_( new Ui::ConversionDialog ),
 progress_( new ProgressViewer( this ) ),
 table_() {
 	this->ui_->setupUi( this );
-	this->ui_->outputPath->setText( QDir::homePath() );
+	this->ui_->outputPath->setText( QDesktopServices::displayName( QDesktopServices::MusicLocation ) );
 
 	QSettings setting;
 	// Output name template
