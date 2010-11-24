@@ -20,6 +20,7 @@
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 #include "ffmpegwriter.hpp"
+#include "helper.hpp"
 
 #include "khopper/error.hpp"
 
@@ -31,16 +32,6 @@ extern "C" {
 #include <cstring>
 
 namespace {
-
-	static inline const char * wHelper( const QUrl & uri ) {
-		QByteArray tmp( uri.toString().toUtf8() );
-#ifdef Q_OS_WIN32
-		if( uri.scheme() == "file" ) {
-			tmp.prepend( 'w' );
-		}
-#endif
-		return tmp;
-	}
 
 	static inline void fc_helper( AVFormatContext * oc ) {
 		for( std::size_t i = 0; i < oc->nb_streams; ++i ) {
@@ -64,6 +55,7 @@ namespace {
 }
 
 using namespace khopper::codec;
+using khopper::ffmpeg::fromURI;
 
 FfmpegWriter::FfmpegWriter( const QUrl & uri ):
 AbstractWriter( uri ),
@@ -86,7 +78,7 @@ void FfmpegWriter::doClose() {
 }
 
 void FfmpegWriter::setupMuxer() {
-	AVOutputFormat * pOF = guess_format( NULL, wHelper( this->getURI() ), NULL );
+	AVOutputFormat * pOF = guess_format( NULL, fromURI( this->getURI() ), NULL );
 	if( pOF == NULL ) {
 		throw error::CodecError( "Can not recognize output format" );
 	}
@@ -175,7 +167,7 @@ void FfmpegWriter::setupEncoder() {
 void FfmpegWriter::openResource() {
 	AVOutputFormat * pOF = this->pFormatContext_->oformat;
 	if( !( pOF->flags & AVFMT_NOFILE ) ) {
-		if( url_fopen( &this->pFormatContext_->pb, wHelper( this->getURI() ), URL_WRONLY ) < 0 ) {
+		if( url_fopen( &this->pFormatContext_->pb, fromURI( this->getURI() ), URL_WRONLY ) < 0 ) {
 			throw error::IOError( QString( "Can not open file: `%1\'" ).arg( this->getURI().toString() ) );
 		}
 	}
