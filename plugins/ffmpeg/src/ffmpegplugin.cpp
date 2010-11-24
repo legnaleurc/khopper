@@ -22,6 +22,7 @@
 #include "ffmpegplugin.hpp"
 #include "wavpanel.hpp"
 #include "ffmpegreader.hpp"
+#include "helper.hpp"
 #ifdef _WIN32
 #include "wfile.hpp"
 #endif
@@ -33,11 +34,13 @@ extern "C" {
 #include <libavformat/avformat.h>
 }
 
+#include <QtCore/QtDebug>
 #include <QtCore/QtPlugin>
 
 Q_EXPORT_PLUGIN2( KHOPPER_PLUGIN_ID, khopper::plugin::FfmpegPlugin )
 
 using namespace khopper::plugin;
+using khopper::ffmpeg::fromURI;
 using khopper::widget::WavPanel;
 using khopper::plugin::registerReader;
 using khopper::plugin::unregisterReader;
@@ -56,12 +59,14 @@ void FfmpegPlugin::doInstall() {
 	av_register_protocol( &khopper::codec::wfileProtocol );
 #endif
 	registerReader( this->getID(), []( const QUrl & uri )->unsigned int {
+		qDebug() << "verifing FfmpegReader" << uri << fromURI( uri );
 		AVFormatContext * pFC = NULL;
-		if( av_open_input_file( &pFC, uri.toString().toUtf8(), NULL, 0, NULL ) == 0 ) {
+		if( av_open_input_file( &pFC, fromURI( uri ), NULL, 0, NULL ) == 0 ) {
 			if( av_find_stream_info( pFC ) < 0 ) {
 				return 0;
 			}
 			av_close_input_file( pFC );
+			qDebug() << "returned 100 (from FfmpegReader)";
 			return 100;
 		}
 		return 0;
