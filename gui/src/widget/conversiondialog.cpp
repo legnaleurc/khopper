@@ -38,6 +38,7 @@ using khopper::album::TrackCSP;
 using khopper::album::TrackSP;
 using khopper::album::PlayList;
 using khopper::codec::WriterSP;
+using khopper::utility::Converter;
 
 ConversionDialog::ConversionDialog( QWidget * parent ):
 QDialog( parent ),

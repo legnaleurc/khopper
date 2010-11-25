@@ -1,5 +1,5 @@
 /**
- * @file propertydialog.hpp
+ * @file preference.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,37 +19,43 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_WIDGET_PROPERTYDIALOG_HPP
-#define KHOPPER_WIDGET_PROPERTYDIALOG_HPP
+#ifndef KHOPPER_WIDGET_PREFERENCE_HPP
+#define KHOPPER_WIDGET_PREFERENCE_HPP
 
-#include "khopper/track.hpp"
-
-#include <QtGui/QDialog>
 #include <QtGui/QAbstractButton>
+#include <QtGui/QDialog>
+
+#include <memory>
 
 namespace Ui {
-	class PropertyDialog;
+	class Preference;
 }
 
 namespace khopper {
 	namespace widget {
-		class PropertyDialog : public QDialog {
+
+		/**
+		 * @brief Preference dialog
+		 */
+		class Preference : public QDialog {
 			Q_OBJECT
 
 		public:
-			explicit PropertyDialog( QWidget * parent );
-
-			using QDialog::exec;
-			int exec( album::TrackSP track );
+			/// Default constructor
+			explicit Preference( QWidget * parent );
 
 		private slots:
+			void changeFont_();
 			void perform_( QAbstractButton * );
 
 		private:
-			void write_();
+			std::shared_ptr< Ui::Preference > ui_;
+			QFont currentFont_;
 
-			std::shared_ptr< Ui::PropertyDialog > ui_;
+			void apply_();
+			void revert_();
 		};
+
 	}
 }
 

@@ -29,6 +29,7 @@ using khopper::album::TrackSP;
 using khopper::codec::ReaderSP;
 using khopper::codec::WriterSP;
 using khopper::error::RunTimeError;
+using khopper::utility::Converter;
 
 ProgressBar::ProgressBar( QWidget * parent ):
 QWidget( parent ),

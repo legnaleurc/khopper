@@ -1,5 +1,5 @@
 /**
- * @file progressbar.hpp
+ * @file propertydialog.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,41 +19,37 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_WIDGET_PROGRESSBAR_HPP
-#define KHOPPER_WIDGET_PROGRESSBAR_HPP
+#ifndef KHOPPER_WIDGET_PROPERTYDIALOG_HPP
+#define KHOPPER_WIDGET_PROPERTYDIALOG_HPP
 
 #include "khopper/track.hpp"
-#include "khopper/abstractwriter.hpp"
 
-#include <QtGui/QWidget>
+#include <QtGui/QDialog>
+#include <QtGui/QAbstractButton>
 
 namespace Ui {
-	class ProgressBar;
+	class PropertyDialog;
 }
 
 namespace khopper {
 	namespace widget {
 
-		class Converter;
-
-		class ProgressBar : public QWidget {
+		class PropertyDialog : public QDialog {
 			Q_OBJECT
+
 		public:
-			explicit ProgressBar( QWidget * parent );
+			explicit PropertyDialog( QWidget * parent );
 
-			void cancel();
-			void start( Converter * task );
-
-		signals:
-			void finished();
+			using QDialog::exec;
+			int exec( album::TrackSP track );
 
 		private slots:
-			void increase_( qint64 );
-			void onFinished_();
+			void perform_( QAbstractButton * );
 
 		private:
-			Converter * task_;
-			std::shared_ptr< Ui::ProgressBar > ui_;
+			void write_();
+
+			std::shared_ptr< Ui::PropertyDialog > ui_;
 		};
 
 	}

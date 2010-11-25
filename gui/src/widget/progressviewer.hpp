@@ -1,5 +1,5 @@
 /**
- * @file preference.hpp
+ * @file progressviewer.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,42 +19,48 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_WIDGET_PREFERENCE_HPP
-#define KHOPPER_WIDGET_PREFERENCE_HPP
+#ifndef KHOPPER_WIDGET_PROGRESSVIEWER_HPP
+#define KHOPPER_WIDGET_PROGRESSVIEWER_HPP
 
-#include <QtGui/QAbstractButton>
-#include <QtGui/QDialog>
+#include "khopper/playlist.hpp"
+#include "khopper/abstractwriter.hpp"
 
-#include <memory>
+#include <QtCore/QList>
+#include <QtCore/QQueue>
+#include <QtGui/QWidget>
 
 namespace Ui {
-	class Preference;
+	class ProgressViewer;
 }
 
 namespace khopper {
 
+	namespace utility {
+		class Converter;
+	}
+
 	namespace widget {
 
-		/**
-		 * @brief Preference dialog
-		 */
-		class Preference : public QDialog {
-			Q_OBJECT
+		class ProgressBar;
 
+		class ProgressViewer : public QWidget {
+			Q_OBJECT
 		public:
-			/// Default constructor
-			explicit Preference( QWidget * parent );
+			explicit ProgressViewer( QWidget * parent );
+
+			void start( const QList< utility::Converter * > & tasks );
 
 		private slots:
-			void changeFont_();
-			void perform_( QAbstractButton * );
+			void cancel_();
+			void dispatch_();
 
 		private:
-			std::shared_ptr< Ui::Preference > ui_;
-			QFont currentFont_;
+			void dispatch_( ProgressBar * );
 
-			void apply_();
-			void revert_();
+			int rc_;
+			QList< ProgressBar * > lp_;
+			QList< utility::Converter * > tasks_;
+			std::shared_ptr< Ui::ProgressViewer > ui_;
 		};
 
 	}

@@ -23,7 +23,7 @@
 
 #include <algorithm>
 
-using namespace khopper::widget;
+using namespace khopper::utility;
 using khopper::album::PlayList;
 
 PlayListModel::PlayListModel( QObject * parent ):

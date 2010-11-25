@@ -19,15 +19,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_WIDGET_PLAYLISTMODEL_HPP
-#define KHOPPER_WIDGET_PLAYLISTMODEL_HPP
+#ifndef KHOPPER_UTILITY_PLAYLISTMODEL_HPP
+#define KHOPPER_UTILITY_PLAYLISTMODEL_HPP
 
 #include "khopper/playlist.hpp"
 
 #include <QtCore/QAbstractItemModel>
 
 namespace khopper {
-	namespace widget {
+	namespace utility {
+
 		class PlayListModel : public QAbstractItemModel {
 		public:
 			explicit PlayListModel( QObject * parent );
@@ -47,6 +48,7 @@ namespace khopper {
 		private:
 			album::PlayList list_;
 		};
+
 	}
 }
 
