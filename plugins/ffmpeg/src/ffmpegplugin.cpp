@@ -53,7 +53,7 @@ panel_( new WavPanel ) {
 }
 
 void FfmpegPlugin::doInstall() {
-	KHOPPER_APPLICATION->addPanel( this->panel_.get() );
+	khopper::pApp()->addPanel( this->panel_.get() );
 	av_register_all();
 #ifdef _WIN32
 	av_register_protocol( &khopper::codec::wfileProtocol );
@@ -76,6 +76,6 @@ void FfmpegPlugin::doInstall() {
 }
 
 void FfmpegPlugin::doUninstall() {
-	KHOPPER_APPLICATION->removePanel( this->panel_.get() );
+	khopper::pApp()->removePanel( this->panel_.get() );
 	unregisterReader( this->getID() );
 }
