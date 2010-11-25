@@ -22,7 +22,7 @@
 #include "oggpanel.hpp"
 #include "ui_oggpanel.h"
 #include "oggwriter.hpp"
-#include "flacwriter.hpp"
+#include "../flac/flacwriter.hpp"
 
 #include "khopper/text.hpp"
 

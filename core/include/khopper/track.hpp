@@ -87,8 +87,8 @@ namespace khopper {
 			void setURI( const QUrl & uri );
 
 		private:
-			struct TrackPrivate;
-			std::shared_ptr< TrackPrivate > p_;
+			class Private;
+			std::shared_ptr< Private > p_;
 		};
 
 		/**

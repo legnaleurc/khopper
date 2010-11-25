@@ -20,6 +20,7 @@
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 #include "ffmpegreader.hpp"
+#include "helper.hpp"
 
 #include "khopper/error.hpp"
 
@@ -28,19 +29,12 @@ extern "C" {
 #include <libavformat/avformat.h>
 }
 
+#include <QtCore/QtDebug>
+
 #include <cstdlib>
 #include <cstring>
 
 namespace {
-
-	static inline std::string wHelper( const QUrl & uri ) {
-		// FIXME: not always local file
-		QString tmp( uri.toLocalFile() );
-#ifdef Q_OS_WIN32
-		tmp.prepend( "wfile://" );
-#endif
-		return tmp.toStdString();
-	}
 
 	static inline void p_helper( AVPacket * p ) {
 		av_freep( &p );
@@ -59,6 +53,7 @@ namespace {
 using namespace khopper::codec;
 using khopper::error::IOError;
 using khopper::error::CodecError;
+using khopper::ffmpeg::fromURI;
 
 FfmpegReader::FfmpegReader( const QUrl & uri ):
 AbstractReader( uri ),
@@ -99,11 +94,11 @@ void FfmpegReader::doClose() {
 
 void FfmpegReader::openResource_() {
 	AVFormatContext * pFC = NULL;
-	int ret = av_open_input_file( &pFC, wHelper( this->getURI() ).c_str(), NULL, 0, NULL );
+	int ret = av_open_input_file( &pFC, fromURI( this->getURI() ), NULL, 0, NULL );
 	if( ret != 0 ) {
 		throw IOError(
 			tr(
-				"Can not open `%1\':\n"
+				"FfmpegReader: Can not open `%1\':\n"
 				"%2"
 			).arg( this->getURI().toString() ).arg( strerror( AVUNERROR( ret ) ) )
 		);
@@ -113,13 +108,13 @@ void FfmpegReader::openResource_() {
 
 void FfmpegReader::setupDemuxer_() {
 	if( av_find_stream_info( this->pFormatContext_.get() ) < 0 ) {
-		throw CodecError( tr( "Can not find codec info!" ) );
+		throw CodecError( tr( "FfmpegReader: Can not find codec info!" ) );
 	}
 
 	if( this->pFormatContext_->duration != static_cast< int64_t >( AV_NOPTS_VALUE ) ) {
 		this->setDuration( toMS( this->pFormatContext_->duration ) );
 	} else {
-		throw CodecError( tr( "Can not get duration!" ) );
+		throw CodecError( tr( "FfmpegReader: Can not get duration!" ) );
 	}
 }
 
@@ -132,7 +127,7 @@ void FfmpegReader::setupDecoder_() {
 		}
 	}
 	if( a_stream == -1 ) {
-		throw CodecError( "Find no audio stream!" );
+		throw CodecError( "FfmpegReader: Find no audio stream!" );
 	}
 	this->pStream_ = this->pFormatContext_->streams[a_stream];
 	AVCodecContext * pCC = this->pStream_->codec;
@@ -179,11 +174,11 @@ void FfmpegReader::setupDecoder_() {
 
 	AVCodec * pC = avcodec_find_decoder( pCC->codec_id );
 	if( pC == NULL ) {
-		throw error::CodecError( tr( "Find no decoder!" ) );
+		throw error::CodecError( tr( "FfmpegReader: Find no decoder!" ) );
 	}
 
 	if( avcodec_open( pCC, pC ) < 0 ) {
-		throw error::CodecError( tr( "Can not open decoder." ) );
+		throw error::CodecError( tr( "FfmpegReader: Can not open decoder." ) );
 	}
 	this->pCodecContext_.reset( pCC, avcodec_close );
 }

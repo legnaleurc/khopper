@@ -30,8 +30,9 @@ namespace khopper {
 		class PluginManager;
 	}
 
-	struct Application::ApplicationPrivate {
-		ApplicationPrivate();
+	class Application::Private {
+	public:
+		Private();
 
 		std::shared_ptr< plugin::PluginManager > pm;
 	};

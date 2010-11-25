@@ -19,8 +19,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_WIDGET_CONVERTER_HPP
-#define KHOPPER_WIDGET_CONVERTER_HPP
+#ifndef KHOPPER_UTILITY_CONVERTER_HPP
+#define KHOPPER_UTILITY_CONVERTER_HPP
 
 #include "khopper/abstractwriter.hpp"
 #include "khopper/track.hpp"
@@ -28,8 +28,7 @@
 #include <QtCore/QThread>
 
 namespace khopper {
-
-	namespace widget {
+	namespace utility {
 
 		/**
 		 * @brief Controller of converting
@@ -70,7 +69,6 @@ namespace khopper {
 		};
 
 	}
-
 }
 
 #endif

@@ -30,8 +30,9 @@
 namespace khopper {
 	namespace album {
 
-		struct Track::TrackPrivate {
-			TrackPrivate( const QUrl & uri );
+		class Track::Private {
+		public:
+			Private( const QUrl & uri );
 
 			AlbumSP album;
 			QByteArray artist;

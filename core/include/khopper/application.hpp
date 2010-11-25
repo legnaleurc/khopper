@@ -85,12 +85,12 @@ namespace khopper {
 		void errorOccured( const QString & title, const QString & message );
 
 	private:
-		struct ApplicationPrivate;
-		std::shared_ptr< ApplicationPrivate > p_;
+		class Private;
+		std::shared_ptr< Private > p_;
 	};
 
-}
+	KHOPPER_DLL Application * pApp();
 
-#define KHOPPER_APPLICATION static_cast< khopper::Application * >( QCoreApplication::instance() )
+}
 
 #endif
