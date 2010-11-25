@@ -29,7 +29,7 @@ using khopper::plugin::PluginManager;
 
 Application::Application( int & argc, char * * argv ):
 QApplication( argc, argv ),
-p_( new ApplicationPrivate ) {
+p_( new Private ) {
 	QObject::connect( this->p_->pm.get(), SIGNAL( errorOccured( const QString &, const QString & ) ), this, SIGNAL( errorOccured( const QString &, const QString & ) ) );
 }
 
@@ -49,6 +49,10 @@ AbstractPlugin * Application::getPluginInstance( const QString & pluginID ) cons
 	return this->p_->pm->getPluginInstance( pluginID );
 }
 
-Application::ApplicationPrivate::ApplicationPrivate():
+Application::Private::Private():
 pm( new PluginManager ) {
+}
+
+Application * khopper::pApp() {
+	return static_cast< Application * >( QCoreApplication::instance() );
 }

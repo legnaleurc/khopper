@@ -38,6 +38,7 @@ using khopper::album::TrackCSP;
 using khopper::album::TrackSP;
 using khopper::album::PlayList;
 using khopper::codec::WriterSP;
+using khopper::utility::Converter;
 
 ConversionDialog::ConversionDialog( QWidget * parent ):
 QDialog( parent ),
@@ -55,8 +56,8 @@ table_() {
 
 	connect( this->ui_->browse, SIGNAL( clicked() ), this, SLOT( changeOutputPath_() ) );
 
-	connect( KHOPPER_APPLICATION, SIGNAL( panelAdded( khopper::widget::AbstractPanel * ) ), this, SLOT( addPanel( khopper::widget::AbstractPanel * ) ) );
-	connect( KHOPPER_APPLICATION, SIGNAL( panelRemoved( khopper::widget::AbstractPanel * ) ), this, SLOT( removePanel( khopper::widget::AbstractPanel * ) ) );
+	connect( khopper::pApp(), SIGNAL( panelAdded( khopper::widget::AbstractPanel * ) ), this, SLOT( addPanel( khopper::widget::AbstractPanel * ) ) );
+	connect( khopper::pApp(), SIGNAL( panelRemoved( khopper::widget::AbstractPanel * ) ), this, SLOT( removePanel( khopper::widget::AbstractPanel * ) ) );
 }
 
 void ConversionDialog::convert( const PlayList & tracks ) {
