@@ -36,7 +36,3 @@ ui_( new Ui::AboutWidget ){
 		"Part of %3<br/>"
 	).arg( qApp->applicationName() ).arg( qApp->applicationVersion() ).arg( qApp->organizationName() ) );
 }
-
-AboutWidget::~AboutWidget() {
-	delete this->ui_;
-}

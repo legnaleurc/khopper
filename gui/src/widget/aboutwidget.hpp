@@ -24,6 +24,8 @@
 
 #include <QtGui/QWidget>
 
+#include <memory>
+
 namespace Ui {
 	class AboutWidget;
 }
@@ -34,9 +36,8 @@ namespace khopper {
 		class AboutWidget : public QWidget {
 		public:
 			explicit AboutWidget( QWidget * parent );
-			virtual ~AboutWidget();
 		private:
-			Ui::AboutWidget * ui_;
+			std::shared_ptr< Ui::AboutWidget > ui_;
 		};
 
 	}
