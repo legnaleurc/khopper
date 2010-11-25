@@ -19,8 +19,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_WIDGET_SONGLIST_HPP
-#define KHOPPER_WIDGET_SONGLIST_HPP
+#ifndef KHOPPER_WIDGET_PLAYLISTVIEW_HPP
+#define KHOPPER_WIDGET_PLAYLISTVIEW_HPP
 
 #include "khopper/playlist.hpp"
 

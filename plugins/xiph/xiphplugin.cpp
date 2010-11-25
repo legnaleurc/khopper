@@ -51,8 +51,8 @@ XiphPlugin::~XiphPlugin() {
 }
 
 void XiphPlugin::doInstall() {
-	KHOPPER_APPLICATION->addPanel( this->flacPanel_ );
-	KHOPPER_APPLICATION->addPanel( this->oggPanel_ );
+	khopper::pApp()->addPanel( this->flacPanel_ );
+	khopper::pApp()->addPanel( this->oggPanel_ );
 	registerReader( this->getID(), []( const QUrl & uri )->unsigned int {
 		// FIXME
 		QFileInfo info( uri.toLocalFile() );
@@ -66,7 +66,7 @@ void XiphPlugin::doInstall() {
 }
 
 void XiphPlugin::doUninstall() {
-	KHOPPER_APPLICATION->removePanel( this->flacPanel_ );
-	KHOPPER_APPLICATION->removePanel( this->oggPanel_ );
+	khopper::pApp()->removePanel( this->flacPanel_ );
+	khopper::pApp()->removePanel( this->oggPanel_ );
 	unregisterReader( this->getID() );
 }

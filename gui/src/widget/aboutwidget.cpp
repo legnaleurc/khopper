@@ -1,5 +1,5 @@
 /**
- * @file propertydialog.hpp
+ * @file aboutwidget.cpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,38 +19,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_WIDGET_PROPERTYDIALOG_HPP
-#define KHOPPER_WIDGET_PROPERTYDIALOG_HPP
+#include "aboutwidget.hpp"
+#include "ui_aboutwidget.h"
 
-#include "khopper/track.hpp"
+using namespace khopper::widget;
 
-#include <QtGui/QDialog>
-#include <QtGui/QAbstractButton>
+AboutWidget::AboutWidget( QWidget * parent ):
+QWidget( parent, Qt::Dialog ),
+ui_( new Ui::AboutWidget ){
+	this->ui_->setupUi( this );
 
-namespace Ui {
-	class PropertyDialog;
+	this->ui_->logo->setPixmap( QPixmap( ":/share/pixmap/logo.png" ).scaled( 60, 60 ) );
+	this->ui_->version->setText( tr(
+		"<h1>%1</h1>"
+		"Version %2<br/>"
+		"Part of %3<br/>"
+	).arg( qApp->applicationName() ).arg( qApp->applicationVersion() ).arg( qApp->organizationName() ) );
 }
-
-namespace khopper {
-	namespace widget {
-		class PropertyDialog : public QDialog {
-			Q_OBJECT
-
-		public:
-			explicit PropertyDialog( QWidget * parent );
-
-			using QDialog::exec;
-			int exec( album::TrackSP track );
-
-		private slots:
-			void perform_( QAbstractButton * );
-
-		private:
-			void write_();
-
-			std::shared_ptr< Ui::PropertyDialog > ui_;
-		};
-	}
-}
-
-#endif
