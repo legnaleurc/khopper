@@ -50,7 +50,10 @@ AbstractPlugin * Application::getPluginInstance( const QString & pluginID ) cons
 }
 
 Application::Private::Private():
-pm( new PluginManager ) {
+pm( new PluginManager ),
+readerFactory(),
+playlistFactory() {
+	Application::Private::self = this;
 }
 
 Application * khopper::pApp() {

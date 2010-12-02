@@ -20,12 +20,13 @@
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 #include "abstractreaderprivate.hpp"
+#include "applicationprivate.hpp"
 
-#ifndef LOKI_CLASS_LEVEL_THREADING
-# define LOKI_CLASS_LEVEL_THREADING
-#endif
-
-#include <loki/Singleton.h>
+//#ifndef LOKI_CLASS_LEVEL_THREADING
+//# define LOKI_CLASS_LEVEL_THREADING
+//#endif
+//
+//#include <loki/Singleton.h>
 
 #include <cassert>
 #include <cmath>
@@ -35,34 +36,15 @@ using namespace khopper::codec;
 using namespace khopper::plugin;
 
 bool khopper::plugin::registerReader( const QString & id, ReaderVerifier v, ReaderCreator c ) {
-	return ReaderFactory::Instance().l.insert( std::make_pair( id, std::make_pair( v, c ) ) ).second;
+	return Application::Private::self->readerFactory.registerProduct( id, v, c );
 }
 
 bool khopper::plugin::unregisterReader( const QString & id ) {
-	return ReaderFactory::Instance().l.erase( id ) == 1;
+	return Application::Private::self->readerFactory.unregisterProduct( id );
 }
 
 ReaderCreator khopper::plugin::getReaderCreator( const QUrl & uri ) {
-	typedef ReaderFactoryPrivate::Map Map;
-	const Map & m( ReaderFactory::Instance().l );
-
-	if( !m.empty() ) {
-		throw khopper::error::SystemError( QObject::tr( "No reader can be used." ) );
-	}
-	unsigned int maxScore = 0;
-	ReaderCreator maxCreator;
-	std::for_each( m.begin(), m.end(), [&]( const Map::value_type & p ) {
-		if( p.second.first( uri ) > maxScore ) {
-			maxCreator = p.second.second;
-		}
-	} );
-	if( maxScore == 0 ) {
-		return []( const QUrl & uri )->ReaderSP {
-			throw khopper::error::RunTimeError( QObject::tr( "Found no reader match `%1\'" ).arg( uri.toString() ) );
-		};
-	} else {
-		return maxCreator;
-	}
+	return Application::Private::self->readerFactory.getCreator( uri );
 }
 
 AbstractReader::AbstractReader( const QUrl & uri ):

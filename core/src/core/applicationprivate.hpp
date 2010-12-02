@@ -22,7 +22,10 @@
 #ifndef KHOPPER_APPLICATIONPRIVATE_HPP
 #define KHOPPER_APPLICATIONPRIVATE_HPP
 
+#include "abstractreader.hpp"
 #include "application.hpp"
+#include "factory.hpp"
+#include "playlist.hpp"
 
 namespace khopper {
 
@@ -30,12 +33,27 @@ namespace khopper {
 		class PluginManager;
 	}
 
+	template< typename KeyType, typename CreatorType >
+	class FactoryError {
+	public:
+		CreatorType onError( const KeyType & key ) {
+			return []( const KeyType & key )->typename CreatorType::result_type {
+				throw error::RunTimeError( "Find no suitable codec." );
+			};
+		}
+	};
+
 	class Application::Private {
 	public:
+		static Application::Private * self;
+
 		Private();
 
 		std::shared_ptr< plugin::PluginManager > pm;
+		Factory< QString, QUrl, codec::ReaderSP, FactoryError > readerFactory;
+		Factory< QString, QUrl, album::PlayList, FactoryError > playlistFactory;
 	};
+
 }
 
 #endif

@@ -54,20 +54,20 @@ namespace khopper {
 
 	}
 
-	namespace plugin {
-
-		struct ReaderFactoryPrivate {
-			typedef QString Key;
-			typedef std::pair< ReaderVerifier, ReaderCreator > Value;
-			typedef std::map< Key, Value > Map;
-			std::map< Key, Value > l;
-		};
-
-		typedef Loki::SingletonHolder<
-			ReaderFactoryPrivate
-		> ReaderFactory;
-
-	}
+//	namespace plugin {
+//
+//		struct ReaderFactoryPrivate {
+//			typedef QString Key;
+//			typedef std::pair< ReaderVerifier, ReaderCreator > Value;
+//			typedef std::map< Key, Value > Map;
+//			std::map< Key, Value > l;
+//		};
+//
+//		typedef Loki::SingletonHolder<
+//			ReaderFactoryPrivate
+//		> ReaderFactory;
+//
+//	}
 
 }
 

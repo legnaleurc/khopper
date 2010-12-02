@@ -1,6 +1,6 @@
 # core
 
-find_package(Loki REQUIRED)
+#find_package(Loki REQUIRED)
 
 # hack MSCV path
 if(MSVC)
@@ -20,11 +20,11 @@ set(KHOPPER_CORE_MOC_HEADERS
 
 qt4_wrap_cpp(KHOPPER_CORE_MOC_SOURCES ${KHOPPER_CORE_MOC_HEADERS})
 
-include_directories("include/khopper" src ${LOKI_INCLUDE_DIR})
+include_directories("include/khopper" src)
 
 source_group("Generated Files" FILES ${KHOPPER_CORE_MOC_SOURCES})
 add_library(libkhopper SHARED ${KHOPPER_CORE_HEADERS} ${KHOPPER_CORE_SOURCES} ${KHOPPER_CORE_MOC_SOURCES})
-target_link_libraries(libkhopper ${LOKI_LIBRARIES} ${QT_LIBRARIES})
+target_link_libraries(libkhopper ${QT_LIBRARIES})
 set_target_properties(libkhopper
     PROPERTIES
         VERSION ${KHOPPER_VERSION}

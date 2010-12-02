@@ -24,24 +24,24 @@
 
 #include "playlist.hpp"
 
-#include <loki/Singleton.h>
+//#include <loki/Singleton.h>
 
 #include <map>
 #include <utility>
 
-namespace khopper {
-	namespace plugin {
-
-		class PlayListFactoryPrivate {
-		public:
-			typedef std::map< QString, std::pair< PlayListVerifier, PlayListCreator > > TableType;
-
-			TableType m;
-		};
-
-		typedef Loki::SingletonHolder< PlayListFactoryPrivate > PlayListFactory;
-
-	}
-}
+//namespace khopper {
+//	namespace plugin {
+//
+//		class PlayListFactoryPrivate {
+//		public:
+//			typedef std::map< QString, std::pair< PlayListVerifier, PlayListCreator > > TableType;
+//
+//			TableType m;
+//		};
+//
+//		typedef Loki::SingletonHolder< PlayListFactoryPrivate > PlayListFactory;
+//
+//	}
+//}
 
 #endif
