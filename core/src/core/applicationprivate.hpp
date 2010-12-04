@@ -36,18 +36,18 @@ namespace khopper {
 	template< typename KeyType, typename CreatorType >
 	class FactoryError {
 	public:
-		CreatorType onError( const KeyType & key ) {
-			return []( const KeyType & key )->typename CreatorType::result_type {
+		CreatorType onError( const KeyType & /*key*/ ) const {
+			return []( const KeyType & /*key*/ )->typename CreatorType::result_type {
 				throw error::RunTimeError( "Find no suitable codec." );
 			};
 		}
 	};
 
-	class Application::Private {
+	class ApplicationPrivate {
 	public:
-		static Application::Private * self;
+		static ApplicationPrivate * self;
 
-		Private();
+		ApplicationPrivate();
 
 		std::shared_ptr< plugin::PluginManager > pm;
 		Factory< QString, QUrl, codec::ReaderSP, FactoryError > readerFactory;

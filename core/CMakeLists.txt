@@ -1,7 +1,5 @@
 # core
 
-#find_package(Loki REQUIRED)
-
 # hack MSCV path
 if(MSVC)
     set(LIBRARY_OUTPUT_PATH "${CMAKE_BINARY_DIR}")

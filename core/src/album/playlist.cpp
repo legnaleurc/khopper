@@ -30,7 +30,7 @@ using namespace khopper::album;
 using namespace khopper::plugin;
 
 PlayList khopper::album::createPlayList( const QUrl & uri ) {
-	return Application::Private::self->playlistFactory.createProduct( uri );
+	return ApplicationPrivate::self->playlistFactory.createProduct( uri );
 }
 
 void khopper::album::exportPlayList( const PlayList & playList, const QUrl & fileURI ) {
@@ -54,9 +54,9 @@ void khopper::album::exportPlayList( const PlayList & playList, const QUrl & fil
 }
 
 bool khopper::plugin::registerPlayList( const QString & id, PlayListVerifier v, PlayListCreator c ) {
-	return Application::Private::self->playlistFactory.registerProduct( id, v, c );
+	return ApplicationPrivate::self->playlistFactory.registerProduct( id, v, c );
 }
 
 bool khopper::plugin::unregisterPlayList( const QString & id ) {
-	return Application::Private::self->playlistFactory.unregisterProduct( id );
+	return ApplicationPrivate::self->playlistFactory.unregisterProduct( id );
 }

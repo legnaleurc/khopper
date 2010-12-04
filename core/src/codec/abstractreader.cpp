@@ -20,13 +20,7 @@
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 #include "abstractreaderprivate.hpp"
-#include "applicationprivate.hpp"
-
-//#ifndef LOKI_CLASS_LEVEL_THREADING
-//# define LOKI_CLASS_LEVEL_THREADING
-//#endif
-//
-//#include <loki/Singleton.h>
+#include "core/applicationprivate.hpp"
 
 #include <cassert>
 #include <cmath>
@@ -36,15 +30,15 @@ using namespace khopper::codec;
 using namespace khopper::plugin;
 
 bool khopper::plugin::registerReader( const QString & id, ReaderVerifier v, ReaderCreator c ) {
-	return Application::Private::self->readerFactory.registerProduct( id, v, c );
+	return ApplicationPrivate::self->readerFactory.registerProduct( id, v, c );
 }
 
 bool khopper::plugin::unregisterReader( const QString & id ) {
-	return Application::Private::self->readerFactory.unregisterProduct( id );
+	return ApplicationPrivate::self->readerFactory.unregisterProduct( id );
 }
 
 ReaderCreator khopper::plugin::getReaderCreator( const QUrl & uri ) {
-	return Application::Private::self->readerFactory.getCreator( uri );
+	return ApplicationPrivate::self->readerFactory.getCreator( uri );
 }
 
 AbstractReader::AbstractReader( const QUrl & uri ):
