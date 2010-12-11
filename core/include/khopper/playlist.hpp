@@ -24,40 +24,30 @@
 
 #include "track.hpp"
 
-#ifndef LOKI_CLASS_LEVEL_THREADING
-# define LOKI_CLASS_LEVEL_THREADING
-#endif
-#include <loki/Functor.h>
-
 #include <QtCore/QList>
 #include <QtCore/QVector>
 #include <QtCore/QSet>
+
+#include <functional>
 
 namespace khopper {
 
 	namespace album {
 
-		class KHOPPER_DLL PlayList : public QList< TrackSP > {
-		};
+		typedef QList< TrackSP > PlayList;
+
+		PlayList KHOPPER_DLL createPlayList( const QUrl & uri );
+		void exportPlayList( const PlayList & playList, const QUrl & fileURI );
 
 	}
 
 	namespace plugin {
 
-		typedef Loki::Functor<
-			unsigned int,
-			LOKI_TYPELIST_1( const QUrl & ),
-			Loki::ClassLevelLockable
-		> PlayListVerifier;
-		typedef Loki::Functor<
-			album::PlayList,
-			LOKI_TYPELIST_1( const QUrl & ),
-			Loki::ClassLevelLockable
-		> PlayListCreator;
+		typedef std::function< unsigned int ( const QUrl & ) > PlayListVerifier;
+		typedef std::function< album::PlayList ( const QUrl & ) > PlayListCreator;
 
-		album::PlayList KHOPPER_DLL createPlayList( const QUrl & uri );
-		void KHOPPER_DLL registerPlayList( PlayListVerifier v, PlayListCreator c );
-		void KHOPPER_DLL unregisterPlayList( PlayListVerifier v );
+		bool KHOPPER_DLL registerPlayList( const QString & id, PlayListVerifier v, PlayListCreator c );
+		bool KHOPPER_DLL unregisterPlayList( const QString & id );
 
 	}
 

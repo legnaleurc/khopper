@@ -1,6 +1,5 @@
 # core
 
-find_package(Loki REQUIRED)
 find_package(TagLib REQUIRED)
 
 # hack MSCV path
@@ -21,19 +20,19 @@ set(KHOPPER_CORE_MOC_HEADERS
 
 qt4_wrap_cpp(KHOPPER_CORE_MOC_SOURCES ${KHOPPER_CORE_MOC_HEADERS})
 
-include_directories("include/khopper" src ${LOKI_INCLUDE_DIR} ${TAGLIB_INCLUDE_DIR})
+include_directories("include/khopper" src ${TAGLIB_INCLUDE_DIR})
 
 source_group("Generated Files" FILES ${KHOPPER_CORE_MOC_SOURCES})
-add_library(khopper_core SHARED ${KHOPPER_CORE_HEADERS} ${KHOPPER_CORE_SOURCES} ${KHOPPER_CORE_MOC_SOURCES})
-target_link_libraries(khopper_core ${LOKI_LIBRARIES} ${TAGLIB_LIBRARIES} ${QT_LIBRARIES})
-set_target_properties(khopper_core
+add_library(khopper SHARED ${KHOPPER_CORE_HEADERS} ${KHOPPER_CORE_SOURCES} ${KHOPPER_CORE_MOC_SOURCES})
+target_link_libraries(khopper ${TAGLIB_LIBRARIES} ${QT_LIBRARIES})
+set_target_properties(khopper
     PROPERTIES
         VERSION ${KHOPPER_VERSION}
         SOVERSION ${KHOPPER_VERSION}
         FRAMEWORK TRUE
         PUBLIC_HEADER "${KHOPPER_CORE_PUBLIC_HEADERS}")
 
-install(TARGETS khopper_core
+install(TARGETS khopper
     RUNTIME DESTINATION "bin"
     LIBRARY DESTINATION "lib"
     ARCHIVE DESTINATION "lib"

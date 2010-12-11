@@ -22,8 +22,6 @@
 #ifndef KHOPPER_WIDGET_CODECSELECTOR_HPP
 #define KHOPPER_WIDGET_CODECSELECTOR_HPP
 
-#include "khopper/tr1.hpp"
-
 #include <QtGui/QDialog>
 
 #include <memory>

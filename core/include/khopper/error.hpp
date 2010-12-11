@@ -22,7 +22,7 @@
 #ifndef KHOPPER_UTIL_ERROR_HPP
 #define KHOPPER_UTIL_ERROR_HPP
 
-#include "tr1.hpp"
+#include "config.hpp"
 
 #include <QtCore/QString>
 
@@ -42,6 +42,7 @@ namespace khopper {
 		 */
 		class KHOPPER_DLL BaseError : public std::exception {
 		public:
+			explicit BaseError( int code );
 			/**
 			 * @brief Construct with an error message
 			 */
@@ -80,6 +81,7 @@ namespace khopper {
 		template< typename Type >
 		class Error : public BaseError, public Type {
 		public:
+			explicit Error( int code ) : BaseError( code ) {}
 			/**
 			 * @brief Construct with an error message
 			 */

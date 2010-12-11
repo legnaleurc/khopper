@@ -21,6 +21,7 @@
  */
 #include "mp3writer.hpp"
 
+#include "khopper/error.hpp"
 #include "khopper/text.hpp"
 
 #include <id3v2tag.h>
@@ -33,7 +34,7 @@ namespace {
 		FILE * fout = NULL;
 		errno_t ret = _wfopen_s( &fout, uri.toLocalFile().toStdWString().c_str(), L"wb" );
 		if( ret != 0 ) {
-			return NULL;
+			throw khopper::error::IOError( ret );
 		}
 		return fout;
 #else

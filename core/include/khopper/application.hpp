@@ -22,7 +22,7 @@
 #ifndef KHOPPER_APPLICATION_HPP
 #define KHOPPER_APPLICATION_HPP
 
-#include "tr1.hpp"
+#include "config.hpp"
 
 #include <QtGui/QApplication>
 
@@ -38,29 +38,60 @@ namespace khopper {
 		class AbstractPanel;
 	}
 
+	class ApplicationPrivate;
+
+	/**
+	 * @brief GUI application context
+	 *
+	 * This class provides application-wide services.
+	 */
 	class KHOPPER_DLL Application : public QApplication {
 		Q_OBJECT
 
 	public:
+		/**
+		 * @brief Constructor
+		 * @param argc argument count
+		 * @param argv argument array
+		 */
 		Application( int & argc, char * * argv );
 
+		/**
+		 * @brief Add panel to OptionWidget
+		 * @param panel a panel create by plugin
+		 */
 		void addPanel( khopper::widget::AbstractPanel * panel );
+		/**
+		 * @brief Remove panel from OptionWidget
+		 * @param panel which to be removed
+		 */
 		void removePanel( khopper::widget::AbstractPanel * panel );
+		/// Reload all plugins
 		void reloadPlugins();
+		/**
+		 * @brief Get instance of a plugin
+		 * @param pluginID the plugin ID
+		 */
 		plugin::AbstractPlugin * getPluginInstance( const QString & pluginID ) const;
 
 	signals:
+		/// Emitted when addPanel called
 		void panelAdded( khopper::widget::AbstractPanel * panel );
+		/// Emitted when removePanel called
 		void panelRemoved( khopper::widget::AbstractPanel * panel );
+		/**
+		 * @brief Emitted if a error occured
+		 * @param title error title
+		 * @param message error message
+		 */
 		void errorOccured( const QString & title, const QString & message );
 
 	private:
-		struct ApplicationPrivate;
 		std::shared_ptr< ApplicationPrivate > p_;
 	};
 
-}
+	KHOPPER_DLL Application * pApp();
 
-#define KHOPPER_APPLICATION static_cast< khopper::Application * >( QCoreApplication::instance() )
+}
 
 #endif

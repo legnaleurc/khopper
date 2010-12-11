@@ -22,7 +22,7 @@
 #ifndef KHOPPER_CODEC_AUDIOFORMATPRIVATE_HPP
 #define KHOPPER_CODEC_AUDIOFORMATPRIVATE_HPP
 
-#include "codecutil.hpp"
+#include "audioformat.hpp"
 
 namespace khopper {
 	namespace codec {

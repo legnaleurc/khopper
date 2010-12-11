@@ -19,36 +19,44 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "playlistprivate.hpp"
+#include "core/applicationprivate.hpp"
+
+#include <QtCore/QFile>
+#include <QtXml/QXmlStreamWriter>
 
 #include <algorithm>
 
 using namespace khopper::album;
 using namespace khopper::plugin;
 
-PlayList khopper::plugin::createPlayList( const QUrl & uri ) {
-	const std::list< PlayListFactoryPrivate::Pair > & fList( PlayListFactory::Instance().fList );
-
-	if( !fList.empty() ) {
-		typedef PlayListFactoryPrivate::Pair PLFPPair;
-		return std::max_element( fList.begin(), fList.end(), [&uri]( const PLFPPair & l, const PLFPPair & r ) {
-			return l.first( uri ) < r.first( uri );
-		} )->second( uri );
-	} else {
-		throw khopper::error::SystemError( QObject::tr( "No playlist can be created." ) );
-	}
+PlayList khopper::album::createPlayList( const QUrl & uri ) {
+	return ApplicationPrivate::self->playlistFactory.createProduct( uri );
 }
 
-void khopper::plugin::registerPlayList( PlayListVerifier v, PlayListCreator c ) {
-	PlayListFactory::Instance().fList.push_back( std::make_pair( v, c ) );
+void khopper::album::exportPlayList( const PlayList & playList, const QUrl & fileURI ) {
+	// FIXME: local file only
+	QString filePath = fileURI.toLocalFile();
+	QFile fout( filePath );
+	fout.open( QIODevice::WriteOnly );
+	QXmlStreamWriter xout( &fout );
+
+	xout.writeStartDocument();
+
+	std::for_each( playList.begin(), playList.end(), [&xout]( TrackCSP track ) {
+		xout.writeStartElement( "item" );
+		xout.writeAttribute( "uri", track->getURI().toString() );
+		xout.writeEndElement();
+	} );
+
+	xout.writeEndDocument();
+
+	fout.close();
 }
 
-void khopper::plugin::unregisterPlayList( PlayListVerifier v ) {
-	std::list< PlayListFactoryPrivate::Pair > & fList( PlayListFactory::Instance().fList );
-	for( std::list< PlayListFactoryPrivate::Pair >::iterator it = fList.begin(); it != fList.end(); ++it ) {
-		if( it->first == v ) {
-			fList.erase( it );
-			break;
-		}
-	}
+bool khopper::plugin::registerPlayList( const QString & id, PlayListVerifier v, PlayListCreator c ) {
+	return ApplicationPrivate::self->playlistFactory.registerProduct( id, v, c );
+}
+
+bool khopper::plugin::unregisterPlayList( const QString & id ) {
+	return ApplicationPrivate::self->playlistFactory.unregisterProduct( id );
 }
