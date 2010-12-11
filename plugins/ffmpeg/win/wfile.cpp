@@ -42,7 +42,7 @@ extern "C" {
 namespace {
 
 	static int wfile_open( URLContext * h, const char * filename, int flags ) {
-		int ret = av_strstart( filename, "wfile://", &filename );
+		int ret = av_strstart( filename, "wfile:///", &filename );
 		if( ret < 0 ) {
 			return AVERROR(ENOENT);
 		}

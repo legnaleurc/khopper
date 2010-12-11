@@ -1,5 +1,5 @@
 /**
- * @file preference.hpp
+ * @file converter.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,46 +19,56 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_WIDGET_PREFERENCE_HPP
-#define KHOPPER_WIDGET_PREFERENCE_HPP
+#ifndef KHOPPER_UTILITY_CONVERTER_HPP
+#define KHOPPER_UTILITY_CONVERTER_HPP
 
-#include <QtGui/QAbstractButton>
-#include <QtGui/QDialog>
+#include "khopper/abstractwriter.hpp"
+#include "khopper/track.hpp"
 
-#include <memory>
-
-namespace Ui {
-	class Preference;
-}
+#include <QtCore/QThread>
 
 namespace khopper {
-
-	namespace widget {
+	namespace utility {
 
 		/**
-		 * @brief Preference dialog
+		 * @brief Controller of converting
 		 */
-		class Preference : public QDialog {
+		class Converter : public QThread {
 			Q_OBJECT
 
 		public:
-			/// Default constructor
-			explicit Preference( QWidget * parent );
+			/**
+			 * @brief Default constructor
+			 */
+			Converter( album::TrackCSP track, codec::WriterSP encoder );
 
-		private slots:
-			void changeFont_();
-			void perform_( QAbstractButton * );
+			QString getTitle() const;
+			qint64 getMaximumValue() const;
+
+		public slots:
+			/**
+			 * @brief Cancel converting
+			 */
+			void cancel();
+
+		signals:
+			/**
+			 * @brief Decoded duration
+			 * @param ms Time in second * 1000
+			 */
+			void decodedTime( qint64 ms );
+			void errorOccured( const QString & title, const QString & message );
+
+		protected:
+			void run();
 
 		private:
-			std::shared_ptr< Ui::Preference > ui_;
-			QFont currentFont_;
-
-			void apply_();
-			void revert_();
+			bool canceled_;
+			album::TrackCSP track_;
+			codec::WriterSP writer_;
 		};
 
 	}
-
 }
 
 #endif

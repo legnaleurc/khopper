@@ -19,7 +19,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "playlistfactory.hpp"
+#include "core/applicationprivate.hpp"
 
 #include <QtCore/QFile>
 #include <QtXml/QXmlStreamWriter>
@@ -30,16 +30,7 @@ using namespace khopper::album;
 using namespace khopper::plugin;
 
 PlayList khopper::album::createPlayList( const QUrl & uri ) {
-	const PlayListFactoryPrivate::TableType & m( PlayListFactory::Instance().m );
-
-	if( !m.empty() ) {
-		typedef PlayListFactoryPrivate::TableType::value_type Pair;
-		return std::max_element( m.begin(), m.end(), [&uri]( const Pair & l, const Pair & r ) {
-			return l.second.first( uri ) < r.second.first( uri );
-		} )->second.second( uri );
-	} else {
-		throw khopper::error::SystemError( QObject::tr( "No playlist can be created." ) );
-	}
+	return ApplicationPrivate::self->playlistFactory.createProduct( uri );
 }
 
 void khopper::album::exportPlayList( const PlayList & playList, const QUrl & fileURI ) {
@@ -63,10 +54,9 @@ void khopper::album::exportPlayList( const PlayList & playList, const QUrl & fil
 }
 
 bool khopper::plugin::registerPlayList( const QString & id, PlayListVerifier v, PlayListCreator c ) {
-	return PlayListFactory::Instance().m.insert( std::make_pair( id, std::make_pair( v, c ) ) ).second;
+	return ApplicationPrivate::self->playlistFactory.registerProduct( id, v, c );
 }
 
 bool khopper::plugin::unregisterPlayList( const QString & id ) {
-	PlayListFactoryPrivate::TableType & m( PlayListFactory::Instance().m );
-	return m.erase( id ) == 1;
+	return ApplicationPrivate::self->playlistFactory.unregisterProduct( id );
 }

@@ -38,6 +38,8 @@ namespace khopper {
 		class AbstractPanel;
 	}
 
+	class ApplicationPrivate;
+
 	/**
 	 * @brief GUI application context
 	 *
@@ -85,12 +87,11 @@ namespace khopper {
 		void errorOccured( const QString & title, const QString & message );
 
 	private:
-		struct ApplicationPrivate;
 		std::shared_ptr< ApplicationPrivate > p_;
 	};
 
-}
+	KHOPPER_DLL Application * pApp();
 
-#define KHOPPER_APPLICATION static_cast< khopper::Application * >( QCoreApplication::instance() )
+}
 
 #endif

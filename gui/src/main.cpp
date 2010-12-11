@@ -55,9 +55,9 @@ int main( int argc, char * argv[] ) {
 	QList< QUrl > tmp;
 	QStringList args( QApplication::arguments().mid( 1 ) );
 	std::for_each( args.begin(), args.end(), [&tmp]( const QString & path ) {
-		tmp.push_back( path );
-		if( tmp.back().scheme().isEmpty() ) {
-			tmp.back().setScheme( "file" );
+		QUrl uri( QUrl::fromUserInput( path ) );
+		if( uri.isValid() ) {
+			tmp.push_back( uri );
 		}
 	} );
 
