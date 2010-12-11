@@ -27,9 +27,11 @@ using khopper::widget::AbstractPanel;
 using khopper::plugin::AbstractPlugin;
 using khopper::plugin::PluginManager;
 
+ApplicationPrivate * ApplicationPrivate::self = NULL;
+
 Application::Application( int & argc, char * * argv ):
 QApplication( argc, argv ),
-p_( new Private ) {
+p_( new ApplicationPrivate ) {
 	QObject::connect( this->p_->pm.get(), SIGNAL( errorOccured( const QString &, const QString & ) ), this, SIGNAL( errorOccured( const QString &, const QString & ) ) );
 }
 
@@ -49,8 +51,11 @@ AbstractPlugin * Application::getPluginInstance( const QString & pluginID ) cons
 	return this->p_->pm->getPluginInstance( pluginID );
 }
 
-Application::Private::Private():
+ApplicationPrivate::ApplicationPrivate():
+readerFactory(),
+playlistFactory(),
 pm( new PluginManager ) {
+	ApplicationPrivate::self = this;
 }
 
 Application * khopper::pApp() {
