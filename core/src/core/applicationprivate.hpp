@@ -43,15 +43,20 @@ namespace khopper {
 		}
 	};
 
+	/**
+	 * @attention Becareful the initialization order of members, this class
+	 * is a part of Singleton. All factories should construct very first and
+	 * should destruct very last.
+	 */
 	class ApplicationPrivate {
 	public:
 		static ApplicationPrivate * self;
 
 		ApplicationPrivate();
 
-		std::shared_ptr< plugin::PluginManager > pm;
 		Factory< QString, QUrl, codec::ReaderSP, FactoryError > readerFactory;
 		Factory< QString, QUrl, album::PlayList, FactoryError > playlistFactory;
+		std::shared_ptr< plugin::PluginManager > pm;
 	};
 
 }

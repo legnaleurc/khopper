@@ -52,9 +52,9 @@ AbstractPlugin * Application::getPluginInstance( const QString & pluginID ) cons
 }
 
 ApplicationPrivate::ApplicationPrivate():
-pm( new PluginManager ),
 readerFactory(),
-playlistFactory() {
+playlistFactory(),
+pm( new PluginManager ) {
 	ApplicationPrivate::self = this;
 }
 
