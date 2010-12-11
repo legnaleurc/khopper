@@ -21,17 +21,16 @@ qt4_wrap_cpp(KHOPPER_CORE_MOC_SOURCES ${KHOPPER_CORE_MOC_HEADERS})
 include_directories("include/khopper" src)
 
 source_group("Generated Files" FILES ${KHOPPER_CORE_MOC_SOURCES})
-add_library(libkhopper SHARED ${KHOPPER_CORE_HEADERS} ${KHOPPER_CORE_SOURCES} ${KHOPPER_CORE_MOC_SOURCES})
-target_link_libraries(libkhopper ${QT_LIBRARIES})
-set_target_properties(libkhopper
+add_library(khopper SHARED ${KHOPPER_CORE_HEADERS} ${KHOPPER_CORE_SOURCES} ${KHOPPER_CORE_MOC_SOURCES})
+target_link_libraries(khopper ${QT_LIBRARIES})
+set_target_properties(khopper
     PROPERTIES
         VERSION ${KHOPPER_VERSION}
         SOVERSION ${KHOPPER_VERSION}
-        PREFIX ""
         FRAMEWORK TRUE
         PUBLIC_HEADER "${KHOPPER_CORE_PUBLIC_HEADERS}")
 
-install(TARGETS libkhopper
+install(TARGETS khopper
     RUNTIME DESTINATION "bin"
     LIBRARY DESTINATION "lib"
     ARCHIVE DESTINATION "lib"
