@@ -20,6 +20,7 @@
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 #include "ffmpegreader.hpp"
+#include "helper.hpp"
 
 #include "khopper/error.hpp"
 
@@ -34,17 +35,6 @@ extern "C" {
 #include <cstring>
 
 namespace {
-
-	static inline const char * wHelper( const QUrl & uri ) {
-		QByteArray tmp( uri.toString().toUtf8() );
-#ifdef Q_OS_WIN32
-		if( uri.scheme() == "file" ) {
-			tmp.push_front( 'w' );
-		}
-#endif
-		qDebug() << "FfmpegReader: processed uri:" << tmp;
-		return tmp;
-	}
 
 	static inline void p_helper( AVPacket * p ) {
 		av_freep( &p );
@@ -63,6 +53,7 @@ namespace {
 using namespace khopper::codec;
 using khopper::error::IOError;
 using khopper::error::CodecError;
+using khopper::ffmpeg::fromURI;
 
 FfmpegReader::FfmpegReader( const QUrl & uri ):
 AbstractReader( uri ),
@@ -103,7 +94,7 @@ void FfmpegReader::doClose() {
 
 void FfmpegReader::openResource_() {
 	AVFormatContext * pFC = NULL;
-	int ret = av_open_input_file( &pFC, wHelper( this->getURI() ), NULL, 0, NULL );
+	int ret = av_open_input_file( &pFC, fromURI( this->getURI() ), NULL, 0, NULL );
 	if( ret != 0 ) {
 		throw IOError(
 			tr(

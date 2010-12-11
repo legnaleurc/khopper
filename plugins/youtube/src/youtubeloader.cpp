@@ -55,7 +55,7 @@ needGo_( true ),
 origURI_( uri ),
 progress_( new QProgressDialog() ) {
 	this->progress_->setWindowTitle( tr( "Downloading progress" ) );
-	this->connect( KHOPPER_APPLICATION, SIGNAL( errorOccured( const QString &, const QString & ) ), SIGNAL( errorOccured( const QString &, const QString & ) ) );
+	this->connect( khopper::pApp(), SIGNAL( errorOccured( const QString &, const QString & ) ), SIGNAL( errorOccured( const QString &, const QString & ) ) );
 }
 
 void YouTubeLoader::parseHeader( bool display ) {
