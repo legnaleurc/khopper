@@ -1,5 +1,5 @@
 /**
- * @file pluginmodel.cpp
+ * @file pluginmodel.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,25 +19,25 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
-#include "pluginmodel.hpp"
+#ifndef KHOPPER_WIDGET_PLUGINMODEL_HPP
+#define KHOPPER_WIDGET_PLUGINMODEL_HPP
 
-using namespace khopper::widget;
+#include <QtCore/QAbstractTableModel>
 
-PluginModel::PluginModel( QObject * parent ) : QAbstractTableModel( parent ) {
-	this->setHeaderData( 0, Qt::Horizontal, tr( "ID" ), Qt::DisplayRole );
-	this->setHeaderData( 1, Qt::Horizontal, tr( "Version" ), Qt::DisplayRole );
-	this->setHeaderData( 2, Qt::Horizontal, tr( "Path" ), Qt::DisplayRole );
-	this->setHeaderData( 3, Qt::Horizontal, tr( "Loaded" ), Qt::DisplayRole );
+namespace khopper {
+	namespace widget {
+
+		class PluginModel : public QAbstractTableModel {
+		public:
+			explicit PluginModel( QObject * parent );
+
+			virtual int columnCount( const QModelIndex & parent = QModelIndex() ) const;
+			virtual QVariant data( const QModelIndex & index, int role = Qt::DisplayRole ) const;
+			virtual QVariant headerData( int section, Qt::Orientation orientation, int role = Qt::DisplayRole ) const;
+			virtual int rowCount( const QModelIndex & parent = QModelIndex() ) const;
+		};
+
+	}
 }
 
-int PluginModel::columnCount( const QModelIndex & /*parent*/ ) const {
-	return 4;
-}
-
-QVariant PluginModel::data( const QModelIndex & /*index*/, int /*role*/ ) const {
-	return QVariant();
-}
-
-int PluginModel::rowCount( const QModelIndex & /*parent*/ ) const {
-	return 0;
-}
+#endif
