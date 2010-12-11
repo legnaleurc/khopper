@@ -1,5 +1,5 @@
 /**
- * @file aboutwidget.hpp
+ * @file progressviewer.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,27 +19,52 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_WIDGET_ABOUTWIDGET_HPP
-#define KHOPPER_WIDGET_ABOUTWIDGET_HPP
+#ifndef KHOPPER_WIDGET_PROGRESSVIEWER_HPP
+#define KHOPPER_WIDGET_PROGRESSVIEWER_HPP
 
+#include "khopper/playlist.hpp"
+#include "khopper/abstractwriter.hpp"
+
+#include <QtCore/QList>
+#include <QtCore/QQueue>
 #include <QtGui/QWidget>
 
 namespace Ui {
-	class AboutWidget;
+	class ProgressViewer;
 }
 
 namespace khopper {
+
+	namespace utility {
+		class Converter;
+	}
+
 	namespace widget {
 
-		class AboutWidget : public QWidget {
+		class ProgressBar;
+
+		class ProgressViewer : public QWidget {
+			Q_OBJECT
 		public:
-			explicit AboutWidget( QWidget * parent );
-			virtual ~AboutWidget();
+			explicit ProgressViewer( QWidget * parent );
+
+			void start( const QList< utility::Converter * > & tasks );
+
+		private slots:
+			void cancel_();
+			void dispatch_();
+
 		private:
-			Ui::AboutWidget * ui_;
+			void dispatch_( ProgressBar * );
+
+			int rc_;
+			QList< ProgressBar * > lp_;
+			QList< utility::Converter * > tasks_;
+			std::shared_ptr< Ui::ProgressViewer > ui_;
 		};
 
 	}
+
 }
 
-#endif // KHOPPER_WIDGET_ABOUTWIDGET_HPP
+#endif

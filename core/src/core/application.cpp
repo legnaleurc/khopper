@@ -27,6 +27,8 @@ using khopper::widget::AbstractPanel;
 using khopper::plugin::AbstractPlugin;
 using khopper::plugin::PluginManager;
 
+ApplicationPrivate * ApplicationPrivate::self = NULL;
+
 Application::Application( int & argc, char * * argv ):
 QApplication( argc, argv ),
 p_( new ApplicationPrivate ) {
@@ -49,6 +51,13 @@ AbstractPlugin * Application::getPluginInstance( const QString & pluginID ) cons
 	return this->p_->pm->getPluginInstance( pluginID );
 }
 
-Application::ApplicationPrivate::ApplicationPrivate():
+ApplicationPrivate::ApplicationPrivate():
+readerFactory(),
+playlistFactory(),
 pm( new PluginManager ) {
+	ApplicationPrivate::self = this;
+}
+
+Application * khopper::pApp() {
+	return static_cast< Application * >( QCoreApplication::instance() );
 }

@@ -36,10 +36,12 @@
 #include <QtGui/QFileDialog>
 #include <QtGui/QMessageBox>
 
+#include <algorithm>
+
 using namespace khopper::widget;
+using khopper::album::createPlayList;
 using khopper::album::PlayList;
 using khopper::error::BaseError;
-using khopper::plugin::createPlayList;
 
 MainWindow::MainWindow():
 QMainWindow( 0, 0 ),
@@ -52,7 +54,7 @@ lastOpenedDir_( QDesktopServices::storageLocation( QDesktopServices::MusicLocati
 	// Setting menu bar
 	this->initMenuBar_();
 
-	QObject::connect( KHOPPER_APPLICATION, SIGNAL( errorOccured( const QString &, const QString & ) ), this, SLOT( showErrorMessage_( const QString &, const QString & ) ) );
+	QObject::connect( khopper::pApp(), SIGNAL( errorOccured( const QString &, const QString & ) ), this, SLOT( showErrorMessage_( const QString &, const QString & ) ) );
 
 	QObject::connect( this->ui_->player, SIGNAL( fileDropped( const QList< QUrl > & ) ), this, SLOT( open( const QList< QUrl > & ) ) );
 	QObject::connect( this->ui_->player, SIGNAL( requireConvert( const khopper::album::PlayList & ) ), this, SLOT( fire_( const khopper::album::PlayList & ) ) );

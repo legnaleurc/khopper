@@ -30,26 +30,6 @@
 
 Q_EXPORT_PLUGIN2( KHOPPER_PLUGIN_ID, khopper::plugin::SinglePlugin )
 
-namespace {
-
-	unsigned int verifier( const QUrl & uri ) {
-		if( uri.scheme() != "file" ) {
-			// TODO: network support
-			return 0;
-		}
-		return 100;
-	}
-
-	khopper::album::PlayList creator( const QUrl & uri ) {
-		khopper::album::TrackSP track( new khopper::album::Track( uri ) );
-
-		khopper::album::PlayList tmp;
-		tmp.push_back( track );
-		return tmp;
-	}
-
-}
-
 using namespace khopper::plugin;
 using khopper::album::PlayList;
 
@@ -60,9 +40,21 @@ AbstractPlugin() {
 }
 
 void SinglePlugin::doInstall() {
-	registerPlayList( verifier, creator );
+	registerPlayList( this->getID(), []( const QUrl & uri )->unsigned int {
+		if( uri.scheme() != "file" ) {
+			// TODO: network support
+			return 0;
+		}
+		return 100;
+	}, []( const QUrl & uri )->PlayList {
+		khopper::album::TrackSP track( new khopper::album::Track( uri ) );
+
+		khopper::album::PlayList tmp;
+		tmp.push_back( track );
+		return tmp;
+	} );
 }
 
 void SinglePlugin::doUninstall() {
-	unregisterPlayList( verifier );
+	unregisterPlayList( this->getID() );
 }

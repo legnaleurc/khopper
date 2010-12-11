@@ -36,8 +36,11 @@
 #include <QtGui/QHeaderView>
 #include <QtGui/QMenu>
 
+#include <algorithm>
+
 using namespace khopper::widget;
 using khopper::album::PlayList;
+using khopper::utility::PlayListModel;
 
 PlayListView::PlayListView( QWidget * parent ):
 QTreeView( parent ),

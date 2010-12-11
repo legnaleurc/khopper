@@ -1,5 +1,5 @@
 /**
- * @file aboutwidget.cpp
+ * @file aboutwidget.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,24 +19,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "aboutwidget.hpp"
-#include "ui_aboutwidget.h"
+#ifndef KHOPPER_WIDGET_ABOUTWIDGET_HPP
+#define KHOPPER_WIDGET_ABOUTWIDGET_HPP
 
-using namespace khopper::widget;
+#include <QtGui/QWidget>
 
-AboutWidget::AboutWidget( QWidget * parent ):
-QWidget( parent, Qt::Dialog ),
-ui_( new Ui::AboutWidget ){
-	this->ui_->setupUi( this );
+#include <memory>
 
-	this->ui_->logo->setPixmap( QPixmap( ":/share/pixmap/logo.png" ).scaled( 60, 60 ) );
-	this->ui_->version->setText( tr(
-		"<h1>%1</h1>"
-		"Version %2<br/>"
-		"Part of %3<br/>"
-	).arg( qApp->applicationName() ).arg( qApp->applicationVersion() ).arg( qApp->organizationName() ) );
+namespace Ui {
+	class AboutWidget;
 }
 
-AboutWidget::~AboutWidget() {
-	delete this->ui_;
+namespace khopper {
+	namespace widget {
+
+		class AboutWidget : public QWidget {
+		public:
+			explicit AboutWidget( QWidget * parent );
+		private:
+			std::shared_ptr< Ui::AboutWidget > ui_;
+		};
+
+	}
 }
+
+#endif // KHOPPER_WIDGET_ABOUTWIDGET_HPP

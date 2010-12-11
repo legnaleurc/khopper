@@ -44,9 +44,9 @@ Mp3Plugin::~Mp3Plugin() {
 }
 
 void Mp3Plugin::doInstall() {
-	KHOPPER_APPLICATION->addPanel( this->panel_ );
+	khopper::pApp()->addPanel( this->panel_ );
 }
 
 void Mp3Plugin::doUninstall() {
-	KHOPPER_APPLICATION->removePanel( this->panel_ );
+	khopper::pApp()->removePanel( this->panel_ );
 }
