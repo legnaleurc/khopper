@@ -34,9 +34,12 @@ namespace Ui {
 
 namespace khopper {
 
+	namespace utility {
+		class PlayListModel;
+	}
+
 	namespace widget {
 
-		class PlayListModel;
 		class PropertyDialog;
 
 		/// Audio player
@@ -85,7 +88,7 @@ namespace khopper {
 
 			album::TrackSP currentTrack_;
 			album::Timestamp duration_;
-			PlayListModel * model_;
+			utility::PlayListModel * model_;
 			bool playable_;
 			Phonon::MediaObject * player_;
 			PropertyDialog * prop_;

@@ -23,7 +23,7 @@
 
 #include <algorithm>
 
-using namespace khopper::widget;
+using namespace khopper::utility;
 using khopper::album::PlayList;
 
 PlayListModel::PlayListModel( QObject * parent ):
@@ -50,6 +50,9 @@ void PlayListModel::changeTextCodec( const QModelIndex & index, QTextCodec * cod
 }
 
 void PlayListModel::append( const PlayList & playList ) {
+	if( playList.empty() ) {
+		return;
+	}
 	int start = this->list_.size();
 	int end = this->list_.size() + playList.size() - 1;
 	this->beginInsertRows( QModelIndex(), start, end );

@@ -1,5 +1,5 @@
 /**
- * @file playlistfactory.hpp
+ * @file progressviewer.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,29 +19,52 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_ALBUM_PLAYLISTFACTORY_HPP
-#define KHOPPER_ALBUM_PLAYLISTFACTORY_HPP
+#ifndef KHOPPER_WIDGET_PROGRESSVIEWER_HPP
+#define KHOPPER_WIDGET_PROGRESSVIEWER_HPP
 
-#include "playlist.hpp"
+#include "khopper/playlist.hpp"
+#include "khopper/abstractwriter.hpp"
 
-#include <loki/Singleton.h>
+#include <QtCore/QList>
+#include <QtCore/QQueue>
+#include <QtGui/QWidget>
 
-#include <map>
-#include <utility>
+namespace Ui {
+	class ProgressViewer;
+}
 
 namespace khopper {
-	namespace plugin {
 
-		class PlayListFactoryPrivate {
+	namespace utility {
+		class Converter;
+	}
+
+	namespace widget {
+
+		class ProgressBar;
+
+		class ProgressViewer : public QWidget {
+			Q_OBJECT
 		public:
-			typedef std::map< QString, std::pair< PlayListVerifier, PlayListCreator > > TableType;
+			explicit ProgressViewer( QWidget * parent );
 
-			TableType m;
+			void start( const QList< utility::Converter * > & tasks );
+
+		private slots:
+			void cancel_();
+			void dispatch_();
+
+		private:
+			void dispatch_( ProgressBar * );
+
+			int rc_;
+			QList< ProgressBar * > lp_;
+			QList< utility::Converter * > tasks_;
+			std::shared_ptr< Ui::ProgressViewer > ui_;
 		};
 
-		typedef Loki::SingletonHolder< PlayListFactoryPrivate > PlayListFactory;
-
 	}
+
 }
 
 #endif

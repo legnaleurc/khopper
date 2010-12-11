@@ -22,7 +22,10 @@
 #ifndef KHOPPER_APPLICATIONPRIVATE_HPP
 #define KHOPPER_APPLICATIONPRIVATE_HPP
 
+#include "abstractreader.hpp"
 #include "application.hpp"
+#include "factory.hpp"
+#include "playlist.hpp"
 
 namespace khopper {
 
@@ -30,11 +33,32 @@ namespace khopper {
 		class PluginManager;
 	}
 
-	struct Application::ApplicationPrivate {
+	template< typename KeyType, typename CreatorType >
+	class FactoryError {
+	public:
+		CreatorType onError( const KeyType & /*key*/ ) const {
+			return []( const KeyType & /*key*/ )->typename CreatorType::result_type {
+				throw error::RunTimeError( "Find no suitable codec." );
+			};
+		}
+	};
+
+	/**
+	 * @attention Becareful the initialization order of members, this class
+	 * is a part of Singleton. All factories should construct very first and
+	 * should destruct very last.
+	 */
+	class ApplicationPrivate {
+	public:
+		static ApplicationPrivate * self;
+
 		ApplicationPrivate();
 
+		Factory< QString, QUrl, codec::ReaderSP, FactoryError > readerFactory;
+		Factory< QString, QUrl, album::PlayList, FactoryError > playlistFactory;
 		std::shared_ptr< plugin::PluginManager > pm;
 	};
+
 }
 
 #endif

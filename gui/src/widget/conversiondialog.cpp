@@ -29,14 +29,16 @@
 
 #include <QtCore/QSettings>
 #include <QtGui/QFileDialog>
+#include <QtGui/QDesktopServices>
 
-#include <boost/format.hpp>
+#include <algorithm>
 
 using namespace khopper::widget;
 using khopper::album::TrackCSP;
 using khopper::album::TrackSP;
 using khopper::album::PlayList;
 using khopper::codec::WriterSP;
+using khopper::utility::Converter;
 
 ConversionDialog::ConversionDialog( QWidget * parent ):
 QDialog( parent ),
@@ -44,7 +46,7 @@ ui_( new Ui::ConversionDialog ),
 progress_( new ProgressViewer( this ) ),
 table_() {
 	this->ui_->setupUi( this );
-	this->ui_->outputPath->setText( QDir::homePath() );
+	this->ui_->outputPath->setText( QDesktopServices::displayName( QDesktopServices::MusicLocation ) );
 
 	QSettings setting;
 	// Output name template
@@ -54,8 +56,8 @@ table_() {
 
 	connect( this->ui_->browse, SIGNAL( clicked() ), this, SLOT( changeOutputPath_() ) );
 
-	connect( KHOPPER_APPLICATION, SIGNAL( panelAdded( khopper::widget::AbstractPanel * ) ), this, SLOT( addPanel( khopper::widget::AbstractPanel * ) ) );
-	connect( KHOPPER_APPLICATION, SIGNAL( panelRemoved( khopper::widget::AbstractPanel * ) ), this, SLOT( removePanel( khopper::widget::AbstractPanel * ) ) );
+	connect( khopper::pApp(), SIGNAL( panelAdded( khopper::widget::AbstractPanel * ) ), this, SLOT( addPanel( khopper::widget::AbstractPanel * ) ) );
+	connect( khopper::pApp(), SIGNAL( panelRemoved( khopper::widget::AbstractPanel * ) ), this, SLOT( removePanel( khopper::widget::AbstractPanel * ) ) );
 }
 
 void ConversionDialog::convert( const PlayList & tracks ) {
@@ -100,11 +102,17 @@ QString ConversionDialog::getOutputPath_( TrackSP track ) {
 
 QString ConversionDialog::getOutputName_( TrackSP track ) {
 	QString tmp = this->ui_->tpl->text();
-	tmp.replace( "%t", "%1%" );
-	tmp.replace( "%a", "%2%" );
-	tmp.replace( QRegExp( "%(\\d*)i" ), "%|3$0\\1|" );
+	tmp.replace( "%t", track->getTitle() );
+	tmp.replace( "%a", track->getArtist() );
+	QRegExp pattern( "%(\\d*)i" );
+	int offset = 0;
+	while( ( offset = pattern.indexIn( tmp, offset ) ) >= 0 ) {
+		QString newString( QString( "%1" ).arg( QString::number( track->getIndex() ), pattern.cap( 1 ).toInt(), '0' ) );
+		tmp.replace( offset, pattern.matchedLength(), newString );
+		offset += newString.length() - pattern.matchedLength();
+	}
 	tmp.replace( "%%", "%" );
-	return QString::fromStdString( ( boost::format( tmp.toStdString() ) % track->getTitle().toStdString() % track->getArtist().toStdString() % track->getIndex() ).str() );
+	return tmp;
 }
 
 void ConversionDialog::changeOutputPath_() {

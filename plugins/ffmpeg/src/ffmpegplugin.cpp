@@ -22,6 +22,7 @@
 #include "ffmpegplugin.hpp"
 #include "wavpanel.hpp"
 #include "ffmpegreader.hpp"
+#include "helper.hpp"
 #ifdef _WIN32
 #include "wfile.hpp"
 #endif
@@ -33,26 +34,13 @@ extern "C" {
 #include <libavformat/avformat.h>
 }
 
+#include <QtCore/QtDebug>
 #include <QtCore/QtPlugin>
 
 Q_EXPORT_PLUGIN2( KHOPPER_PLUGIN_ID, khopper::plugin::FfmpegPlugin )
 
-namespace {
-
-	unsigned int verifier( const QUrl & uri ) {
-		if( guess_format( NULL, uri.toLocalFile().toStdString().c_str(), NULL ) != NULL ) {
-			return 100;
-		}
-		return 0;
-	}
-
-	khopper::codec::ReaderSP creator( const QUrl & uri ) {
-		return khopper::codec::ReaderSP( new khopper::codec::FfmpegReader( uri ) );
-	}
-
-}
-
 using namespace khopper::plugin;
+using khopper::ffmpeg::fromURI;
 using khopper::widget::WavPanel;
 using khopper::plugin::registerReader;
 using khopper::plugin::unregisterReader;
@@ -65,15 +53,29 @@ panel_( new WavPanel ) {
 }
 
 void FfmpegPlugin::doInstall() {
-	KHOPPER_APPLICATION->addPanel( this->panel_.get() );
+	khopper::pApp()->addPanel( this->panel_.get() );
 	av_register_all();
 #ifdef _WIN32
 	av_register_protocol( &khopper::codec::wfileProtocol );
 #endif
-	registerReader( this->getID(), verifier, creator );
+	registerReader( this->getID(), []( const QUrl & uri )->unsigned int {
+		qDebug() << "verifing FfmpegReader" << uri << fromURI( uri );
+		AVFormatContext * pFC = NULL;
+		if( av_open_input_file( &pFC, fromURI( uri ), NULL, 0, NULL ) == 0 ) {
+			if( av_find_stream_info( pFC ) < 0 ) {
+				return 0;
+			}
+			av_close_input_file( pFC );
+			qDebug() << "returned 100 (from FfmpegReader)";
+			return 100;
+		}
+		return 0;
+	}, []( const QUrl & uri )->khopper::codec::ReaderSP {
+		return khopper::codec::ReaderSP( new khopper::codec::FfmpegReader( uri ) );
+	} );
 }
 
 void FfmpegPlugin::doUninstall() {
-	KHOPPER_APPLICATION->removePanel( this->panel_.get() );
+	khopper::pApp()->removePanel( this->panel_.get() );
 	unregisterReader( this->getID() );
 }

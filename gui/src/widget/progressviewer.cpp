@@ -35,6 +35,7 @@ namespace {
 using namespace khopper::widget;
 using khopper::album::PlayList;
 using khopper::codec::WriterSP;
+using khopper::utility::Converter;
 
 ProgressViewer::ProgressViewer( QWidget * parent ):
 QWidget( parent, Qt::Window ),

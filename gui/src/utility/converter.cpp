@@ -26,7 +26,7 @@
 #include "khopper/error.hpp"
 #include "khopper/text.hpp"
 
-using namespace khopper::widget;
+using namespace khopper::utility;
 using khopper::album::TrackCSP;
 using khopper::codec::WriterSP;
 using khopper::codec::ReaderSP;

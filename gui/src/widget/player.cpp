@@ -51,6 +51,8 @@ namespace {
 using namespace khopper::widget;
 using khopper::album::PlayList;
 using khopper::album::TrackSP;
+using khopper::utility::PlayListModel;
+using khopper::utility::WavWrapper;
 
 Player::Player( QWidget * parent ):
 QWidget( parent, 0 ),

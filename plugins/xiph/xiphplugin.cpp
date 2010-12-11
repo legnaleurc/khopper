@@ -31,23 +31,6 @@
 
 Q_EXPORT_PLUGIN2( KHOPPER_PLUGIN_ID, khopper::plugin::XiphPlugin )
 
-namespace {
-
-	unsigned int verifier( const QUrl & uri ) {
-		// FIXME
-		QFileInfo info( uri.toLocalFile() );
-		if( info.suffix().toLower() == "flac" ) {
-			return 200;
-		}
-		return 0;
-	}
-
-	khopper::codec::ReaderSP creator( const QUrl & uri ) {
-		return khopper::codec::ReaderSP( new khopper::codec::FlacReader( uri ) );
-	}
-
-}
-
 using namespace khopper::plugin;
 using khopper::widget::FlacPanel;
 using khopper::widget::OggPanel;
@@ -68,13 +51,22 @@ XiphPlugin::~XiphPlugin() {
 }
 
 void XiphPlugin::doInstall() {
-	KHOPPER_APPLICATION->addPanel( this->flacPanel_ );
-	KHOPPER_APPLICATION->addPanel( this->oggPanel_ );
-	registerReader( this->getID(), verifier, creator );
+	khopper::pApp()->addPanel( this->flacPanel_ );
+	khopper::pApp()->addPanel( this->oggPanel_ );
+	registerReader( this->getID(), []( const QUrl & uri )->unsigned int {
+		// FIXME
+		QFileInfo info( uri.toLocalFile() );
+		if( info.suffix().toLower() == "flac" ) {
+			return 200;
+		}
+		return 0;
+	}, []( const QUrl & uri )->khopper::codec::ReaderSP {
+		return khopper::codec::ReaderSP( new khopper::codec::FlacReader( uri ) );
+	} );
 }
 
 void XiphPlugin::doUninstall() {
-	KHOPPER_APPLICATION->removePanel( this->flacPanel_ );
-	KHOPPER_APPLICATION->removePanel( this->oggPanel_ );
+	khopper::pApp()->removePanel( this->flacPanel_ );
+	khopper::pApp()->removePanel( this->oggPanel_ );
 	unregisterReader( this->getID() );
 }
