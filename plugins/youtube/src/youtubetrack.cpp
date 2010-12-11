@@ -5,9 +5,10 @@
 #include <QtCore/QEventLoop>
 
 using namespace khopper::album;
-using khopper::plugin::YouTubeLoader;
+using khopper::album::Timestamp;
 using khopper::codec::ReaderSP;
 using khopper::codec::YouTubeReader;
+using khopper::plugin::YouTubeLoader;
 
 YouTubeTrack::YouTubeTrack( const QUrl & uri, const QString & title, const QString & format ):
 Track( uri ),
@@ -15,6 +16,10 @@ format_( format ) {
 	this->setAlbum( AlbumSP( new Album ) );
 	this->setIndex( 1 );
 	this->setTitle( title );
+	ReaderSP reader( this->createReader() );
+	reader->open( QIODevice::ReadOnly );
+	this->setDuration( Timestamp::fromMillisecond( reader->getDuration() ) );
+	reader->close();
 }
 
 ReaderSP YouTubeTrack::createReader() const {
