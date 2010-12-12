@@ -37,7 +37,7 @@ source_group("Form Files" REGULAR_EXPRESSION .*\\.ui)
 
 if(MSVC)
     add_executable(khopper_gui WIN32 main.rc ${KHOPPER_GUI_HEADERS} ${KHOPPER_GUI_SOURCES} ${KHOPPER_GUI_MOC_SOURCES} ${KHOPPER_GUI_UIC_HEADERS} ${KHOPPER_GUI_RCC_SOURCES})
-    target_link_libraries(khopper_gui khopper ${QT_LIBRARIES} ${QT_PHONON_LIBRARY} ${QT_QTGUI_LIBRARY})
+    target_link_libraries(khopper_gui khopper ${QT_LIBRARIES} ${QT_PHONON_LIBRARY} ${QT_QTMAIN_LIBRARY})
 else()
     add_executable(khopper_gui ${KHOPPER_GUI_HEADERS} ${KHOPPER_GUI_SOURCES} ${KHOPPER_GUI_MOC_SOURCES} ${KHOPPER_GUI_UIC_HEADERS} ${KHOPPER_GUI_RCC_SOURCES})
     target_link_libraries(khopper_gui khopper ${QT_LIBRARIES} ${QT_PHONON_LIBRARY})
