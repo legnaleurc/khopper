@@ -23,7 +23,6 @@
 #include "rangedreader.hpp"
 
 #include "khopper/error.hpp"
-#include "khopper/text.hpp"
 #include "khopper/track.hpp"
 
 #include <QtCore/QRegExp>

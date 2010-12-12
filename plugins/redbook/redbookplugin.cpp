@@ -22,7 +22,6 @@
 #include "redbookplugin.hpp"
 #include "redbookreader.hpp"
 
-#include "khopper/text.hpp"
 #include "khopper/application.hpp"
 
 #include <QtCore/QtPlugin>

@@ -24,7 +24,6 @@
 #include "flac/flacreader.hpp"
 #include "ogg/oggpanel.hpp"
 
-#include "khopper/text.hpp"
 #include "khopper/application.hpp"
 
 #include <QtCore/QtPlugin>
