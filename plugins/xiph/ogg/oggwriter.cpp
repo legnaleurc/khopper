@@ -22,7 +22,6 @@
 #include "oggwriter.hpp"
 
 #include "khopper/error.hpp"
-#include "khopper/text.hpp"
 
 #include <cstdio>
 #include <cstdlib>

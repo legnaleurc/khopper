@@ -26,7 +26,6 @@
 #include "mainwindow.hpp"
 
 #include "khopper/application.hpp"
-#include "khopper/text.hpp"
 
 #include <QtCore/QSettings>
 #include <QtCore/QTextCodec>

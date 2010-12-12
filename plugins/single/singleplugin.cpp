@@ -23,7 +23,6 @@
 
 #include "khopper/abstractreader.hpp"
 #include "khopper/playlist.hpp"
-#include "khopper/text.hpp"
 
 #include <QtCore/QDir>
 #include <QtCore/QtPlugin>

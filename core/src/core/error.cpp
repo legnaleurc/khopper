@@ -24,7 +24,7 @@
 using namespace khopper::error;
 
 BaseError::BaseError( int code ) : msg_() {
-#ifdef Q_OS_WIN
+#ifdef Q_CC_MSVC
 	char tmp[1024];
 	strerror_s( tmp, code );
 	this->msg_ = QString::fromUtf8( tmp );
