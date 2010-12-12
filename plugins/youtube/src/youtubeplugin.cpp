@@ -22,7 +22,6 @@
 #include "youtubeplugin.hpp"
 #include "youtubeloader.hpp"
 #include "youtubetrack.hpp"
-#include "khopper/text.hpp"
 #include "khopper/playlist.hpp"
 
 #include <QtCore/QtPlugin>
@@ -93,7 +92,9 @@ void YouTubePlugin::doInstall() {
 	}, [&]( const QUrl & uri )->PlayList {
 		YouTubeLoader loader( uri );
 		loader.parseHeader( true );
-		QString format( loader.selectFormat() );
+//		QString format( loader.selectFormat() );
+		// Always use MP4 360p, it makes no diff for audio.
+		QString format( "18" );
 		khopper::album::TrackSP track( new khopper::album::YouTubeTrack( uri, loader.getTitle(), format ) );
 
 		khopper::album::PlayList tmp;
@@ -104,4 +105,6 @@ void YouTubePlugin::doInstall() {
 
 void YouTubePlugin::doUninstall() {
 	unregisterPlayList( this->getID() );
+	YouTubeLoader::errorString().clear();
+	YouTubeLoader::formats().clear();
 }
