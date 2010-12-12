@@ -24,8 +24,6 @@
 #include "oggwriter.hpp"
 #include "../flac/flacwriter.hpp"
 
-#include "khopper/text.hpp"
-
 #include <QtCore/QVariant>
 
 using namespace khopper::widget;

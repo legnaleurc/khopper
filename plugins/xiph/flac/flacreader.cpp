@@ -21,8 +21,6 @@
  */
 #include "flacreader.hpp"
 
-#include "khopper/text.hpp"
-
 #include <QtCore/QMultiMap>
 #include <QtCore/QStringList>
 #include <QtCore/QtDebug>
