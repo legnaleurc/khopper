@@ -22,7 +22,7 @@ include_directories("include/khopper" src)
 
 source_group("Generated Files" FILES ${KHOPPER_CORE_MOC_SOURCES})
 add_library(khopper SHARED ${KHOPPER_CORE_HEADERS} ${KHOPPER_CORE_SOURCES} ${KHOPPER_CORE_MOC_SOURCES})
-target_link_libraries(khopper ${QT_LIBRARIES})
+target_link_libraries(khopper ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY})
 set_target_properties(khopper
     PROPERTIES
         VERSION ${KHOPPER_VERSION}
