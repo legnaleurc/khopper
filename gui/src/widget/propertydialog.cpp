@@ -27,6 +27,7 @@ using khopper::album::TrackSP;
 
 PropertyDialog::PropertyDialog( QWidget * parent ):
 QDialog( parent ),
+currentTrack_(),
 ui_( new Ui::PropertyDialog ) {
 	this->ui_->setupUi( this );
 
@@ -35,6 +36,7 @@ ui_( new Ui::PropertyDialog ) {
 }
 
 int PropertyDialog::exec( TrackSP track ) {
+	this->currentTrack_ = track;
 	this->ui_->title->setText( track->getTitle() );
 	this->ui_->artist->setText( track->getArtist() );
 	this->ui_->albumTitle->setText( track->getAlbum()->getTitle() );
@@ -48,6 +50,7 @@ void PropertyDialog::perform_( QAbstractButton * button ) {
 	switch( this->ui_->buttonBox->buttonRole( button ) ) {
 		case QDialogButtonBox::AcceptRole:
 			this->write_();
+			this->currentTrack_.reset();
 			this->accept();
 			break;
 		case QDialogButtonBox::ApplyRole:
@@ -55,6 +58,7 @@ void PropertyDialog::perform_( QAbstractButton * button ) {
 			break;
 		case QDialogButtonBox::RejectRole:
 			this->reject();
+			this->currentTrack_.reset();
 			break;
 		default:
 			;
@@ -62,4 +66,7 @@ void PropertyDialog::perform_( QAbstractButton * button ) {
 }
 
 void PropertyDialog::write_() {
+	this->currentTrack_->setTitle( this->ui_->title->text() );
+	this->currentTrack_->setArtist( this->ui_->artist->text() );
+	this->currentTrack_->getAlbum()->setTitle( this->ui_->albumTitle->text() );
 }
