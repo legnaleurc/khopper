@@ -108,10 +108,9 @@ void OggWriter::doOpen() {
 	vorbis_comment * vc = static_cast< vorbis_comment * >( std::malloc( sizeof( vorbis_comment ) ) );
 	this->comments_.reset( vc, vorbisCommentHelper );
 	vorbis_comment_init( vc );
-	// NOTE: dirty hack for the stupid prototype of vorbis_comment_add_tag.
-	vorbis_comment_add_tag( vc, const_cast< char * >( "TITLE" ), this->getTitle().data() );
-	vorbis_comment_add_tag( vc, const_cast< char * >( "ALBUM" ), this->getAlbum().data() );
-	vorbis_comment_add_tag( vc, const_cast< char * >( "ARTIST" ), this->getArtist().data() );
+	vorbis_comment_add_tag( vc, "TITLE", this->getTitle().constData() );
+	vorbis_comment_add_tag( vc, "ALBUM", this->getAlbum().constData() );
+	vorbis_comment_add_tag( vc, "ARTIST", this->getArtist().constData() );
 
 	ogg_packet header;
 	ogg_packet header_common;
