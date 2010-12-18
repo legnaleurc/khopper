@@ -1,5 +1,7 @@
 # core
 
+find_package(TagLib REQUIRED)
+
 # hack MSCV path
 if(MSVC)
     set(LIBRARY_OUTPUT_PATH "${CMAKE_BINARY_DIR}")
@@ -18,11 +20,11 @@ set(KHOPPER_CORE_MOC_HEADERS
 
 qt4_wrap_cpp(KHOPPER_CORE_MOC_SOURCES ${KHOPPER_CORE_MOC_HEADERS})
 
-include_directories("include/khopper" src)
+include_directories("include/khopper" src ${TAGLIB_INCLUDE_DIR})
 
 source_group("Generated Files" FILES ${KHOPPER_CORE_MOC_SOURCES})
 add_library(khopper SHARED ${KHOPPER_CORE_HEADERS} ${KHOPPER_CORE_SOURCES} ${KHOPPER_CORE_MOC_SOURCES})
-target_link_libraries(khopper ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY})
+target_link_libraries(khopper ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${TAGLIB_LIBRARIES})
 set_target_properties(khopper
     PROPERTIES
         VERSION ${KHOPPER_VERSION}

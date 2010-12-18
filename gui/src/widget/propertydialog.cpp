@@ -69,4 +69,6 @@ void PropertyDialog::write_() {
 	this->currentTrack_->setTitle( this->ui_->title->text() );
 	this->currentTrack_->setArtist( this->ui_->artist->text() );
 	this->currentTrack_->getAlbum()->setTitle( this->ui_->albumTitle->text() );
+
+	this->currentTrack_->save();
 }

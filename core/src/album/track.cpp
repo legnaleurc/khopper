@@ -22,6 +22,9 @@
 #include "trackprivate.hpp"
 #include "error.hpp"
 
+#include <fileref.h>
+#include <tag.h>
+
 #include <QtCore/QHash>
 #include <QtCore/QtDebug>
 
@@ -100,6 +103,20 @@ QString Track::getTitle() const {
 
 const QUrl & Track::getURI() const {
 	return this->p_->uri;
+}
+
+void Track::save() const {
+	if( this->p_->uri.scheme() != "file" ) {
+		return;
+	}
+
+	TagLib::FileRef fout( this->p_->uri.toLocalFile().toUtf8().constData() );
+	fout.tag()->setAlbum( TagLib::String( this->getAlbum()->getTitle().toUtf8().constData(), TagLib::String::UTF8 ) );
+	fout.tag()->setArtist( TagLib::String( this->getArtist().toUtf8().constData(), TagLib::String::UTF8 ) );
+	fout.tag()->setTitle( TagLib::String( this->getTitle().toUtf8().constData(), TagLib::String::UTF8 ) );
+	fout.tag()->setTrack( this->getIndex() );
+
+	fout.save();
 }
 
 void Track::setAlbum( AlbumSP album ) {
