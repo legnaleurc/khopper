@@ -184,7 +184,6 @@ void FfmpegReader::setupDecoder_() {
 }
 
 void FfmpegReader::readHeader_() {
-	av_metadata_conv( this->pFormatContext_.get(), NULL, this->pFormatContext_->iformat->metadata_conv );
 	AVMetadataTag * mt = NULL;
 	if( ( mt = av_metadata_get( this->pFormatContext_->metadata, "title", NULL, 0 ) ) ) {
 		this->setTitle( mt->value );
