@@ -185,29 +185,37 @@ void FfmpegReader::setupDecoder_() {
 
 void FfmpegReader::readHeader_() {
 	av_metadata_conv( this->pFormatContext_.get(), NULL, this->pFormatContext_->iformat->metadata_conv );
+	if( this->pStream_->metadata ) {
+		this->readMetadata_( this->pStream_->metadata );
+	} else {
+		this->readMetadata_( this->pFormatContext_->metadata );
+	}
+}
+
+void FfmpegReader::readMetadata_( AVMetadata * metadata ) {
 	AVMetadataTag * mt = NULL;
-	if( ( mt = av_metadata_get( this->pFormatContext_->metadata, "title", NULL, 0 ) ) ) {
+	if( ( mt = av_metadata_get( metadata, "title", NULL, 0 ) ) ) {
 		this->setTitle( mt->value );
 	}
-	if( ( mt = av_metadata_get( this->pFormatContext_->metadata, "author", NULL, 0 ) ) ) {
+	if( ( mt = av_metadata_get( metadata, "author", NULL, 0 ) ) ) {
 		this->setArtist( mt->value );
 	}
-	if( ( mt = av_metadata_get( this->pFormatContext_->metadata, "copyright", NULL, 0 ) ) ) {
+	if( ( mt = av_metadata_get( metadata, "copyright", NULL, 0 ) ) ) {
 		this->setCopyright( mt->value );
 	}
-	if( ( mt = av_metadata_get( this->pFormatContext_->metadata, "comment", NULL, 0 ) ) ) {
+	if( ( mt = av_metadata_get( metadata, "comment", NULL, 0 ) ) ) {
 		this->setComment( mt->value );
 	}
-	if( ( mt = av_metadata_get( this->pFormatContext_->metadata, "album", NULL, 0 ) ) ) {
+	if( ( mt = av_metadata_get( metadata, "album", NULL, 0 ) ) ) {
 		this->setAlbumTitle( mt->value );
 	}
-	if( ( mt = av_metadata_get( this->pFormatContext_->metadata, "year", NULL, 0 ) ) ) {
+	if( ( mt = av_metadata_get( metadata, "year", NULL, 0 ) ) ) {
 		this->setYear( mt->value );
 	}
-	if( ( mt = av_metadata_get( this->pFormatContext_->metadata, "track", NULL, 0 ) ) ) {
+	if( ( mt = av_metadata_get( metadata, "track", NULL, 0 ) ) ) {
 		this->setIndex( std::atoi( mt->value ) );
 	}
-	if( ( mt = av_metadata_get( this->pFormatContext_->metadata, "genre", NULL, 0 ) ) ) {
+	if( ( mt = av_metadata_get( metadata, "genre", NULL, 0 ) ) ) {
 		this->setGenre( mt->value );
 	}
 }
