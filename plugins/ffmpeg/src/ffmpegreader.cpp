@@ -197,7 +197,7 @@ void FfmpegReader::readMetadata_( AVMetadata * metadata ) {
 	if( ( mt = av_metadata_get( metadata, "title", NULL, 0 ) ) ) {
 		this->setTitle( mt->value );
 	}
-	if( ( mt = av_metadata_get( metadata, "author", NULL, 0 ) ) ) {
+	if( ( mt = av_metadata_get( metadata, "artist", NULL, 0 ) ) ) {
 		this->setArtist( mt->value );
 	}
 	if( ( mt = av_metadata_get( metadata, "copyright", NULL, 0 ) ) ) {
