@@ -111,9 +111,9 @@ void Track::save() const {
 	}
 
 	TagLib::FileRef fout( this->p_->uri.toLocalFile().toUtf8().constData() );
-	fout.tag()->setAlbum( this->getAlbum()->getTitle().toUtf8().constData() );
-	fout.tag()->setArtist( this->getArtist().toUtf8().constData() );
-	fout.tag()->setTitle( this->getTitle().toUtf8().constData() );
+	fout.tag()->setAlbum( TagLib::String( this->getAlbum()->getTitle().toUtf8().constData(), TagLib::String::UTF8 ) );
+	fout.tag()->setArtist( TagLib::String( this->getArtist().toUtf8().constData(), TagLib::String::UTF8 ) );
+	fout.tag()->setTitle( TagLib::String( this->getTitle().toUtf8().constData(), TagLib::String::UTF8 ) );
 	fout.tag()->setTrack( this->getIndex() );
 
 	fout.save();
