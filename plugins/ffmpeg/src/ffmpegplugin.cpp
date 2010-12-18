@@ -27,7 +27,6 @@
 #include "wfile.hpp"
 #endif
 
-#include "khopper/text.hpp"
 #include "khopper/application.hpp"
 
 extern "C" {

@@ -24,7 +24,6 @@
 #include "khopper/abstractreader.hpp"
 #include "khopper/abstractwriter.hpp"
 #include "khopper/error.hpp"
-#include "khopper/text.hpp"
 
 using namespace khopper::utility;
 using khopper::album::TrackCSP;

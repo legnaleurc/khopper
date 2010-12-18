@@ -22,7 +22,6 @@
 #include "mp3writer.hpp"
 
 #include "khopper/error.hpp"
-#include "khopper/text.hpp"
 
 #include <id3v2tag.h>
 
