@@ -42,14 +42,14 @@ RedbookPlugin::~RedbookPlugin() {
 }
 
 void RedbookPlugin::doInstall() {
-	registerReader( this->getID(), []( const QUrl & uri ) {
+	registerReader( this->getID(), []( const QUrl & uri )->int {
 		QFileInfo info( uri.toLocalFile() );
 		if( info.suffix().toLower() == "bin" ) {
 			qDebug() << "returned 200 (" << Q_FUNC_INFO << ")";
 			return 200;
 		}
 		return 0;
-	}, []( const QUrl & uri ) {
+	}, []( const QUrl & uri )->khopper::codec::ReaderSP {
 		return khopper::codec::ReaderSP( new khopper::codec::RedbookReader( uri ) );
 	} );
 }
