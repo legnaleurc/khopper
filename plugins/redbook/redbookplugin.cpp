@@ -25,24 +25,9 @@
 #include "khopper/application.hpp"
 
 #include <QtCore/QtPlugin>
+#include <QtCore/QtDebug>
 
 Q_EXPORT_PLUGIN2( KHOPPER_PLUGIN_ID, khopper::plugin::RedbookPlugin )
-
-namespace {
-
-	int verifier( const QUrl & uri ) {
-		QFileInfo info( uri.toLocalFile() );
-		if( info.suffix().toLower() == "bin" ) {
-			return 200;
-		}
-		return 0;
-	}
-
-	khopper::codec::ReaderSP creator( const QUrl & uri ) {
-		return khopper::codec::ReaderSP( new khopper::codec::RedbookReader( uri ) );
-	}
-
-}
 
 using namespace khopper::plugin;
 using khopper::plugin::registerReader;
@@ -57,7 +42,16 @@ RedbookPlugin::~RedbookPlugin() {
 }
 
 void RedbookPlugin::doInstall() {
-	registerReader( this->getID(), verifier, creator );
+	registerReader( this->getID(), []( const QUrl & uri ) {
+		QFileInfo info( uri.toLocalFile() );
+		if( info.suffix().toLower() == "bin" ) {
+			qDebug() << "returned 200 (" << Q_FUNC_INFO << ")";
+			return 200;
+		}
+		return 0;
+	}, []( const QUrl & uri ) {
+		return khopper::codec::ReaderSP( new khopper::codec::RedbookReader( uri ) );
+	} );
 }
 
 void RedbookPlugin::doUninstall() {

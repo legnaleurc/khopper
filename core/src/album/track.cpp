@@ -26,6 +26,7 @@
 #include <tag.h>
 
 #include <QtCore/QHash>
+#include <QtCore/QtDebug>
 
 using namespace khopper::album;
 using khopper::codec::AudioFormat;
@@ -43,15 +44,16 @@ p_( new Private( uri ) ) {
 		this->p_->creator = getReaderCreator( uri );
 		reader = this->createReader();
 		if( !reader ) {
-			throw RunTimeError( "Invalid reader" );
+			throw RunTimeError( QObject::tr( "Invalid reader (%1)" ).arg( Q_FUNC_INFO ) );
 		}
-	} catch( BaseError & /*e*/ ) {
-		return;
+	} catch( BaseError & e ) {
+		qDebug() << e.getMessage() << typeid( e ).name() << Q_FUNC_INFO;
+		throw;
 	}
 
 	reader->open( QIODevice::ReadOnly );
 	if( !reader->isOpen() ) {
-		throw CodecError( QObject::tr( "Can not open file!" ) );
+		throw CodecError( QObject::tr( "Can not open `%1\' (%2)" ).arg( uri.toString() ).arg( Q_FUNC_INFO ) );
 	}
 
 	this->setAlbum( AlbumSP( new Album ) );
