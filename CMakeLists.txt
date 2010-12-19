@@ -38,12 +38,15 @@ endif()
 set(CMAKE_DEBUG_POSTFIX d)
 
 add_subdirectory(core)
+
 if(QT_PHONON_FOUND)
-    list(APPEND KHOPPER_OPTIONAL_FOUND "Qt Phonon module for GUI module.")
+    list(APPEND KHOPPER_OPTIONAL_FOUND "[GUI] GUI module enabled.")
     add_subdirectory(gui)
 else()
-    list(APPEND KHOPPER_OPTIONAL_NOT_FOUND "Qt Phonon module for GUI module.")
+    list(APPEND KHOPPER_OPTIONAL_NOT_FOUND "[GUI] GUI module disabled:")
+    list(APPEND KHOPPER_OPTIONAL_NOT_FOUND "    Qt Phonon not found.")
 endif()
+
 add_subdirectory(plugins)
 
 list(LENGTH KHOPPER_OPTIONAL_FOUND length)
