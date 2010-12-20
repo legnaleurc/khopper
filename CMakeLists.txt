@@ -20,7 +20,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "MinSizeRel"
     add_definitions(-DQT_NO_DEBUG -DQT_NO_DEBUG_OUTPUT)
 endif()
 if(CMAKE_COMPILER_IS_GNUCXX)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -Wextra -Wall")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -pedantic -Wextra -Wall -pipe")
 elseif(MSVC)
     add_definitions("/D__STDC_CONSTANT_MACROS")
     if(CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
