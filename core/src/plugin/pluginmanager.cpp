@@ -53,7 +53,7 @@ loadedPlugins_() {
 
 	// first search binary related paths, for build time testing
 	QDir tmp( qApp->applicationDirPath() );
-#ifdef _MSC_VER
+#ifdef CMAKE_INTDIR
 	// hack for MSVC
 	if( tmp.cd( "../plugins/" CMAKE_INTDIR ) ) {
 		this->searchPaths_.push_back( tmp );

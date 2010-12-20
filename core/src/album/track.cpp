@@ -22,7 +22,11 @@
 #include "trackprivate.hpp"
 #include "error.hpp"
 
+#include <fileref.h>
+#include <tag.h>
+
 #include <QtCore/QHash>
+#include <QtCore/QtDebug>
 
 using namespace khopper::album;
 using khopper::codec::AudioFormat;
@@ -40,15 +44,16 @@ p_( new Private( uri ) ) {
 		this->p_->creator = getReaderCreator( uri );
 		reader = this->createReader();
 		if( !reader ) {
-			throw RunTimeError( "Invalid reader" );
+			throw RunTimeError( QObject::tr( "Invalid reader (%1)" ).arg( Q_FUNC_INFO ) );
 		}
-	} catch( BaseError & /*e*/ ) {
-		return;
+	} catch( BaseError & e ) {
+		qDebug() << e.getMessage() << typeid( e ).name() << Q_FUNC_INFO;
+		throw;
 	}
 
 	reader->open( QIODevice::ReadOnly );
 	if( !reader->isOpen() ) {
-		throw CodecError( QObject::tr( "Can not open file!" ) );
+		throw CodecError( QObject::tr( "Can not open `%1\' (%2)" ).arg( uri.toString() ).arg( Q_FUNC_INFO ) );
 	}
 
 	this->setAlbum( AlbumSP( new Album ) );
@@ -98,6 +103,20 @@ QString Track::getTitle() const {
 
 const QUrl & Track::getURI() const {
 	return this->p_->uri;
+}
+
+void Track::save() const {
+	if( this->p_->uri.scheme() != "file" ) {
+		return;
+	}
+
+	TagLib::FileRef fout( this->p_->uri.toLocalFile().toUtf8().constData() );
+	fout.tag()->setAlbum( TagLib::String( this->getAlbum()->getTitle().toUtf8().constData(), TagLib::String::UTF8 ) );
+	fout.tag()->setArtist( TagLib::String( this->getArtist().toUtf8().constData(), TagLib::String::UTF8 ) );
+	fout.tag()->setTitle( TagLib::String( this->getTitle().toUtf8().constData(), TagLib::String::UTF8 ) );
+	fout.tag()->setTrack( this->getIndex() );
+
+	fout.save();
 }
 
 void Track::setAlbum( AlbumSP album ) {

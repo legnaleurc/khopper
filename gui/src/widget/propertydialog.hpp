@@ -49,6 +49,7 @@ namespace khopper {
 		private:
 			void write_();
 
+			album::TrackSP currentTrack_;
 			std::shared_ptr< Ui::PropertyDialog > ui_;
 		};
 

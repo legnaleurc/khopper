@@ -63,6 +63,8 @@ namespace khopper {
 			 */
 			const QUrl & getURI() const;
 
+			virtual void save() const;
+
 			void setAlbum( AlbumSP album );
 			void setArtist( const QByteArray & artist );
 			void setArtist( const QString & artist );

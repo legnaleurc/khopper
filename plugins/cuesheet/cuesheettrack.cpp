@@ -33,6 +33,11 @@ ReaderSP CueSheetTrack::createReader() const {
 	return ReaderSP( new RangedReader( this->getURI(), this->getStartTime().toMillisecond(), this->getDuration().toMillisecond() ) );
 }
 
+// TODO: not implemented
+void CueSheetTrack::save() const {
+	return;
+}
+
 const QStringList & CueSheetTrack::getComments() const {
 	return this->comments_;
 }
