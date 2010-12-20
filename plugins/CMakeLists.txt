@@ -63,10 +63,11 @@ else()
 endif()
 
 if(QT_QTNETWORK_FOUND)
-    list(APPEND KHOPPER_OPTIONAL_FOUND "Found QtNetwork module, YouTube plugin will be build.")
+    list(APPEND KHOPPER_OPTIONAL_FOUND "[Plugin] YouTube plugin enabled.")
     add_subdirectory(youtube)
 else()
-    list(APPEND KHOPPER_OPTIONAL_NOT_FOUND "QtNetwork not found for YouTube plugin.")
+    list(APPEND KHOPPER_OPTIONAL_NOT_FOUND "[Plugin] YouTube plugin disabled:")
+    list(APPEND KHOPPER_OPTIONAL_NOT_FOUND "    QtNetwork not found.")
 endif()
 
 set(KHOPPER_OPTIONAL_FOUND ${KHOPPER_OPTIONAL_FOUND} PARENT_SCOPE)
