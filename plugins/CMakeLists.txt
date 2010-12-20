@@ -19,6 +19,7 @@ macro(KHOPPER_ADD_PLUGIN target)
         LIBRARY DESTINATION "lib/khopper/plugins")
 endmacro()
 
+list(APPEND KHOPPER_OPTIONAL_FOUND "[Plugin] CUE Sheet plugin enabled.")
 add_subdirectory(cuesheet)
 
 find_package(FFmpeg)
