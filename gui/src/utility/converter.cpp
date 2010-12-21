@@ -33,7 +33,7 @@ using khopper::error::BaseError;
 using khopper::error::CodecError;
 
 Converter::Converter( TrackCSP track, WriterSP writer ):
-QThread( 0 ),
+QObject( 0 ),
 canceled_( false ),
 track_( track ),
 writer_( writer ) {
@@ -42,12 +42,13 @@ writer_( writer ) {
 	this->writer_->setTitle( this->track_->getTitle().toUtf8() );
 }
 
-void Converter::run() {
+void Converter::start() {
 	ReaderSP decoder( this->track_->createReader() );
 	try {
 		decoder->open( QIODevice::ReadOnly );
 	} catch( BaseError & e ) {
 		emit this->errorOccured( tr( "Decoder Error" ), e.getMessage() );
+		emit this->finished();
 		return;
 	}
 
@@ -58,6 +59,7 @@ void Converter::run() {
 		this->writer_->open( QIODevice::WriteOnly );
 	} catch( BaseError & e ) {
 		emit this->errorOccured( tr( "Encoder Error" ), e.getMessage() );
+		emit this->finished();
 		return;
 	}
 	this->canceled_ = false;
@@ -74,6 +76,7 @@ void Converter::run() {
 
 	this->writer_->close();
 	decoder->close();
+	emit this->finished();
 }
 
 void Converter::cancel() {

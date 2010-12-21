@@ -56,6 +56,7 @@ namespace khopper {
 
 		private:
 			utility::Converter * task_;
+			QThread * thread_;
 			std::shared_ptr< Ui::ProgressBar > ui_;
 		};
 
