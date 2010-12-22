@@ -71,9 +71,9 @@ void ProgressBar::increase_( qint64 value ) {
 }
 
 void ProgressBar::onFinished_() {
-	delete this->task_;
+	this->task_->deleteLater();
 	this->task_ = NULL;
-	delete this->thread_;
+	this->thread_->deleteLater();
 	this->thread_ = NULL;
 	emit this->finished();
 }
