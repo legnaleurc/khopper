@@ -20,14 +20,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "youtubereader.hpp"
+#include "youtubeloader.hpp"
 
 using namespace khopper::codec;
 using khopper::plugin::getReaderCreator;
 using khopper::error::BaseError;
+using khopper::plugin::YouTubeLoader;
 
 YouTubeReader::YouTubeReader( const QUrl & uri ):
 AbstractReader( uri ),
-client_( getReaderCreator( uri )( uri ) ) {
+client_() {
+	YouTubeLoader loader( uri );
+	loader.parseHeader( false );
+	this->setTitle( loader.getTitle().toUtf8() );
+	// Always use MP4, it makes no diff for audio.
+	QUrl realURI( loader.getRealURI( "18" ) );
+	this->client_ = getReaderCreator( realURI )( realURI );
 }
 
 bool YouTubeReader::atEnd() const {

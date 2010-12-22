@@ -21,8 +21,7 @@
  */
 #include "youtubeplugin.hpp"
 #include "youtubeloader.hpp"
-#include "youtubetrack.hpp"
-#include "khopper/playlist.hpp"
+#include "youtubereader.hpp"
 
 #include <QtCore/QtPlugin>
 #include <QtCore/QtDebug>
@@ -30,9 +29,8 @@
 Q_EXPORT_PLUGIN2( KHOPPER_PLUGIN_ID, khopper::plugin::YouTubePlugin )
 
 using namespace khopper::plugin;
-using khopper::album::PlayList;
-using khopper::plugin::unregisterPlayList;
-using khopper::plugin::registerPlayList;
+using khopper::plugin::registerReader;
+using khopper::plugin::unregisterReader;
 
 YouTubePlugin::YouTubePlugin():
 AbstractPlugin() {
@@ -82,29 +80,20 @@ void YouTubePlugin::doInstall() {
 	errorString.insert( QNetworkReply::UnknownContentError, tr( "unknown content" ) );
 	errorString.insert( QNetworkReply::ProtocolFailure, tr( "protocol failure" ) );
 
-	registerPlayList( this->getID(), []( const QUrl & uri )->unsigned int {
+	registerReader( this->getID(), []( const QUrl & uri )->int {
 		if( uri.scheme() == "http" && uri.host() == "www.youtube.com" && uri.path() == "/watch" ) {
-			qDebug() << "YouTubePlugin returned 200" << uri;
+			qDebug() << Q_FUNC_INFO << "returned 200";
 			return 200;
 		}
-		qDebug() << "YouTubePlugin returned 0" << uri;
 		return 0;
-	}, [&]( const QUrl & uri )->PlayList {
-		YouTubeLoader loader( uri );
-		loader.parseHeader( true );
-//		QString format( loader.selectFormat() );
-		// Always use MP4 360p, it makes no diff for audio.
-		QString format( "18" );
-		khopper::album::TrackSP track( new khopper::album::YouTubeTrack( uri, loader.getTitle(), format ) );
-
-		khopper::album::PlayList tmp;
-		tmp.push_back( track );
-		return tmp;
+	}, []( const QUrl & uri )->khopper::codec::ReaderSP {
+		using namespace khopper::codec;
+		return ReaderSP( new YouTubeReader( uri ) );
 	} );
 }
 
 void YouTubePlugin::doUninstall() {
-	unregisterPlayList( this->getID() );
+	unregisterReader( this->getID() );
 	YouTubeLoader::errorString().clear();
 	YouTubeLoader::formats().clear();
 }
