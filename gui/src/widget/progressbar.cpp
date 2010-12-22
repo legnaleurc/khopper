@@ -61,7 +61,7 @@ void ProgressBar::start( Converter * task ) {
 	this->thread_ = new QThread;
 	task->moveToThread( this->thread_ );
 	task->connect( this->thread_, SIGNAL( started() ), SLOT( start() ) );
-	this->thread_->connect( task, SIGNAL( finished ), SLOT( quit() ) );
+	this->thread_->connect( task, SIGNAL( finished() ), SLOT( quit() ) );
 
 	this->thread_->start();
 }
