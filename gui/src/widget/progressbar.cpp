@@ -61,7 +61,7 @@ void ProgressBar::start( Converter * task ) {
 	this->thread_ = new QThread;
 	task->moveToThread( this->thread_ );
 	task->connect( this->thread_, SIGNAL( started() ), SLOT( start() ) );
-	this->thread_->connect( task, SIGNAL( finished ), SLOT( quit() ) );
+	this->thread_->connect( task, SIGNAL( finished() ), SLOT( quit() ) );
 
 	this->thread_->start();
 }
@@ -71,9 +71,9 @@ void ProgressBar::increase_( qint64 value ) {
 }
 
 void ProgressBar::onFinished_() {
-	delete this->task_;
+	this->task_->deleteLater();
 	this->task_ = NULL;
-	delete this->thread_;
+	this->thread_->deleteLater();
 	this->thread_ = NULL;
 	emit this->finished();
 }
