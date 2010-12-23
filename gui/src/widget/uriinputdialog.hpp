@@ -1,5 +1,5 @@
 /**
- * @file progressbar.hpp
+ * @file uriinputdialog.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,49 +19,35 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_WIDGET_PROGRESSBAR_HPP
-#define KHOPPER_WIDGET_PROGRESSBAR_HPP
+#ifndef KHOPPER_WIDGET_URIINPUTDIALOG_HPP
+#define KHOPPER_WIDGET_URIINPUTDIALOG_HPP
 
-#include "khopper/track.hpp"
-#include "khopper/abstractwriter.hpp"
+#include <QtCore/QUrl>
+#include <QtGui/QDialog>
 
-#include <QtGui/QWidget>
+#include <memory>
 
 namespace Ui {
-	class ProgressBar;
+	class UriInputDialog;
 }
 
 namespace khopper {
-
-	namespace utility {
-		class Converter;
-	}
-
 	namespace widget {
 
-		class ProgressBar : public QWidget {
-			Q_OBJECT
+		class UriInputDialog : public QDialog {
 		public:
-			explicit ProgressBar( QWidget * parent );
+			explicit UriInputDialog( QWidget * parent );
 
-			void cancel();
-			void start( utility::Converter * task );
+			QList< QUrl > getUriList() const;
 
-		signals:
-			void finished();
-
-		private slots:
-			void increase_( qint64 );
-			void onFinished_();
+		protected:
+			virtual void setVisible( bool visible );
 
 		private:
-			utility::Converter * task_;
-			QThread * thread_;
-			std::shared_ptr< Ui::ProgressBar > ui_;
+			std::shared_ptr< Ui::UriInputDialog > ui_;
 		};
 
 	}
-
 }
 
 #endif

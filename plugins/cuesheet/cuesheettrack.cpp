@@ -27,10 +27,14 @@ using khopper::codec::RangedReader;
 
 CueSheetTrack::CueSheetTrack( const QUrl & uri ):
 Track( uri ) {
+	this->setReaderCreator( [this]( const QUrl & uri ) {
+		return ReaderSP( new RangedReader( uri, this->getStartTime().toMillisecond(), this->getDuration().toMillisecond() ) );
+	} );
 }
 
-ReaderSP CueSheetTrack::createReader() const {
-	return ReaderSP( new RangedReader( this->getURI(), this->getStartTime().toMillisecond(), this->getDuration().toMillisecond() ) );
+// TODO: not implemented
+void CueSheetTrack::save() const {
+	return;
 }
 
 const QStringList & CueSheetTrack::getComments() const {

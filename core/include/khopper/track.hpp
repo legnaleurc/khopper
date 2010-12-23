@@ -55,13 +55,15 @@ namespace khopper {
 			unsigned int getBitRate() const;
 			const Timestamp & getDuration() const;
 			unsigned int getIndex() const;
-			virtual codec::ReaderSP createReader() const;
+			codec::ReaderSP createReader() const;
 			QString getTitle() const;
 			/**
 			 * @brief Get url.
 			 * @sa setFilePath(const QString &) setFilePath(const QByteArray &)
 			 */
 			const QUrl & getURI() const;
+
+			virtual void save() const;
 
 			void setAlbum( AlbumSP album );
 			void setArtist( const QByteArray & artist );
@@ -80,25 +82,25 @@ namespace khopper {
 			void setTextCodec( QTextCodec * textCodec );
 			void setTitle( const QByteArray & title );
 			void setTitle( const QString & title );
-			/**
-			 * @brief Set url.
-			 * @sa getFilePath() setFilePath(const QByteArray &)
-			 */
-			void setURI( const QUrl & uri );
+
+		protected:
+			Track( const QUrl & uri, plugin::ReaderCreator creator );
+
+			void setReaderCreator( plugin::ReaderCreator creator );
 
 		private:
 			class Private;
-			std::shared_ptr< Private > p_;
+			typename std::shared_ptr< Private > p_;
 		};
 
 		/**
 		 * @brief Smart pointer of Track.
 		 */
-		typedef std::shared_ptr< Track > TrackSP;
+		typedef typename std::shared_ptr< Track > TrackSP;
 		/**
 		 * @brief Smart pointer of const Track.
 		 */
-		typedef std::shared_ptr< const Track > TrackCSP;
+		typedef typename std::shared_ptr< const Track > TrackCSP;
 
 	}
 

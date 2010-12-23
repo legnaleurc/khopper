@@ -22,52 +22,33 @@
 #include "trackprivate.hpp"
 #include "error.hpp"
 
+#include <fileref.h>
+#include <tag.h>
+
 #include <QtCore/QHash>
 #include <QtCore/QtDebug>
 
 using namespace khopper::album;
 using khopper::codec::AudioFormat;
 using khopper::codec::ReaderSP;
-using khopper::error::BaseError;
 using khopper::error::RunTimeError;
 using khopper::error::CodecError;
 using khopper::plugin::getReaderCreator;
+using khopper::plugin::ReaderCreator;
 
 Track::Track( const QUrl & uri ):
-p_( new Private( uri ) ) {
-	// FIXME: virtual function call in constructor.
-	ReaderSP reader;
-	try {
-		this->p_->creator = getReaderCreator( uri );
-		reader = this->createReader();
-		if( !reader ) {
-			throw RunTimeError( QObject::tr( "Invalid reader (%1)" ).arg( Q_FUNC_INFO ) );
-		}
-	} catch( BaseError & e ) {
-		qDebug() << e.getMessage() << typeid( e ).name() << Q_FUNC_INFO;
-		throw;
-	}
+p_( new Private( uri, getReaderCreator( uri ) ) ) {
+}
 
-	reader->open( QIODevice::ReadOnly );
-	if( !reader->isOpen() ) {
-		throw CodecError( QObject::tr( "Can not open `%1\' (%2)" ).arg( uri.toString() ).arg( Q_FUNC_INFO ) );
-	}
-
-	this->setAlbum( AlbumSP( new Album ) );
-	// FIXME: text codec
-	this->getAlbum()->setTitle( reader->getAlbumTitle() );
-	this->setArtist( reader->getArtist() );
-	this->setAudioFormat( reader->getAudioFormat() );
-	this->setBitRate( reader->getBitRate() );
-	this->setDuration( Timestamp::fromMillisecond( reader->getDuration() ) );
-	this->setIndex( reader->getIndex() );
-	this->setTitle( reader->getTitle() );
-	this->setURI( reader->getURI() );
-
-	reader->close();
+Track::Track( const QUrl & uri, ReaderCreator creator ):
+p_( new Private( uri, creator ) ) {
 }
 
 Track::~Track() {
+}
+
+void Track::setReaderCreator( ReaderCreator creator ) {
+	this->p_->creator = creator;
 }
 
 ReaderSP Track::createReader() const {
@@ -100,6 +81,20 @@ QString Track::getTitle() const {
 
 const QUrl & Track::getURI() const {
 	return this->p_->uri;
+}
+
+void Track::save() const {
+	if( this->p_->uri.scheme() != "file" ) {
+		return;
+	}
+
+	TagLib::FileRef fout( this->p_->uri.toLocalFile().toUtf8().constData() );
+	fout.tag()->setAlbum( TagLib::String( this->getAlbum()->getTitle().toUtf8().constData(), TagLib::String::UTF8 ) );
+	fout.tag()->setArtist( TagLib::String( this->getArtist().toUtf8().constData(), TagLib::String::UTF8 ) );
+	fout.tag()->setTitle( TagLib::String( this->getTitle().toUtf8().constData(), TagLib::String::UTF8 ) );
+	fout.tag()->setTrack( this->getIndex() );
+
+	fout.save();
 }
 
 void Track::setAlbum( AlbumSP album ) {
@@ -148,10 +143,6 @@ void Track::setTitle( const QString & title ) {
 	this->p_->title = this->p_->textCodec->fromUnicode( title );
 }
 
-void Track::setURI( const QUrl & uri ) {
-	this->p_->uri = uri;
-}
-
 const AudioFormat & Track::getAudioFormat() const {
 	return this->p_->format;
 }
@@ -160,17 +151,37 @@ void Track::setAudioFormat( const AudioFormat & format ) {
 	this->p_->format = format;
 }
 
-Track::Private::Private( const QUrl & uri ):
-album(),
+Track::Private::Private( const QUrl & uri, ReaderCreator creator ):
+album( new Album ),
 artist(),
 bitRate( 0 ),
-creator(),
+creator( creator ),
 duration(),
 format(),
 songWriter(),
 title(),
 textCodec( QTextCodec::codecForName( "UTF-8" ) ),
 uri( uri ) {
+	ReaderSP reader( this->creator( this->uri ) );
+	if( !reader ) {
+		throw RunTimeError( QObject::tr( "Invalid reader (%1)" ).arg( Q_FUNC_INFO ) );
+	}
+
+	reader->open( QIODevice::ReadOnly );
+	if( !reader->isOpen() ) {
+		throw CodecError( QObject::tr( "Can not open `%1\' (%2)" ).arg( uri.toString() ).arg( Q_FUNC_INFO ) );
+	}
+
+	// FIXME: text codec
+	this->album->setTitle( reader->getAlbumTitle() );
+	this->artist = reader->getArtist();
+	this->format = reader->getAudioFormat();
+	this->bitRate = reader->getBitRate();
+	this->duration = Timestamp::fromMillisecond( reader->getDuration() );
+	this->index = reader->getIndex();
+	this->title = reader->getTitle();
+
+	reader->close();
 }
 
 uint qHash( TrackCSP key ) {

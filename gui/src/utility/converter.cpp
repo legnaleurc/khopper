@@ -33,7 +33,7 @@ using khopper::error::BaseError;
 using khopper::error::CodecError;
 
 Converter::Converter( TrackCSP track, WriterSP writer ):
-QThread( 0 ),
+QObject( 0 ),
 canceled_( false ),
 track_( track ),
 writer_( writer ) {
@@ -42,12 +42,14 @@ writer_( writer ) {
 	this->writer_->setTitle( this->track_->getTitle().toUtf8() );
 }
 
-void Converter::run() {
-	ReaderSP decoder( this->track_->createReader() );
+void Converter::start() {
+	ReaderSP decoder;
 	try {
+		decoder = this->track_->createReader();
 		decoder->open( QIODevice::ReadOnly );
 	} catch( BaseError & e ) {
 		emit this->errorOccured( tr( "Decoder Error" ), e.getMessage() );
+		emit this->finished();
 		return;
 	}
 
@@ -58,12 +60,18 @@ void Converter::run() {
 		this->writer_->open( QIODevice::WriteOnly );
 	} catch( BaseError & e ) {
 		emit this->errorOccured( tr( "Encoder Error" ), e.getMessage() );
+		emit this->finished();
 		return;
 	}
 	this->canceled_ = false;
 
 	const int sec = decoder->getAudioFormat().frequency() * decoder->getAudioFormat().channels() * decoder->getAudioFormat().sampleSize() / 8;
-	while( !decoder->atEnd() ) {
+	std::function< bool () > endCondition( ( decoder->isSequential() ) ? static_cast< std::function< bool () > >( [&]()->bool {
+		return decoder->waitForReadyRead( -1 );
+	} ) : static_cast< std::function< bool () > >( [&]()->bool {
+		return !decoder->atEnd();
+	} ) );
+	while( endCondition() ) {
 		if( this->canceled_ ) {
 			break;
 		}
@@ -74,6 +82,7 @@ void Converter::run() {
 
 	this->writer_->close();
 	decoder->close();
+	emit this->finished();
 }
 
 void Converter::cancel() {

@@ -25,6 +25,7 @@
 #include "conversiondialog.hpp"
 #include "player.hpp"
 #include "preference.hpp"
+#include "uriinputdialog.hpp"
 
 #include "khopper/application.hpp"
 #include "khopper/error.hpp"
@@ -34,6 +35,7 @@
 #include <QtCore/QFileInfo>
 #include <QtGui/QDesktopServices>
 #include <QtGui/QFileDialog>
+#include <QtGui/QInputDialog>
 #include <QtGui/QMessageBox>
 
 #include <algorithm>
@@ -45,11 +47,12 @@ using khopper::error::BaseError;
 
 MainWindow::MainWindow():
 QMainWindow( 0, 0 ),
-ui_( new Ui::MainWindow ),
-conversion_( new ConversionDialog( this ) ),
-preference_( new Preference( this ) ),
 about_( new AboutWidget( this ) ),
-lastOpenedDir_( QDesktopServices::storageLocation( QDesktopServices::MusicLocation ) ) {
+conversion_( new ConversionDialog( this ) ),
+lastOpenedDir_( QDesktopServices::storageLocation( QDesktopServices::MusicLocation ) ),
+preference_( new Preference( this ) ),
+ui_( new Ui::MainWindow ),
+uriInput_( new UriInputDialog( this ) ) {
 	this->ui_->setupUi( this );
 	// Setting menu bar
 	this->initMenuBar_();
@@ -69,6 +72,7 @@ lastOpenedDir_( QDesktopServices::storageLocation( QDesktopServices::MusicLocati
 
 void MainWindow::initMenuBar_() {
 	QObject::connect( this->ui_->action_Open, SIGNAL( triggered() ), this, SLOT( showOpenFilesDialog() ) );
+	QObject::connect( this->ui_->action_Load_By_Url, SIGNAL( triggered() ), this, SLOT( showUriInputDialog() ) );
 	QObject::connect( this->ui_->action_Preference, SIGNAL( triggered() ), this->preference_, SLOT( exec() ) );
 	QObject::connect( this->ui_->actionAbout_Khopper, SIGNAL( triggered() ), this->about_, SLOT( show() ) );
 	QObject::connect( this->ui_->actionAbout_Qt, SIGNAL( triggered() ), qApp, SLOT( aboutQt() ) );
@@ -122,4 +126,11 @@ void MainWindow::open( const QList< QUrl > & uris ) {
 
 void MainWindow::showErrorMessage_( const QString & title, const QString & msg ) {
 	QMessageBox::critical( this, title, msg );
+}
+
+void MainWindow::showUriInputDialog() {
+	if( this->uriInput_->exec() != QDialog::Accepted ) {
+		return;
+	}
+	this->open( this->uriInput_->getUriList() );
 }

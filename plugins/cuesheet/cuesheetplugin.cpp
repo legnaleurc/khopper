@@ -27,6 +27,7 @@
 
 #include <QtCore/QDir>
 #include <QtCore/QtPlugin>
+#include <QtCore/QtDebug>
 
 Q_EXPORT_PLUGIN2( KHOPPER_PLUGIN_ID, khopper::plugin::CueSheetPlugin )
 
@@ -43,14 +44,18 @@ void CueSheetPlugin::doInstall() {
 	registerPlayList( this->getID(), []( const QUrl & uri )->unsigned int {
 		if( uri.scheme() != "file" ) {
 			// TODO: network support
+			qDebug() << "CueSheetPlugin returned 0" << uri;
 			return 0U;
 		}
 		QFileInfo info( uri.toLocalFile() );
 		if( info.suffix().toLower() == "cue" ) {
+			qDebug() << "CueSheetPlugin returned 100" << uri;
 			return 100U;
 		} else if( info.dir().exists( info.baseName() + ".cue" ) ) {
+			qDebug() << "CueSheetPlugin returned 200" << uri;
 			return 200U;
 		} else {
+			qDebug() << "CueSheetPlugin returned 0" << uri;
 			return 0U;
 		}
 	}, []( const QUrl & uri )->PlayList {
