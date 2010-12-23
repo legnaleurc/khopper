@@ -22,7 +22,6 @@
 #include "mp3plugin.hpp"
 #include "mp3panel.hpp"
 
-#include "khopper/text.hpp"
 #include "khopper/application.hpp"
 
 #include <QtCore/QtPlugin>

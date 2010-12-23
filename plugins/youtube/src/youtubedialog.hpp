@@ -1,5 +1,5 @@
 /**
- * @file progressbar.hpp
+ * @file youtubedialog.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,49 +19,42 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_WIDGET_PROGRESSBAR_HPP
-#define KHOPPER_WIDGET_PROGRESSBAR_HPP
+#ifndef KHOPPER_WIDGET_YOUTUBEDIALOG_HPP
+#define KHOPPER_WIDGET_YOUTUBEDIALOG_HPP
 
-#include "khopper/track.hpp"
-#include "khopper/abstractwriter.hpp"
+#include <QtCore/QUrl>
+#include <QtGui/QButtonGroup>
+#include <QtGui/QDialog>
 
-#include <QtGui/QWidget>
+#include <map>
+#include <memory>
 
 namespace Ui {
-	class ProgressBar;
+	class YouTubeDialog;
 }
 
 namespace khopper {
-
-	namespace utility {
-		class Converter;
-	}
-
 	namespace widget {
 
-		class ProgressBar : public QWidget {
+		class YouTubeDialog : public QDialog {
 			Q_OBJECT
 		public:
-			explicit ProgressBar( QWidget * parent );
+			YouTubeDialog();
 
-			void cancel();
-			void start( utility::Converter * task );
-
-		signals:
-			void finished();
+			void addFormat( const QString & format );
+			void clearFormat();
+			QString getSelectedFormat() const;
+			QString getLocalLocation() const;
 
 		private slots:
-			void increase_( qint64 );
-			void onFinished_();
+			void getLocation_();
 
 		private:
-			utility::Converter * task_;
-			QThread * thread_;
-			std::shared_ptr< Ui::ProgressBar > ui_;
+			QButtonGroup * group_;
+			std::shared_ptr< Ui::YouTubeDialog > ui_;
 		};
 
 	}
-
 }
 
 #endif

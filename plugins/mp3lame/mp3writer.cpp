@@ -22,9 +22,10 @@
 #include "mp3writer.hpp"
 
 #include "khopper/error.hpp"
-#include "khopper/text.hpp"
 
 #include <id3v2tag.h>
+
+#include <QtCore/QtDebug>
 
 namespace {
 
@@ -38,6 +39,7 @@ namespace {
 		}
 		return fout;
 #else
+		qDebug() << "Mp3Writer: uri" << uri << "local" << uri.toLocalFile().toStdString().c_str();
 		return fopen( uri.toLocalFile().toStdString().c_str(), "wb" );
 #endif
 	}

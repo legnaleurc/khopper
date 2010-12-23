@@ -25,15 +25,13 @@
 #include "khopper/abstractwriter.hpp"
 #include "khopper/track.hpp"
 
-#include <QtCore/QThread>
-
 namespace khopper {
 	namespace utility {
 
 		/**
 		 * @brief Controller of converting
 		 */
-		class Converter : public QThread {
+		class Converter : public QObject {
 			Q_OBJECT
 
 		public:
@@ -50,6 +48,7 @@ namespace khopper {
 			 * @brief Cancel converting
 			 */
 			void cancel();
+			void start();
 
 		signals:
 			/**
@@ -58,9 +57,7 @@ namespace khopper {
 			 */
 			void decodedTime( qint64 ms );
 			void errorOccured( const QString & title, const QString & message );
-
-		protected:
-			void run();
+			void finished();
 
 		private:
 			bool canceled_;

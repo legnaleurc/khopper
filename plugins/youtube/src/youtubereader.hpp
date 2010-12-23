@@ -1,5 +1,5 @@
 /**
- * @file progressbar.hpp
+ * @file youtubereader.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,45 +19,34 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_WIDGET_PROGRESSBAR_HPP
-#define KHOPPER_WIDGET_PROGRESSBAR_HPP
+#ifndef KHOPPER_CODEC_YOUTUBEREADER_HPP
+#define KHOPPER_CODEC_YOUTUBEREADER_HPP
 
-#include "khopper/track.hpp"
-#include "khopper/abstractwriter.hpp"
-
-#include <QtGui/QWidget>
-
-namespace Ui {
-	class ProgressBar;
-}
+#include "khopper/abstractreader.hpp"
 
 namespace khopper {
 
-	namespace utility {
-		class Converter;
+	namespace plugin {
+		class YouTubePlugin;
 	}
 
-	namespace widget {
+	namespace codec {
 
-		class ProgressBar : public QWidget {
-			Q_OBJECT
+		class YouTubeReader : public AbstractReader {
 		public:
-			explicit ProgressBar( QWidget * parent );
+			explicit YouTubeReader( const QUrl & uri, plugin::YouTubePlugin * parent );
 
-			void cancel();
-			void start( utility::Converter * task );
+			virtual bool atEnd() const;
+			virtual bool seek( qint64 pos );
+			virtual qint64 size() const;
 
-		signals:
-			void finished();
-
-		private slots:
-			void increase_( qint64 );
-			void onFinished_();
+		protected:
+			virtual void doOpen();
+			virtual void doClose();
+			virtual qint64 readData( char * data, qint64 maxSize );
 
 		private:
-			utility::Converter * task_;
-			QThread * thread_;
-			std::shared_ptr< Ui::ProgressBar > ui_;
+			ReaderSP client_;
 		};
 
 	}

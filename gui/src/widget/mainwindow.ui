@@ -48,6 +48,7 @@
      <string>&amp;File</string>
     </property>
     <addaction name="action_Open"/>
+    <addaction name="action_Load_By_Url"/>
    </widget>
    <addaction name="menu_File"/>
    <addaction name="menu_Tools"/>
@@ -79,6 +80,14 @@
   <action name="actionPlugins_Manager">
    <property name="text">
     <string>Plugins &amp;Manager</string>
+   </property>
+  </action>
+  <action name="action_Load_By_Url">
+   <property name="text">
+    <string>&amp;Direct Convert By Url</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+D</string>
    </property>
   </action>
  </widget>

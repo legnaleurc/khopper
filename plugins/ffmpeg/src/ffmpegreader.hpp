@@ -28,6 +28,7 @@ struct AVFormatContext;
 struct AVCodecContext;
 struct AVPacket;
 struct AVStream;
+struct AVMetadata;
 
 namespace khopper {
 
@@ -62,6 +63,7 @@ namespace khopper {
 			void setupDecoder_();
 			void readHeader_();
 			QByteArray readFrame_();
+			void readMetadata_( AVMetadata * );
 
 			std::shared_ptr< AVFormatContext > pFormatContext_;
 			std::shared_ptr< AVCodecContext > pCodecContext_;

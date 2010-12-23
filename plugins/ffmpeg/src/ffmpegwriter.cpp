@@ -132,6 +132,8 @@ void FfmpegWriter::setupEncoder() {
 		throw error::CodecError( "Can not open encoder" );
 	}
 
+	pCC->sample_fmt = pC->sample_fmts[0];
+
 	switch( pCC->codec_id ) {
 	case CODEC_ID_PCM_S16LE:
 	case CODEC_ID_PCM_S16BE:
@@ -182,7 +184,7 @@ void FfmpegWriter::closeResource() {
 
 void FfmpegWriter::writeHeader() {
 	av_metadata_set( &this->pFormatContext_->metadata, "title", this->getTitle().constData() );
-	av_metadata_set( &this->pFormatContext_->metadata, "author", this->getArtist().constData() );
+	av_metadata_set( &this->pFormatContext_->metadata, "artist", this->getArtist().constData() );
 	av_metadata_set( &this->pFormatContext_->metadata, "album", this->getAlbum().constData() );
 
 	if( av_write_header( this->pFormatContext_.get() ) < 0 ) {

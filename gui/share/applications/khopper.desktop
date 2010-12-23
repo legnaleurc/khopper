@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Application
 Name=Khopper
-Exec=khopper %U
+Exec=khopper_gui %U
 GenericName=Khopper
 Categories=AudioVideo;Audio;Music;Qt;
 Encoding=UTF-8
