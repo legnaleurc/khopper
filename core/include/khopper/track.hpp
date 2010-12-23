@@ -55,7 +55,7 @@ namespace khopper {
 			unsigned int getBitRate() const;
 			const Timestamp & getDuration() const;
 			unsigned int getIndex() const;
-			virtual codec::ReaderSP createReader() const;
+			codec::ReaderSP createReader() const;
 			QString getTitle() const;
 			/**
 			 * @brief Get url.
@@ -82,11 +82,11 @@ namespace khopper {
 			void setTextCodec( QTextCodec * textCodec );
 			void setTitle( const QByteArray & title );
 			void setTitle( const QString & title );
-			/**
-			 * @brief Set url.
-			 * @sa getFilePath() setFilePath(const QByteArray &)
-			 */
-			void setURI( const QUrl & uri );
+
+		protected:
+			Track( const QUrl & uri, plugin::ReaderCreator creator );
+
+			void setReaderCreator( plugin::ReaderCreator creator );
 
 		private:
 			class Private;

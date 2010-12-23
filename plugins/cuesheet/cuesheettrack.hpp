@@ -35,7 +35,6 @@ namespace khopper {
 		public:
 			explicit CueSheetTrack( const QUrl & url );
 
-			virtual codec::ReaderSP createReader() const;
 			virtual void save() const;
 
 			const QStringList & getComments() const;
