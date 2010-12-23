@@ -90,17 +90,17 @@ namespace khopper {
 
 		private:
 			class Private;
-			std::shared_ptr< Private > p_;
+			typename std::shared_ptr< Private > p_;
 		};
 
 		/**
 		 * @brief Smart pointer of Track.
 		 */
-		typedef std::shared_ptr< Track > TrackSP;
+		typedef typename std::shared_ptr< Track > TrackSP;
 		/**
 		 * @brief Smart pointer of const Track.
 		 */
-		typedef std::shared_ptr< const Track > TrackCSP;
+		typedef typename std::shared_ptr< const Track > TrackCSP;
 
 	}
 
