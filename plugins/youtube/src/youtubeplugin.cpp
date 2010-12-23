@@ -43,6 +43,14 @@ progress_( new QProgressDialog() ) {
 	this->progress_->setWindowTitle( tr( "Downloading progress" ) );
 }
 
+std::shared_ptr< YouTubeDialog > YouTubePlugin::getDialog() const {
+	return this->dialog_;
+}
+
+std::shared_ptr< QProgressDialog > YouTubePlugin::getProgress() const {
+	return this->progress_;
+}
+
 void YouTubePlugin::doInstall() {
 	YouTubeLoader::FormatTable & formats( YouTubeLoader::formats() );
 	// '5':'FLV 240p','18':'MP4 360p','22':'MP4 720p (HD)','34':'FLV 360p','35':'FLV 480p','37':'MP4 1080p (HD)','38':'MP4 Original (HD)','43':'WebM 480p','45':'WebM 720p (HD)'
