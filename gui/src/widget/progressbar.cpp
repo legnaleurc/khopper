@@ -52,7 +52,6 @@ void ProgressBar::start( Converter * task ) {
 
 	task->connect( this->ui_->pushButton, SIGNAL( clicked() ), SLOT( cancel() ) );
 	this->connect( task, SIGNAL( decodedTime( qint64 ) ), SLOT( increase_( qint64 ) ) );
-	this->connect( task, SIGNAL( finished() ), SLOT( onFinished_() ) );
 
 	this->ui_->label->setText( task->getTitle() );
 	this->ui_->progressBar->setRange( 0, task->getMaximumValue() );
@@ -62,6 +61,7 @@ void ProgressBar::start( Converter * task ) {
 	task->moveToThread( this->thread_ );
 	task->connect( this->thread_, SIGNAL( started() ), SLOT( start() ) );
 	this->thread_->connect( task, SIGNAL( finished() ), SLOT( quit() ) );
+	this->connect( this->thread_, SIGNAL( finished() ), SLOT( onFinished_() ) );
 
 	this->thread_->start();
 }

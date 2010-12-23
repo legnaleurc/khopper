@@ -22,6 +22,7 @@
 #include "youtubeplugin.hpp"
 #include "youtubeloader.hpp"
 #include "youtubereader.hpp"
+#include "youtubedialog.hpp"
 
 #include <QtCore/QtPlugin>
 #include <QtCore/QtDebug>
@@ -31,11 +32,15 @@ Q_EXPORT_PLUGIN2( KHOPPER_PLUGIN_ID, khopper::plugin::YouTubePlugin )
 using namespace khopper::plugin;
 using khopper::plugin::registerReader;
 using khopper::plugin::unregisterReader;
+using khopper::widget::YouTubeDialog;
 
 YouTubePlugin::YouTubePlugin():
-AbstractPlugin() {
+AbstractPlugin(),
+dialog_( new YouTubeDialog ),
+progress_( new QProgressDialog() ) {
 	this->setID( KHOPPER_STRINGIZE( KHOPPER_PLUGIN_ID ) );
 	this->setVersion( KHOPPER_STRINGIZE( KHOPPER_VERSION ) );
+	this->progress_->setWindowTitle( tr( "Downloading progress" ) );
 }
 
 void YouTubePlugin::doInstall() {
@@ -86,9 +91,9 @@ void YouTubePlugin::doInstall() {
 			return 200;
 		}
 		return 0;
-	}, []( const QUrl & uri )->khopper::codec::ReaderSP {
+	}, [this]( const QUrl & uri )->khopper::codec::ReaderSP {
 		using namespace khopper::codec;
-		return ReaderSP( new YouTubeReader( uri ) );
+		return ReaderSP( new YouTubeReader( uri, this ) );
 	} );
 }
 

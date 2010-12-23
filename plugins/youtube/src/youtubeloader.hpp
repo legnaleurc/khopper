@@ -34,6 +34,8 @@
 namespace khopper {
 	namespace plugin {
 
+		class YouTubePlugin;
+
 		class YouTubeLoader : public QObject {
 			Q_OBJECT
 		public:
@@ -47,7 +49,7 @@ namespace khopper {
 //			static QUrl download( const QUrl & url );
 //			static QUrl getRealUri( const QUrl & uri, const QString & format );
 
-			YouTubeLoader( const QUrl & uri );
+			YouTubeLoader( const QUrl & uri, YouTubePlugin * parent );
 
 			void parseHeader( bool display );
 			QString getTitle() const;
@@ -80,14 +82,13 @@ namespace khopper {
 
 			QByteArray content_;
 			Parameter curParam_;
-			std::shared_ptr< widget::YouTubeDialog > dialog_;
 			QUrl downloadURI_;
 			QFile fout_;
 			QNetworkReply * link_;
 			QNetworkAccessManager * linker_;
 			bool needGo_;
 			QUrl origURI_;
-			std::shared_ptr< QProgressDialog > progress_;
+			YouTubePlugin * parent_;
 		};
 
 	}

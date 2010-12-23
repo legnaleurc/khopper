@@ -25,11 +25,16 @@
 #include "khopper/abstractreader.hpp"
 
 namespace khopper {
+
+	namespace plugin {
+		class YouTubePlugin;
+	}
+
 	namespace codec {
 
 		class YouTubeReader : public AbstractReader {
 		public:
-			explicit YouTubeReader( const QUrl & uri );
+			explicit YouTubeReader( const QUrl & uri, plugin::YouTubePlugin * parent );
 
 			virtual bool atEnd() const;
 			virtual bool seek( qint64 pos );
@@ -45,6 +50,7 @@ namespace khopper {
 		};
 
 	}
+
 }
 
 #endif

@@ -20,6 +20,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "youtubeloader.hpp"
+#include "youtubeplugin.hpp"
 #include "khopper/application.hpp"
 
 #include <QtCore/QDir>
@@ -31,7 +32,6 @@
 #include <algorithm>
 
 using namespace khopper::plugin;
-using khopper::widget::YouTubeDialog;
 
 YouTubeLoader::ErrorTable & YouTubeLoader::errorString() {
 	static YouTubeLoader::ErrorTable errorString_;
@@ -43,18 +43,16 @@ YouTubeLoader::FormatTable & YouTubeLoader::formats() {
 	return formats_;
 }
 
-YouTubeLoader::YouTubeLoader( const QUrl & uri ):
+YouTubeLoader::YouTubeLoader( const QUrl & uri, YouTubePlugin * parent ):
 content_(),
 curParam_(),
-dialog_( new YouTubeDialog ),
 downloadURI_(),
 fout_(),
 link_( NULL ),
 linker_( new QNetworkAccessManager( this ) ),
 needGo_( true ),
 origURI_( uri ),
-progress_( new QProgressDialog() ) {
-	this->progress_->setWindowTitle( tr( "Downloading progress" ) );
+parent_( parent ) {
 	this->connect( khopper::pApp(), SIGNAL( errorOccured( const QString &, const QString & ) ), SIGNAL( errorOccured( const QString &, const QString & ) ) );
 }
 
@@ -77,9 +75,9 @@ QUrl YouTubeLoader::getRealURI( const QString & format ) const {
 
 QString YouTubeLoader::getHeader_( bool display ) {
 	if( display ) {
-		this->progress_->setValue( 0 );
-		this->progress_->setLabelText( tr( "Downloading content" ) );
-		this->progress_->show();
+		this->parent_->getProgress()->setValue( 0 );
+		this->parent_->getProgress()->setLabelText( tr( "Downloading content" ) );
+		this->parent_->getProgress()->show();
 	}
 	this->link_ = this->linker_->get( QNetworkRequest( this->origURI_ ) );
 	this->connect( this->link_, SIGNAL( error( QNetworkReply::NetworkError ) ), SLOT( onError_( QNetworkReply::NetworkError ) ) );
@@ -104,14 +102,14 @@ QString YouTubeLoader::selectFormat() {
 			continue;
 		}
 		if( this->curParam_.formatURLs.find( it.key() ) != this->curParam_.formatURLs.end() ) {
-			this->dialog_->addFormat( it.key() );
+			this->parent_->getDialog()->addFormat( it.key() );
 		}
 	}
-	if( this->dialog_->exec() != QDialog::Accepted ) {
+	if( this->parent_->getDialog()->exec() != QDialog::Accepted ) {
 		// FIXME
 		return QString();
 	}
-	return this->dialog_->getSelectedFormat();
+	return this->parent_->getDialog()->getSelectedFormat();
 }
 
 YouTubeLoader::Parameter YouTubeLoader::parseHeader_( const QString & header ) {
@@ -202,18 +200,18 @@ void YouTubeLoader::read_() {
 }
 
 void YouTubeLoader::updateProgress_( qint64 bytesReceived, qint64 bytesTotal ) {
-	this->progress_->setMaximum( bytesTotal );
-	this->progress_->setValue( bytesReceived );
+	this->parent_->getProgress()->setMaximum( bytesTotal );
+	this->parent_->getProgress()->setValue( bytesReceived );
 }
 
 void YouTubeLoader::finish_() {
 	this->link_->deleteLater();
-	this->progress_->hide();
+	this->parent_->getProgress()->hide();
 	emit this->finished();
 }
 
 void YouTubeLoader::finishDownload_() {
-	this->progress_->hide();
+	this->parent_->getProgress()->hide();
 	this->fout_.close();
 	QUrl redirectURI = this->link_->attribute( QNetworkRequest::RedirectionTargetAttribute ).toUrl();
 	qDebug() << this->link_->attribute( QNetworkRequest::HttpStatusCodeAttribute ) << redirectURI;

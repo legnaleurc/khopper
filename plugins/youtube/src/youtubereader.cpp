@@ -21,16 +21,18 @@
  */
 #include "youtubereader.hpp"
 #include "youtubeloader.hpp"
+#include "youtubeplugin.hpp"
 
 using namespace khopper::codec;
 using khopper::plugin::getReaderCreator;
 using khopper::error::BaseError;
 using khopper::plugin::YouTubeLoader;
+using khopper::plugin::YouTubePlugin;
 
-YouTubeReader::YouTubeReader( const QUrl & uri ):
+YouTubeReader::YouTubeReader( const QUrl & uri, YouTubePlugin * parent ):
 AbstractReader( uri ),
 client_() {
-	YouTubeLoader loader( uri );
+	YouTubeLoader loader( uri, parent );
 	loader.parseHeader( false );
 	this->setTitle( loader.getTitle().toUtf8() );
 	// Always use MP4, it makes no diff for audio.

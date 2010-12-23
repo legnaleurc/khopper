@@ -24,19 +24,34 @@
 
 #include "khopper/abstractplugin.hpp"
 
+class QProgressDialog;
+
 namespace khopper {
+
+	namespace widget {
+		class YouTubeDialog;
+	}
+
 	namespace plugin {
 
 		class YouTubePlugin : public AbstractPlugin {
 		public:
 			YouTubePlugin();
 
+			std::shared_ptr< widget::YouTubeDialog > getDialog() const;
+			std::shared_ptr< QProgressDialog > getProgress() const;
+
 		protected:
 			virtual void doInstall();
 			virtual void doUninstall();
+
+		private:
+			std::shared_ptr< widget::YouTubeDialog > dialog_;
+			std::shared_ptr< QProgressDialog > progress_;
 		};
 
 	}
+
 }
 
 #endif
