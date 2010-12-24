@@ -20,6 +20,7 @@
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 #include "applicationprivate.hpp"
+#include "system.hpp"
 #include "plugin/pluginmanager.hpp"
 
 using namespace khopper;
@@ -51,7 +52,12 @@ AbstractPlugin * Application::getPluginInstance( const QString & pluginID ) cons
 	return this->p_->pm->getPluginInstance( pluginID );
 }
 
+int Application::getCpuCount() const {
+	return this->p_->cpuCount;
+}
+
 ApplicationPrivate::ApplicationPrivate():
+cpuCount( getCpuCount() ),
 readerFactory(),
 playlistFactory(),
 pm( new PluginManager ) {

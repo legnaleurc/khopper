@@ -23,6 +23,7 @@
 #include "ui_progressviewer.h"
 #include "progressbar.hpp"
 #include "converter.hpp"
+#include "khopper/application.hpp"
 
 #include <QtCore/QMutexLocker>
 
@@ -46,7 +47,7 @@ ui_( new Ui::ProgressViewer ) {
 	this->ui_->setupUi( this );
 	QObject::connect( this->ui_->cancel, SIGNAL( clicked() ), this, SLOT( cancel_() ) );
 
-	for( int i = 0; i < 2; ++i ) {
+	for( int i = 0; i < khopper::pApp()->getCpuCount(); ++i ) {
 		this->lp_.append( new ProgressBar( this ) );
 		this->ui_->layout->addWidget( this->lp_.last() );
 		QObject::connect( this->lp_.last(), SIGNAL( finished() ), this, SLOT( dispatch_() ) );

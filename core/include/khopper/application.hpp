@@ -74,6 +74,8 @@ namespace khopper {
 		 */
 		plugin::AbstractPlugin * getPluginInstance( const QString & pluginID ) const;
 
+		int getCpuCount() const;
+
 	signals:
 		/// Emitted when addPanel called
 		void panelAdded( khopper::widget::AbstractPanel * panel );
