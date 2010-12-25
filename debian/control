@@ -23,7 +23,7 @@ Description: Core library of Khopper
  This package provides the core library of Khopper.
 
 Package: khopper-gui
-Architecture: all
+Architecture: any
 Section: sound
 Depends: ${shlibs:Depends}, ${misc:Depends}, libkhopper
 Recommends: khopper-plugins
@@ -35,7 +35,7 @@ Description: Graphical User Interface of Khopper
  This package provides the Graphical User Interface of Khopper.
 
 Package: khopper-plugins
-Architecture: all
+Architecture: any
 Section: libs
 Depends: ${shlibs:Depends}, ${misc:Depends}, libkhopper
 Recommends: khopper-gui
