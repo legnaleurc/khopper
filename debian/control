@@ -1,0 +1,58 @@
+Source: khopper
+Section: sound
+Priority: extra
+Maintainer: Wei-Cheng Pan <legnaleurc@gmail.com>
+Build-Depends: debhelper (>= 7.0.50~), cmake, g++ (>= 4.5),
+ libqt4-dev (>= 4.6), libphonon-dev, libavformat-dev (>= 0.5), libflac-dev,
+ pkg-config, libvorbis-dev, libmp3lame-dev, libtag1-dev
+Standards-Version: 3.9.1
+Homepage: http://legnaleurc.blogspot.com/search/label/Khopper
+Vcs-Git: git://github.com/legnaleurc/khopper.git
+Vcs-Browser: https://github.com/legnaleurc/khopper
+
+Package: libkhopper
+Architecture: any
+Section: libs
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Recommends: khopper-gui
+Description: Core library of Khopper
+ Khopper is an application written in Qt toolkit and is designed for convert
+ audio files. It also provides plug-in interface to make it easily extend its
+ functionality.
+ .
+ This package provides the core library of Khopper.
+
+Package: khopper-gui
+Architecture: all
+Section: sound
+Depends: ${shlibs:Depends}, ${misc:Depends}, libkhopper
+Recommends: khopper-plugins
+Description: Graphical User Interface of Khopper
+ Khopper is an application written in Qt toolkit and is designed for convert
+ audio files. It also provides plug-in interface to make it easily extend its
+ functionality.
+ .
+ This package provides the Graphical User Interface of Khopper.
+
+Package: khopper-plugins
+Architecture: all
+Section: libs
+Depends: ${shlibs:Depends}, ${misc:Depends}, libkhopper
+Recommends: khopper-gui
+Description: Plug-ins of Khopper
+ Khopper is an application written in Qt toolkit and is designed for convert
+ audio files. It also provides plug-in interface to make it easily extend its
+ functionality.
+ .
+ This package provides all plug-in of Khopper.
+
+Package: khopper-dev
+Architecture: all
+Section: devel
+Depends: ${misc:Depends}, libkhopper
+Description: Development headers of Khopper
+ Khopper is an application written in Qt toolkit and is designed for convert
+ audio files. It also provides plug-in interface to make it easily extend its
+ functionality.
+ .
+ This package provides the development headers of Khopper.

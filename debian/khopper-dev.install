@@ -1,0 +1,13 @@
+usr/include/khopper/abstractpanel.hpp
+usr/include/khopper/abstractplugin.hpp
+usr/include/khopper/abstractreader.hpp
+usr/include/khopper/abstractwriter.hpp
+usr/include/khopper/album.hpp
+usr/include/khopper/application.hpp
+usr/include/khopper/audioformat.hpp
+usr/include/khopper/codectypes.hpp
+usr/include/khopper/config.hpp
+usr/include/khopper/error.hpp
+usr/include/khopper/playlist.hpp
+usr/include/khopper/timestamp.hpp
+usr/include/khopper/track.hpp
