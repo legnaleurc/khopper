@@ -1,5 +1,5 @@
 Source: khopper
-Section: sound
+Section: universe/sound
 Priority: extra
 Maintainer: Wei-Cheng Pan <legnaleurc@gmail.com>
 Build-Depends: debhelper (>= 7.0.50~), cmake, g++-4.5,
