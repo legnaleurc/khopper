@@ -12,7 +12,7 @@ Vcs-Browser: https://github.com/legnaleurc/khopper
 
 Package: libkhopper
 Architecture: any
-Section: libs
+Section: universe/libs
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Recommends: khopper-gui
 Description: Core library of Khopper
@@ -24,7 +24,7 @@ Description: Core library of Khopper
 
 Package: khopper-gui
 Architecture: any
-Section: sound
+Section: universe/sound
 Depends: ${shlibs:Depends}, ${misc:Depends}, libkhopper
 Recommends: khopper-plugins
 Description: Graphical User Interface of Khopper
@@ -36,7 +36,7 @@ Description: Graphical User Interface of Khopper
 
 Package: khopper-plugins
 Architecture: any
-Section: libs
+Section: universe/libs
 Depends: ${shlibs:Depends}, ${misc:Depends}, libkhopper
 Recommends: khopper-gui
 Description: Plug-ins of Khopper
@@ -48,7 +48,7 @@ Description: Plug-ins of Khopper
 
 Package: khopper-dev
 Architecture: all
-Section: devel
+Section: universe/devel
 Depends: ${misc:Depends}, libkhopper
 Description: Development headers of Khopper
  Khopper is an application written in Qt toolkit and is designed for convert
