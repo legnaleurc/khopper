@@ -24,6 +24,7 @@
 
 #include "error.hpp"
 
+#include <QtCore/QAbstractItemModel>
 #include <QtCore/QDir>
 
 #include <string>
@@ -41,13 +42,19 @@ namespace khopper {
 		 * @ingroup Plugins
 		 * @brief Private plugin manager
 		 */
-		class PluginManager : public QObject {
+		class PluginManager : public QAbstractItemModel {
 			Q_OBJECT
 
 		public:
 			/// default constructor
 			PluginManager();
 			virtual ~PluginManager();
+
+			virtual QModelIndex index( int row, int column, const QModelIndex & parent = QModelIndex() ) const;
+			virtual QModelIndex parent( const QModelIndex & index ) const;
+			virtual int rowCount( const QModelIndex & parent = QModelIndex() ) const;
+			virtual int columnCount( const QModelIndex & parent = QModelIndex() ) const;
+			virtual QVariant data( const QModelIndex & index, int role = Qt::DisplayRole ) const;
 
 			/// get plugin instance by name
 			AbstractPlugin * getPluginInstance( const QString & name ) const;

@@ -88,6 +88,26 @@ PluginManager::~PluginManager() {
 	this->unloadPlugins();
 }
 
+QModelIndex PluginManager::index( int /*row*/, int /*column*/, const QModelIndex & /*parent*/ ) const {
+	return QModelIndex();
+}
+
+QModelIndex PluginManager::parent( const QModelIndex & /*index*/ ) const {
+	return QModelIndex();
+}
+
+int PluginManager::rowCount( const QModelIndex & /*parent*/ ) const {
+	return 0;
+}
+
+int PluginManager::columnCount( const QModelIndex & /*parent*/ ) const {
+	return 0;
+}
+
+QVariant PluginManager::data( const QModelIndex & /*index*/, int /*role*/ ) const {
+	return QVariant();
+}
+
 void PluginManager::reloadPlugins() {
 	this->unloadPlugins();
 
