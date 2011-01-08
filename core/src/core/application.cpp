@@ -52,6 +52,10 @@ AbstractPlugin * Application::getPluginInstance( const QString & pluginID ) cons
 	return this->p_->pm->getPluginInstance( pluginID );
 }
 
+QAbstractItemModel * Application::getPluginModel() const {
+	return this->p_->pm.get();
+}
+
 int Application::getCpuCount() const {
 	return this->p_->cpuCount;
 }

@@ -21,9 +21,8 @@
  */
 #include "pluginviewer.hpp"
 #include "ui_pluginviewer.h"
-#include "pluginmodel.hpp"
 
-#include <QtGui/QStandardItemModel>
+#include "khopper/application.hpp"
 
 using namespace khopper::widget;
 
@@ -32,5 +31,5 @@ QWidget( parent, Qt::Dialog ),
 ui_( new Ui::PluginViewer ) {
 	this->ui_->setupUi( this );
 
-	this->ui_->tableView->setModel( new PluginModel( this ) );
+	this->ui_->treeView->setModel( khopper::pApp()->getPluginModel() );
 }

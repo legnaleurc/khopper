@@ -28,6 +28,10 @@
 
 #include <memory>
 
+QT_BEGIN_NAMESPACE
+class QAbstractItemModel;
+QT_END_NAMESPACE
+
 namespace khopper {
 
 	namespace plugin {
@@ -73,6 +77,8 @@ namespace khopper {
 		 * @param pluginID the plugin ID
 		 */
 		plugin::AbstractPlugin * getPluginInstance( const QString & pluginID ) const;
+
+		QAbstractItemModel * getPluginModel() const;
 
 		int getCpuCount() const;
 
