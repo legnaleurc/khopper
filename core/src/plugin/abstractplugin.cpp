@@ -26,6 +26,10 @@ using namespace khopper::plugin;
 AbstractPlugin::AbstractPlugin() : p_( new AbstractPluginPrivate ) {
 }
 
+const QFileInfo & AbstractPlugin::getFileInfo() const {
+	return this->p_->info;
+}
+
 void AbstractPlugin::setID( const QString & id ) {
 	this->p_->id = id;
 }
