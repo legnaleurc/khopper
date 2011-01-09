@@ -35,7 +35,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -45,15 +45,17 @@
        <item row="0" column="0">
         <widget class="QLabel" name="label_3">
          <property name="text">
-          <string>An audio converter&lt;br/&gt;
-&lt;br/&gt;
-(C) 2008&lt;br/&gt;
-&lt;br/&gt;
-Present by Wei-Cheng Pan&lt;br/&gt;
-&lt;a href=\&quot;http://legnaleurc.blogspot.com/search/label/Khopper\&quot;&gt;Home Page&lt;/a&gt;&lt;br/&gt;</string>
+          <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;An audio converter&lt;br /&gt;&lt;br /&gt;(C) 2008&lt;br /&gt;&lt;br /&gt;Present by Wei-Cheng Pan&lt;br /&gt;&lt;a href=&quot;http://legnaleurc.blogspot.com/search/label/Khopper&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Home Page&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="textFormat">
           <enum>Qt::RichText</enum>
+         </property>
+         <property name="openExternalLinks">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -74,8 +76,8 @@ Present by Wei-Cheng Pan&lt;br/&gt;
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>203</width>
-            <height>224</height>
+            <width>180</width>
+            <height>206</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout_2">
@@ -97,6 +99,9 @@ Wei-Ru Zeng&lt;br/&gt;
              </property>
              <property name="textFormat">
               <enum>Qt::RichText</enum>
+             </property>
+             <property name="openExternalLinks">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
@@ -135,6 +140,7 @@ Wei-Ru Zeng&lt;br/&gt;
   </layout>
  </widget>
  <resources>
+  <include location="../../main.qrc"/>
   <include location="../../main.qrc"/>
  </resources>
  <connections>
