@@ -54,6 +54,7 @@ namespace khopper {
 
 		ApplicationPrivate();
 
+		int cpuCount;
 		Factory< QString, QUrl, codec::ReaderSP, FactoryError > readerFactory;
 		Factory< QString, QUrl, album::PlayList, FactoryError > playlistFactory;
 		std::shared_ptr< plugin::PluginManager > pm;
