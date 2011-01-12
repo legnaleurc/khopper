@@ -112,6 +112,8 @@ QString ConversionDialog::getOutputName_( TrackSP track ) {
 		offset += newString.length() - pattern.matchedLength();
 	}
 	tmp.replace( "%%", "%" );
+	tmp.replace( "/", "_" );
+	tmp.replace( "\\", "_" );
 	return tmp;
 }
 
