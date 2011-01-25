@@ -6,14 +6,17 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>224</width>
-    <height>320</height>
+    <width>242</width>
+    <height>306</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>About Khopper</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="sizeConstraint">
+    <enum>QLayout::SetFixedSize</enum>
+   </property>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
@@ -35,7 +38,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -76,8 +79,8 @@ p, li { white-space: pre-wrap; }
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>180</width>
-            <height>206</height>
+            <width>198</width>
+            <height>192</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout_2">
@@ -133,7 +136,7 @@ Wei-Ru Zeng&lt;br/&gt;
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="standardButtons">
-      <set>QDialogButtonBox::Close</set>
+      <set>QDialogButtonBox::Ok</set>
      </property>
     </widget>
    </item>
@@ -142,21 +145,22 @@ Wei-Ru Zeng&lt;br/&gt;
  <resources>
   <include location="../../main.qrc"/>
   <include location="../../main.qrc"/>
+  <include location="../../main.qrc"/>
  </resources>
  <connections>
   <connection>
    <sender>buttonBox</sender>
-   <signal>rejected()</signal>
+   <signal>accepted()</signal>
    <receiver>AboutWidget</receiver>
    <slot>hide()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>84</x>
-     <y>305</y>
+     <x>96</x>
+     <y>286</y>
     </hint>
     <hint type="destinationlabel">
-     <x>92</x>
-     <y>372</y>
+     <x>96</x>
+     <y>300</y>
     </hint>
    </hints>
   </connection>
