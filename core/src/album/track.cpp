@@ -89,6 +89,10 @@ void Track::save() const {
 	}
 
 	TagLib::FileRef fout( this->p_->uri.toLocalFile().toUtf8().constData() );
+	if( fout.isNull() ) {
+		qDebug() << "Format not supported, skip tag writing.";
+		return;
+	}
 	fout.tag()->setAlbum( TagLib::String( this->getAlbum()->getTitle().toUtf8().constData(), TagLib::String::UTF8 ) );
 	fout.tag()->setArtist( TagLib::String( this->getArtist().toUtf8().constData(), TagLib::String::UTF8 ) );
 	fout.tag()->setTitle( TagLib::String( this->getTitle().toUtf8().constData(), TagLib::String::UTF8 ) );
