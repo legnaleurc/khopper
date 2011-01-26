@@ -79,8 +79,8 @@ p, li { white-space: pre-wrap; }
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>198</width>
-            <height>192</height>
+            <width>217</width>
+            <height>188</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout_2">
@@ -127,6 +127,9 @@ Wei-Ru Zeng&lt;br/&gt;
          <property name="pixmap">
           <pixmap resource="../../main.qrc">:/share/pixmap/womm.png</pixmap>
          </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
         </widget>
        </item>
       </layout>
@@ -137,6 +140,9 @@ Wei-Ru Zeng&lt;br/&gt;
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="standardButtons">
       <set>QDialogButtonBox::Ok</set>
+     </property>
+     <property name="centerButtons">
+      <bool>true</bool>
      </property>
     </widget>
    </item>
