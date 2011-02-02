@@ -40,7 +40,7 @@ namespace khopper {
 			OggPanel();
 
 			/// Get configured Writer instance
-			virtual codec::WriterSP createWriter( const QUrl & uri ) const;
+			virtual plugin::WriterCreator getWriterCreator() const;
 
 		private:
 			std::shared_ptr< Ui::OggPanel > ui_;

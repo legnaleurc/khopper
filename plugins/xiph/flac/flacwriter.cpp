@@ -27,25 +27,8 @@
 
 #include <cstdint>
 
-namespace {
-
-	static inline FILE * fileHelper( const QUrl & uri ) {
-		// FIXME: not always local file
-#ifdef Q_OS_WIN32
-		FILE * fout = NULL;
-		errno_t ret = _wfopen_s( &fout, uri.toLocalFile().toStdWString().c_str(), L"wb" );
-		if( ret != 0 ) {
-			return NULL;
-		}
-		return fout;
-#else
-		return fopen( uri.toLocalFile().toStdString().c_str(), "wb" );
-#endif
-	}
-
-}
-
 using namespace khopper::codec;
+using khopper::error::IOError;
 using khopper::error::SystemError;
 
 FlacWriter::FlacWriter( const QUrl & uri ):
@@ -62,6 +45,23 @@ FlacWriter::~FlacWriter() {
 }
 
 void FlacWriter::doOpen() {
+	if( this->getURI().scheme() != "file" ) {
+		throw IOError( tr( "This plugin do not support remote access." ) );
+	}
+	// open files
+	FILE * fout = NULL;
+#ifdef Q_OS_WIN32
+	errno_t ret = _wfopen_s( &fout, this->getURI().toLocalFile().toStdWString().c_str(), L"wb" );
+	if( ret != 0 ) {
+		throw IOError( ret );
+	}
+#else
+	fout = fopen( this->getURI().toLocalFile().toStdString().c_str(), "wb" );
+	if( fout == NULL ) {
+		throw IOError( QString( "Can not open: %1" ).arg( this->getURI().toString() ) );
+	}
+#endif
+
 	FLAC__bool ok = true;
 	std::vector< FLAC__StreamMetadata * > metadata;
 
@@ -121,11 +121,6 @@ void FlacWriter::doOpen() {
 		throw error::CodecError( "encoder parameter error" );
 	}
 
-	// open files
-	FILE * fout = fileHelper( this->getURI() );
-	if( fout == NULL ) {
-		throw error::IOError( QString( "Can not open: %1" ).arg( this->getURI().toString() ) );
-	}
 	FLAC__StreamEncoderInitStatus init_status;
 	if( this->ogg_ ) {
 		init_status = FLAC__stream_encoder_init_ogg_FILE(

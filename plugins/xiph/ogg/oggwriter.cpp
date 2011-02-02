@@ -26,44 +26,8 @@
 #include <cstdio>
 #include <cstdlib>
 
-namespace {
-
-	static inline FILE * fileHelper( const QUrl & uri ) {
-#ifdef Q_OS_WIN32
-		FILE * fout = NULL;
-		errno_t ret = _wfopen_s( &fout, uri.toLocalFile().toStdWString().c_str(), L"wb" );
-		if( ret != 0 ) {
-			return NULL;
-		}
-		return fout;
-#else
-		return fopen( uri.toLocalFile().toStdString().c_str(), "wb" );
-#endif
-	}
-
-	static inline void vorbisInfoHelper( vorbis_info * vi ) {
-		vorbis_info_clear( vi );
-		std::free( vi );
-	}
-
-	static inline void vorbisDSPHelper( vorbis_dsp_state * vd ) {
-		vorbis_dsp_clear( vd );
-		std::free( vd );
-	}
-
-	static inline void vorbisBlockHelper( vorbis_block * vb ) {
-		vorbis_block_clear( vb );
-		std::free( vb );
-	}
-
-	static inline void vorbisCommentHelper( vorbis_comment * vc ) {
-		vorbis_comment_clear( vc );
-		std::free( vc );
-	}
-
-}
-
 using namespace khopper::codec;
+using khopper::error::IOError;
 
 OggWriter::OggWriter( const QUrl & uri ):
 AbstractWriter( uri ),
@@ -80,6 +44,25 @@ OggWriter::~OggWriter() {
 }
 
 void OggWriter::doOpen() {
+	if( this->getURI().scheme() == "file" ) {
+		throw IOError( "This plugin do not support remote access." );
+	}
+
+	FILE * fout = NULL;
+	// open file
+#ifdef Q_OS_WIN32
+	errno_t ret = _wfopen_s( &fout, this->getURI().toLocalFile().toStdWString().c_str(), L"wb" );
+	if( ret != 0 ) {
+		throw IOError( ret );
+	}
+#else
+	fout = fopen( this->getURI().toLocalFile().toStdString().c_str(), "wb" );
+	if( fout == NULL ) {
+		throw error::IOError( QString( "Can not open: %1" ).arg( this->getURI().toString() ) );
+	}
+#endif
+	this->fout_.reset( fout, std::fclose );
+
 	// setup ogg stream
 	ogg_stream_state * os = static_cast< ogg_stream_state * >( std::malloc( sizeof( ogg_stream_state ) ) );
 	ogg_stream_init( os, 0xcafebabe );
@@ -87,26 +70,38 @@ void OggWriter::doOpen() {
 
 	// setup vorbis info
 	vorbis_info * vi = static_cast< vorbis_info * >( std::malloc( sizeof( vorbis_info ) ) );
-	this->encoder_.reset( vi, vorbisInfoHelper );
+	this->encoder_.reset( vi, []( vorbis_info * vi ) {
+		vorbis_info_clear( vi );
+		std::free( vi );
+	} );
 	vorbis_info_init( vi );
-	int ret = vorbis_encode_init_vbr( vi, this->getAudioFormat().channels(), this->getAudioFormat().frequency(), this->quality_ );
+	ret = vorbis_encode_init_vbr( vi, this->getAudioFormat().channels(), this->getAudioFormat().frequency(), this->quality_ );
 	if( ret != 0 ) {
 		throw error::CodecError( "Vorbis initialization error" );
 	}
 
 	// setup vorbis dsp state
 	vorbis_dsp_state * vd = static_cast< vorbis_dsp_state * >( std::malloc( sizeof( vorbis_dsp_state ) ) );
-	this->dsp_.reset( vd, vorbisDSPHelper );
+	this->dsp_.reset( vd, []( vorbis_dsp_state * vd ) {
+		vorbis_dsp_clear( vd );
+		std::free( vd );
+	} );
 	vorbis_analysis_init( vd, vi );
 
 	// setup vorbis block
 	vorbis_block * vb = static_cast< vorbis_block * >( std::malloc( sizeof( vorbis_block ) ) );
-	this->block_.reset( vb, vorbisBlockHelper );
+	this->block_.reset( vb, []( vorbis_block * vb ) {
+		vorbis_block_clear( vb );
+		std::free( vb );
+	} );
 	vorbis_block_init( vd, vb );
 
 	// write vorbis comment
 	vorbis_comment * vc = static_cast< vorbis_comment * >( std::malloc( sizeof( vorbis_comment ) ) );
-	this->comments_.reset( vc, vorbisCommentHelper );
+	this->comments_.reset( vc, []( vorbis_comment * vc ) {
+		vorbis_comment_clear( vc );
+		std::free( vc );
+	} );
 	vorbis_comment_init( vc );
 	vorbis_comment_add_tag( vc, "TITLE", this->getTitle().constData() );
 	vorbis_comment_add_tag( vc, "ALBUM", this->getAlbum().constData() );
@@ -120,13 +115,6 @@ void OggWriter::doOpen() {
 	ogg_stream_packetin( this->muxer_.get(), &header );
 	ogg_stream_packetin( this->muxer_.get(), &header_common );
 	ogg_stream_packetin( this->muxer_.get(), &header_code );
-
-	// open file
-	FILE * fout = fileHelper( this->getURI() );
-	if( fout == NULL ) {
-		throw error::IOError( QString( "Can not open: %1" ).arg( this->getURI().toString() ) );
-	}
-	this->fout_.reset( fout, std::fclose );
 
 	// write header
 	ogg_page og;

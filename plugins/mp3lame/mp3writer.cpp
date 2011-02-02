@@ -27,26 +27,8 @@
 
 #include <QtCore/QtDebug>
 
-namespace {
-
-	static inline FILE * fileHelper( const QUrl & uri ) {
-		// FIXME: not always local file
-#ifdef Q_OS_WIN32
-		FILE * fout = NULL;
-		errno_t ret = _wfopen_s( &fout, uri.toLocalFile().toStdWString().c_str(), L"wb" );
-		if( ret != 0 ) {
-			throw khopper::error::IOError( ret );
-		}
-		return fout;
-#else
-		qDebug() << "Mp3Writer: uri" << uri << "local" << uri.toLocalFile().toStdString().c_str();
-		return fopen( uri.toLocalFile().toStdString().c_str(), "wb" );
-#endif
-	}
-
-}
-
 using namespace khopper::codec;
+using khopper::error::IOError;
 
 Mp3Writer::Mp3Writer( const QUrl & uri ):
 AbstractWriter( uri ),
@@ -56,11 +38,26 @@ id3v2Offset_( -1L ) {
 }
 
 void Mp3Writer::doOpen() {
-	// open file
-	FILE * fout = fileHelper( this->getURI() );
-	if( fout == NULL ) {
-		throw error::IOError( QString( "Can not open: %1" ).arg( this->getURI().toString() ) );
+	// no remote support
+	if( this->getURI().scheme() != "file" ) {
+		throw IOError( tr( "This plugin do not support remote writing." ) );
 	}
+	qDebug() << "Mp3Writer: uri" << this->getURI() << "local" << this->getURI().toLocalFile();
+
+	// open file
+	FILE * fout = NULL;
+#ifdef Q_OS_WIN32
+	errno_t ret = _wfopen_s( &fout, this->getURI().toLocalFile().toStdWString().c_str(), L"wb" );
+	if( ret != 0 ) {
+		throw khopper::error::IOError( ret );
+	}
+#else
+	fout = fopen( this->getURI().toLocalFile().toStdString().c_str(), "wb" );
+	if( fout == NULL ) {
+		throw IOError( QString( "Can not open: %1" ).arg( this->getURI().toString() ) );
+	}
+#endif
+
 	this->fout_.reset( fout, fclose );
 
 	// lame encoder setting
@@ -92,7 +89,7 @@ void Mp3Writer::doOpen() {
 	fwrite( id3v2.data(), sizeof( id3v2[0] ), id3v2.size(), this->fout_.get() );
 
 	// initialize all parameters
-	int ret = lame_init_params( this->gfp_.get() );
+	ret = lame_init_params( this->gfp_.get() );
 	if( ret < 0 ) {
 		qDebug( "lame param error" );
 	}

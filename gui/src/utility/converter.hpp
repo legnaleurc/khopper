@@ -36,9 +36,9 @@ namespace khopper {
 
 		public:
 			/**
-			 * @brief Default constructor
+			 * @brief Constructor
 			 */
-			Converter( album::TrackCSP track, codec::WriterSP encoder );
+			Converter( album::TrackCSP track, plugin::WriterCreator creator, const QString & path );
 
 			QString getTitle() const;
 			qint64 getMaximumValue() const;
@@ -60,9 +60,12 @@ namespace khopper {
 			void finished();
 
 		private:
+			QUrl getUniqueURI_() const;
+
 			bool canceled_;
+			plugin::WriterCreator creator_;
 			album::TrackCSP track_;
-			codec::WriterSP writer_;
+			QString path_;
 		};
 
 	}

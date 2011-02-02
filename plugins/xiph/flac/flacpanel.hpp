@@ -47,7 +47,7 @@ namespace khopper {
 			 * @brief Get encoder setting object
 			 * @return Smart pointer contains AbstractWriter
 			 */
-			virtual codec::WriterSP createWriter( const QUrl & uri ) const;
+			virtual plugin::WriterCreator getWriterCreator() const;
 
 		private:
 			std::shared_ptr< Ui::FlacPanel > ui_;
