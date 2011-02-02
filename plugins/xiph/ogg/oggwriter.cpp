@@ -49,9 +49,10 @@ void OggWriter::doOpen() {
 	}
 
 	FILE * fout = NULL;
+	int ret = 0;
 	// open file
 #ifdef Q_OS_WIN32
-	errno_t ret = _wfopen_s( &fout, this->getURI().toLocalFile().toStdWString().c_str(), L"wb" );
+	ret = _wfopen_s( &fout, this->getURI().toLocalFile().toStdWString().c_str(), L"wb" );
 	if( ret != 0 ) {
 		throw IOError( ret );
 	}
@@ -119,7 +120,7 @@ void OggWriter::doOpen() {
 	// write header
 	ogg_page og;
 	for(;;) {
-		int ret = ogg_stream_flush( this->muxer_.get(), &og );
+		ret = ogg_stream_flush( this->muxer_.get(), &og );
 		if( ret == 0 ) {
 			break;
 		}

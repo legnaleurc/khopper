@@ -46,8 +46,9 @@ void Mp3Writer::doOpen() {
 
 	// open file
 	FILE * fout = NULL;
+	int ret = 0;
 #ifdef Q_OS_WIN32
-	errno_t ret = _wfopen_s( &fout, this->getURI().toLocalFile().toStdWString().c_str(), L"wb" );
+	ret = _wfopen_s( &fout, this->getURI().toLocalFile().toStdWString().c_str(), L"wb" );
 	if( ret != 0 ) {
 		throw khopper::error::IOError( ret );
 	}
