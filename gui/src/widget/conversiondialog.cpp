@@ -38,6 +38,7 @@ using khopper::album::TrackCSP;
 using khopper::album::TrackSP;
 using khopper::album::PlayList;
 using khopper::codec::WriterSP;
+using khopper::plugin::WriterCreator;
 using khopper::utility::Converter;
 
 ConversionDialog::ConversionDialog( QWidget * parent ):
@@ -67,11 +68,12 @@ void ConversionDialog::convert( const PlayList & tracks ) {
 	}
 
 	AbstractPanel * panel = this->getCurrent();
+	WriterCreator wc( panel->getWriterCreator() );
 
 	QList< Converter * > tasks;
 	std::for_each( tracks.begin(), tracks.end(), [&]( album::TrackSP track ) {
 		QString path = QString( "%1/%2.%3" ).arg( this->getOutputPath_( track ) ).arg( this->getOutputName_( track ) ).arg( panel->getSuffix() );
-		Converter * task = new Converter( track, panel->createWriter( QUrl::fromLocalFile( path ) ) );
+		Converter * task = new Converter( track, wc, path );
 		QObject::connect( task, SIGNAL( errorOccured( const QString &, const QString & ) ), this, SIGNAL( errorOccured( const QString &, const QString & ) ) );
 		tasks.push_back( task );
 	} );

@@ -27,8 +27,9 @@
 namespace khopper {
 	namespace codec {
 
-		struct AbstractWriter::AbstractWriterPrivate {
-			AbstractWriterPrivate( const QUrl & uri );
+		class AbstractWriter::Private {
+		public:
+			explicit Private( const QUrl & uri );
 
 			QByteArray album;
 			QByteArray artist;

@@ -27,6 +27,7 @@
 #include <QtCore/QIODevice>
 #include <QtCore/QUrl>
 
+#include <functional>
 #include <memory>
 
 namespace khopper {
@@ -94,7 +95,7 @@ namespace khopper {
 
 		protected:
 			/**
-			 * @brief Default constructor
+			 * @brief Constructor
 			 */
 			explicit AbstractWriter( const QUrl & uri );
 
@@ -138,8 +139,8 @@ namespace khopper {
 			AbstractWriter( const AbstractWriter & );
 			AbstractWriter & operator =( const AbstractWriter & );
 
-			struct AbstractWriterPrivate;
-			std::shared_ptr< AbstractWriterPrivate > p_;
+			class Private;
+			std::shared_ptr< Private > p_;
 		};
 
 		/**
@@ -158,6 +159,12 @@ namespace khopper {
 		 * Use TR1 shared pointer.
 		 */
 		typedef std::shared_ptr< const AbstractWriter > WriterCSP;
+
+	}
+
+	namespace plugin {
+
+		typedef std::function< codec::WriterSP ( const QUrl & ) > WriterCreator;
 
 	}
 
