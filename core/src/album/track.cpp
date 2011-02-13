@@ -89,6 +89,10 @@ void Track::save() const {
 	}
 
 	TagLib::FileRef fout( this->p_->uri.toLocalFile().toUtf8().constData() );
+	if( fout.isNull() ) {
+		qDebug() << "Format not supported, skip tag writing.";
+		return;
+	}
 	fout.tag()->setAlbum( TagLib::String( this->getAlbum()->getTitle().toUtf8().constData(), TagLib::String::UTF8 ) );
 	fout.tag()->setArtist( TagLib::String( this->getArtist().toUtf8().constData(), TagLib::String::UTF8 ) );
 	fout.tag()->setTitle( TagLib::String( this->getTitle().toUtf8().constData(), TagLib::String::UTF8 ) );
@@ -171,15 +175,27 @@ uri( uri ) {
 	if( !reader->isOpen() ) {
 		throw CodecError( QObject::tr( "Can not open `%1\' (%2)" ).arg( uri.toString() ).arg( Q_FUNC_INFO ) );
 	}
-
-	// FIXME: text codec
-	this->album->setTitle( reader->getAlbumTitle() );
-	this->artist = reader->getArtist();
-	this->format = reader->getAudioFormat();
 	this->bitRate = reader->getBitRate();
 	this->duration = Timestamp::fromMillisecond( reader->getDuration() );
-	this->index = reader->getIndex();
-	this->title = reader->getTitle();
+	this->format = reader->getAudioFormat();
+
+	// FIXME: text codec
+	if( this->uri.scheme() == "file" ) {
+		TagLib::FileRef fin( this->uri.toLocalFile().toUtf8().constData() );
+		if( fin.isNull() ) {
+			goto failback;
+		}
+		this->album->setTitle( QString::fromUtf8( fin.tag()->album().to8Bit( true ).c_str() ) );
+		this->artist = fin.tag()->artist().to8Bit( true ).c_str();
+		this->index = fin.tag()->track();
+		this->title = fin.tag()->title().to8Bit( true ).c_str();
+	} else {
+failback:
+		this->album->setTitle( reader->getAlbumTitle() );
+		this->artist = reader->getArtist();
+		this->index = reader->getIndex();
+		this->title = reader->getTitle();
+	}
 
 	reader->close();
 }

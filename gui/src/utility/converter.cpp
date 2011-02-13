@@ -25,21 +25,32 @@
 #include "khopper/abstractwriter.hpp"
 #include "khopper/error.hpp"
 
+#include <QtCore/QDir>
+#include <QtCore/QFileInfo>
+
 using namespace khopper::utility;
 using khopper::album::TrackCSP;
 using khopper::codec::WriterSP;
 using khopper::codec::ReaderSP;
 using khopper::error::BaseError;
 using khopper::error::CodecError;
+using khopper::plugin::WriterCreator;
 
-Converter::Converter( TrackCSP track, WriterSP writer ):
+Converter::Converter( TrackCSP track, WriterCreator creator, const QString & path ):
 QObject( 0 ),
 canceled_( false ),
+creator_( creator ),
 track_( track ),
-writer_( writer ) {
-	this->writer_->setAlbum( this->track_->getAlbum()->getTitle().toUtf8() );
-	this->writer_->setArtist( this->track_->getArtist().toUtf8() );
-	this->writer_->setTitle( this->track_->getTitle().toUtf8() );
+path_( path ) {
+}
+
+QUrl Converter::getUniqueURI_() const {
+	QFileInfo fi( this->path_ );
+	QString baseName( fi.baseName() );
+	for( int i = 1; fi.exists(); ++i ) {
+		fi.setFile( fi.dir(), QString( "%1_%2.%3" ).arg( baseName ).arg( i ).arg( fi.completeSuffix() ) );
+	}
+	return QUrl::fromLocalFile( fi.absoluteFilePath() );
 }
 
 void Converter::start() {
@@ -53,11 +64,15 @@ void Converter::start() {
 		return;
 	}
 
-	this->writer_->setAudioFormat( decoder->getAudioFormat() );
-	this->writer_->setChannelLayout( decoder->getChannelLayout() );
+	WriterSP encoder( this->creator_( this->getUniqueURI_() ) );
+	encoder->setAlbum( this->track_->getAlbum()->getTitle().toUtf8() );
+	encoder->setArtist( this->track_->getArtist().toUtf8() );
+	encoder->setTitle( this->track_->getTitle().toUtf8() );
+	encoder->setAudioFormat( decoder->getAudioFormat() );
+	encoder->setChannelLayout( decoder->getChannelLayout() );
 
 	try {
-		this->writer_->open( QIODevice::WriteOnly );
+		encoder->open( QIODevice::WriteOnly );
 	} catch( BaseError & e ) {
 		emit this->errorOccured( tr( "Encoder Error" ), e.getMessage() );
 		emit this->finished();
@@ -76,11 +91,11 @@ void Converter::start() {
 			break;
 		}
 		QByteArray frame( decoder->read( sec ) );
-		this->writer_->write( frame );
+		encoder->write( frame );
 		emit this->decodedTime( frame.size() * 1000 / sec );
 	}
 
-	this->writer_->close();
+	encoder->close();
 	decoder->close();
 	emit this->finished();
 }

@@ -34,7 +34,9 @@ AbstractReader( uri ),
 client_() {
 	YouTubeLoader loader( uri, parent );
 	loader.parseHeader( false );
-	this->setTitle( loader.getTitle().toUtf8() );
+	QString title( loader.getTitle() );
+	title.replace( "&lt;", "<" ).replace( "&gt;", ">" ).replace( "&nbsp;", " " ).replace( "&amp;", "&" );
+	this->setTitle( title.toUtf8() );
 	// Always use MP4, it makes no diff for audio.
 	QUrl realURI( loader.getRealURI( "18" ) );
 	this->client_ = getReaderCreator( realURI )( realURI );

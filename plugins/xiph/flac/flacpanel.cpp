@@ -28,6 +28,7 @@
 using namespace khopper::widget;
 using khopper::codec::WriterSP;
 using khopper::codec::FlacWriter;
+using khopper::plugin::WriterCreator;
 
 FlacPanel::FlacPanel():
 AbstractPanel(),
@@ -45,13 +46,15 @@ ui_( new Ui::FlacPanel ) {
 	this->ui_->channels->setCurrentIndex( 1 );
 }
 
-WriterSP FlacPanel::createWriter( const QUrl & uri ) const {
-	FlacWriter * encoder = new FlacWriter( uri );
+WriterCreator FlacPanel::getWriterCreator() const {
+	return []( const QUrl & uri )->WriterSP {
+		FlacWriter * encoder = new FlacWriter( uri );
 
-	if( this->ui_->custom->isChecked() ) {
-		//encoder->setSampleRate( this->ui_->sampleRate->itemData( this->ui_->sampleRate->currentIndex() ).toInt() );
-		//encoder->setChannels( this->ui_->channels->itemData( this->ui_->channels->currentIndex() ).toInt() );
-	}
+		//if( this->ui_->custom->isChecked() ) {
+			//encoder->setSampleRate( this->ui_->sampleRate->itemData( this->ui_->sampleRate->currentIndex() ).toInt() );
+			//encoder->setChannels( this->ui_->channels->itemData( this->ui_->channels->currentIndex() ).toInt() );
+		//}
 
-	return WriterSP( encoder );
+		return WriterSP( encoder );
+	};
 }

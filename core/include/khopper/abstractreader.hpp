@@ -56,6 +56,8 @@ namespace khopper {
 		 * @ingroup Codecs
 		 * @brief Audio reader interface
 		 * @sa AbstractWriter
+		 * @attention This class may and usaully use in threads. <b>Do NOT
+		 * @attention hold any GUI Object in this class</b>.
 		 */
 		class KHOPPER_DLL AbstractReader : public QIODevice {
 		public:
