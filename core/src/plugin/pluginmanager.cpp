@@ -120,22 +120,22 @@ QVariant PluginManager::data( const QModelIndex & index, int role ) const {
 		case 0:
 			it = this->loadedPlugins_.begin();
 			std::advance( it, index.row() );
-			return it->second->getID();
+			return true;
 			break;
 		case 1:
 			it = this->loadedPlugins_.begin();
 			std::advance( it, index.row() );
-			return it->second->getVersion();
+			return it->second->getID();
 			break;
 		case 2:
 			it = this->loadedPlugins_.begin();
 			std::advance( it, index.row() );
-			return it->second->getFileInfo().absoluteFilePath();
+			return it->second->getVersion();
 			break;
 		case 3:
 			it = this->loadedPlugins_.begin();
 			std::advance( it, index.row() );
-			return true;
+			return it->second->getFileInfo().absoluteFilePath();
 			break;
 		default:
 			return QVariant();
@@ -153,13 +153,13 @@ QVariant PluginManager::headerData( int section, Qt::Orientation orientation, in
 		case Qt::Horizontal:
 			switch( section ) {
 			case 0:
-				return tr( "ID" );
-			case 1:
-				return tr( "Version" );
-			case 2:
-				return tr( "Path" );
-			case 3:
 				return tr( "Loaded" );
+			case 1:
+				return tr( "ID" );
+			case 2:
+				return tr( "Version" );
+			case 3:
+				return tr( "Path" );
 			default:
 				return QVariant();
 			}
