@@ -88,8 +88,13 @@ PluginManager::~PluginManager() {
 	this->unloadPlugins();
 }
 
-QModelIndex PluginManager::index( int /*row*/, int /*column*/, const QModelIndex & /*parent*/ ) const {
-	return QModelIndex();
+QModelIndex PluginManager::index( int row, int column, const QModelIndex & parent ) const {
+	if( row >= this->rowCount( parent ) || column >= this->columnCount( parent ) ) {
+		return QModelIndex();
+	}
+	std::map< std::string, AbstractPlugin * >::const_iterator it = this->loadedPlugins_.begin();
+	std::advance( it, row );
+	return this->createIndex( row, column, it->second );
 }
 
 QModelIndex PluginManager::parent( const QModelIndex & /*index*/ ) const {
@@ -97,15 +102,75 @@ QModelIndex PluginManager::parent( const QModelIndex & /*index*/ ) const {
 }
 
 int PluginManager::rowCount( const QModelIndex & /*parent*/ ) const {
-	return 0;
+	return this->loadedPlugins_.size();
 }
 
 int PluginManager::columnCount( const QModelIndex & /*parent*/ ) const {
-	return 0;
+	return 4;
 }
 
-QVariant PluginManager::data( const QModelIndex & /*index*/, int /*role*/ ) const {
-	return QVariant();
+QVariant PluginManager::data( const QModelIndex & index, int role ) const {
+	if( !index.isValid() ) {
+		return QVariant();
+	}
+	std::map< std::string, AbstractPlugin * >::const_iterator it;
+	switch( role ) {
+	case Qt::DisplayRole:
+		switch( index.column() ) {
+		case 0:
+			it = this->loadedPlugins_.begin();
+			std::advance( it, index.row() );
+			return it->second->getID();
+			break;
+		case 1:
+			it = this->loadedPlugins_.begin();
+			std::advance( it, index.row() );
+			return it->second->getVersion();
+			break;
+		case 2:
+			it = this->loadedPlugins_.begin();
+			std::advance( it, index.row() );
+			return it->second->getFileInfo().absoluteFilePath();
+			break;
+		case 3:
+			it = this->loadedPlugins_.begin();
+			std::advance( it, index.row() );
+			return true;
+			break;
+		default:
+			return QVariant();
+		}
+		break;
+	default:
+		return QVariant();
+	}
+}
+
+QVariant PluginManager::headerData( int section, Qt::Orientation orientation, int role ) const {
+	switch( role ) {
+	case Qt::DisplayRole:
+		switch( orientation ) {
+		case Qt::Horizontal:
+			switch( section ) {
+			case 0:
+				return tr( "ID" );
+			case 1:
+				return tr( "Version" );
+			case 2:
+				return tr( "Path" );
+			case 3:
+				return tr( "Loaded" );
+			default:
+				return QVariant();
+			}
+			break;
+		default:
+			return QVariant();
+		}
+		break;
+	default:
+		return QVariant();
+	}
 }
 
 void PluginManager::reloadPlugins() {

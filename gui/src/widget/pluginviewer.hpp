@@ -26,7 +26,6 @@
 
 #include <memory>
 
-class QStandardItemModel;
 namespace Ui {
 	class PluginViewer;
 }
