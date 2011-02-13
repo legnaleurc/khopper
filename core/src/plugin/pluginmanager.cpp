@@ -101,12 +101,12 @@ QModelIndex PluginManager::parent( const QModelIndex & /*index*/ ) const {
 	return QModelIndex();
 }
 
-int PluginManager::rowCount( const QModelIndex & /*parent*/ ) const {
-	return this->loadedPlugins_.size();
+int PluginManager::rowCount( const QModelIndex & parent ) const {
+	return parent.isValid() ? 0 : this->loadedPlugins_.size();
 }
 
-int PluginManager::columnCount( const QModelIndex & /*parent*/ ) const {
-	return 4;
+int PluginManager::columnCount( const QModelIndex & parent ) const {
+	return parent.isValid() ? 0 : 4;
 }
 
 QVariant PluginManager::data( const QModelIndex & index, int role ) const {
