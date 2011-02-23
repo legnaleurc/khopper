@@ -36,6 +36,7 @@ namespace khopper {
 
 	namespace plugin {
 		class AbstractPlugin;
+		class PluginModel;
 	}
 
 	namespace widget {
@@ -78,7 +79,7 @@ namespace khopper {
 		 */
 		plugin::AbstractPlugin * getPluginInstance( const QString & pluginID ) const;
 
-		QAbstractItemModel * getPluginModel() const;
+		plugin::PluginModel * getPluginModel() const;
 
 		int getCpuCount() const;
 

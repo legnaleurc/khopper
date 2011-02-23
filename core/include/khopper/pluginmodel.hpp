@@ -1,5 +1,5 @@
 /**
- * @file pluginmanager.hpp
+ * @file pluginmodel.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,36 +19,29 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_PLUGIN_PLUGINMANAGER_HPP
-#define KHOPPER_PLUGIN_PLUGINMANAGER_HPP
+#ifndef KHOPPER_PLUGIN_PLUGINMODEL_HPP
+#define KHOPPER_PLUGIN_PLUGINMODEL_HPP
 
 #include "error.hpp"
 
 #include <QtCore/QAbstractItemModel>
 #include <QtCore/QDir>
 
-#include <string>
-#include <list>
-#include <map>
-
 namespace khopper {
 
 	namespace plugin {
-
-		class AbstractPanel;
-		class AbstractPlugin;
 
 		/**
 		 * @ingroup Plugins
 		 * @brief Private plugin manager
 		 */
-		class PluginManager : public QAbstractItemModel {
+		class KHOPPER_DLL PluginModel : public QAbstractItemModel {
 			Q_OBJECT
 
 		public:
 			/// default constructor
-			PluginManager();
-			virtual ~PluginManager();
+			PluginModel();
+			virtual ~PluginModel();
 
 			virtual QModelIndex index( int row, int column, const QModelIndex & parent = QModelIndex() ) const;
 			virtual QModelIndex parent( const QModelIndex & index ) const;
@@ -57,11 +50,7 @@ namespace khopper {
 			virtual QVariant data( const QModelIndex & index, int role = Qt::DisplayRole ) const;
 			virtual QVariant headerData( int section, Qt::Orientation orientation, int role = Qt::DisplayRole ) const;
 
-			/// get plugin instance by name
-			AbstractPlugin * getPluginInstance( const QString & name ) const;
-			const std::list< QDir > & getSearchPaths() const {
-				return this->searchPaths_;
-			}
+			const std::list< QDir > & getSearchPaths() const;
 
 			/**
 			 * @brief reload all plugins
@@ -71,14 +60,16 @@ namespace khopper {
 			void reloadPlugins();
 			void unloadPlugins();
 
+		public slots:
+			void loadPlugin( const QModelIndex & index );
+			void unloadPlugin( const QModelIndex & index );
+
 		signals:
 			void errorOccured( const QString & title, const QString & message );
 
 		private:
-			QFileInfoList getPluginsFileInfo_() const;
-
-			std::list< QDir > searchPaths_;
-			std::map< std::string, AbstractPlugin * > loadedPlugins_;
+			class Private;
+			std::shared_ptr< Private > p_;
 		};
 
 	}

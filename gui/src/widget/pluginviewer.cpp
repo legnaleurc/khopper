@@ -23,8 +23,13 @@
 #include "ui_pluginviewer.h"
 
 #include "khopper/application.hpp"
+#include "khopper/pluginmodel.hpp"
+
+#include <algorithm>
+#include <functional>
 
 using namespace khopper::widget;
+using khopper::plugin::PluginModel;
 
 PluginViewer::PluginViewer( QWidget * parent ):
 QWidget( parent, Qt::Dialog ),
@@ -32,4 +37,18 @@ ui_( new Ui::PluginViewer ) {
 	this->ui_->setupUi( this );
 
 	this->ui_->treeView->setModel( khopper::pApp()->getPluginModel() );
+	this->connect( this->ui_->loadButton, SIGNAL( clicked() ), SLOT( loadSelected_() ) );
+	this->connect( this->ui_->unloadButton, SIGNAL( clicked() ), SLOT( unloadSelected_() ) );
+}
+
+void PluginViewer::loadSelected_() {
+	QItemSelectionModel * selection = this->ui_->treeView->selectionModel();
+	QModelIndexList indices = selection->selectedRows();
+	std::for_each( indices.begin(), indices.end(), std::bind( &PluginModel::loadPlugin, khopper::pApp()->getPluginModel(), std::placeholders::_1 ) );
+}
+
+void PluginViewer::unloadSelected_() {
+	QItemSelectionModel * selection = this->ui_->treeView->selectionModel();
+	QModelIndexList indices = selection->selectedRows();
+	std::for_each( indices.begin(), indices.end(), std::bind( &PluginModel::unloadPlugin, khopper::pApp()->getPluginModel(), std::placeholders::_1 ) );
 }

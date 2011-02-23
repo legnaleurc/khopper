@@ -30,7 +30,7 @@
 namespace khopper {
 
 	namespace plugin {
-		class PluginManager;
+		class PluginModel;
 	}
 
 	template< typename KeyType, typename CreatorType >
@@ -57,7 +57,7 @@ namespace khopper {
 		int cpuCount;
 		Factory< QString, QUrl, codec::ReaderSP, FactoryError > readerFactory;
 		Factory< QString, QUrl, album::PlayList, FactoryError > playlistFactory;
-		std::shared_ptr< plugin::PluginManager > pm;
+		std::shared_ptr< plugin::PluginModel > pm;
 	};
 
 }

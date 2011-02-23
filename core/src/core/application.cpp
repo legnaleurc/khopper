@@ -21,19 +21,31 @@
  */
 #include "applicationprivate.hpp"
 #include "system.hpp"
-#include "plugin/pluginmanager.hpp"
+#include "pluginmodel.hpp"
 
 using namespace khopper;
 using khopper::widget::AbstractPanel;
 using khopper::plugin::AbstractPlugin;
-using khopper::plugin::PluginManager;
+using khopper::plugin::PluginModel;
 
 ApplicationPrivate * ApplicationPrivate::self = NULL;
+
+ApplicationPrivate::ApplicationPrivate():
+cpuCount( getCpuCount() ),
+readerFactory(),
+playlistFactory(),
+pm( new PluginModel ) {
+	ApplicationPrivate::self = this;
+}
+
+Application * khopper::pApp() {
+	return static_cast< Application * >( QCoreApplication::instance() );
+}
 
 Application::Application( int & argc, char * * argv ):
 QApplication( argc, argv ),
 p_( new ApplicationPrivate ) {
-	QObject::connect( this->p_->pm.get(), SIGNAL( errorOccured( const QString &, const QString & ) ), this, SIGNAL( errorOccured( const QString &, const QString & ) ) );
+	this->connect( this->p_->pm.get(), SIGNAL( errorOccured( const QString &, const QString & ) ), SIGNAL( errorOccured( const QString &, const QString & ) ) );
 }
 
 void Application::addPanel( AbstractPanel * panel ) {
@@ -48,26 +60,14 @@ void Application::reloadPlugins() {
 	this->p_->pm->reloadPlugins();
 }
 
-AbstractPlugin * Application::getPluginInstance( const QString & pluginID ) const {
-	return this->p_->pm->getPluginInstance( pluginID );
-}
+//AbstractPlugin * Application::getPluginInstance( const QString & pluginID ) const {
+//	return this->p_->pm->getPluginInstance( pluginID );
+//}
 
-QAbstractItemModel * Application::getPluginModel() const {
+plugin::PluginModel * Application::getPluginModel() const {
 	return this->p_->pm.get();
 }
 
 int Application::getCpuCount() const {
 	return this->p_->cpuCount;
-}
-
-ApplicationPrivate::ApplicationPrivate():
-cpuCount( getCpuCount() ),
-readerFactory(),
-playlistFactory(),
-pm( new PluginManager ) {
-	ApplicationPrivate::self = this;
-}
-
-Application * khopper::pApp() {
-	return static_cast< Application * >( QCoreApplication::instance() );
 }

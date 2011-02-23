@@ -22,6 +22,7 @@ set(KHOPPER_GUI_MOC_HEADERS
     src/widget/mainwindow.hpp
     src/widget/player.hpp
     src/widget/playlistview.hpp
+    src/widget/pluginviewer.hpp
     src/widget/preference.hpp
     src/widget/progressbar.hpp
     src/widget/progressviewer.hpp

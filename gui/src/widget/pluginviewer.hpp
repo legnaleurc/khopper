@@ -34,8 +34,13 @@ namespace khopper {
 	namespace widget {
 
 		class PluginViewer : public QWidget {
+			Q_OBJECT
 		public:
 			explicit PluginViewer( QWidget * parent );
+
+		private slots:
+			void loadSelected_();
+			void unloadSelected_();
 
 		private:
 			std::shared_ptr< Ui::PluginViewer > ui_;

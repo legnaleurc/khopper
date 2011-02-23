@@ -24,21 +24,21 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QPushButton" name="pushButton">
+      <widget class="QPushButton" name="loadButton">
        <property name="text">
         <string>&amp;Load</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton_2">
+      <widget class="QPushButton" name="unloadButton">
        <property name="text">
         <string>&amp;Unload</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton_3">
+      <widget class="QPushButton" name="refreshButton">
        <property name="text">
         <string>&amp;Refresh</string>
        </property>
