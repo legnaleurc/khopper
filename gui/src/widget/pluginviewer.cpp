@@ -36,9 +36,11 @@ QWidget( parent, Qt::Dialog ),
 ui_( new Ui::PluginViewer ) {
 	this->ui_->setupUi( this );
 
-	this->ui_->treeView->setModel( khopper::pApp()->getPluginModel() );
+	PluginModel * model = khopper::pApp()->getPluginModel();
+	this->ui_->treeView->setModel( model );
 	this->connect( this->ui_->loadButton, SIGNAL( clicked() ), SLOT( loadSelected_() ) );
 	this->connect( this->ui_->unloadButton, SIGNAL( clicked() ), SLOT( unloadSelected_() ) );
+	model->connect( this->ui_->refreshButton, SIGNAL( clicked() ), SLOT( refreshPlugins() ) );
 }
 
 void PluginViewer::loadSelected_() {

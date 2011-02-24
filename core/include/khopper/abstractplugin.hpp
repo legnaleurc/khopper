@@ -43,12 +43,14 @@ namespace khopper {
 		class KHOPPER_DLL AbstractPlugin : public QObject {
 		public:
 			AbstractPlugin();
+			virtual ~AbstractPlugin();
 
-			void install( const QFileInfo & fileInfo );
+			void install();
 			void uninstall();
 			bool isInstalled() const;
 
 			const QFileInfo & getFileInfo() const;
+			void setFileInfo( const QFileInfo & fileInfo );
 			/// get the id of the plugin, must be unique
 			const QString & getID() const;
 			/// get version string of the plugin
@@ -65,8 +67,8 @@ namespace khopper {
 			AbstractPlugin( const AbstractPlugin & );
 			AbstractPlugin & operator =( const AbstractPlugin & );
 
-			struct AbstractPluginPrivate;
-			std::shared_ptr< AbstractPluginPrivate > p_;
+			class Private;
+			std::shared_ptr< Private > p_;
 		};
 
 	}

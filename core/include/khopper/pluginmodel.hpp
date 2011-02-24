@@ -65,6 +65,7 @@ namespace khopper {
 		public slots:
 			void loadPlugin( const QModelIndex & index );
 			void unloadPlugin( const QModelIndex & index );
+			void refreshPlugins();
 
 		signals:
 			void errorOccured( const QString & title, const QString & message );

@@ -29,8 +29,9 @@
 namespace khopper {
 	namespace plugin {
 
-		struct AbstractPlugin::AbstractPluginPrivate {
-			AbstractPluginPrivate();
+		class AbstractPlugin::Private {
+		public:
+			Private();
 
 			bool installed;
 			QString id;

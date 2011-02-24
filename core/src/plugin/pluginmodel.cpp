@@ -170,7 +170,50 @@ QVariant PluginModel::headerData( int section, Qt::Orientation orientation, int 
 
 void PluginModel::reloadPlugins() {
 	this->unloadPlugins();
+	this->refreshPlugins();
 
+	std::for_each( this->p_->plugins.begin(), this->p_->plugins.end(), [&]( const Private::PluginListType::value_type & pPlugin ) {
+		try {
+			pPlugin->install();
+		} catch( error::BaseError & e ) {
+			emit this->errorOccured( QObject::tr( "Plugin install error" ), e.getMessage() );
+			return;
+		}
+	} );
+}
+
+void PluginModel::unloadPlugins() {
+	for( Private::PluginListType::iterator it = this->p_->plugins.begin(); it != this->p_->plugins.end(); ++it ) {
+		if( *it ) {
+			( *it )->uninstall();
+		}
+	}
+	this->p_->plugins.clear();
+}
+
+void PluginModel::loadPlugin( const QModelIndex & index ) {
+	if( !index.isValid() || !this->p_->plugins[index.row()] || this->p_->plugins[index.row()]->isInstalled() ) {
+		return;
+	}
+	try {
+		this->p_->plugins[index.row()]->install();
+	} catch( error::BaseError & e ) {
+		emit this->errorOccured( QObject::tr( "Plugin install error" ), e.getMessage() );
+	}
+}
+
+void PluginModel::unloadPlugin( const QModelIndex & index ) {
+	if( !index.isValid() || !this->p_->plugins[index.row()] || !this->p_->plugins[index.row()]->isInstalled() ) {
+		return;
+	}
+	try {
+		this->p_->plugins[index.row()]->uninstall();
+	} catch( error::BaseError & e ) {
+		emit this->errorOccured( QObject::tr( "Plugin uninstall error" ), e.getMessage() );
+	}
+}
+
+void PluginModel::refreshPlugins() {
 	QFileInfoList pfi( this->p_->getPluginsFileInfo() );
 	std::for_each( pfi.begin(), pfi.end(), [&]( const QFileInfo & fileInfo ) {
 		qDebug() << fileInfo.absoluteFilePath();
@@ -193,52 +236,15 @@ void PluginModel::reloadPlugins() {
 		if( it != this->p_->plugins.end() ) {
 			// if find deprecated plugin, unload it
 			if( *it != loader.instance() ) {
+				// NOTE: maybe unsafe with multiple inheritance
 				qDebug() << "unload deprecated plugin:" << loader.unload();
 			} else {
 				qDebug() << "identical instance: ignored";
 			}
 		} else {
-			// if not, try load it
-			try {
-				pPlugin->install( fileInfo );
-			} catch( error::BaseError & e ) {
-				emit this->errorOccured( QObject::tr( "Plugin install error" ), e.getMessage() );
-				loader.unload();
-				return;
-			}
+			pPlugin->setFileInfo( fileInfo );
 			// if anything is right, add it to list
 			this->p_->plugins.push_back( pPlugin );
 		}
 	} );
-}
-
-void PluginModel::unloadPlugins() {
-	for( Private::PluginListType::iterator it = this->p_->plugins.begin(); it != this->p_->plugins.end(); ++it ) {
-		if( *it ) {
-			( *it )->uninstall();
-		}
-	}
-	this->p_->plugins.clear();
-}
-
-void PluginModel::loadPlugin( const QModelIndex & index ) {
-	if( !index.isValid() || !this->p_->plugins[index.row()] || this->p_->plugins[index.row()]->isInstalled() ) {
-		return;
-	}
-	try {
-		this->p_->plugins[index.row()]->install( this->p_->plugins[index.row()]->getFileInfo() );
-	} catch( error::BaseError & e ) {
-		emit this->errorOccured( QObject::tr( "Plugin install error" ), e.getMessage() );
-	}
-}
-
-void PluginModel::unloadPlugin( const QModelIndex & index ) {
-	if( !index.isValid() || !this->p_->plugins[index.row()] || !this->p_->plugins[index.row()]->isInstalled() ) {
-		return;
-	}
-	try {
-		this->p_->plugins[index.row()]->uninstall();
-	} catch( error::BaseError & e ) {
-		emit this->errorOccured( QObject::tr( "Plugin uninstall error" ), e.getMessage() );
-	}
 }
