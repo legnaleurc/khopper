@@ -28,6 +28,7 @@
 using namespace khopper::widget;
 using khopper::codec::WriterSP;
 using khopper::codec::Mp3Writer;
+using khopper::plugin::WriterCreator;
 
 Mp3Panel::Mp3Panel():
 AbstractPanel(),
@@ -64,23 +65,29 @@ choise_( new QButtonGroup( this ) ) {
 	this->ui_->channels->setCurrentIndex( 1 );
 }
 
-WriterSP Mp3Panel::createWriter( const QUrl & uri ) const {
-	Mp3Writer * encoder = new Mp3Writer( uri );
+WriterCreator Mp3Panel::getWriterCreator() const {
+	int id = this->choise_->checkedId();
+	int bitRate = this->ui_->bitRate->itemData( this->ui_->bitRate->currentIndex() ).toInt();
+	int quality = this->ui_->level->itemData( this->ui_->level->currentIndex() ).toInt();
+	// NOTE: workaround for VC10
+	return std::bind( std::function< WriterSP ( const QUrl &, int, unsigned int, int ) >( []( const QUrl & uri, int id, unsigned int bitRate, int quality )->WriterSP {
+		Mp3Writer * encoder = new Mp3Writer( uri );
 
-	switch( this->choise_->checkedId() ) {
-	case 0:
-		encoder->setBitRate( this->ui_->bitRate->itemData( this->ui_->bitRate->currentIndex() ).toInt() );
-		break;
-	case 1:
-		encoder->setVBRQuality( this->ui_->level->itemData( this->ui_->level->currentIndex() ).toInt() );
-		break;
-	default:
-		;
-	}
-	if( this->ui_->custom->isChecked() ) {
-		//encoder->setSampleRate( this->ui_->sampleRate->itemData( this->ui_->sampleRate->currentIndex() ).toInt() );
-		//encoder->setChannels( this->ui_->channels->itemData( this->ui_->channels->currentIndex() ).toInt() );
-	}
+		switch( id ) {
+		case 0:
+			encoder->setBitRate( bitRate );
+			break;
+		case 1:
+			encoder->setVBRQuality( quality );
+			break;
+		default:
+			;
+		}
+		//if( this->ui_->custom->isChecked() ) {
+			//encoder->setSampleRate( this->ui_->sampleRate->itemData( this->ui_->sampleRate->currentIndex() ).toInt() );
+			//encoder->setChannels( this->ui_->channels->itemData( this->ui_->channels->currentIndex() ).toInt() );
+		//}
 
-	return WriterSP( encoder );
+		return WriterSP( encoder );
+	} ), std::placeholders::_1, id, bitRate, quality );
 }

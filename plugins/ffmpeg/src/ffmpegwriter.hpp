@@ -40,7 +40,7 @@ namespace khopper {
 		class FfmpegWriter : public AbstractWriter {
 		public:
 			/**
-			 * @brief Default constructor
+			 * @brief Constructor
 			 */
 			explicit FfmpegWriter( const QUrl & uri );
 

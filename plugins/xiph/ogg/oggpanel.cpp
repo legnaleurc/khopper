@@ -30,6 +30,7 @@ using namespace khopper::widget;
 using khopper::codec::WriterSP;
 using khopper::codec::FlacWriter;
 using khopper::codec::OggWriter;
+using khopper::plugin::WriterCreator;
 
 OggPanel::OggPanel():
 AbstractPanel(),
@@ -59,26 +60,30 @@ choise_( new QButtonGroup( this ) ) {
 	this->ui_->sampleRate->addItem( tr( "48000 Hz" ), QVariant( 48000 ) );
 }
 
-WriterSP OggPanel::createWriter( const QUrl & uri ) const {
-	WriterSP tmp;
+WriterCreator OggPanel::getWriterCreator() const {
 	int id = this->choise_->checkedId();
+	int quality = this->ui_->quality->itemData( this->ui_->quality->currentIndex() ).toInt();
+	// NOTE: workaround for VC10
+	return std::bind( std::function< WriterSP ( const QUrl &, int, int ) >( []( const QUrl & uri, int id, int quality )->WriterSP {
+		WriterSP tmp;
 
-	if( id == 0 ) {
-		FlacWriter * flac = new FlacWriter( uri );
-		flac->setOggMode( true );
-		tmp.reset( flac );
-	} else if( id == 1 ) {
-		OggWriter * vorbis = new OggWriter( uri );
-		vorbis->setVBRQuality( this->ui_->quality->itemData( this->ui_->quality->currentIndex() ).toInt() / 10.f );
-		tmp.reset( vorbis );
-	} else {
-		qDebug( "%d\n", id );
-	}
+		if( id == 0 ) {
+			FlacWriter * flac = new FlacWriter( uri );
+			flac->setOggMode( true );
+			tmp.reset( flac );
+		} else if( id == 1 ) {
+			OggWriter * vorbis = new OggWriter( uri );
+			vorbis->setVBRQuality( quality / 10.f );
+			tmp.reset( vorbis );
+		} else {
+			qDebug( "%d\n", id );
+		}
 
-	if( this->ui_->custom->isChecked() ) {
-		//tmp->setChannels( this->ui_->channels->itemData( this->ui_->channels->currentIndex() ).toInt() );
-		//tmp->setSampleRate( this->ui_->sampleRate->itemData( this->ui_->sampleRate->currentIndex() ).toInt() );
-	}
+		//if( this->ui_->custom->isChecked() ) {
+			//tmp->setChannels( this->ui_->channels->itemData( this->ui_->channels->currentIndex() ).toInt() );
+			//tmp->setSampleRate( this->ui_->sampleRate->itemData( this->ui_->sampleRate->currentIndex() ).toInt() );
+		//}
 
-	return tmp;
+		return tmp;
+	} ), std::placeholders::_1, id, quality );
 }

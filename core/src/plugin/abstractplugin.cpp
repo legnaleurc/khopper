@@ -23,7 +23,21 @@
 
 using namespace khopper::plugin;
 
-AbstractPlugin::AbstractPlugin() : p_( new AbstractPluginPrivate ) {
+AbstractPlugin::Private::Private():
+installed( false ),
+id(),
+version(),
+info() {
+}
+
+AbstractPlugin::AbstractPlugin() : p_( new Private ) {
+}
+
+AbstractPlugin::~AbstractPlugin() {
+}
+
+void AbstractPlugin::setFileInfo( const QFileInfo & fileInfo ) {
+	this->p_->info = fileInfo;
 }
 
 const QFileInfo & AbstractPlugin::getFileInfo() const {
@@ -46,11 +60,10 @@ const QString & AbstractPlugin::getVersion() const {
 	return this->p_->version;
 }
 
-void AbstractPlugin::install( const QFileInfo & fileInfo ) {
+void AbstractPlugin::install() {
 	if( this->p_->installed ) {
 		return;
 	}
-	this->p_->info = fileInfo;
 	this->doInstall();
 	this->p_->installed = true;
 }
@@ -65,11 +78,4 @@ void AbstractPlugin::uninstall() {
 
 bool AbstractPlugin::isInstalled() const {
 	return this->p_->installed;
-}
-
-AbstractPlugin::AbstractPluginPrivate::AbstractPluginPrivate():
-installed( false ),
-id(),
-version(),
-info() {
 }

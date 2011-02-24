@@ -33,6 +33,7 @@
     <property name="title">
      <string>&amp;Tools</string>
     </property>
+    <addaction name="actionPlugins_Manager"/>
     <addaction name="action_Preference"/>
    </widget>
    <widget class="QMenu" name="menu_Help">
@@ -74,6 +75,11 @@
   <action name="actionAbout_Qt">
    <property name="text">
     <string>About &amp;Qt ...</string>
+   </property>
+  </action>
+  <action name="actionPlugins_Manager">
+   <property name="text">
+    <string>Plugins &amp;Manager</string>
    </property>
   </action>
   <action name="action_Load_By_Url">
