@@ -44,7 +44,6 @@ namespace khopper {
 
 			std::list< QDir > searchPaths;
 			PluginListType plugins;
-//			std::map< std::string, AbstractPlugin * > loadedPlugins;
 		};
 
 	}

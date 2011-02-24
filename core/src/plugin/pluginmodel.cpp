@@ -187,13 +187,16 @@ void PluginModel::reloadPlugins() {
 
 		using namespace khopper::plugin;
 		// FIXME: wrap lambda with std::function because the bug of VC10
-		PluginModel::Private::PluginListType::const_iterator it = std::find_if( this->p_->plugins.begin(), this->p_->plugins.end(), std::bind( std::function< bool( const PluginModel::Private::PluginListType::value_type, const QString & ) >( []( const PluginModel::Private::PluginListType::value_type & that, const QString & id ) {
+		PluginModel::Private::PluginListType::const_iterator it = std::find_if( this->p_->plugins.begin(), this->p_->plugins.end(), std::bind( std::function< bool( const PluginModel::Private::PluginListType::value_type &, const QString & ) >( []( const PluginModel::Private::PluginListType::value_type & that, const QString & id ) {
 			return that->getID() == id;
 		} ), std::placeholders::_1, pPlugin->getID() ) );
 		if( it != this->p_->plugins.end() ) {
 			// if find deprecated plugin, unload it
-			bool unloaded = loader.unload();
-			qDebug() << "unload deprecated plugin:" << unloaded;
+			if( *it != loader.instance() ) {
+				qDebug() << "unload deprecated plugin:" << loader.unload();
+			} else {
+				qDebug() << "identical instance: ignored";
+			}
 		} else {
 			// if not, try load it
 			try {
