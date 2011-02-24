@@ -30,7 +30,6 @@
 #include "khopper/track.hpp"
 
 #include <QtCore/QDir>
-#include <QtCore/QString>
 
 #include <vector>
 #include <string>
@@ -78,7 +77,7 @@ namespace khopper {
 
 			PlayList playList_;
 			std::shared_ptr< CueSheet > album_;
-			QString currentFilePath_;
+			QUrl currentFileURI_;
 			QString currentFileType_;
 			std::shared_ptr< CueSheetTrack > previousTrack_;
 			std::shared_ptr< CueSheetTrack > currentTrack_;

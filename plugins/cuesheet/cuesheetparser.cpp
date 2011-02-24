@@ -49,6 +49,7 @@ using khopper::error::CodecError;
 using khopper::error::ParsingError;
 using khopper::codec::ReaderSP;
 using khopper::codec::RangedReader;
+using khopper::plugin::getReaderCreator;
 
 PlayList CueSheetParser::load( const QString & content, const QDir & dir ) {
 	CueSheetParser parser( content, dir );
@@ -134,7 +135,7 @@ void CueSheetParser::parseFile_( const QString & fileName, const QString & type,
 		this->updateLastTrack_();
 	}
 
-	this->currentFilePath_ = dir.filePath( stripQuote( fileName ) );
+	this->currentFileURI_ = QUrl::fromLocalFile( dir.filePath( stripQuote( fileName ) ) );
 	this->currentFileType_ = type;
 }
 
@@ -188,7 +189,7 @@ void CueSheetParser::parseComment_( const QString & key, const QString & value )
 
 void CueSheetParser::parseTrack_( const QString & num, const QString & type ) {
 	this->previousTrack_ = this->currentTrack_;
-	this->currentTrack_.reset( new CueSheetTrack( QUrl::fromLocalFile( this->currentFilePath_ ) ) );
+	this->currentTrack_.reset( new CueSheetTrack( this->currentFileURI_ ) );
 
 	this->trackIndex_ = num.toUInt();
 	this->currentTrack_->setIndex( num.toShort() );
@@ -212,7 +213,7 @@ void CueSheetParser::parseGarbage_( const QString & line ) {
 
 void CueSheetParser::updateLastTrack_() {
 	// get the total length, because cue sheet don't provide it
-	ReaderSP decoder( this->currentTrack_->createReader() );
+	ReaderSP decoder( getReaderCreator( this->currentFileURI_ )( this->currentFileURI_ ) );
 	try {
 		// NOTE: may throw exception
 		decoder->open( QIODevice::ReadOnly );
