@@ -27,6 +27,8 @@
 #include <QtCore/QAbstractItemModel>
 #include <QtCore/QDir>
 
+#include <memory>
+
 namespace khopper {
 
 	namespace plugin {
