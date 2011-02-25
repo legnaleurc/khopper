@@ -42,7 +42,6 @@ RangedReader::RangedReader( const QUrl & uri, qint64 msBegin, qint64 msDuration 
 AbstractReader( uri ),
 client_(),
 msBegin_( msBegin ),
-msCurrent_( 0 ),
 msDuration_( msDuration ) {
 	this->client_ = getReaderCreator( uri )( uri );
 }
@@ -80,7 +79,6 @@ void RangedReader::doOpen() {
 }
 
 void RangedReader::doClose() {
-	this->msCurrent_ = 0;
 	this->client_->close();
 }
 

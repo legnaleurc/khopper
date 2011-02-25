@@ -54,7 +54,6 @@ namespace khopper {
 
 			std::shared_ptr< FLAC__StreamDecoder > pFD_;
 			QByteArray buffer_;
-			uint64_t offset_;
 		};
 
 	}

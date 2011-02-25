@@ -44,7 +44,6 @@ namespace khopper {
 		private:
 			ReaderSP client_;
 			qint64 msBegin_;
-			qint64 msCurrent_;
 			qint64 msDuration_;
 		};
 
