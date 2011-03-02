@@ -10,7 +10,7 @@ set(KHOPPER_VERSION "${KHOPPER_VERSION_MAJOR}.${KHOPPER_VERSION_MINOR}.${KHOPPER
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 
-find_package(Qt4 4.6 COMPONENTS Network Phonon Xml REQUIRED)
+find_package(Qt4 4.6 COMPONENTS Network Phonon REQUIRED)
 
 include(${QT_USE_FILE})
 include_directories(${Boost_INCLUDE_DIRS})
