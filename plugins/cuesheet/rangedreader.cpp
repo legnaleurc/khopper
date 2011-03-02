@@ -6,12 +6,12 @@
  *
  * This file is part of Khopper.
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
+ * This plug-in is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
+ * version 3 of the License, or (at your option) any later version.
  *
- * This library is distributed in the hope that it will be useful,
+ * This plug-in is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
@@ -49,11 +49,6 @@ msDuration_( msDuration ) {
 bool RangedReader::atEnd() const {
 	return this->client_->atEnd() || this->client_->pos() >= posFromMs( this->msBegin_ + this->msDuration_, this->getAudioFormat() );
 }
-
-//void RangedReader::setRange( qint64 msBegin, qint64 msDuration ) {
-//	this->msBegin_ = msBegin;
-//	this->msDuration_ = msDuration;
-//}
 
 qint64 RangedReader::size() const {
 	return posFromMs( this->msDuration_, this->getAudioFormat() );
