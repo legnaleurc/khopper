@@ -22,7 +22,7 @@
 #include "core/applicationprivate.hpp"
 
 #include <QtCore/QFile>
-#include <QtXml/QXmlStreamWriter>
+//#include <QtXml/QXmlStreamWriter>
 
 #include <algorithm>
 
@@ -34,23 +34,24 @@ PlayList khopper::album::createPlayList( const QUrl & uri ) {
 }
 
 void khopper::album::exportPlayList( const PlayList & playList, const QUrl & fileURI ) {
+	// TODO: find a robust implementation
 	// FIXME: local file only
-	QString filePath = fileURI.toLocalFile();
-	QFile fout( filePath );
-	fout.open( QIODevice::WriteOnly );
-	QXmlStreamWriter xout( &fout );
+	//QString filePath = fileURI.toLocalFile();
+	//QFile fout( filePath );
+	//fout.open( QIODevice::WriteOnly );
+	//QXmlStreamWriter xout( &fout );
 
-	xout.writeStartDocument();
+	//xout.writeStartDocument();
 
-	std::for_each( playList.begin(), playList.end(), [&xout]( TrackCSP track ) {
-		xout.writeStartElement( "item" );
-		xout.writeAttribute( "uri", track->getURI().toString() );
-		xout.writeEndElement();
-	} );
+	//std::for_each( playList.begin(), playList.end(), [&xout]( TrackCSP track ) {
+	//	xout.writeStartElement( "item" );
+	//	xout.writeAttribute( "uri", track->getURI().toString() );
+	//	xout.writeEndElement();
+	//} );
 
-	xout.writeEndDocument();
+	//xout.writeEndDocument();
 
-	fout.close();
+	//fout.close();
 }
 
 bool khopper::plugin::registerPlayList( const QString & id, PlayListVerifier v, PlayListCreator c ) {

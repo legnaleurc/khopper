@@ -26,10 +26,9 @@ using khopper::codec::ReaderSP;
 using khopper::codec::RangedReader;
 
 CueSheetTrack::CueSheetTrack( const QUrl & uri ):
-Track( uri ) {
-	this->setReaderCreator( [this]( const QUrl & uri )->ReaderSP {
-		return ReaderSP( new RangedReader( uri, this->getStartTime().toMillisecond(), this->getDuration().toMillisecond() ) );
-	} );
+Track( uri, [this]( const QUrl & uri )->ReaderSP {
+	return ReaderSP( new RangedReader( uri, this->getStartTime().toMillisecond(), this->getDuration().toMillisecond() ) );
+} ) {
 }
 
 // TODO: not implemented

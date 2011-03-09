@@ -71,8 +71,8 @@ void PlayListModel::remove( QModelIndexList indexes ) {
 	} );
 }
 
-int PlayListModel::columnCount( const QModelIndex & /*parent*/ ) const {
-	return 4;
+int PlayListModel::columnCount( const QModelIndex & parent ) const {
+	return parent.isValid() ? 0 : 4;
 }
 
 bool PlayListModel::setData( const QModelIndex & index, const QVariant & value, int role ) {
@@ -156,6 +156,6 @@ QVariant PlayListModel::headerData( int section, Qt::Orientation orientation, in
 	}
 }
 
-int PlayListModel::rowCount( const QModelIndex & /*parent*/ ) const {
-	return this->list_.size();
+int PlayListModel::rowCount( const QModelIndex & parent ) const {
+	return parent.isValid() ? 0 : this->list_.size();
 }

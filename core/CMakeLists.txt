@@ -21,7 +21,7 @@ elseif(CMAKE_HOST_UNIX)
 endif()
 set(KHOPPER_CORE_MOC_HEADERS
     "include/khopper/application.hpp"
-    "src/plugin/pluginmanager.hpp")
+    "include/khopper/pluginmodel.hpp")
 
 qt4_wrap_cpp(KHOPPER_CORE_MOC_SOURCES ${KHOPPER_CORE_MOC_HEADERS})
 

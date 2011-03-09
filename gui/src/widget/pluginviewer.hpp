@@ -1,5 +1,5 @@
 /**
- * @file flacpanel.hpp
+ * @file pluginviewer.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,38 +19,31 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_PLUGIN_FLACPANEL_HPP
-#define KHOPPER_PLUGIN_FLACPANEL_HPP
+#ifndef KHOPPER_WIDGET_PLUGINVIEWER_HPP
+#define KHOPPER_WIDGET_PLUGINVIEWER_HPP
 
-#include "khopper/abstractpanel.hpp"
+#include <QtGui/QWidget>
+
+#include <memory>
 
 namespace Ui {
-	class FlacPanel;
+	class PluginViewer;
 }
 
 namespace khopper {
 	namespace widget {
 
-		/**
-		 * @brief flac option widget
-		 */
-		class FlacPanel : public AbstractPanel {
+		class PluginViewer : public QWidget {
+			Q_OBJECT
 		public:
-			/**
-			 * @brief Default constructor
-			 * @param parent Parent widget
-			 * @param f Window flags
-			 */
-			FlacPanel();
+			explicit PluginViewer( QWidget * parent );
 
-			/**
-			 * @brief Get encoder setting object
-			 * @return Smart pointer contains AbstractWriter
-			 */
-			virtual plugin::WriterCreator getWriterCreator() const;
+		private slots:
+			void loadSelected_();
+			void unloadSelected_();
 
 		private:
-			std::shared_ptr< Ui::FlacPanel > ui_;
+			std::shared_ptr< Ui::PluginViewer > ui_;
 		};
 
 	}

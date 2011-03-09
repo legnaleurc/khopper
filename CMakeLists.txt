@@ -4,13 +4,13 @@ cmake_minimum_required(VERSION 2.6)
 
 project(Khopper)
 set(KHOPPER_VERSION_MAJOR "0")
-set(KHOPPER_VERSION_MINOR "2")
-set(KHOPPER_VERSION_PATCH "60")
+set(KHOPPER_VERSION_MINOR "3")
+set(KHOPPER_VERSION_PATCH "3")
 set(KHOPPER_VERSION "${KHOPPER_VERSION_MAJOR}.${KHOPPER_VERSION_MINOR}.${KHOPPER_VERSION_PATCH}")
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 
-find_package(Qt4 4.6 COMPONENTS Network Phonon Xml REQUIRED)
+find_package(Qt4 4.7 COMPONENTS Network Phonon REQUIRED)
 
 include(${QT_USE_FILE})
 include_directories(${Boost_INCLUDE_DIRS})

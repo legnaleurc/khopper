@@ -26,7 +26,7 @@
 using namespace khopper::codec;
 
 AbstractWriter::AbstractWriter( const QUrl & uri ):
-p_( new AbstractWriterPrivate( uri ) ) {
+p_( new Private( uri ) ) {
 }
 
 AbstractWriter::~AbstractWriter() {
@@ -125,7 +125,7 @@ void AbstractWriter::setAudioFormat( const AudioFormat & format ) {
 	this->p_->format = format;
 }
 
-AbstractWriter::AbstractWriterPrivate::AbstractWriterPrivate( const QUrl & uri ):
+AbstractWriter::Private::Private( const QUrl & uri ):
 album(),
 artist(),
 bitRate( 0 ),

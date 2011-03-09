@@ -44,6 +44,7 @@ namespace khopper {
 		class ConversionDialog;
 		class ConverterThread;
 		class Player;
+		class PluginViewer;
 		class Preference;
 		class Progress;
 		class UriInputDialog;
@@ -83,6 +84,7 @@ namespace khopper {
 			AboutWidget * about_;
 			ConversionDialog * conversion_;
 			QString lastOpenedDir_;
+			PluginViewer * plugins_;
 			Preference * preference_;
 			std::shared_ptr< Ui::MainWindow > ui_;
 			UriInputDialog * uriInput_;

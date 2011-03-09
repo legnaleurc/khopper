@@ -50,8 +50,7 @@ using khopper::error::CodecError;
 FlacReader::FlacReader( const QUrl & uri ):
 AbstractReader( uri ),
 pFD_( FLAC__stream_decoder_new(), FLAC__stream_decoder_delete ),
-buffer_(),
-offset_( 0 ) {
+buffer_() {
 	if( !this->pFD_ ) {
 		throw CodecError( "Not enough memory! (from khopper::codec::FlacReader)" );
 	}
@@ -90,15 +89,15 @@ void FlacReader::doOpen() {
 void FlacReader::doClose() {
 	FLAC__stream_decoder_finish( this->pFD_.get() );
 	this->buffer_.clear();
-	//this->offset_ = 0;
 }
 
 bool FlacReader::seek( qint64 pos ) {
 	bool ret = this->AbstractReader::seek( pos );
-	FLAC__bool ok = FLAC__stream_decoder_seek_absolute( this->pFD_.get(), pos );
+	FLAC__bool ok = FLAC__stream_decoder_seek_absolute( this->pFD_.get(), pos / this->getAudioFormat().channels() / ( this->getAudioFormat().sampleSize() / 8 ) );
 	if( ok && ret ) {
-		//this->offset_ = pos;
 		this->buffer_.clear();
+	} else if( FLAC__stream_decoder_get_state( this->pFD_.get() ) == FLAC__STREAM_DECODER_SEEK_ERROR ) {
+		FLAC__stream_decoder_flush( this->pFD_.get() );
 	}
 	return ok && ret;
 }
@@ -170,12 +169,6 @@ void FlacReader::metadataCallback_( const FLAC__StreamDecoder * /*decoder*/, con
 		break;
 	case FLAC__METADATA_TYPE_SEEKTABLE:
 		qDebug( "FLAC__METADATA_TYPE_SEEKTABLE" );
-//#ifndef QT_NO_DEBUG_OUTPUT
-//				for( uint64_t i = 0; i < metadata->data.seek_table.num_points; ++i ) {
-//					FLAC__StreamMetadata_SeekPoint * sp = metadata->data.seek_table.points + i;
-//					qDebug() << sp->sample_number << sp->stream_offset << sp->frame_samples;
-//				}
-//#endif
 		break;
 	case FLAC__METADATA_TYPE_VORBIS_COMMENT:
 		self->parseVorbisComments_( metadata->data.vorbis_comment );

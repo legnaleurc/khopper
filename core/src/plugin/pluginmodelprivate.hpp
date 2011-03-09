@@ -1,5 +1,5 @@
 /**
- * @file abstractpluginprivate.hpp
+ * @file pluginmodelprivate.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,24 +19,31 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_PLUGIN_ABSTRACTPLUGINPRIVATE_HPP
-#define KHOPPER_PLUGIN_ABSTRACTPLUGINPRIVATE_HPP
+#ifndef KHOPPER_PLUGIN_PLUGINMODELPRIVATE_HPP
+#define KHOPPER_PLUGIN_PLUGINMODELPRIVATE_HPP
 
-#include "abstractplugin.hpp"
+#include "pluginmodel.hpp"
 
-#include <QtCore/QString>
+#include <list>
+#include <vector>
+
+class QPluginLoader;
 
 namespace khopper {
 	namespace plugin {
 
-		class AbstractPlugin::Private {
+		class AbstractPlugin;
+
+		class PluginModel::Private {
 		public:
+			typedef std::vector< AbstractPlugin * > PluginListType;
+
 			Private();
 
-			bool installed;
-			QString id;
-			QString version;
-			QFileInfo info;
+			QFileInfoList getPluginsFileInfo() const;
+
+			std::list< QDir > searchPaths;
+			PluginListType plugins;
 		};
 
 	}

@@ -24,6 +24,7 @@
 #include "aboutwidget.hpp"
 #include "conversiondialog.hpp"
 #include "player.hpp"
+#include "pluginviewer.hpp"
 #include "preference.hpp"
 #include "uriinputdialog.hpp"
 
@@ -50,6 +51,7 @@ QMainWindow( 0, 0 ),
 about_( new AboutWidget( this ) ),
 conversion_( new ConversionDialog( this ) ),
 lastOpenedDir_( QDesktopServices::storageLocation( QDesktopServices::MusicLocation ) ),
+plugins_( new PluginViewer( this ) ),
 preference_( new Preference( this ) ),
 ui_( new Ui::MainWindow ),
 uriInput_( new UriInputDialog( this ) ) {
@@ -72,6 +74,7 @@ uriInput_( new UriInputDialog( this ) ) {
 
 void MainWindow::initMenuBar_() {
 	QObject::connect( this->ui_->action_Open, SIGNAL( triggered() ), this, SLOT( showOpenFilesDialog() ) );
+	QObject::connect( this->ui_->actionPlugins_Manager, SIGNAL( triggered() ), this->plugins_, SLOT( show() ) );
 	QObject::connect( this->ui_->action_Load_By_Url, SIGNAL( triggered() ), this, SLOT( showUriInputDialog() ) );
 	QObject::connect( this->ui_->action_Preference, SIGNAL( triggered() ), this->preference_, SLOT( exec() ) );
 	QObject::connect( this->ui_->actionAbout_Khopper, SIGNAL( triggered() ), this->about_, SLOT( show() ) );

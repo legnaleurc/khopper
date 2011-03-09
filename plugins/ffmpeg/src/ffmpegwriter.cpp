@@ -32,26 +32,8 @@ extern "C" {
 #include <cstring>
 
 namespace {
-
-	static inline void fc_helper( AVFormatContext * oc ) {
-		for( std::size_t i = 0; i < oc->nb_streams; ++i ) {
-			if( oc->streams[i] && oc->streams[i]->codec->codec ) {
-				avcodec_close( oc->streams[i]->codec );
-			}
-			av_freep( &oc->streams[i]->codec );
-			av_freep( &oc->streams[i] );
-		}
-
-		AVOutputFormat * pOF = oc->oformat;
-		if( !( pOF->flags & AVFMT_NOFILE ) && oc->pb ) {
-			url_fclose( oc->pb );
-		}
-
-		av_freep( &oc );
-	}
 	static const double QSCALE_NONE = -99999.;
 	static const int OUTPUT_BUFFER_SIZE = FF_MIN_BUFFER_SIZE * 4;
-
 }
 
 using namespace khopper::codec;
@@ -83,7 +65,22 @@ void FfmpegWriter::setupMuxer() {
 		throw error::CodecError( "Can not recognize output format" );
 	}
 
-	this->pFormatContext_.reset( avformat_alloc_context(), fc_helper );
+	this->pFormatContext_.reset( avformat_alloc_context(), []( AVFormatContext * oc ) {
+		for( std::size_t i = 0; i < oc->nb_streams; ++i ) {
+			if( oc->streams[i] && oc->streams[i]->codec->codec ) {
+				avcodec_close( oc->streams[i]->codec );
+			}
+			av_freep( &oc->streams[i]->codec );
+			av_freep( &oc->streams[i] );
+		}
+
+		AVOutputFormat * pOF = oc->oformat;
+		if( !( pOF->flags & AVFMT_NOFILE ) && oc->pb ) {
+			url_fclose( oc->pb );
+		}
+
+		av_freep( &oc );
+	} );
 	if( !this->pFormatContext_ ) {
 		throw error::SystemError( "Memory allocation error" );
 	}
