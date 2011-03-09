@@ -17,7 +17,7 @@ Build Dependencies:
 	Required:
 		CMake:
 			http://www.cmake.org/
-		Qt >= 4.6 (with Phonon module):
+		Qt >= 4.7 (with Phonon module):
 			http://qt.nokia.com/products/
 	Optional:
 		FFmpeg Libraries >= 0.5:
