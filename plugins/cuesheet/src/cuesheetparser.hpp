@@ -78,6 +78,7 @@ namespace khopper {
 			std::shared_ptr< CueSheetTrack > currentTrack_;
 			unsigned int trackIndex_;
 			std::vector< Timestamp > currentTOCs_;
+			QStringList currentFrames_;
 		};
 
 	}

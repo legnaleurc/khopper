@@ -22,10 +22,16 @@
 #include "freedb.hpp"
 
 #include <QtCore/QtDebug>
+#include <QtCore/QRegExp>
 
 using namespace khopper::album;
 
-FreeDB::FreeDB() : QObject( 0 ), link_( new QTcpSocket( this ) ) {
+FreeDB::FreeDB( unsigned int discid, const QStringList & frames, int nsecs ):
+QObject( 0 ),
+link_( new QTcpSocket( this ) ),
+discid_( discid ),
+frames_( frames ),
+nsecs_( nsecs ) {
 	this->connect( this->link_, SIGNAL( connected() ), SLOT( onConnected_() ) );
 	this->connect( this->link_, SIGNAL( error( QAbstractSocket::SocketError ) ), SLOT( onError_( QAbstractSocket::SocketError ) ) );
 }
@@ -50,6 +56,22 @@ void FreeDB::onConnected_() {
 	foreach( QByteArray m, msg ) {
 		qDebug() << m;
 	}
+	
+	QString tmp( "cddb query \"%1\" \"%2\" %3 \"%4\"\n" );
+	msg = this->sendRequest_( tmp.arg( this->discid_, 8, 16, QChar( '0' ) ).arg( this->frames_.size() ).arg( this->frames_.join( " " ) ).arg( this->nsecs_ ).toUtf8() );
+	foreach( QByteArray m, msg ) {
+		qDebug() << m;
+	}
+	QRegExp pattern( "(\\d\\d\\d) (\\w+) ([\\w\\d]+) (.+)" );
+	if( pattern.exactMatch( QString::fromUtf8( msg[0] ) ) && pattern.cap( 1 ) == "200" ) {
+		tmp = "cddb read \"%1\" \"%2\"\n";
+		msg = this->sendRequest_( tmp.arg( pattern.cap( 2 ) ).arg( pattern.cap( 3 ) ).toUtf8(), true );
+		foreach( QByteArray m, msg ) {
+			qDebug() << m;
+		}
+	} else {
+		qDebug() << "not match";
+	}
 
 	msg = this->sendRequest_( "quit\n" );
 	foreach( QByteArray m, msg ) {
@@ -64,9 +86,25 @@ void FreeDB::onError_( QAbstractSocket::SocketError socketError ) {
 	qDebug() << this->link_->errorString();
 }
 
-FreeDB::ResponseType FreeDB::sendRequest_( const QByteArray & cmd ) {
+FreeDB::ResponseType FreeDB::sendRequest_( const QByteArray & cmd, bool dot ) {
 	this->link_->write( cmd );
-	return this->getResponse_();
+	if( !dot ) {
+		return this->getResponse_();
+	} else {
+		ResponseType result( this->getResponse_() );
+		while( result.back() != ".\r\n" ) {
+			ResponseType tmp( this->getResponse_() );
+			unsigned int i = 0;
+			if( !result.back().endsWith( "\r\n" ) ) {
+				result.back().append( tmp[i] );
+				++i;
+			}
+			for( ; i < tmp.size(); ++i ) {
+				result.push_back( tmp[i] );
+			}
+		}
+		return result;
+	}
 }
 
 FreeDB::ResponseType FreeDB::getResponse_() {

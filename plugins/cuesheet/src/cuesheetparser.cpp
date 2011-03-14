@@ -100,7 +100,7 @@ void CueSheetParser::parseCue_( QString content, const QDir & dir ) {
 
 	this->updateLastTrack_();
 
-	FreeDB query;
+	FreeDB query( this->calcDiscID_(), this->currentFrames_, ( this->currentTOCs_.back().getMinute() * 60 + this->currentTOCs_.back().getSecond() ) - ( this->currentTOCs_.front().getMinute() * 60 + this->currentTOCs_.front().getSecond() ) );
 	QEventLoop wait;
 	wait.connect( &query, SIGNAL( finished() ), SLOT( quit() ) );
 	query.start();
@@ -168,6 +168,7 @@ void CueSheetParser::parseIndex_( const QString & type, const QString & num, con
 		case 1:
 			// add toc
 			this->currentTOCs_.push_back( tmp );
+			this->currentFrames_.push_back( QString( "\"%1\"" ).arg( m.toUInt() * 60 * 75 + s.toUInt() * 75 + f.toUInt() ) );
 
 			// track start time
 			this->currentTrack_->setStartTime( tmp );

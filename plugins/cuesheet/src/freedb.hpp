@@ -23,6 +23,7 @@
 #define KHOPPER_PLUGIN_FREEDB_HPP
 
 #include <QtNetwork/QTcpSocket>
+#include <QtCore/QStringList>
 
 #include <vector>
 
@@ -32,7 +33,7 @@ namespace khopper {
 		class FreeDB : public QObject {
 			Q_OBJECT
 		public:
-			FreeDB();
+			FreeDB( unsigned int discid, const QStringList & frames, int nsecs );
 
 			void start();
 
@@ -46,10 +47,13 @@ namespace khopper {
 		private:
 			typedef std::vector< QByteArray > ResponseType;
 
-			ResponseType sendRequest_( const QByteArray & );
+			ResponseType sendRequest_( const QByteArray &, bool = false );
 			ResponseType getResponse_();
 
 			QTcpSocket * link_;
+			unsigned int discid_;
+			QStringList frames_;
+			int nsecs_;
 		};
 
 	}
