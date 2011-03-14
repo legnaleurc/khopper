@@ -21,6 +21,7 @@
  */
 #include "cuesheetparser.hpp"
 #include "rangedreader.hpp"
+#include "freedb.hpp"
 
 #include "khopper/error.hpp"
 #include "khopper/track.hpp"
@@ -29,6 +30,7 @@
 #include <QtCore/QStringList>
 #include <QtCore/QtDebug>
 #include <QtCore/QTextStream>
+#include <QtCore/QEventLoop>
 
 #include <algorithm>
 
@@ -97,6 +99,12 @@ void CueSheetParser::parseCue_( QString content, const QDir & dir ) {
 	} );
 
 	this->updateLastTrack_();
+
+	FreeDB query;
+	QEventLoop wait;
+	wait.connect( &query, SIGNAL( finished() ), SLOT( quit() ) );
+	query.start();
+	wait.exec();
 }
 
 void CueSheetParser::parseSingle_( const QString & c, const QString & s ) {
