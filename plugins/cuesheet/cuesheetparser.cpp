@@ -146,7 +146,7 @@ void CueSheetParser::parseFlags_( const QString & flag ) {
 }
 
 void CueSheetParser::parseIndex_( const QString & type, const QString & num, const QString & m, const QString & s, const QString & f ) {
-	Timestamp tmp( m.toInt(), s.toShort(), f.toInt() * 1000 / 75 );
+	Timestamp tmp( m.toInt(), s.toInt(), f.toInt() * 1000 / 75 );
 
 	if( type == "INDEX" ) {
 		short int n = num.toShort();
@@ -158,6 +158,9 @@ void CueSheetParser::parseIndex_( const QString & type, const QString & num, con
 			}
 			break;
 		case 1:
+			// add toc
+			this->currentTOCs_.push_back( tmp );
+
 			// track start time
 			this->currentTrack_->setStartTime( tmp );
 			if( this->trackIndex_ > 1 && ( this->previousTrack_->getStartTime() + this->previousTrack_->getDuration() > tmp || !this->previousTrack_->getDuration().isValid() ) ) {
@@ -221,8 +224,35 @@ void CueSheetParser::updateLastTrack_() {
 		qDebug() << e.getMessage();
 	}
 	if( decoder->isOpen() ) {
-		this->currentTrack_->setDuration( Timestamp::fromMillisecond( decoder->getDuration() ) - this->currentTrack_->getStartTime() );
+		Timestamp tmp( Timestamp::fromMillisecond( decoder->getDuration() ) );
+		this->currentTrack_->setDuration( tmp - this->currentTrack_->getStartTime() );
+
+		this->currentTOCs_.push_back( tmp );
 
 		decoder->close();
 	}
+}
+
+unsigned int CueSheetParser::calcDiscID_() {
+	int t = 0, n = 0;
+	unsigned int i = 0;
+
+	while( i < ( this->currentTOCs_.size() - 1 ) ) {
+		// NOTE: CDs have a 2-second offset from the start of disc data
+		n += this->calcCDDBSum_( this->currentTOCs_[i].getMinute() * 60 + this->currentTOCs_[i].getSecond() + 2 );
+		++i;
+	}
+	t = ( this->currentTOCs_.back().getMinute() * 60 + this->currentTOCs_.back().getSecond() ) - ( this->currentTOCs_.front().getMinute() * 60 + this->currentTOCs_.front().getSecond() );
+
+	unsigned int tmp = ( ( n % 0xFF ) << 24 | t << 8 | ( this->currentTOCs_.size() - 1 ) );
+	return tmp;
+}
+
+int CueSheetParser::calcCDDBSum_( int n ) {
+	int ret = 0;
+	while( n > 0 ) {
+		ret += n % 10;
+		n /= 10;
+	}
+	return ret;
 }

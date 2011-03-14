@@ -67,13 +67,8 @@ namespace khopper {
 
 			void updateLastTrack_();
 
-			/**
-			 * @brief Set media file
-			 * @param [in] filePath Audio path
-			 * @throws CodecError Decode media error
-			 * @throws IOError File not openable
-			 */
-			//void setMedia_( const QUrl & uri );
+			unsigned int calcDiscID_();
+			int calcCDDBSum_( int n );
 
 			PlayList playList_;
 			std::shared_ptr< CueSheet > album_;
@@ -82,6 +77,7 @@ namespace khopper {
 			std::shared_ptr< CueSheetTrack > previousTrack_;
 			std::shared_ptr< CueSheetTrack > currentTrack_;
 			unsigned int trackIndex_;
+			std::vector< Timestamp > currentTOCs_;
 		};
 
 	}
