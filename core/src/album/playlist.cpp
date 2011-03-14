@@ -33,7 +33,7 @@ PlayList khopper::album::createPlayList( const QUrl & uri ) {
 	return ApplicationPrivate::self->playlistFactory.createProduct( uri );
 }
 
-void khopper::album::exportPlayList( const PlayList & playList, const QUrl & fileURI ) {
+void khopper::album::exportPlayList( const PlayList & /*playList*/, const QUrl & /*fileURI*/ ) {
 	// TODO: find a robust implementation
 	// FIXME: local file only
 	//QString filePath = fileURI.toLocalFile();
