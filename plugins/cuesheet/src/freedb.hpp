@@ -45,10 +45,8 @@ namespace khopper {
 			void onError_( QAbstractSocket::SocketError );
 
 		private:
-			typedef std::vector< QByteArray > ResponseType;
-
-			ResponseType sendRequest_( const QByteArray &, bool = false );
-			ResponseType getResponse_();
+			QStringList sendRequest_( const QByteArray & );
+			QByteArray getResponse_();
 
 			QTcpSocket * link_;
 			unsigned int discid_;

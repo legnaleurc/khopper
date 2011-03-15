@@ -21,10 +21,15 @@
  */
 #include "freedb.hpp"
 
+#include "khopper/error.hpp"
+
 #include <QtCore/QtDebug>
 #include <QtCore/QRegExp>
+#include <QtCore/QTextStream>
+#include <QtCore/QTextCodec>
 
 using namespace khopper::album;
+using khopper::error::RunTimeError;
 
 FreeDB::FreeDB( unsigned int discid, const QStringList & frames, int nsecs ):
 QObject( 0 ),
@@ -41,42 +46,27 @@ void FreeDB::start() {
 }
 
 void FreeDB::onConnected_() {
-	qDebug() << "connected to host";
-	ResponseType msg( this->getResponse_() );
-	foreach( QByteArray m, msg ) {
-		qDebug() << m;
-	}
+	qDebug() << this->getResponse_();
 
-	msg = this->sendRequest_( "proto 6\n" );
-	foreach( QByteArray m, msg ) {
-		qDebug() << m;
-	}
+	QStringList msg = this->sendRequest_( "proto 6\n" );
+	qDebug() << msg;
 
 	msg = this->sendRequest_( "cddb hello \"legnaleurc\" \"foolproofproject.org\" \"Khopper\" \"0.3\"\n" );
-	foreach( QByteArray m, msg ) {
-		qDebug() << m;
-	}
+	qDebug() << msg;
 	
 	QString tmp( "cddb query \"%1\" \"%2\" %3 \"%4\"\n" );
 	msg = this->sendRequest_( tmp.arg( this->discid_, 8, 16, QChar( '0' ) ).arg( this->frames_.size() ).arg( this->frames_.join( " " ) ).arg( this->nsecs_ ).toUtf8() );
-	foreach( QByteArray m, msg ) {
-		qDebug() << m;
-	}
 	QRegExp pattern( "(\\d\\d\\d) (\\w+) ([\\w\\d]+) (.+)" );
-	if( pattern.exactMatch( QString::fromUtf8( msg[0] ) ) && pattern.cap( 1 ) == "200" ) {
+	if( pattern.exactMatch( msg[0] ) && pattern.cap( 1 ) == "200" ) {
 		tmp = "cddb read \"%1\" \"%2\"\n";
-		msg = this->sendRequest_( tmp.arg( pattern.cap( 2 ) ).arg( pattern.cap( 3 ) ).toUtf8(), true );
-		foreach( QByteArray m, msg ) {
-			qDebug() << m;
-		}
+		msg = this->sendRequest_( tmp.arg( pattern.cap( 2 ) ).arg( pattern.cap( 3 ) ).toUtf8() );
+		qDebug() << msg;
 	} else {
-		qDebug() << "not match";
+		throw RunTimeError( QObject::tr( "no exact match" ) );
 	}
 
 	msg = this->sendRequest_( "quit\n" );
-	foreach( QByteArray m, msg ) {
-		qDebug() << m;
-	}
+	qDebug() << msg;
 	this->link_->disconnect();
 	emit this->finished();
 }
@@ -86,35 +76,36 @@ void FreeDB::onError_( QAbstractSocket::SocketError socketError ) {
 	qDebug() << this->link_->errorString();
 }
 
-FreeDB::ResponseType FreeDB::sendRequest_( const QByteArray & cmd, bool dot ) {
+QStringList FreeDB::sendRequest_( const QByteArray & cmd ) {
 	this->link_->write( cmd );
-	if( !dot ) {
-		return this->getResponse_();
-	} else {
-		ResponseType result( this->getResponse_() );
-		while( result.back() != ".\r\n" ) {
-			ResponseType tmp( this->getResponse_() );
-			unsigned int i = 0;
-			if( !result.back().endsWith( "\r\n" ) ) {
-				result.back().append( tmp[i] );
-				++i;
-			}
-			for( ; i < tmp.size(); ++i ) {
-				result.push_back( tmp[i] );
-			}
-		}
-		return result;
+
+	if( !this->link_->waitForReadyRead() ) {
+		throw RunTimeError( this->link_->errorString() );
 	}
+	QByteArray response( this->link_->readLine() );
+	if( response[1] == '1' ) {
+		response.append( this->link_->readAll() );
+		// NOTE: works, should be more graceful
+		while( !( response.endsWith( "\r.\r" ) || response.endsWith( "\n.\n" ) || response.endsWith( "\r\n.\r\n" ) ) ) {
+			if( !this->link_->waitForReadyRead() ) {
+				throw RunTimeError( this->link_->errorString() );
+			}
+			response.append( this->link_->readAll() );
+		}
+	}
+
+	QTextStream sin( response );
+	sin.setCodec( QTextCodec::codecForName( "UTF-8" ) );
+	QStringList message;
+	while( !sin.atEnd() ) {
+		message.push_back( sin.readLine() );
+	}
+	return message;
 }
 
-FreeDB::ResponseType FreeDB::getResponse_() {
+QByteArray FreeDB::getResponse_() {
 	if( !this->link_->waitForReadyRead() ) {
-		qDebug() << "TimeOut";
-		return ResponseType();
+		throw RunTimeError( this->link_->errorString() );
 	}
-	ResponseType msg;
-	while( !this->link_->atEnd() ) {
-		msg.push_back( this->link_->readLine() );
-	}
-	return msg;
+	return this->link_->readAll();
 }
