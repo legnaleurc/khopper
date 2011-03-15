@@ -66,6 +66,7 @@ namespace khopper {
 			void parseGarbage_( const QString & );
 
 			void updateLastTrack_();
+			void queryFromCDDB_();
 
 			unsigned int calcDiscID_();
 			int calcCDDBSum_( int n );
