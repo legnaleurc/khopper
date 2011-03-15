@@ -56,43 +56,46 @@ bool FreeDB::connectToHost( const QString & hostName, quint16 port ) {
 	if( response.empty() ) {
 		return false;
 	}
-	qDebug() << response;
 	if( response.startsWith( "43" ) ) {
 		return false;
 	}
 
 	// set protocol level
 	response = this->sendRequest_( "proto 6" );
-	qDebug() << response;
-
+	// handshake
 	response = this->sendRequest_( "cddb hello \"legnaleurc\" \"foolproofproject.org\" \"Khopper\" \"0.3\"" );
-	qDebug() << response;
 
 	return true;
 }
 
 void FreeDB::disconnectFromHost() {
 	QStringList msg( this->sendRequest_( "quit" ) );
-	qDebug() << msg;
 	this->link_->disconnectFromHost();
 }
 
 std::pair< QString, QString > FreeDB::query( unsigned int discid, const QStringList & frames, int nsecs ) {
 	QString tmp( "cddb query \"%1\" \"%2\" %3 \"%4\"" );
 	QStringList msg( this->sendRequest_( tmp.arg( discid, 8, 16, QChar( '0' ) ).arg( frames.size() ).arg( frames.join( " " ) ).arg( nsecs ).toUtf8() ) );
-	qDebug() << msg;
 
-	QRegExp pattern( "(\\d\\d\\d) (\\w+) ([\\w\\d]+) .+" );
-	if( !pattern.exactMatch( msg[0] ) || pattern.cap( 1 ) != "200" ) {
-		throw RunTimeError( "find no exact match" );
+	QRegExp pattern( "\\d\\d\\d (\\w+) ([\\w\\d]+) .+" );
+	if( msg[0][0] != '2' ) {
+	} else if( msg[0][1] == '1' && msg[0][2] == '0' ) {
+		// code 210, found exact matches, choose first one
+		pattern.setPattern( "(\\w+) ([\\w\\d]+) .*" );
+		qDebug() << msg[1];
+		if( pattern.exactMatch( msg[1] ) ) {
+			qDebug() << pattern.capturedTexts();
+			return std::make_pair( pattern.cap( 1 ), pattern.cap( 2 ) );
+		}
+	} else if( pattern.exactMatch( msg[0] ) ) {
+		return std::make_pair( pattern.cap( 1 ), pattern.cap( 2 ) );
 	}
-	return std::make_pair( pattern.cap( 2 ), pattern.cap( 3 ) );
+	throw RunTimeError( "find no exact match from FreeDB" );
 }
 
 DiscData FreeDB::read( const QString & categ, const QString & discid ) {
 	QString tmp( "cddb read \"%1\" \"%2\"" );
 	QStringList msg( this->sendRequest_( tmp.arg( categ ).arg( discid ).toUtf8() ) );
-	qDebug() << msg;
 	if( !msg[0].startsWith( "210" ) ) {
 		throw RunTimeError( "unexcepted error" );
 	}
@@ -103,7 +106,6 @@ DiscData FreeDB::read( const QString & categ, const QString & discid ) {
 		if( !pattern.exactMatch( msg[i] ) ) {
 			continue;
 		}
-		qDebug() << pattern.cap( 1 ) << pattern.cap( 2 ) << pattern.cap( 3 );
 		if( pattern.cap( 1 ) == "DISCID" ) {
 			// i know the discid
 		} else if( pattern.cap( 1 ) == "DTITLE" ) {
@@ -156,6 +158,7 @@ void FreeDB::onError_( QAbstractSocket::SocketError socketError ) {
 }
 
 QStringList FreeDB::sendRequest_( const QByteArray & cmd ) {
+	qDebug() << cmd;
 	this->link_->write( cmd + '\n' );
 
 	return this->getResponse_();
@@ -184,5 +187,6 @@ QStringList FreeDB::getResponse_() {
 	while( !sin.atEnd() ) {
 		message.push_back( sin.readLine() );
 	}
+	qDebug() << message;
 	return message;
 }
