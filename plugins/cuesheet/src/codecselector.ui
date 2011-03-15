@@ -15,7 +15,21 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QComboBox" name="codecs"/>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QCheckBox" name="freedb">
+       <property name="text">
+        <string>Query metadata from FreeDB</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="codecs"/>
+     </item>
+    </layout>
    </item>
    <item>
     <widget class="QScrollArea" name="scrollArea">
@@ -28,7 +42,7 @@
         <x>0</x>
         <y>0</y>
         <width>386</width>
-        <height>225</height>
+        <height>226</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout">

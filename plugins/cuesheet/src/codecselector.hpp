@@ -25,6 +25,7 @@
 #include <QtGui/QDialog>
 
 #include <memory>
+#include <utility>
 
 namespace Ui {
 	class CodecSelector;
@@ -41,7 +42,7 @@ namespace khopper {
 			Q_OBJECT
 
 		public:
-			static QString selectTextCodec( const QByteArray & encoded );
+			static std::pair< bool, QString > selectTextCodec( const QByteArray & encoded );
 
 		private slots:
 			void update_( int );

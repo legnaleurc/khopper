@@ -43,7 +43,7 @@ namespace khopper {
 		 */
 		class CueSheetParser {
 		public:
-			static PlayList load( const QString & content, const QDir & dir );
+			static PlayList load( const QString & content, const QDir & dir, bool freedb );
 
 		private:
 			/**
@@ -54,9 +54,9 @@ namespace khopper {
 			 * @throws CodecError Decode media error
 			 * @throws IOError File not openable
 			 */
-			CueSheetParser( const QString & content, const QDir & dir );
+			CueSheetParser();
 
-			void parseCue_( QString, const QDir & );
+			void parseCue_( QString, const QDir &, bool );
 			void parseSingle_( const QString &, const QString & );
 			void parseFile_( const QString &, const QString &, const QDir & );
 			void parseFlags_( const QString & );

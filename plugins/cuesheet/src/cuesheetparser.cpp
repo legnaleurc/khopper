@@ -55,18 +55,18 @@ using khopper::codec::ReaderSP;
 using khopper::codec::RangedReader;
 using khopper::plugin::getReaderCreator;
 
-PlayList CueSheetParser::load( const QString & content, const QDir & dir ) {
-	CueSheetParser parser( content, dir );
+PlayList CueSheetParser::load( const QString & content, const QDir & dir, bool freedb ) {
+	CueSheetParser parser;
+	parser.parseCue_( content, dir, freedb );
 	return parser.playList_;
 }
 
-CueSheetParser::CueSheetParser( const QString & content, const QDir & dir ):
+CueSheetParser::CueSheetParser():
 playList_(),
 album_( new CueSheet ) {
-	this->parseCue_( content, dir );
 }
 
-void CueSheetParser::parseCue_( QString content, const QDir & dir ) {
+void CueSheetParser::parseCue_( QString content, const QDir & dir, bool freedb ) {
 	QRegExp COMMENT( "\\s*REM\\s+(.*)\\s+(.*)\\s*" );
 	QRegExp SINGLE( "\\s*(CATALOG|CDTEXTFILE|ISRC|PERFORMER|SONGWRITER|TITLE)\\s+(.*)\\s*" );
 	QRegExp FILES( "\\s*FILE\\s+(.*)\\s+(WAVE|BINARY)\\s*" );
@@ -102,10 +102,12 @@ void CueSheetParser::parseCue_( QString content, const QDir & dir ) {
 
 	this->updateLastTrack_();
 
-	try {
-		this->queryFromCDDB_();
-	} catch( BaseError & /*e*/ ) {
-		// TODO: log a message
+	if( freedb ) {
+		try {
+			this->queryFromCDDB_();
+		} catch( BaseError & /*e*/ ) {
+			// TODO: log a message
+		}
 	}
 }
 
