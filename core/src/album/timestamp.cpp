@@ -42,6 +42,18 @@ Timestamp::Timestamp( int m, int s, int ms ) : p_( new TimestampPrivate( m, s, m
 Timestamp::Timestamp( const Timestamp & that ) : p_( new TimestampPrivate( *that.p_ ) ) {
 }
 
+int Timestamp::getMinute() const {
+	return this->p_->minute;
+}
+
+int Timestamp::getSecond() const {
+	return this->p_->second;
+}
+
+int Timestamp::getMillisecond() const {
+	return this->p_->millisecond;
+}
+
 bool Timestamp::isZero() const {
 	return ( this->p_->minute == 0 ) && ( this->p_->second == 0 ) && ( this->p_->millisecond == 0 );
 }

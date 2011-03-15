@@ -21,6 +21,7 @@
  */
 #include "cuesheetparser.hpp"
 #include "rangedreader.hpp"
+#include "freedb.hpp"
 
 #include "khopper/error.hpp"
 #include "khopper/track.hpp"
@@ -29,6 +30,7 @@
 #include <QtCore/QStringList>
 #include <QtCore/QtDebug>
 #include <QtCore/QTextStream>
+#include <QtCore/QEventLoop>
 
 #include <algorithm>
 
@@ -45,24 +47,26 @@ namespace {
 }
 
 using namespace khopper::album;
+using khopper::error::BaseError;
 using khopper::error::CodecError;
 using khopper::error::ParsingError;
+using khopper::error::RunTimeError;
 using khopper::codec::ReaderSP;
 using khopper::codec::RangedReader;
 using khopper::plugin::getReaderCreator;
 
-PlayList CueSheetParser::load( const QString & content, const QDir & dir ) {
-	CueSheetParser parser( content, dir );
+PlayList CueSheetParser::load( const QString & content, const QDir & dir, bool freedb ) {
+	CueSheetParser parser;
+	parser.parseCue_( content, dir, freedb );
 	return parser.playList_;
 }
 
-CueSheetParser::CueSheetParser( const QString & content, const QDir & dir ):
+CueSheetParser::CueSheetParser():
 playList_(),
 album_( new CueSheet ) {
-	this->parseCue_( content, dir );
 }
 
-void CueSheetParser::parseCue_( QString content, const QDir & dir ) {
+void CueSheetParser::parseCue_( QString content, const QDir & dir, bool freedb ) {
 	QRegExp COMMENT( "\\s*REM\\s+(.*)\\s+(.*)\\s*" );
 	QRegExp SINGLE( "\\s*(CATALOG|CDTEXTFILE|ISRC|PERFORMER|SONGWRITER|TITLE)\\s+(.*)\\s*" );
 	QRegExp FILES( "\\s*FILE\\s+(.*)\\s+(WAVE|BINARY)\\s*" );
@@ -97,6 +101,14 @@ void CueSheetParser::parseCue_( QString content, const QDir & dir ) {
 	} );
 
 	this->updateLastTrack_();
+
+	if( freedb ) {
+		try {
+			this->queryFromCDDB_();
+		} catch( BaseError & /*e*/ ) {
+			// TODO: log a message
+		}
+	}
 }
 
 void CueSheetParser::parseSingle_( const QString & c, const QString & s ) {
@@ -146,7 +158,7 @@ void CueSheetParser::parseFlags_( const QString & flag ) {
 }
 
 void CueSheetParser::parseIndex_( const QString & type, const QString & num, const QString & m, const QString & s, const QString & f ) {
-	Timestamp tmp( m.toInt(), s.toShort(), f.toInt() * 1000 / 75 );
+	Timestamp tmp( m.toInt(), s.toInt(), f.toInt() * 1000 / 75 );
 
 	if( type == "INDEX" ) {
 		short int n = num.toShort();
@@ -158,6 +170,10 @@ void CueSheetParser::parseIndex_( const QString & type, const QString & num, con
 			}
 			break;
 		case 1:
+			// add toc
+			this->currentTOCs_.push_back( tmp );
+			this->currentFrames_.push_back( QString( "\"%1\"" ).arg( m.toUInt() * 60 * 75 + s.toUInt() * 75 + f.toUInt() ) );
+
 			// track start time
 			this->currentTrack_->setStartTime( tmp );
 			if( this->trackIndex_ > 1 && ( this->previousTrack_->getStartTime() + this->previousTrack_->getDuration() > tmp || !this->previousTrack_->getDuration().isValid() ) ) {
@@ -221,8 +237,58 @@ void CueSheetParser::updateLastTrack_() {
 		qDebug() << e.getMessage();
 	}
 	if( decoder->isOpen() ) {
-		this->currentTrack_->setDuration( Timestamp::fromMillisecond( decoder->getDuration() ) - this->currentTrack_->getStartTime() );
+		Timestamp tmp( Timestamp::fromMillisecond( decoder->getDuration() ) );
+		this->currentTrack_->setDuration( tmp - this->currentTrack_->getStartTime() );
+
+		this->currentTOCs_.push_back( tmp );
 
 		decoder->close();
 	}
+}
+
+void CueSheetParser::queryFromCDDB_() {
+	FreeDB query;
+	if( !query.connectToHost( "freedb.freedb.org", 8880 ) ) {
+		throw RunTimeError( "connect failed" );
+	}
+	std::pair< QString, QString > t( query.query( this->calcDiscID_(), this->currentFrames_, ( this->currentTOCs_.back().getMinute() * 60 + this->currentTOCs_.back().getSecond() ) - ( this->currentTOCs_.front().getMinute() * 60 + this->currentTOCs_.front().getSecond() ) ) );
+	DiscData data( query.read( t.first, t.second ) );
+	if( !data.artist.isEmpty() ) {
+		this->album_->setArtist( data.artist );
+	}
+	if( !data.title.isEmpty() ) {
+		this->album_->setTitle( data.title );
+	}
+	for( QMap< int, TrackData >::const_iterator it = data.tracks.begin(); it != data.tracks.end(); ++it ) {
+		if( !it->artist.isEmpty() ) {
+			this->playList_[it.key()]->setArtist( it->artist );
+		}
+		if( !it->title.isEmpty() ) {
+			this->playList_[it.key()]->setTitle( it->title );
+		}
+	}
+}
+
+unsigned int CueSheetParser::calcDiscID_() {
+	int t = 0, n = 0;
+	unsigned int i = 0;
+
+	while( i < ( this->currentTOCs_.size() - 1 ) ) {
+		// NOTE: CDs have a 2-second offset from the start of disc data
+		n += this->calcCDDBSum_( this->currentTOCs_[i].getMinute() * 60 + this->currentTOCs_[i].getSecond() + 2 );
+		++i;
+	}
+	t = ( this->currentTOCs_.back().getMinute() * 60 + this->currentTOCs_.back().getSecond() ) - ( this->currentTOCs_.front().getMinute() * 60 + this->currentTOCs_.front().getSecond() );
+
+	unsigned int tmp = ( ( n % 0xFF ) << 24 | t << 8 | ( this->currentTOCs_.size() - 1 ) );
+	return tmp;
+}
+
+int CueSheetParser::calcCDDBSum_( int n ) {
+	int ret = 0;
+	while( n > 0 ) {
+		ret += n % 10;
+		n /= 10;
+	}
+	return ret;
 }
