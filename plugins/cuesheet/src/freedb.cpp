@@ -31,57 +31,141 @@
 using namespace khopper::album;
 using khopper::error::RunTimeError;
 
-FreeDB::FreeDB( unsigned int discid, const QStringList & frames, int nsecs ):
+FreeDB::FreeDB():
 QObject( 0 ),
-link_( new QTcpSocket( this ) ),
-discid_( discid ),
-frames_( frames ),
-nsecs_( nsecs ) {
-	this->connect( this->link_, SIGNAL( connected() ), SLOT( onConnected_() ) );
+link_( new QTcpSocket( this ) ) {
 	this->connect( this->link_, SIGNAL( error( QAbstractSocket::SocketError ) ), SLOT( onError_( QAbstractSocket::SocketError ) ) );
 }
 
-void FreeDB::start() {
-	this->link_->connectToHost( "freedb.freedb.org", 8880 );
+FreeDB::~FreeDB() {
+	if( this->isConnected() ) {
+		this->disconnectFromHost();
+	}
 }
 
-void FreeDB::onConnected_() {
-	qDebug() << this->getResponse_();
+bool FreeDB::isConnected() const {
+	return this->link_->state() == QAbstractSocket::ConnectedState;
+}
 
-	QStringList msg = this->sendRequest_( "proto 6\n" );
-	qDebug() << msg;
-
-	msg = this->sendRequest_( "cddb hello \"legnaleurc\" \"foolproofproject.org\" \"Khopper\" \"0.3\"\n" );
-	qDebug() << msg;
-	
-	QString tmp( "cddb query \"%1\" \"%2\" %3 \"%4\"\n" );
-	msg = this->sendRequest_( tmp.arg( this->discid_, 8, 16, QChar( '0' ) ).arg( this->frames_.size() ).arg( this->frames_.join( " " ) ).arg( this->nsecs_ ).toUtf8() );
-	QRegExp pattern( "(\\d\\d\\d) (\\w+) ([\\w\\d]+) (.+)" );
-	if( pattern.exactMatch( msg[0] ) && pattern.cap( 1 ) == "200" ) {
-		tmp = "cddb read \"%1\" \"%2\"\n";
-		msg = this->sendRequest_( tmp.arg( pattern.cap( 2 ) ).arg( pattern.cap( 3 ) ).toUtf8() );
-		qDebug() << msg;
-	} else {
-		throw RunTimeError( QObject::tr( "no exact match" ) );
+bool FreeDB::connectToHost( const QString & hostName, quint16 port ) {
+	this->link_->connectToHost( hostName, port );
+	if( !this->link_->waitForConnected() ) {
+		return false;
+	}
+	QStringList response( this->getResponse_() );
+	if( response.empty() ) {
+		return false;
+	}
+	qDebug() << response;
+	if( response.startsWith( "43" ) ) {
+		return false;
 	}
 
-	msg = this->sendRequest_( "quit\n" );
+	// set protocol level
+	response = this->sendRequest_( "proto 6" );
+	qDebug() << response;
+
+	response = this->sendRequest_( "cddb hello \"legnaleurc\" \"foolproofproject.org\" \"Khopper\" \"0.3\"" );
+	qDebug() << response;
+
+	return true;
+}
+
+void FreeDB::disconnectFromHost() {
+	QStringList msg( this->sendRequest_( "quit" ) );
 	qDebug() << msg;
-	this->link_->disconnect();
-	emit this->finished();
+	this->link_->disconnectFromHost();
+}
+
+std::pair< QString, QString > FreeDB::query( unsigned int discid, const QStringList & frames, int nsecs ) {
+	QString tmp( "cddb query \"%1\" \"%2\" %3 \"%4\"" );
+	QStringList msg( this->sendRequest_( tmp.arg( discid, 8, 16, QChar( '0' ) ).arg( frames.size() ).arg( frames.join( " " ) ).arg( nsecs ).toUtf8() ) );
+	qDebug() << msg;
+
+	QRegExp pattern( "(\\d\\d\\d) (\\w+) ([\\w\\d]+) .+" );
+	if( !pattern.exactMatch( msg[0] ) || pattern.cap( 1 ) != "200" ) {
+		throw RunTimeError( "find no exact match" );
+	}
+	return std::make_pair( pattern.cap( 2 ), pattern.cap( 3 ) );
+}
+
+DiscData FreeDB::read( const QString & categ, const QString & discid ) {
+	QString tmp( "cddb read \"%1\" \"%2\"" );
+	QStringList msg( this->sendRequest_( tmp.arg( categ ).arg( discid ).toUtf8() ) );
+	qDebug() << msg;
+	if( !msg[0].startsWith( "210" ) ) {
+		throw RunTimeError( "unexcepted error" );
+	}
+	DiscData data;
+
+	QRegExp pattern( "([A-Z]+)(\\d*)=(.*)" );
+	for( int i = 1; i < msg.size(); ++i ) {
+		if( !pattern.exactMatch( msg[i] ) ) {
+			continue;
+		}
+		qDebug() << pattern.cap( 1 ) << pattern.cap( 2 ) << pattern.cap( 3 );
+		if( pattern.cap( 1 ) == "DISCID" ) {
+			// i know the discid
+		} else if( pattern.cap( 1 ) == "DTITLE" ) {
+			QRegExp tmp( "(.+) / (.+)" );
+			if( tmp.exactMatch( pattern.cap( 3 ) ) ) {
+				data.artist = tmp.cap( 1 );
+				data.title = tmp.cap( 2 );
+			} else {
+				data.title = pattern.cap( 3 );
+			}
+		} else if( pattern.cap( 1 ) == "DYEAR" ) {
+			data.year = pattern.cap( 3 );
+		} else if( pattern.cap( 1 ) == "DGENRE" ) {
+			data.genre = pattern.cap( 3 );
+		} else if( pattern.cap( 1 ) == "TTITLE" ) {
+			int j = pattern.cap( 2 ).toInt();
+			QMap< int, TrackData >::iterator it = data.tracks.find( j );
+			if( it == data.tracks.end() ) {
+				it = data.tracks.insert( j, TrackData() );
+			}
+			QRegExp tmp( "(.+) / (.+)" );
+			if( tmp.exactMatch( pattern.cap( 3 ) ) ) {
+				it->artist = tmp.cap( 1 );
+				it->title = tmp.cap( 2 );
+			} else {
+				it->title = pattern.cap( 3 );
+			}
+		} else if( pattern.cap( 1 ) == "EXTD" ) {
+			data.ext += pattern.cap( 3 );
+		} else if( pattern.cap( 1 ) == "EXTT" ) {
+			int j = pattern.cap( 2 ).toInt();
+			QMap< int, TrackData >::iterator it = data.tracks.find( j );
+			if( it == data.tracks.end() ) {
+				it = data.tracks.insert( j, TrackData() );
+			}
+			it->ext += pattern.cap( 3 );
+		} else if( pattern.cap( 1 ) == "PLAYORDER" ) {
+			// not important
+		} else {
+			// should never happen
+		}
+	}
+	return data;
 }
 
 void FreeDB::onError_( QAbstractSocket::SocketError socketError ) {
 	qDebug() << socketError;
 	qDebug() << this->link_->errorString();
+	emit this->error( this->link_->errorString() );
 }
 
 QStringList FreeDB::sendRequest_( const QByteArray & cmd ) {
-	this->link_->write( cmd );
+	this->link_->write( cmd + '\n' );
 
+	return this->getResponse_();
+}
+
+QStringList FreeDB::getResponse_() {
 	if( !this->link_->waitForReadyRead() ) {
-		throw RunTimeError( this->link_->errorString() );
+		return QStringList();
 	}
+
 	QByteArray response( this->link_->readLine() );
 	if( response[1] == '1' ) {
 		response.append( this->link_->readAll() );
@@ -101,11 +185,4 @@ QStringList FreeDB::sendRequest_( const QByteArray & cmd ) {
 		message.push_back( sin.readLine() );
 	}
 	return message;
-}
-
-QByteArray FreeDB::getResponse_() {
-	if( !this->link_->waitForReadyRead() ) {
-		throw RunTimeError( this->link_->errorString() );
-	}
-	return this->link_->readAll();
 }

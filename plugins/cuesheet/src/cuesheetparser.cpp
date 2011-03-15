@@ -49,6 +49,7 @@ namespace {
 using namespace khopper::album;
 using khopper::error::CodecError;
 using khopper::error::ParsingError;
+using khopper::error::RunTimeError;
 using khopper::codec::ReaderSP;
 using khopper::codec::RangedReader;
 using khopper::plugin::getReaderCreator;
@@ -100,11 +101,17 @@ void CueSheetParser::parseCue_( QString content, const QDir & dir ) {
 
 	this->updateLastTrack_();
 
-	FreeDB query( this->calcDiscID_(), this->currentFrames_, ( this->currentTOCs_.back().getMinute() * 60 + this->currentTOCs_.back().getSecond() ) - ( this->currentTOCs_.front().getMinute() * 60 + this->currentTOCs_.front().getSecond() ) );
-	QEventLoop wait;
-	wait.connect( &query, SIGNAL( finished() ), SLOT( quit() ) );
-	query.start();
-	wait.exec();
+	FreeDB query;
+	if( !query.connectToHost( "freedb.freedb.org", 8880 ) ) {
+		throw RunTimeError( "connect failed" );
+	}
+	std::pair< QString, QString > t( query.query( this->calcDiscID_(), this->currentFrames_, ( this->currentTOCs_.back().getMinute() * 60 + this->currentTOCs_.back().getSecond() ) - ( this->currentTOCs_.front().getMinute() * 60 + this->currentTOCs_.front().getSecond() ) ) );
+	DiscData data( query.read( t.first, t.second ) );
+	qDebug() << data.artist;
+	qDebug() << data.title;
+	for( QMap< int, TrackData >::const_iterator it = data.tracks.begin(); it != data.tracks.end(); ++it ) {
+		qDebug() << it->title;
+	}
 }
 
 void CueSheetParser::parseSingle_( const QString & c, const QString & s ) {

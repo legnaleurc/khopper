@@ -26,32 +26,49 @@
 #include <QtCore/QStringList>
 
 #include <vector>
+#include <utility>
 
 namespace khopper {
 	namespace album {
 
+		struct TrackData {
+			QString title;
+			QString artist;
+			QString ext;
+		};
+		struct DiscData {
+			QString discid;
+			QString title;
+			QString artist;
+			QString year;
+			QString genre;
+			QString ext;
+			QMap< int, TrackData > tracks;
+		};
+
 		class FreeDB : public QObject {
 			Q_OBJECT
 		public:
-			FreeDB( unsigned int discid, const QStringList & frames, int nsecs );
+			FreeDB();
+			virtual ~FreeDB();
 
-			void start();
+			bool isConnected() const;
+			bool connectToHost( const QString & hostName, quint16 port );
+			void disconnectFromHost();
+			std::pair< QString, QString > query( unsigned int discid, const QStringList & frames, int nsecs );
+			DiscData read( const QString & categ, const QString & discid );
 
 		signals:
-			void finished();
+			void error( const QString & msg );
 
 		private slots:
-			void onConnected_();
 			void onError_( QAbstractSocket::SocketError );
 
 		private:
 			QStringList sendRequest_( const QByteArray & );
-			QByteArray getResponse_();
+			QStringList getResponse_();
 
 			QTcpSocket * link_;
-			unsigned int discid_;
-			QStringList frames_;
-			int nsecs_;
 		};
 
 	}
