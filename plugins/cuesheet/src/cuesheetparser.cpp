@@ -95,11 +95,6 @@ void CueSheetParser::parseCue_( QString content, const QDir & dir, bool freedb )
 		}
 	}
 
-	// set track album
-	std::for_each( this->playList_.begin(), this->playList_.end(), [&]( TrackSP track ) {
-		track->setAlbum( this->album_ );
-	} );
-
 	this->updateLastTrack_();
 
 	if( freedb ) {
@@ -211,6 +206,7 @@ void CueSheetParser::parseTrack_( const QString & num, const QString & type ) {
 	this->currentTrack_->setIndex( num.toShort() );
 	this->currentTrack_->setFileType( this->currentFileType_ );
 	this->currentTrack_->setDataType( type );
+	this->currentTrack_->setAlbum( this->album_ );
 
 	this->playList_.push_back( this->currentTrack_ );
 }
