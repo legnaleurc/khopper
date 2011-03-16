@@ -67,9 +67,14 @@ void CueSheetPlugin::doInstall() {
 			fin.setFileName( info.path() + "/" + info.baseName() + ".cue" );
 		}
 		fin.open( QIODevice::ReadOnly );
-		QString content = khopper::widget::CodecSelector::selectTextCodec( fin.readAll() );
+		QByteArray encoded( fin.readAll() );
 		fin.close();
-		return khopper::album::CueSheetParser::load( content, info.dir() );
+		std::pair< bool, QString > decoded = khopper::widget::CodecSelector::selectTextCodec( encoded );
+		if( decoded.second.isEmpty() ) {
+			return khopper::album::PlayList();
+		} else {
+			return khopper::album::CueSheetParser::load( decoded.second, info.dir(), decoded.first );
+		}
 	} );
 }
 

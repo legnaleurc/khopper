@@ -27,12 +27,12 @@
 
 using namespace khopper::widget;
 
-QString CodecSelector::selectTextCodec( const QByteArray & encoded ) {
+std::pair< bool, QString > CodecSelector::selectTextCodec( const QByteArray & encoded ) {
 	std::shared_ptr< CodecSelector > dialog( new CodecSelector( encoded ) );
 	if( dialog->exec() == QDialog::Rejected ) {
-		return "";
+		return std::make_pair( false, "" );
 	} else {
-		return dialog->decoded_;
+		return std::make_pair( dialog->ui_->freedb->isChecked(), dialog->decoded_ );
 	}
 }
 
@@ -46,7 +46,7 @@ decoded_() {
 	this->ui_->codecs->addItem( "UTF-8", QTextCodec::codecForName( "UTF-8" )->mibEnum() );
 	this->ui_->codecs->addItem( "Shift-JIS", QTextCodec::codecForName( "Shift-JIS" )->mibEnum() );
 	this->ui_->codecs->addItem( "Big5", QTextCodec::codecForName( "Big5" )->mibEnum() );
-	QObject::connect( this->ui_->codecs, SIGNAL( currentIndexChanged( int ) ), this, SLOT( update_( int ) ) );
+	this->connect( this->ui_->codecs, SIGNAL( currentIndexChanged( int ) ), SLOT( update_( int ) ) );
 
 	this->update_( this->ui_->codecs->currentIndex() );
 }
