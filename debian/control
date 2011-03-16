@@ -3,7 +3,7 @@ Section: universe/sound
 Priority: extra
 Maintainer: Wei-Cheng Pan <legnaleurc@gmail.com>
 Build-Depends: debhelper (>= 7.0.50~), cmake, g++-4.5,
- libqt4-dev (>= 4.6), libphonon-dev, libavformat-dev (>= 0.5), libflac-dev,
+ libqt4-dev (>= 4.7), libphonon-dev, libavformat-dev (>= 0.5), libflac-dev,
  pkg-config, libvorbis-dev, libmp3lame-dev, libtag1-dev
 Standards-Version: 3.9.1
 Homepage: http://legnaleurc.blogspot.com/search/label/Khopper
