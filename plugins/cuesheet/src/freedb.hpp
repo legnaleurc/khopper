@@ -27,6 +27,7 @@
 
 #include <vector>
 #include <utility>
+#include <memory>
 
 namespace khopper {
 	namespace album {
@@ -46,29 +47,22 @@ namespace khopper {
 			QMap< int, TrackData > tracks;
 		};
 
-		class FreeDB : public QObject {
-			Q_OBJECT
+		class FreeDB {
 		public:
 			FreeDB();
-			virtual ~FreeDB();
+			~FreeDB();
 
 			bool isConnected() const;
-			bool connectToHost( const QString & hostName, quint16 port );
+			void connectToHost( const QString & hostName, quint16 port );
 			void disconnectFromHost();
 			std::pair< QString, QString > query( unsigned int discid, const QStringList & frames, int nsecs );
 			DiscData read( const QString & categ, const QString & discid );
-
-		signals:
-			void error( const QString & msg );
-
-		private slots:
-			void onError_( QAbstractSocket::SocketError );
 
 		private:
 			QStringList sendRequest_( const QByteArray & );
 			QStringList getResponse_();
 
-			QTcpSocket * link_;
+			std::shared_ptr< QTcpSocket > link_;
 		};
 
 	}
