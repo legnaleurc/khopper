@@ -21,6 +21,7 @@
  */
 #include "freedb.hpp"
 
+#include "khopper/application.hpp"
 #include "khopper/error.hpp"
 
 #include <QtCore/QtDebug>
@@ -63,7 +64,8 @@ bool FreeDB::connectToHost( const QString & hostName, quint16 port ) {
 	// set protocol level
 	response = this->sendRequest_( "proto 6" );
 	// handshake
-	response = this->sendRequest_( "cddb hello \"legnaleurc\" \"foolproofproject.org\" \"Khopper\" \"0.3\"" );
+	QString tmp( "cddb hello \"legnaleurc\" \"foolproofproject.org\" \"%1\" \"%2\"" );
+	response = this->sendRequest_( tmp.arg( QCoreApplication::applicationName() ).arg( QCoreApplication::applicationVersion() ).toUtf8() );
 
 	return true;
 }
