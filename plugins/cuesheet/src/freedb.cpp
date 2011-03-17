@@ -89,9 +89,9 @@ std::pair< QString, QString > FreeDB::query( unsigned int discid, const QStringL
 	QStringList msg( this->sendRequest_( tmp.arg( discid, 8, 16, QChar( '0' ) ).arg( frames.size() ).arg( frames.join( " " ) ).arg( nsecs ).toUtf8() ) );
 
 	QRegExp pattern( "\\d\\d\\d (\\w+) ([\\w\\d]+) .+" );
-	if( msg.startsWith( "200" ) && pattern.exactMatch( msg[0] ) ) {
+	if( msg[0].startsWith( "200" ) && pattern.exactMatch( msg[0] ) ) {
 		return std::make_pair( pattern.cap( 1 ), pattern.cap( 2 ) );
-	} else if( msg.startsWith( "210" ) ) {
+	} else if( msg[0].startsWith( "210" ) ) {
 		// code 210, found exact matches, choose first one
 		pattern.setPattern( "(\\w+) ([\\w\\d]+) .*" );
 		qDebug() << msg[1];
