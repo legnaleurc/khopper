@@ -73,9 +73,7 @@ ui_( new Ui::Player ) {
 
 	if( Phonon::BackendCapabilities::availableMimeTypes().empty() ) {
 		this->playable_ = false;
-		this->ui_->next->setEnabled( false );
 		this->ui_->playOrPause->setEnabled( false );
-		this->ui_->previous->setEnabled( false );
 		this->ui_->seeker->setEnabled( false );
 		this->ui_->stop->setEnabled( false );
 		this->ui_->volume->setEnabled( false );
