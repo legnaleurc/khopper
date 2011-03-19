@@ -91,13 +91,8 @@ void Player::setQueue_( const PlayList & tracks ) {
 		return;
 	}
 	this->currentTrack_ = tracks.front();
-	QList< Phonon::MediaSource > queue;
-	std::for_each( tracks.begin(), tracks.end(), [&queue]( TrackSP track ) {
-		queue.push_back( new WavWrapper( track->createReader() ) );
-		queue.back().setAutoDelete( true );
-	} );
-	this->player_->setCurrentSource( queue.first() );
-	this->player_->setQueue( queue.mid( 1 ) );
+	this->player_->setCurrentSource( new WavWrapper( this->currentTrack_->createReader() ) );
+	this->player_->currentSource().setAutoDelete( true );
 }
 
 PlayList Player::getSelectedTracks() const {
