@@ -82,12 +82,14 @@ namespace khopper {
 			void propertyHelper_( const QModelIndex & );
 			void stop_();
 			void handleState_( Phonon::State, Phonon::State );
+			void onTick_( qint64 );
+			void onVolumeChanged_( qreal );
 
 		private:
 			void setQueue_( const album::PlayList & );
 
 			album::TrackSP currentTrack_;
-			album::Timestamp duration_;
+			qint64 duration_;
 			utility::PlayListModel * model_;
 			bool playable_;
 			Phonon::MediaObject * player_;

@@ -31,14 +31,35 @@
       </widget>
      </item>
      <item>
-      <widget class="Phonon::SeekSlider" name="seeker">
+      <widget class="QLabel" name="elapsedTime">
+       <property name="text">
+        <string>00:00</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="Phonon::SeekSlider" name="seekerSlider">
        <property name="iconVisible">
         <bool>true</bool>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="Phonon::VolumeSlider" name="volume"/>
+      <widget class="QLabel" name="remainTime">
+       <property name="text">
+        <string>00:00</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="Phonon::VolumeSlider" name="volumeSlider"/>
+     </item>
+     <item>
+      <widget class="QLabel" name="volume">
+       <property name="text">
+        <string>100</string>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
