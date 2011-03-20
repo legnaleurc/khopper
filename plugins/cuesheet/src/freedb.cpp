@@ -29,13 +29,26 @@
 #include <QtCore/QTextStream>
 #include <QtCore/QTextCodec>
 
+namespace {
+	void disconnectAndWarn( QTcpSocket * socket ) {
+		if( socket->state() != QAbstractSocket::UnconnectedState && socket->state() != QAbstractSocket::ClosingState ) {
+			socket->disconnectFromHost();
+		}
+		if( !socket->waitForDisconnected() ) {
+			qWarning() << "disconnect from" << socket->peerName() << "failed";
+		}
+	}
+}
+
 using namespace khopper::album;
+using khopper::error::IOError;
 using khopper::error::RunTimeError;
 
 FreeDB::FreeDB():
-QObject( 0 ),
-link_( new QTcpSocket( this ) ) {
-	this->connect( this->link_, SIGNAL( error( QAbstractSocket::SocketError ) ), SLOT( onError_( QAbstractSocket::SocketError ) ) );
+link_( new QTcpSocket, []( QTcpSocket * socket ) {
+	disconnectAndWarn( socket );
+	delete socket;
+} ) {
 }
 
 FreeDB::~FreeDB() {
@@ -48,31 +61,27 @@ bool FreeDB::isConnected() const {
 	return this->link_->state() == QAbstractSocket::ConnectedState;
 }
 
-bool FreeDB::connectToHost( const QString & hostName, quint16 port ) {
+void FreeDB::connectToHost( const QString & hostName, quint16 port ) {
 	this->link_->connectToHost( hostName, port );
 	if( !this->link_->waitForConnected() ) {
-		return false;
+		throw IOError( this->link_->errorString() );
 	}
-	QStringList response( this->getResponse_() );
-	if( response.empty() ) {
-		return false;
-	}
-	if( response.startsWith( "43" ) ) {
-		return false;
+	QStringList msg( this->getResponse_() );
+	if( msg.empty() || msg.startsWith( "43" ) ) {
+		disconnectAndWarn( this->link_.get() );
+		return;
 	}
 
 	// set protocol level
-	response = this->sendRequest_( "proto 6" );
+	msg = this->sendRequest_( "proto 6" );
 	// handshake
 	QString tmp( "cddb hello \"legnaleurc\" \"foolproofproject.org\" \"%1\" \"%2\"" );
-	response = this->sendRequest_( tmp.arg( QCoreApplication::applicationName() ).arg( QCoreApplication::applicationVersion() ).toUtf8() );
-
-	return true;
+	msg = this->sendRequest_( tmp.arg( QCoreApplication::applicationName() ).arg( QCoreApplication::applicationVersion() ).toUtf8() );
 }
 
 void FreeDB::disconnectFromHost() {
-	QStringList msg( this->sendRequest_( "quit" ) );
-	this->link_->disconnectFromHost();
+	this->sendRequest_( "quit" );
+	disconnectAndWarn( this->link_.get() );
 }
 
 std::pair< QString, QString > FreeDB::query( unsigned int discid, const QStringList & frames, int nsecs ) {
@@ -80,9 +89,9 @@ std::pair< QString, QString > FreeDB::query( unsigned int discid, const QStringL
 	QStringList msg( this->sendRequest_( tmp.arg( discid, 8, 16, QChar( '0' ) ).arg( frames.size() ).arg( frames.join( " " ) ).arg( nsecs ).toUtf8() ) );
 
 	QRegExp pattern( "\\d\\d\\d (\\w+) ([\\w\\d]+) .+" );
-	if( msg.startsWith( "200" ) && pattern.exactMatch( msg[0] ) ) {
+	if( msg[0].startsWith( "200" ) && pattern.exactMatch( msg[0] ) ) {
 		return std::make_pair( pattern.cap( 1 ), pattern.cap( 2 ) );
-	} else if( msg.startsWith( "210" ) ) {
+	} else if( msg[0].startsWith( "210" ) ) {
 		// code 210, found exact matches, choose first one
 		pattern.setPattern( "(\\w+) ([\\w\\d]+) .*" );
 		qDebug() << msg[1];
@@ -152,12 +161,6 @@ DiscData FreeDB::read( const QString & categ, const QString & discid ) {
 	return data;
 }
 
-void FreeDB::onError_( QAbstractSocket::SocketError socketError ) {
-	qDebug() << socketError;
-	qDebug() << this->link_->errorString();
-	emit this->error( this->link_->errorString() );
-}
-
 QStringList FreeDB::sendRequest_( const QByteArray & cmd ) {
 	qDebug() << cmd;
 	this->link_->write( cmd + '\n' );
@@ -167,7 +170,7 @@ QStringList FreeDB::sendRequest_( const QByteArray & cmd ) {
 
 QStringList FreeDB::getResponse_() {
 	if( !this->link_->waitForReadyRead() ) {
-		return QStringList();
+		throw IOError( this->link_->errorString() );
 	}
 
 	QByteArray response( this->link_->readLine() );
@@ -176,7 +179,7 @@ QStringList FreeDB::getResponse_() {
 		// NOTE: works, should be more graceful
 		while( !( response.endsWith( "\r.\r" ) || response.endsWith( "\n.\n" ) || response.endsWith( "\r\n.\r\n" ) ) ) {
 			if( !this->link_->waitForReadyRead() ) {
-				throw RunTimeError( this->link_->errorString() );
+				throw IOError( this->link_->errorString() );
 			}
 			response.append( this->link_->readAll() );
 		}

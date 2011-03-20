@@ -244,9 +244,7 @@ void CueSheetParser::updateLastTrack_() {
 
 void CueSheetParser::queryFromCDDB_() {
 	FreeDB query;
-	if( !query.connectToHost( "freedb.freedb.org", 8880 ) ) {
-		throw RunTimeError( "connect failed" );
-	}
+	query.connectToHost( "freedb.freedb.org", 8880 );
 	std::pair< QString, QString > t( query.query( this->calcDiscID_(), this->currentFrames_, ( this->currentTOCs_.back().getMinute() * 60 + this->currentTOCs_.back().getSecond() ) - ( this->currentTOCs_.front().getMinute() * 60 + this->currentTOCs_.front().getSecond() ) ) );
 	DiscData data( query.read( t.first, t.second ) );
 	if( !data.artist.isEmpty() ) {
