@@ -44,7 +44,7 @@ OggWriter::~OggWriter() {
 }
 
 void OggWriter::doOpen() {
-	if( this->getURI().scheme() == "file" ) {
+	if( this->getURI().scheme() != "file" ) {
 		throw IOError( "This plugin do not support remote access." );
 	}
 
