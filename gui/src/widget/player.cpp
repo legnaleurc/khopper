@@ -78,6 +78,7 @@ ui_( new Ui::Player ) {
 	this->ui_->volumeSlider->setAudioOutput( ao );
 	this->connect( this->player_, SIGNAL( stateChanged( Phonon::State, Phonon::State ) ), SLOT( handleState_( Phonon::State, Phonon::State ) ) );
 	this->connect( this->player_, SIGNAL( tick( qint64 ) ), SLOT( onTick_( qint64 ) ) );
+	this->connect( this->player_, SIGNAL( finished() ), SLOT( onFinished_() ) );
 
 	this->connect( this->ui_->playOrPause, SIGNAL( clicked() ), SLOT( playOrPause_() ) );
 	this->connect( this->ui_->stop, SIGNAL( clicked() ), SLOT( stop_() ) );
@@ -198,4 +199,8 @@ void Player::onTick_( qint64 time ) {
 
 void Player::onVolumeChanged_( qreal volume ) {
 	this->ui_->volume->setText( QString( "%1" ).arg( static_cast< int >( volume * 100 ), 3, 10, QChar( '0' ) ) );
+}
+
+void Player::onFinished_() {
+	this->stop_();
 }

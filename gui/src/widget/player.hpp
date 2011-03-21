@@ -84,6 +84,7 @@ namespace khopper {
 			void handleState_( Phonon::State, Phonon::State );
 			void onTick_( qint64 );
 			void onVolumeChanged_( qreal );
+			void onFinished_();
 
 		private:
 			void setQueue_( const album::PlayList & );
