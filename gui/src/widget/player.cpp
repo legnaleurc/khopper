@@ -33,8 +33,8 @@
 #include <algorithm>
 
 namespace {
-	static inline QString fromTimestamp( qint64 ms ) {
-		return QString( "%1:%2" ).arg( ms / 1000 / 60 ).arg( ms / 1000 % 60, 2L, 10L, QChar( '0' ) );
+	static inline QString fromMS( qint64 ms ) {
+		return QString( "%1:%2" ).arg( ms / 1000 / 60, 2 ).arg( ms / 1000 % 60, 2L, 10L, QChar( '0' ) );
 	}
 }
 
@@ -136,8 +136,8 @@ void Player::play_() {
 
 		this->duration_ = this->currentTrack_->getDuration().toMillisecond();
 		// set time display
-		this->ui_->elapsedTime->setText( fromTimestamp( 0 ) );
-		this->ui_->remainTime->setText( fromTimestamp( this->duration_ ) );
+		this->ui_->elapsedTime->setText( fromMS( 0 ) );
+		this->ui_->remainTime->setText( fromMS( this->duration_ ) );
 		this->starting_ = true;
 		this->player_->play();
 	}
@@ -198,8 +198,8 @@ bool Player::isPlayable() const {
 }
 
 void Player::onTick_( qint64 time ) {
-	this->ui_->elapsedTime->setText( fromTimestamp( time ) );
-	this->ui_->remainTime->setText( fromTimestamp( this->duration_ - time ) );
+	this->ui_->elapsedTime->setText( fromMS( time ) );
+	this->ui_->remainTime->setText( fromMS( this->duration_ - time ) );
 	if( time >= this->duration_ ) {
 		this->stop_();
 	}
