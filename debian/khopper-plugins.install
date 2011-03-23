@@ -2,8 +2,6 @@ usr/lib/khopper/plugins/libkhopper_plugin_cuesheet.so
 usr/lib/khopper/plugins/libkhopper_plugin_cuesheet.so.0.3.7
 usr/lib/khopper/plugins/libkhopper_plugin_ffmpeg.so
 usr/lib/khopper/plugins/libkhopper_plugin_ffmpeg.so.0.3.7
-usr/lib/khopper/plugins/libkhopper_plugin_mp3lame.so
-usr/lib/khopper/plugins/libkhopper_plugin_mp3lame.so.0.3.7
 usr/lib/khopper/plugins/libkhopper_plugin_redbook.so
 usr/lib/khopper/plugins/libkhopper_plugin_redbook.so.0.3.7
 usr/lib/khopper/plugins/libkhopper_plugin_single.so

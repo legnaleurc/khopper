@@ -1,10 +1,10 @@
 Source: khopper
-Section: universe/sound
+Section: sound
 Priority: extra
 Maintainer: Wei-Cheng Pan <legnaleurc@gmail.com>
-Build-Depends: debhelper (>= 7.0.50~), cmake, g++-4.5,
+Build-Depends: debhelper (>= 7.0.50~), cmake, g++ (>= 4.5),
  libqt4-dev (>= 4.7), libphonon-dev, libavformat-dev (>= 0.5), libflac-dev,
- pkg-config, libvorbis-dev, libmp3lame-dev, libtag1-dev
+ pkg-config, libvorbis-dev, libtag1-dev
 Standards-Version: 3.9.1
 Homepage: http://legnaleurc.blogspot.com/search/label/Khopper
 Vcs-Git: git://github.com/legnaleurc/khopper.git
@@ -12,7 +12,7 @@ Vcs-Browser: https://github.com/legnaleurc/khopper
 
 Package: libkhopper
 Architecture: any
-Section: universe/libs
+Section: libs
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Recommends: khopper-gui
 Description: Core library of Khopper
@@ -24,7 +24,7 @@ Description: Core library of Khopper
 
 Package: khopper-gui
 Architecture: any
-Section: universe/sound
+Section: sound
 Depends: ${shlibs:Depends}, ${misc:Depends}, libkhopper
 Recommends: khopper-plugins
 Description: Graphical User Interface of Khopper
@@ -36,7 +36,7 @@ Description: Graphical User Interface of Khopper
 
 Package: khopper-plugins
 Architecture: any
-Section: universe/libs
+Section: libs
 Depends: ${shlibs:Depends}, ${misc:Depends}, libkhopper
 Recommends: khopper-gui
 Description: Plug-ins of Khopper
@@ -48,7 +48,7 @@ Description: Plug-ins of Khopper
 
 Package: khopper-dev
 Architecture: all
-Section: universe/devel
+Section: devel
 Depends: ${misc:Depends}, libkhopper
 Description: Development headers of Khopper
  Khopper is an application written in Qt toolkit and is designed for convert
