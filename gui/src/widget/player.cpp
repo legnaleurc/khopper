@@ -33,8 +33,8 @@
 #include <algorithm>
 
 namespace {
-	static inline QString fromTimestamp( qint64 ms ) {
-		return QString( "%1:%2" ).arg( ms / 1000 / 60 ).arg( ms / 1000 % 60, 2L, 10L, QChar( '0' ) );
+	static inline QString fromMS( qint64 ms ) {
+		return QString( "%1:%2" ).arg( ms / 1000 / 60, 2 ).arg( ms / 1000 % 60, 2L, 10L, QChar( '0' ) );
 	}
 }
 
@@ -78,6 +78,7 @@ ui_( new Ui::Player ) {
 	this->ui_->volumeSlider->setAudioOutput( ao );
 	this->connect( this->player_, SIGNAL( stateChanged( Phonon::State, Phonon::State ) ), SLOT( handleState_( Phonon::State, Phonon::State ) ) );
 	this->connect( this->player_, SIGNAL( tick( qint64 ) ), SLOT( onTick_( qint64 ) ) );
+	this->connect( this->player_, SIGNAL( finished() ), SLOT( onFinished_() ) );
 
 	this->connect( this->ui_->playOrPause, SIGNAL( clicked() ), SLOT( playOrPause_() ) );
 	this->connect( this->ui_->stop, SIGNAL( clicked() ), SLOT( stop_() ) );
@@ -133,8 +134,8 @@ void Player::play_() {
 
 		this->duration_ = this->currentTrack_->getDuration().toMillisecond();
 		// set time display
-		this->ui_->elapsedTime->setText( fromTimestamp( 0 ) );
-		this->ui_->remainTime->setText( fromTimestamp( this->duration_ ) );
+		this->ui_->elapsedTime->setText( fromMS( 0 ) );
+		this->ui_->remainTime->setText( fromMS( this->duration_ ) );
 		this->player_->play();
 	}
 }
@@ -189,8 +190,8 @@ bool Player::isPlayable() const {
 }
 
 void Player::onTick_( qint64 time ) {
-	this->ui_->elapsedTime->setText( fromTimestamp( time ) );
-	this->ui_->remainTime->setText( fromTimestamp( this->duration_ - time ) );
+	this->ui_->elapsedTime->setText( fromMS( time ) );
+	this->ui_->remainTime->setText( fromMS( this->duration_ - time ) );
 	if( time >= this->duration_ ) {
 		this->stop_();
 	}
@@ -198,4 +199,8 @@ void Player::onTick_( qint64 time ) {
 
 void Player::onVolumeChanged_( qreal volume ) {
 	this->ui_->volume->setText( QString( "%1" ).arg( static_cast< int >( volume * 100 ), 3, 10, QChar( '0' ) ) );
+}
+
+void Player::onFinished_() {
+	this->stop_();
 }

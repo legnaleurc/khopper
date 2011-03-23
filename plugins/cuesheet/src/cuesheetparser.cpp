@@ -49,7 +49,7 @@ namespace {
 using namespace khopper::album;
 using khopper::error::BaseError;
 using khopper::error::CodecError;
-using khopper::error::ParsingError;
+using khopper::error::IOError;
 using khopper::error::RunTimeError;
 using khopper::codec::ReaderSP;
 using khopper::codec::RangedReader;
@@ -142,7 +142,11 @@ void CueSheetParser::parseFile_( const QString & fileName, const QString & type,
 		this->updateLastTrack_();
 	}
 
-	this->currentFileURI_ = QUrl::fromLocalFile( dir.filePath( stripQuote( fileName ) ) );
+	QString sFileName( stripQuote( fileName ) );
+	if( !dir.exists( sFileName ) ) {
+		throw IOError( QObject::tr( "%1 not exists, please check the corresponding cue sheet" ).arg( sFileName ) );
+	}
+	this->currentFileURI_ = QUrl::fromLocalFile( dir.filePath( sFileName ) );
 	this->currentFileType_ = type;
 }
 

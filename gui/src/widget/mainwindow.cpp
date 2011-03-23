@@ -120,7 +120,7 @@ void MainWindow::open( const QList< QUrl > & uris ) {
 		try {
 			tracks.append( createPlayList( uri ) );
 		} catch( BaseError & e ) {
-			this->showErrorMessage_( tr( "Can not decode this file!" ), e.getMessage() );
+			this->showErrorMessage_( tr( "Can not open this file!" ), e.getMessage() );
 		}
 	} );
 
