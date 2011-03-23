@@ -95,7 +95,6 @@ namespace khopper {
 			bool playable_;
 			Phonon::MediaObject * player_;
 			PropertyDialog * prop_;
-			bool starting_;
 			std::shared_ptr< Ui::Player > ui_;
 		};
 

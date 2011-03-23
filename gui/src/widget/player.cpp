@@ -53,7 +53,6 @@ model_( new PlayListModel( this ) ),
 playable_( true ),
 player_( new Phonon::MediaObject( this ) ),
 prop_( new PropertyDialog( this ) ),
-starting_( false ),
 ui_( new Ui::Player ) {
 	this->ui_->setupUi( this );
 
@@ -119,7 +118,6 @@ void Player::append( const PlayList & playList ) {
 
 void Player::play_() {
 	if( this->player_->state() == Phonon::PausedState ) {
-		this->starting_ = true;
 		this->player_->play();
 		return;
 	}
@@ -138,7 +136,6 @@ void Player::play_() {
 		// set time display
 		this->ui_->elapsedTime->setText( fromMS( 0 ) );
 		this->ui_->remainTime->setText( fromMS( this->duration_ ) );
-		this->starting_ = true;
 		this->player_->play();
 	}
 }
@@ -168,11 +165,6 @@ void Player::propertyHelper_( const QModelIndex & index ) {
 void Player::handleState_( Phonon::State newState, Phonon::State /*oldState*/ ) {
 	switch( newState ) {
 	case Phonon::PlayingState:
-		if( this->starting_ ) {
-			// Hack Phonon's tick
-			this->player_->seek( 0 );
-			this->starting_ = false;
-		}
 		this->ui_->playOrPause->setText( tr( "Pause" ) );
 		break;
 	case Phonon::StoppedState:
