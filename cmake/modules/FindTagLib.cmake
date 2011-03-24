@@ -7,34 +7,29 @@
 # TAGLIB_INCLUDE_DIR The taglib include directory
 # TAGLIB_LIBRARIES   Link these to use taglib
 
-if(TAGLIB_INCLUDE_DIR AND TAGLIB_LIBRARIES)
-    set(TAGLIB_FOUND TRUE)
-else()
-    if(NOT WIN32)
-        find_package(PkgConfig)
+if(NOT TAGLIB_FOUND)
+    find_package(PkgConfig)
+    if(PKG_CONFIG_FOUND)
         pkg_check_modules(PC_TAGLIB taglib)
-    endif()
+        if(PC_TAGLIB_FOUND)
+            set(TAGLIB_INCLUDE_DIR ${PC_TAGLIB_INCLUDE_DIRS} CACHE INTERNAL "")
+            set(TAGLIB_LIBRARIES ${PC_TAGLIB_LIBRARIES} CACHE INTERNAL "")
+            set(TAGLIB_FOUND TRUE CACHE INTERNAL "")
+        endif()
+    else()
+        find_path(TAGLIB_INCLUDE_DIR id3v2tag.h)
+        find_library(TAGLIB_LIBRARIES_RELEASE tag)
+        find_library(TAGLIB_LIBRARIES_DEBUG tagd)
 
-    find_path(TAGLIB_INCLUDE_DIR id3v2tag.h
-        HINTS
-            ${PC_TAGLIB_INCLUDEDIR}
-            ${PC_TAGLIB_INCLUDE_DIRS})
-    find_library(TAGLIB_LIBRARIES_RELEASE tag
-        HINTS
-            ${PC_TAGLIB_LIBDIR}
-            ${PC_TAGLIB_LIBRARY_DIRS})
-    find_library(TAGLIB_LIBRARIES_DEBUG tagd
-        HINTS
-            ${PC_TAGLIB_LIBDIR}
-            ${PC_TAGLIB_LIBRARY_DIRS})
-    if(TAGLIB_LIBRARIES_RELEASE AND TAGLIB_LIBRARIES_DEBUG)
-        set(TAGLIB_LIBRARIES optimized ${TAGLIB_LIBRARIES_RELEASE} debug ${TAGLIB_LIBRARIES_DEBUG})
-    elseif(TAGLIB_LIBRARIES_RELEASE)
-        set(TAGLIB_LIBRARIES ${TAGLIB_LIBRARIES_RELEASE})
-    endif()
+        if(TAGLIB_LIBRARIES_RELEASE AND TAGLIB_LIBRARIES_DEBUG)
+            set(TAGLIB_LIBRARIES optimized ${TAGLIB_LIBRARIES_RELEASE} debug ${TAGLIB_LIBRARIES_DEBUG})
+        elseif(TAGLIB_LIBRARIES_RELEASE)
+            set(TAGLIB_LIBRARIES ${TAGLIB_LIBRARIES_RELEASE})
+        endif()
 
-    if(TAGLIB_INCLUDE_DIR AND TAGLIB_LIBRARIES)
-        set(TAGLIB_FOUND TRUE)
+        if(TAGLIB_INCLUDE_DIR AND TAGLIB_LIBRARIES)
+            set(TAGLIB_FOUND TRUE)
+        endif()
     endif()
 
     if(TAGLIB_FOUND)
