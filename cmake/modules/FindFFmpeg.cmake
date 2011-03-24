@@ -8,8 +8,6 @@
 # FFMPEG_LIBRARIES     Link this to use FFmpeg
 
 if(NOT FFMPEG_FOUND)
-    set(FFMPEG_FOUND TRUE)
-else()
     find_package(PkgConfig)
     if(PKG_CONFIG_FOUND)
         pkg_check_modules(PC_FFMPEG libavformat libavcodec libavutil)
