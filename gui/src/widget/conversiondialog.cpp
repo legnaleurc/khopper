@@ -67,7 +67,7 @@ table_() {
 
 	QCompleter * completer = new QCompleter( this );
 	PathCompleterModel * model = new PathCompleterModel( this );
-	model->setRootPath( "" );
+	model->setRootPath( this->ui_->outputPath->text() );
 	completer->setModel( model );
 	this->ui_->outputPath->setCompleter( completer );
 }
