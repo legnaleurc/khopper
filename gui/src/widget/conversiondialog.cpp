@@ -23,13 +23,15 @@
 #include "ui_conversiondialog.h"
 #include "progressviewer.hpp"
 #include "converter.hpp"
+#include "pathcompletermodel.hpp"
 
 #include "khopper/abstractpanel.hpp"
 #include "khopper/application.hpp"
 
 #include <QtCore/QSettings>
-#include <QtGui/QFileDialog>
+#include <QtGui/QCompleter>
 #include <QtGui/QDesktopServices>
+#include <QtGui/QFileDialog>
 #include <QtGui/QMessageBox>
 
 #include <algorithm>
@@ -42,6 +44,7 @@ using khopper::album::PlayList;
 using khopper::codec::WriterSP;
 using khopper::plugin::WriterCreator;
 using khopper::utility::Converter;
+using khopper::utility::PathCompleterModel;
 
 ConversionDialog::ConversionDialog( QWidget * parent ):
 QDialog( parent ),
@@ -57,10 +60,16 @@ table_() {
 	this->ui_->tpl->setText( setting.value( "filename", "%2i_%t" ).toString() );
 	setting.endGroup();
 
-	connect( this->ui_->browse, SIGNAL( clicked() ), this, SLOT( changeOutputPath_() ) );
+	this->connect( this->ui_->browse, SIGNAL( clicked() ), SLOT( changeOutputPath_() ) );
 
-	connect( khopper::pApp(), SIGNAL( panelAdded( khopper::widget::AbstractPanel * ) ), this, SLOT( addPanel( khopper::widget::AbstractPanel * ) ) );
-	connect( khopper::pApp(), SIGNAL( panelRemoved( khopper::widget::AbstractPanel * ) ), this, SLOT( removePanel( khopper::widget::AbstractPanel * ) ) );
+	this->connect( khopper::pApp(), SIGNAL( panelAdded( khopper::widget::AbstractPanel * ) ), SLOT( addPanel( khopper::widget::AbstractPanel * ) ) );
+	this->connect( khopper::pApp(), SIGNAL( panelRemoved( khopper::widget::AbstractPanel * ) ), SLOT( removePanel( khopper::widget::AbstractPanel * ) ) );
+
+	QCompleter * completer = new QCompleter( this );
+	PathCompleterModel * model = new PathCompleterModel( this );
+	model->setRootPath( "" );
+	completer->setModel( model );
+	this->ui_->outputPath->setCompleter( completer );
 }
 
 void ConversionDialog::convert( const PlayList & tracks ) {
