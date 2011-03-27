@@ -25,6 +25,7 @@
 
 #include <id3v2tag.h>
 
+#include <QtCore/QFile>
 #include <QtCore/QtDebug>
 
 using namespace khopper::codec;
@@ -32,23 +33,22 @@ using khopper::error::IOError;
 
 Mp3Writer::Mp3Writer( const QUrl & uri ):
 AbstractWriter( uri ),
-fout_( new QFile( this ) ),
+out_( NULL ),
 gfp_(),
 quality_( -1 ),
 id3v2Offset_( -1L ) {
+	// no remote support
+	if( this->getURI().scheme() != "file" ) {
+		throw IOError( QObject::tr( "This plugin do not support remote writing." ) );
+	}
+
+	// setup file
+	this->out_ = new QFile( this->getURI().toLocalFile(), this );
 }
 
 void Mp3Writer::doOpen() {
-	// no remote support
-	if( this->getURI().scheme() != "file" ) {
-		throw IOError( tr( "This plugin do not support remote writing." ) );
-	}
-	qDebug() << "Mp3Writer: uri" << this->getURI() << "local" << this->getURI().toLocalFile();
-
-	// open file
-	this->fout_->setFileName( this->getURI().toLocalFile() );
-	if( !this->fout_->open( QIODevice::WriteOnly ) ) {
-		throw IOError( QObject::tr( "%1 (%2)" ).arg( this->fout_->errorString() ).arg( this->fout_->fileName() ) );
+	if( !this->out_->open( QIODevice::WriteOnly ) ) {
+		throw IOError( QObject::tr( "%1 (%2)" ).arg( this->out_->errorString() ).arg( this->getURI().toString() ) );
 	}
 
 	// lame encoder setting
@@ -77,7 +77,7 @@ void Mp3Writer::doOpen() {
 	TagLib::ByteVector id3v2 = tag.render();
 	qDebug( "ID3v2 length: %d", id3v2.size() );
 	this->id3v2Offset_ = id3v2.size();
-	this->fout_->write( id3v2.data(), id3v2.size() );
+	this->out_->write( id3v2.data(), id3v2.size() );
 
 	// initialize all parameters
 	int ret = lame_init_params( this->gfp_.get() );
@@ -116,7 +116,7 @@ void Mp3Writer::writeFrame( const QByteArray & sample ) {
 		if( ret < 0 ) {
 			qDebug( "lame encode error: %d", ret );
 		}
-		this->fout_->write( static_cast< char * >( static_cast< void * >( &buffer[0] ) ), ret );
+		this->out_->write( static_cast< char * >( static_cast< void * >( &buffer[0] ) ), ret );
 	} else {
 		unsigned char buffer[7200];
 		int ret = lame_encode_flush_nogap(
@@ -124,7 +124,7 @@ void Mp3Writer::writeFrame( const QByteArray & sample ) {
 			buffer,
 			7200
 		);
-		this->fout_->write( static_cast< char * >( static_cast< void * >( &buffer[0] ) ), ret );
+		this->out_->write( static_cast< char * >( static_cast< void * >( &buffer[0] ) ), ret );
 	}
 }
 
@@ -138,16 +138,16 @@ void Mp3Writer::doClose() {
 	if( ret < 0 ) {
 		qDebug( "lame flush error" );
 	}
-	this->fout_->write( static_cast< char * >( static_cast< void * >( &buffer[0] ) ), ret );
+	this->out_->write( static_cast< char * >( static_cast< void * >( &buffer[0] ) ), ret );
 
 	ret = lame_get_lametag_frame( this->gfp_.get(), &buffer[0], buffer.size() );
 	if( ret > 0 ) {
-		this->fout_->seek( this->id3v2Offset_ );
-		this->fout_->write( static_cast< char * >( static_cast< void * >( &buffer[0] ) ), ret );
+		this->out_->seek( this->id3v2Offset_ );
+		this->out_->write( static_cast< char * >( static_cast< void * >( &buffer[0] ) ), ret );
 	}
 
 	this->id3v2Offset_ = -1L;
 	this->quality_ = -1;
 	this->gfp_.reset();
-	this->fout_->close();
+	this->out_->close();
 }
