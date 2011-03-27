@@ -32,6 +32,7 @@ using khopper::error::IOError;
 
 Mp3Writer::Mp3Writer( const QUrl & uri ):
 AbstractWriter( uri ),
+fout_( new QFile( this ) ),
 gfp_(),
 quality_( -1 ),
 id3v2Offset_( -1L ) {
@@ -45,21 +46,10 @@ void Mp3Writer::doOpen() {
 	qDebug() << "Mp3Writer: uri" << this->getURI() << "local" << this->getURI().toLocalFile();
 
 	// open file
-	FILE * fout = NULL;
-	int ret = 0;
-#ifdef Q_OS_WIN32
-	ret = _wfopen_s( &fout, this->getURI().toLocalFile().toStdWString().c_str(), L"wb" );
-	if( ret != 0 ) {
-		throw khopper::error::IOError( ret );
+	this->fout_->setFileName( this->getURI().toLocalFile() );
+	if( !this->fout_->open( QIODevice::WriteOnly ) ) {
+		throw IOError( QObject::tr( "%1 (%2)" ).arg( this->fout_->errorString() ).arg( this->fout_->fileName() ) );
 	}
-#else
-	fout = fopen( this->getURI().toLocalFile().toStdString().c_str(), "wb" );
-	if( fout == NULL ) {
-		throw IOError( QString( "Can not open: %1" ).arg( this->getURI().toString() ) );
-	}
-#endif
-
-	this->fout_.reset( fout, fclose );
 
 	// lame encoder setting
 	this->gfp_.reset( lame_init(), lame_close );
@@ -87,10 +77,10 @@ void Mp3Writer::doOpen() {
 	TagLib::ByteVector id3v2 = tag.render();
 	qDebug( "ID3v2 length: %d", id3v2.size() );
 	this->id3v2Offset_ = id3v2.size();
-	fwrite( id3v2.data(), sizeof( id3v2[0] ), id3v2.size(), this->fout_.get() );
+	this->fout_->write( id3v2.data(), id3v2.size() );
 
 	// initialize all parameters
-	ret = lame_init_params( this->gfp_.get() );
+	int ret = lame_init_params( this->gfp_.get() );
 	if( ret < 0 ) {
 		qDebug( "lame param error" );
 	}
@@ -126,7 +116,7 @@ void Mp3Writer::writeFrame( const QByteArray & sample ) {
 		if( ret < 0 ) {
 			qDebug( "lame encode error: %d", ret );
 		}
-		fwrite( &buffer[0], sizeof( buffer[0] ), ret, this->fout_.get() );
+		this->fout_->write( static_cast< char * >( static_cast< void * >( &buffer[0] ) ), ret );
 	} else {
 		unsigned char buffer[7200];
 		int ret = lame_encode_flush_nogap(
@@ -134,7 +124,7 @@ void Mp3Writer::writeFrame( const QByteArray & sample ) {
 			buffer,
 			7200
 		);
-		fwrite( buffer, sizeof( buffer[0] ), ret, this->fout_.get() );
+		this->fout_->write( static_cast< char * >( static_cast< void * >( &buffer[0] ) ), ret );
 	}
 }
 
@@ -148,16 +138,16 @@ void Mp3Writer::doClose() {
 	if( ret < 0 ) {
 		qDebug( "lame flush error" );
 	}
-	fwrite( &buffer[0], sizeof( char ), ret, this->fout_.get() );
+	this->fout_->write( static_cast< char * >( static_cast< void * >( &buffer[0] ) ), ret );
 
 	ret = lame_get_lametag_frame( this->gfp_.get(), &buffer[0], buffer.size() );
 	if( ret > 0 ) {
-		fseek( this->fout_.get(), this->id3v2Offset_, SEEK_SET );
-		fwrite( &buffer[0], sizeof( char ), ret, this->fout_.get() );
+		this->fout_->seek( this->id3v2Offset_ );
+		this->fout_->write( static_cast< char * >( static_cast< void * >( &buffer[0] ) ), ret );
 	}
 
 	this->id3v2Offset_ = -1L;
 	this->quality_ = -1;
 	this->gfp_.reset();
-	this->fout_.reset();
+	this->fout_->close();
 }

@@ -26,6 +26,8 @@
 
 #include <lame/lame.h>
 
+#include <QtCore/QFile>
+
 namespace khopper {
 
 	namespace codec {
@@ -44,7 +46,7 @@ namespace khopper {
 			virtual void writeFrame( const QByteArray & sample );
 
 		private:
-			std::shared_ptr< FILE > fout_;
+			QFile * fout_;
 			std::shared_ptr< lame_global_flags > gfp_;
 			int quality_;
 			long id3v2Offset_;
