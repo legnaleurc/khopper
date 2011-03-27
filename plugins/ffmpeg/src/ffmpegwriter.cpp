@@ -60,7 +60,7 @@ void FfmpegWriter::doClose() {
 }
 
 void FfmpegWriter::setupMuxer() {
-	AVOutputFormat * pOF = guess_format( NULL, fromURI( this->getURI() ), NULL );
+	AVOutputFormat * pOF = av_guess_format( NULL, fromURI( this->getURI() ), NULL );
 	if( pOF == NULL ) {
 		throw error::CodecError( "Can not recognize output format" );
 	}
@@ -180,9 +180,9 @@ void FfmpegWriter::closeResource() {
 }
 
 void FfmpegWriter::writeHeader() {
-	av_metadata_set( &this->pFormatContext_->metadata, "title", this->getTitle().constData() );
-	av_metadata_set( &this->pFormatContext_->metadata, "artist", this->getArtist().constData() );
-	av_metadata_set( &this->pFormatContext_->metadata, "album", this->getAlbum().constData() );
+	av_metadata_set2( &this->pFormatContext_->metadata, "title", this->getTitle().constData(), 0 );
+	av_metadata_set2( &this->pFormatContext_->metadata, "artist", this->getArtist().constData(), 0 );
+	av_metadata_set2( &this->pFormatContext_->metadata, "album", this->getAlbum().constData(), 0 );
 
 	if( av_write_header( this->pFormatContext_.get() ) < 0 ) {
 		throw error::CodecError( "Can not write header" );

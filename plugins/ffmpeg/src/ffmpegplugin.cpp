@@ -40,9 +40,9 @@ Q_EXPORT_PLUGIN2( KHOPPER_PLUGIN_ID, khopper::plugin::FfmpegPlugin )
 
 using namespace khopper::plugin;
 using khopper::ffmpeg::fromURI;
-using khopper::widget::WavPanel;
 using khopper::plugin::registerReader;
 using khopper::plugin::unregisterReader;
+using khopper::widget::WavPanel;
 
 FfmpegPlugin::FfmpegPlugin():
 AbstractPlugin(),
