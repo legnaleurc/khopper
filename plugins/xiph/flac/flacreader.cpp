@@ -21,39 +21,29 @@
  */
 #include "flacreader.hpp"
 
+#include <QtCore/QFile>
 #include <QtCore/QMultiMap>
 #include <QtCore/QStringList>
 #include <QtCore/QtDebug>
 
 #include <cstring>
 
-namespace {
-
-	static inline FILE * fileHelper( const QUrl & uri ) {
-		// FIXME: not always local file
-#ifdef Q_OS_WIN32
-		FILE * fin = NULL;
-		errno_t ret = _wfopen_s( &fin, uri.toLocalFile().toStdWString().c_str(), L"rb" );
-		if( ret != 0 ) {
-			return NULL;
-		}
-		return fin;
-#else
-		return fopen( uri.toLocalFile().toStdString().c_str(), "rb" );
-#endif
-	}
-}
-
 using namespace khopper::codec;
 using khopper::error::CodecError;
+using khopper::error::IOError;
 
 FlacReader::FlacReader( const QUrl & uri ):
 AbstractReader( uri ),
+in_( NULL ),
 pFD_( FLAC__stream_decoder_new(), FLAC__stream_decoder_delete ),
 buffer_() {
 	if( !this->pFD_ ) {
-		throw CodecError( "Not enough memory! (from khopper::codec::FlacReader)" );
+		throw CodecError( QObject::tr( "Not enough memory! (from khopper::codec::FlacReader)" ) );
 	}
+	if( uri.scheme() != "file" ) {
+		throw IOError( QObject::tr( "%1 protocol is not supported" ).arg( uri.scheme() ) );
+	}
+	this->in_ = new QFile( uri.toLocalFile(), this );
 }
 
 bool FlacReader::atEnd() const {
@@ -62,33 +52,41 @@ bool FlacReader::atEnd() const {
 
 void FlacReader::doOpen() {
 	if( !FLAC__stream_decoder_set_md5_checking( this->pFD_.get(), true ) ) {
-		throw CodecError( "Can\'t check md5! (from khopper::codec::FlacReader)" );
+		throw CodecError( QObject::tr( "Can\'t check md5! (from khopper::codec::FlacReader)" ) );
 	}
 	if( !FLAC__stream_decoder_set_metadata_respond_all( this->pFD_.get() ) ) {
-		throw CodecError( "Can\'t retrive all metadata! (from khopper::codec::FlacReader)" );
+		throw CodecError( QObject::tr( "Can\'t retrive all metadata! (from khopper::codec::FlacReader)" ) );
 	}
 
-	FLAC__StreamDecoderInitStatus initStatus = FLAC__stream_decoder_init_FILE(
+	if( !this->in_->open( QIODevice::ReadOnly ) ) {
+		throw IOError( QObject::tr( "Can not open %1 : %2" ).arg( this->getURI().toString() ).arg( this->in_->errorString() ) );
+	}
+	FLAC__StreamDecoderInitStatus initStatus = FLAC__stream_decoder_init_stream(
 		this->pFD_.get(),
-		fileHelper( this->getURI() ),
-		writeCallback_,
-		metadataCallback_,
-		errorCallback_,
+		FlacReader::readCallback_,
+		FlacReader::seekCallback_,
+		FlacReader::tellCallback_,
+		FlacReader::lengthCallback_,
+		FlacReader::eofCallback_,
+		FlacReader::writeCallback_,
+		FlacReader::metadataCallback_,
+		FlacReader::errorCallback_,
 		this
 	);
 	if( initStatus != FLAC__STREAM_DECODER_INIT_STATUS_OK ) {
-		throw CodecError( std::string( FLAC__StreamDecoderInitStatusString[initStatus] ) + " (from khopper::codec::FlacReader)" );
+		throw CodecError( QObject::tr( "%1  (from khopper::codec::FlacReader)" ).arg( FLAC__StreamDecoderInitStatusString[initStatus] ) );
 	}
 
 	FLAC__bool ok = FLAC__stream_decoder_process_until_end_of_metadata( this->pFD_.get() );
 	if( !ok ) {
-		throw CodecError( "Can\'t read metadata (from khopper::codec::FlacReader)" );
+		throw CodecError( QObject::tr( "Can\'t read metadata (from khopper::codec::FlacReader)" ) );
 	}
 }
 
 void FlacReader::doClose() {
 	FLAC__stream_decoder_finish( this->pFD_.get() );
 	this->buffer_.clear();
+	this->in_->close();
 }
 
 bool FlacReader::seek( qint64 pos ) {
@@ -144,6 +142,56 @@ void FlacReader::parseVorbisComments_( const FLAC__StreamMetadata_VorbisComment 
 			qDebug() << "readed `" << it.key() << "\' but ignored";
 		}
 	}
+}
+
+FLAC__StreamDecoderReadStatus FlacReader::readCallback_(const FLAC__StreamDecoder * /*decoder*/, FLAC__byte buffer[], size_t * bytes, void * client_data ) {
+	FlacReader * self = static_cast< FlacReader * >( client_data );
+	qint64 ret = self->in_->read( static_cast< char * >( static_cast< void * >( buffer ) ), *bytes );
+	if( ret < 0 ) {
+		*bytes = 0;
+		return FLAC__STREAM_DECODER_READ_STATUS_ABORT;
+	} else if( ret == 0 ) {
+		*bytes = 0;
+		return FLAC__STREAM_DECODER_READ_STATUS_END_OF_STREAM;
+	} else {
+		*bytes = ret;
+		return FLAC__STREAM_DECODER_READ_STATUS_CONTINUE;
+	}
+}
+
+FLAC__StreamDecoderSeekStatus FlacReader::seekCallback_( const FLAC__StreamDecoder * /*decoder*/, FLAC__uint64 absolute_byte_offset, void * client_data ) {
+	FlacReader * self = static_cast< FlacReader * >( client_data );
+	if( self->in_->isSequential() ) {
+		return FLAC__STREAM_DECODER_SEEK_STATUS_UNSUPPORTED;
+	}
+	if( self->in_->seek( absolute_byte_offset ) ) {
+		return FLAC__STREAM_DECODER_SEEK_STATUS_OK;
+	} else {
+		return FLAC__STREAM_DECODER_SEEK_STATUS_ERROR;
+	}
+}
+
+FLAC__StreamDecoderTellStatus FlacReader::tellCallback_(const FLAC__StreamDecoder * /*decoder*/, FLAC__uint64 * absolute_byte_offset, void * client_data ) {
+	FlacReader * self = static_cast< FlacReader * >( client_data );
+	if( self->in_->isSequential() ) {
+		return FLAC__STREAM_DECODER_TELL_STATUS_UNSUPPORTED;
+	}
+	*absolute_byte_offset = self->in_->pos();
+	return FLAC__STREAM_DECODER_TELL_STATUS_OK;
+}
+
+FLAC__StreamDecoderLengthStatus FlacReader::lengthCallback_(const FLAC__StreamDecoder * /*decoder*/, FLAC__uint64 * stream_length, void * client_data) {
+	FlacReader * self = static_cast< FlacReader * >( client_data );
+	if( self->in_->isSequential() ) {
+		return FLAC__STREAM_DECODER_LENGTH_STATUS_UNSUPPORTED;
+	}
+	*stream_length = self->in_->size();
+	return FLAC__STREAM_DECODER_LENGTH_STATUS_OK;
+}
+
+FLAC__bool FlacReader::eofCallback_(const FLAC__StreamDecoder * /*decoder*/, void * client_data ) {
+	FlacReader * self = static_cast< FlacReader * >( client_data );
+	return self->in_->atEnd();
 }
 
 void FlacReader::metadataCallback_( const FLAC__StreamDecoder * /*decoder*/, const FLAC__StreamMetadata * metadata, void * client_data ) {

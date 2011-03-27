@@ -46,12 +46,18 @@ namespace khopper {
 			virtual void doClose();
 
 		private:
-			static void metadataCallback_( const FLAC__StreamDecoder *, const FLAC__StreamMetadata *, void * );
+			static FLAC__StreamDecoderReadStatus readCallback_( const FLAC__StreamDecoder *, FLAC__byte[], size_t *, void * );
+			static FLAC__StreamDecoderSeekStatus seekCallback_( const FLAC__StreamDecoder *, FLAC__uint64, void * );
+			static FLAC__StreamDecoderTellStatus tellCallback_( const FLAC__StreamDecoder *, FLAC__uint64 *, void * );
+			static FLAC__StreamDecoderLengthStatus lengthCallback_( const FLAC__StreamDecoder *, FLAC__uint64 *, void * );
+			static FLAC__bool eofCallback_( const FLAC__StreamDecoder *, void * );
 			static FLAC__StreamDecoderWriteStatus writeCallback_( const FLAC__StreamDecoder *, const FLAC__Frame *, const FLAC__int32 * const [], void * );
+			static void metadataCallback_( const FLAC__StreamDecoder *, const FLAC__StreamMetadata *, void * );
 			static void errorCallback_( const FLAC__StreamDecoder *, FLAC__StreamDecoderErrorStatus, void * );
 
 			void parseVorbisComments_( const FLAC__StreamMetadata_VorbisComment & );
 
+			QIODevice * in_;
 			std::shared_ptr< FLAC__StreamDecoder > pFD_;
 			QByteArray buffer_;
 		};
