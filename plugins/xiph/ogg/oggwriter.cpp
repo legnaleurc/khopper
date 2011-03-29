@@ -23,6 +23,8 @@
 
 #include "khopper/error.hpp"
 
+#include <QtCore/QFile>
+
 #include <cstdio>
 #include <cstdlib>
 
@@ -31,39 +33,23 @@ using khopper::error::IOError;
 
 OggWriter::OggWriter( const QUrl & uri ):
 AbstractWriter( uri ),
-fout_(),
+out_( NULL ),
 encoder_(),
 muxer_(),
 dsp_(),
 block_(),
 comments_(),
 quality_( -1.f ) {
+	if( this->getURI().scheme() != "file" ) {
+		throw IOError( QObject::tr( "Do not support remote access." ) );
+	}
+	this->out_ = new QFile( this->getURI().toLocalFile(), this );
 }
 
 OggWriter::~OggWriter() {
 }
 
 void OggWriter::doOpen() {
-	if( this->getURI().scheme() != "file" ) {
-		throw IOError( "This plugin do not support remote access." );
-	}
-
-	FILE * fout = NULL;
-	int ret = 0;
-	// open file
-#ifdef Q_OS_WIN32
-	ret = _wfopen_s( &fout, this->getURI().toLocalFile().toStdWString().c_str(), L"wb" );
-	if( ret != 0 ) {
-		throw IOError( ret );
-	}
-#else
-	fout = fopen( this->getURI().toLocalFile().toStdString().c_str(), "wb" );
-	if( fout == NULL ) {
-		throw error::IOError( QString( "Can not open: %1" ).arg( this->getURI().toString() ) );
-	}
-#endif
-	this->fout_.reset( fout, std::fclose );
-
 	// setup ogg stream
 	ogg_stream_state * os = static_cast< ogg_stream_state * >( std::malloc( sizeof( ogg_stream_state ) ) );
 	ogg_stream_init( os, 0xcafebabe );
@@ -76,7 +62,7 @@ void OggWriter::doOpen() {
 		std::free( vi );
 	} );
 	vorbis_info_init( vi );
-	ret = vorbis_encode_init_vbr( vi, this->getAudioFormat().channels(), this->getAudioFormat().frequency(), this->quality_ );
+	int ret = vorbis_encode_init_vbr( vi, this->getAudioFormat().channels(), this->getAudioFormat().frequency(), this->quality_ );
 	if( ret != 0 ) {
 		throw error::CodecError( "Vorbis initialization error" );
 	}
@@ -117,6 +103,11 @@ void OggWriter::doOpen() {
 	ogg_stream_packetin( this->muxer_.get(), &header_common );
 	ogg_stream_packetin( this->muxer_.get(), &header_code );
 
+	// open device
+	if( !this->out_->open( QIODevice::WriteOnly ) ) {
+		throw IOError( QObject::tr( "Can not open %1 : %2" ).arg( this->getURI().toString() ).arg( this->out_->errorString() ) );
+	}
+
 	// write header
 	ogg_page og;
 	for(;;) {
@@ -124,8 +115,7 @@ void OggWriter::doOpen() {
 		if( ret == 0 ) {
 			break;
 		}
-		std::fwrite( og.header, 1, og.header_len, this->fout_.get() );
-		std::fwrite( og.body, 1, og.body_len, this->fout_.get() );
+		this->writePage_( og );
 	}
 }
 
@@ -163,8 +153,7 @@ void OggWriter::writeFrame( const QByteArray & sample ) {
 			if( ret == 0 ) {
 				break;
 			}
-			std::fwrite( og.header, 1, og.header_len, this->fout_.get() );
-			std::fwrite( og.body, 1, og.body_len, this->fout_.get() );
+			this->writePage_( og );
 		}
 	}
 }
@@ -187,8 +176,7 @@ void OggWriter::doClose() {
 			if( ret == 0 ) {
 				break;
 			}
-			std::fwrite( og.header, 1, og.header_len, this->fout_.get() );
-			std::fwrite( og.body, 1, og.body_len, this->fout_.get() );
+			this->writePage_( og );
 		}
 	}
 
@@ -198,5 +186,10 @@ void OggWriter::doClose() {
 	this->dsp_.reset();
 	this->muxer_.reset();
 	this->encoder_.reset();
-	this->fout_.reset();
+	this->out_->close();
+}
+
+void OggWriter::writePage_( const ogg_page & og ) {
+	this->out_->write( static_cast< const char * >( static_cast< const void * >( og.header ) ), og.header_len );
+	this->out_->write( static_cast< const char * >( static_cast< const void * >( og.body ) ), og.body_len );
 }

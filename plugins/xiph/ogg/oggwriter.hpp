@@ -53,7 +53,9 @@ namespace khopper {
 			virtual void writeFrame( const QByteArray & sample );
 
 		private:
-			std::shared_ptr< FILE > fout_;
+			void writePage_( const ogg_page & );
+
+			QIODevice * out_;
 			std::shared_ptr< vorbis_info > encoder_;
 			std::shared_ptr< ogg_stream_state > muxer_;
 			std::shared_ptr< vorbis_dsp_state > dsp_;
