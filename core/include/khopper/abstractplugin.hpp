@@ -74,6 +74,6 @@ namespace khopper {
 	}
 }
 
-Q_DECLARE_INTERFACE( khopper::plugin::AbstractPlugin, "org.FoolproofProject.Khopper.Plugin/0.3" )
+Q_DECLARE_INTERFACE( khopper::plugin::AbstractPlugin, "org.FoolproofProject.Khopper.Plugin/0.4" )
 
 #endif
