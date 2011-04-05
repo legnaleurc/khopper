@@ -17,18 +17,18 @@ Build Dependencies:
 	Required:
 		CMake:
 			http://www.cmake.org/
-		Qt >= 4.7 (with Phonon module):
+		Qt >= 4.7 (with Phonon module): [GPL3, LGPL2.1, Commercial]
 			http://qt.nokia.com/products/
-		TagLib:
+		TagLib: [LGPL, MPL]
 			http://developer.kde.org/~wheeler/taglib.html
 	Optional:
-		FFmpeg Libraries >= 0.5:
+		FFmpeg Libraries >= 0.5: [LGPL, GPL]
 			http://www.ffmpeg.org/
-		libFLAC >= 1.2.1:
+		libFLAC >= 1.2.1: [BSD-3]
 			http://flac.sourceforge.net/
-		libvorbis and libogg:
+		libvorbis and libogg: [BSD-3]
 			http://www.xiph.org/downloads/
-		LAME:
+		LAME: [LGPL, patent]
 			http://lame.sourceforge.net/
 
 For Debian-based system users:
