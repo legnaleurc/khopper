@@ -3,10 +3,12 @@ Supported platform:
 	Windows
 
 License:
-	core module:
+	libkhopper:
 		LGPLv2.1 or later
-	others:
+	khopper_gui:
 		GPLv3 or later
+	plugins:
+		May variant for dependencies, but basically are GPLv3
 
 Build Dependencies:
 	Toolchain (C++0x support is required):
