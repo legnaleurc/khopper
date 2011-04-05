@@ -8,7 +8,7 @@ License:
 	khopper_gui:
 		GPLv3 or later
 	plugins:
-		May variant for dependencies, but basically are GPLv3
+		May vary with dependencies, but basically are GPLv3
 
 Build Dependencies:
 	Toolchain (C++0x support is required):
