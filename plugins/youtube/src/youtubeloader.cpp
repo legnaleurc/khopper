@@ -22,6 +22,7 @@
 #include "youtubeloader.hpp"
 #include "youtubeplugin.hpp"
 #include "khopper/application.hpp"
+#include "khopper/error.hpp"
 
 #include <QtCore/QDir>
 #include <QtCore/QEventLoop>
@@ -32,6 +33,7 @@
 #include <algorithm>
 
 using namespace khopper::plugin;
+using khopper::error::RunTimeError;
 
 YouTubeLoader::ErrorTable & YouTubeLoader::errorString() {
 	static YouTubeLoader::ErrorTable errorString_;
@@ -115,15 +117,15 @@ QString YouTubeLoader::selectFormat() {
 YouTubeLoader::Parameter YouTubeLoader::parseHeader_( const QString & header ) {
 	YouTubeLoader::Parameter param;
 
-	QRegExp pattern( "\\&video_id=([^(\\&|$)]*)" );
+	QRegExp pattern( "\\&amp;video_id=([^(\\&|$)]*)" );
 	pattern.indexIn( header, 0 );
 	param.id = pattern.cap( 1 );
 
-	pattern.setPattern( "\\&t=([^(\\&|$)]*)" );
+	pattern.setPattern( "\\&amp;t=([^(\\&|$)]*)" );
 	pattern.indexIn( header, 0 );
 	param.ticket = pattern.cap( 1 );
 
-	pattern.setPattern( "\\&fmt_url_map=([^(\\&|$)]*)" );
+	pattern.setPattern( "\\&amp;fmt_url_map=([^(\\&|$)]*)" );
 	pattern.indexIn( header, 0 );
 	QString videoFormats( pattern.cap( 1 ) );
 
@@ -138,6 +140,9 @@ YouTubeLoader::Parameter YouTubeLoader::parseHeader_( const QString & header ) {
 	QStringList videoFormatsGroup( videoFormats.split( "%2C" ) );
 	std::for_each( videoFormatsGroup.begin(), videoFormatsGroup.end(), [&]( const QString & format ) {
 		QStringList pair( format.split( "%7C" ) );
+		if( pair.size() < 2 ) {
+			throw RunTimeError( QObject::tr( "Failed to fetch video from YouTube" ) );
+		}
 		param.formatURLs.insert( std::make_pair( pair[0], QUrl::fromEncoded( QUrl::fromPercentEncoding( pair[1].toUtf8() ).toUtf8() ) ) );
 	} );
 
