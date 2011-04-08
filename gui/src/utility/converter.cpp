@@ -87,13 +87,19 @@ void Converter::run() {
 	} ) : static_cast< std::function< bool () > >( [&]()->bool {
 		return !decoder->atEnd();
 	} ) );
-	while( endCondition() ) {
-		if( this->canceled_ ) {
-			break;
+	try {
+		while( endCondition() ) {
+			if( this->canceled_ ) {
+				break;
+			}
+			QByteArray frame( decoder->read( sec ) );
+			encoder->write( frame );
+			emit this->decodedTime( frame.size() * 1000 / sec );
 		}
-		QByteArray frame( decoder->read( sec ) );
-		encoder->write( frame );
-		emit this->decodedTime( frame.size() * 1000 / sec );
+	} catch( BaseError & e ) {
+		emit this->errorOccured( QObject::tr( "Convert Error" ), e.getMessage() );
+	} catch( std::exception & e ) {
+		emit this->errorOccured( QObject::tr( "Convert Error" ), QString::fromLocal8Bit( e.what() ) );
 	}
 
 	encoder->close();
