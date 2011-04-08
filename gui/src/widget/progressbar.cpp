@@ -24,7 +24,7 @@
 #include "progressviewer.hpp"
 #include "converter.hpp"
 
-#include <QtCore/QThread>
+#include <QtCore/QThreadPool>
 
 using namespace khopper::widget;
 using khopper::album::TrackSP;
@@ -36,7 +36,6 @@ using khopper::utility::Converter;
 ProgressBar::ProgressBar( QWidget * parent ):
 QWidget( parent ),
 task_( NULL ),
-thread_( NULL ),
 ui_( new Ui::ProgressBar ) {
 	this->ui_->setupUi( this );
 }
@@ -57,23 +56,10 @@ void ProgressBar::start( Converter * task ) {
 	this->ui_->progressBar->setRange( 0, task->getMaximumValue() );
 	this->ui_->progressBar->setValue( 0 );
 
-	this->thread_ = new QThread;
-	task->moveToThread( this->thread_ );
-	task->connect( this->thread_, SIGNAL( started() ), SLOT( start() ) );
-	this->thread_->connect( task, SIGNAL( finished() ), SLOT( quit() ) );
-	this->connect( this->thread_, SIGNAL( finished() ), SLOT( onFinished_() ) );
-
-	this->thread_->start();
+	QThreadPool::globalInstance()->start( this->task_ );
+	this->connect( task, SIGNAL( finished() ), SIGNAL( finished() ) );
 }
 
 void ProgressBar::increase_( qint64 value ) {
 	this->ui_->progressBar->setValue( this->ui_->progressBar->value() + value );
-}
-
-void ProgressBar::onFinished_() {
-	this->task_->deleteLater();
-	this->task_ = NULL;
-	this->thread_->deleteLater();
-	this->thread_ = NULL;
-	emit this->finished();
 }

@@ -52,11 +52,9 @@ namespace khopper {
 
 		private slots:
 			void increase_( qint64 );
-			void onFinished_();
 
 		private:
 			utility::Converter * task_;
-			QThread * thread_;
 			std::shared_ptr< Ui::ProgressBar > ui_;
 		};
 

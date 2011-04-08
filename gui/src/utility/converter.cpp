@@ -38,6 +38,7 @@ using khopper::plugin::WriterCreator;
 
 Converter::Converter( TrackCSP track, WriterCreator creator, const QString & path ):
 QObject( 0 ),
+QRunnable(),
 canceled_( false ),
 creator_( creator ),
 track_( track ),
@@ -53,7 +54,7 @@ QUrl Converter::getUniqueURI_() const {
 	return QUrl::fromLocalFile( fi.absoluteFilePath() );
 }
 
-void Converter::start() {
+void Converter::run() {
 	ReaderSP decoder;
 	try {
 		decoder = this->track_->createReader();

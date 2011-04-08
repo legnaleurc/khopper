@@ -25,13 +25,15 @@
 #include "khopper/abstractwriter.hpp"
 #include "khopper/track.hpp"
 
+#include <QtCore/QRunnable>
+
 namespace khopper {
 	namespace utility {
 
 		/**
 		 * @brief Controller of converting
 		 */
-		class Converter : public QObject {
+		class Converter : public QObject, public QRunnable {
 			Q_OBJECT
 
 		public:
@@ -39,6 +41,8 @@ namespace khopper {
 			 * @brief Constructor
 			 */
 			Converter( album::TrackCSP track, plugin::WriterCreator creator, const QString & path );
+
+			virtual void run();
 
 			QString getTitle() const;
 			qint64 getMaximumValue() const;
@@ -48,7 +52,6 @@ namespace khopper {
 			 * @brief Cancel converting
 			 */
 			void cancel();
-			void start();
 
 		signals:
 			/**
