@@ -138,7 +138,7 @@ YouTubeLoader::Parameter YouTubeLoader::parseHeader_( const QString & header ) {
 	qDebug() << param.title;
 
 	QStringList videoFormatsGroup( videoFormats.split( "%2C" ) );
-	std::for_each( videoFormatsGroup.begin(), videoFormatsGroup.end(), [&]( const QString & format ) {
+	std::for_each( videoFormatsGroup.begin(), videoFormatsGroup.end(), [&param]( const QString & format ) {
 		QStringList pair( format.split( "%7C" ) );
 		if( pair.size() < 2 ) {
 			throw RunTimeError( QObject::tr( "Failed to fetch video from YouTube" ) );
