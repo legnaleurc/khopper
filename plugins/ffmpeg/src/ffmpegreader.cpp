@@ -96,12 +96,7 @@ void FfmpegReader::openResource_() {
 	AVFormatContext * pFC = NULL;
 	int ret = av_open_input_file( &pFC, fromURI( this->getURI() ), NULL, 0, NULL );
 	if( ret != 0 ) {
-		throw IOError(
-			tr(
-				"FfmpegReader: Can not open `%1\':\n"
-				"%2"
-			).arg( this->getURI().toString() ).arg( strerror( AVUNERROR( ret ) ) )
-		);
+		throw IOError( AVUNERROR( ret ) );
 	}
 	this->pFormatContext_.reset( pFC, av_close_input_file );
 }
