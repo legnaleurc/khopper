@@ -74,6 +74,6 @@ namespace khopper {
 	}
 }
 
-Q_DECLARE_INTERFACE( khopper::plugin::AbstractPlugin, "org.FoolproofProject.Khopper.Plugin/0.5" )
+Q_DECLARE_INTERFACE( khopper::plugin::AbstractPlugin, "org.FoolproofProject.Khopper.Plugin/" KHOPPER_STRINGIZE( KHOPPER_VERSION_MAJOR ) "." KHOPPER_STRINGIZE( KHOPPER_VERSION_MINOR ) );
 
 #endif
