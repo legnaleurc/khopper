@@ -86,7 +86,7 @@ void FfmpegWriter::setupMuxer() {
 	}
 	this->pFormatContext_->oformat = pOF;
 
-	std::strncpy( this->pFormatContext_->filename, this->getURI().toString().toStdString().c_str(), sizeof( this->pFormatContext_->filename ) );
+	qstrncpy( this->pFormatContext_->filename, this->getURI().toString().toStdString().c_str(), sizeof( this->pFormatContext_->filename ) );
 }
 
 void FfmpegWriter::setupEncoder() {

@@ -36,10 +36,6 @@ extern "C" {
 
 namespace {
 
-	static inline void p_helper( AVPacket * p ) {
-		av_freep( &p );
-	}
-
 	static inline int64_t toNative( int64_t ms ) {
 		return av_rescale( ms, AV_TIME_BASE, 1000 );
 	}
@@ -59,7 +55,9 @@ FfmpegReader::FfmpegReader( const QUrl & uri ):
 AbstractReader( uri ),
 pFormatContext_(),
 pCodecContext_(),
-pPacket_( static_cast< AVPacket * >( av_malloc( sizeof( AVPacket ) ) ), ::p_helper ),
+pPacket_( static_cast< AVPacket * >( av_malloc( sizeof( AVPacket ) ) ), []( AVPacket * p ) {
+	av_freep( &p );
+} ),
 pStream_( NULL ),
 curPos_( 0LL ),
 eof_( true ),
@@ -96,12 +94,7 @@ void FfmpegReader::openResource_() {
 	AVFormatContext * pFC = NULL;
 	int ret = av_open_input_file( &pFC, fromURI( this->getURI() ), NULL, 0, NULL );
 	if( ret != 0 ) {
-		throw IOError(
-			tr(
-				"FfmpegReader: Can not open `%1\':\n"
-				"%2"
-			).arg( this->getURI().toString() ).arg( strerror( AVUNERROR( ret ) ) )
-		);
+		throw IOError( AVUNERROR( ret ) );
 	}
 	this->pFormatContext_.reset( pFC, av_close_input_file );
 }
