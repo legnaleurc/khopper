@@ -24,6 +24,7 @@
 
 #include "khopper/playlist.hpp"
 
+#include <QtCore/QDir>
 #include <QtGui/QDialog>
 
 #include <map>
@@ -61,7 +62,7 @@ namespace khopper {
 			void changeOutputPath_();
 
 		private:
-			QString getOutputPath_( album::TrackSP );
+			QDir getOutputDir_( album::TrackSP );
 			QString getOutputName_( album::TrackSP );
 
 			std::shared_ptr< Ui::ConversionDialog > ui_;

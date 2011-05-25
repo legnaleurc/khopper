@@ -30,7 +30,6 @@
 #include "khopper/track.hpp"
 
 #include <QtCore/QDir>
-#include <QtCore/QString>
 
 #include <vector>
 #include <string>
@@ -44,7 +43,7 @@ namespace khopper {
 		 */
 		class CueSheetParser {
 		public:
-			static PlayList load( const QString & content, const QDir & dir );
+			static PlayList load( const QString & content, const QDir & dir, bool freedb );
 
 		private:
 			/**
@@ -55,9 +54,9 @@ namespace khopper {
 			 * @throws CodecError Decode media error
 			 * @throws IOError File not openable
 			 */
-			CueSheetParser( const QString & content, const QDir & dir );
+			CueSheetParser();
 
-			void parseCue_( QString, const QDir & );
+			void parseCue_( QString, const QDir &, bool );
 			void parseSingle_( const QString &, const QString & );
 			void parseFile_( const QString &, const QString &, const QDir & );
 			void parseFlags_( const QString & );
@@ -67,22 +66,20 @@ namespace khopper {
 			void parseGarbage_( const QString & );
 
 			void updateLastTrack_();
+			void queryFromCDDB_();
 
-			/**
-			 * @brief Set media file
-			 * @param [in] filePath Audio path
-			 * @throws CodecError Decode media error
-			 * @throws IOError File not openable
-			 */
-			//void setMedia_( const QUrl & uri );
+			unsigned int calcDiscID_();
+			int calcCDDBSum_( int n );
 
 			PlayList playList_;
 			std::shared_ptr< CueSheet > album_;
-			QString currentFilePath_;
+			QUrl currentFileURI_;
 			QString currentFileType_;
 			std::shared_ptr< CueSheetTrack > previousTrack_;
 			std::shared_ptr< CueSheetTrack > currentTrack_;
 			unsigned int trackIndex_;
+			std::vector< Timestamp > currentTOCs_;
+			QStringList currentFrames_;
 		};
 
 	}

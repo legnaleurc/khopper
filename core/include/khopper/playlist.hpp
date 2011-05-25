@@ -37,6 +37,9 @@ namespace khopper {
 		typedef QList< TrackSP > PlayList;
 
 		PlayList KHOPPER_DLL createPlayList( const QUrl & uri );
+		/**
+		 * @warning This function is under development and is subject to change.
+		 */
 		void exportPlayList( const PlayList & playList, const QUrl & fileURI );
 
 	}

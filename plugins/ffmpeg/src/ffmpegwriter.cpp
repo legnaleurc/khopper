@@ -125,11 +125,11 @@ void FfmpegWriter::setupEncoder() {
 		throw error::CodecError( "Find no encoder" );
 	}
 
+	pCC->sample_fmt = pC->sample_fmts[0];
+
 	if( avcodec_open( pCC, pC ) < 0 ) {
 		throw error::CodecError( "Can not open encoder" );
 	}
-
-	pCC->sample_fmt = pC->sample_fmts[0];
 
 	switch( pCC->codec_id ) {
 	case CODEC_ID_PCM_S16LE:

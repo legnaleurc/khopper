@@ -30,8 +30,10 @@
 #include <QtCore/QSettings>
 #include <QtGui/QFileDialog>
 #include <QtGui/QDesktopServices>
+#include <QtGui/QMessageBox>
 
 #include <algorithm>
+#include <set>
 
 using namespace khopper::widget;
 using khopper::album::TrackCSP;
@@ -69,16 +71,32 @@ void ConversionDialog::convert( const PlayList & tracks ) {
 
 	AbstractPanel * panel = this->getCurrent();
 	WriterCreator wc( panel->getWriterCreator() );
+	std::set< QString > failureDirs;
 
 	QList< Converter * > tasks;
 	std::for_each( tracks.begin(), tracks.end(), [&]( album::TrackSP track ) {
-		QString path = QString( "%1/%2.%3" ).arg( this->getOutputPath_( track ) ).arg( this->getOutputName_( track ) ).arg( panel->getSuffix() );
+		QDir outDir( this->getOutputDir_( track ) );
+		if( !outDir.exists() ) {
+			failureDirs.insert( outDir.path() );
+			return;
+		}
+		QString path = QString( "%1/%2.%3" ).arg( outDir.path() ).arg( this->getOutputName_( track ) ).arg( panel->getSuffix() );
 		Converter * task = new Converter( track, wc, path );
 		QObject::connect( task, SIGNAL( errorOccured( const QString &, const QString & ) ), this, SIGNAL( errorOccured( const QString &, const QString & ) ) );
 		tasks.push_back( task );
 	} );
 
-	this->progress_->start( tasks );
+	if( !failureDirs.empty() ) {
+		QString allPath;
+		std::for_each( failureDirs.begin(), failureDirs.end(), [&]( const QString & path ) {
+			allPath += path + "\n";
+		} );
+		QMessageBox::warning( this, QObject::tr( "Directory not exist" ), QObject::tr( "The following directories are not exist:\n%1" ).arg( allPath ) );
+	}
+
+	if( !tasks.isEmpty() ) {
+		this->progress_->start( tasks );
+	}
 }
 
 AbstractPanel * ConversionDialog::getCurrent() const {
@@ -95,11 +113,11 @@ void ConversionDialog::removePanel( AbstractPanel * panel ) {
 	this->ui_->tabWidget->removeTab( index );
 }
 
-QString ConversionDialog::getOutputPath_( TrackSP track ) {
+QDir ConversionDialog::getOutputDir_( TrackSP track ) {
 	if( this->ui_->useSource->isChecked() && track->getURI().scheme() == "file" ) {
-		return QFileInfo( track->getURI().toLocalFile() ).path();
+		return QFileInfo( track->getURI().toLocalFile() ).dir();
 	}
-	return this->ui_->outputPath->text();
+	return QDir( this->ui_->outputPath->text() );
 }
 
 QString ConversionDialog::getOutputName_( TrackSP track ) {

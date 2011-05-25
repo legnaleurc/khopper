@@ -73,6 +73,7 @@ bool WavWrapper::open( OpenMode mode ) {
 bool WavWrapper::seek( qint64 pos ) {
 	bool ret = this->QIODevice::seek( pos );
 	if( pos < 44 ) {
+		ret &= this->reader_->seek( 0 );
 	} else {
 		ret &= this->reader_->seek( pos - 44 );
 	}
