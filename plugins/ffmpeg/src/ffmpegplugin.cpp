@@ -55,7 +55,7 @@ void FfmpegPlugin::doInstall() {
 	khopper::pApp()->addPanel( this->panel_.get() );
 	av_register_all();
 #ifdef _WIN32
-	av_register_protocol( &khopper::codec::wfileProtocol );
+	av_register_protocol2( &khopper::codec::wfileProtocol, sizeof( khopper::codec::wfileProtocol ) );
 #endif
 	registerReader( this->getID(), []( const QUrl & uri )->unsigned int {
 		qDebug() << "verifing FfmpegReader" << uri << fromURI( uri );

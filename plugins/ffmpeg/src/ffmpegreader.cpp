@@ -121,7 +121,7 @@ void FfmpegReader::setupDemuxer_() {
 void FfmpegReader::setupDecoder_() {
 	int a_stream = -1;
 	for( std::size_t i = 0 ; i < this->pFormatContext_->nb_streams; ++i ) {
-		if( this->pFormatContext_->streams[i]->codec->codec_type == CODEC_TYPE_AUDIO ) {
+		if( this->pFormatContext_->streams[i]->codec->codec_type == AVMEDIA_TYPE_AUDIO ) {
 			a_stream = i;
 			break;
 		}

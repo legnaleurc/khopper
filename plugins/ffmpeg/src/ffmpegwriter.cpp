@@ -102,7 +102,7 @@ void FfmpegWriter::setupEncoder() {
 
 	AVCodecContext * pCC = this->pStream_->codec;
 	pCC->codec_id = pOF->audio_codec;
-	pCC->codec_type = CODEC_TYPE_AUDIO;
+	pCC->codec_type = AVMEDIA_TYPE_AUDIO;
 	pCC->time_base.num = 1;
 	pCC->time_base.den = this->getAudioFormat().frequency();
 
@@ -218,7 +218,7 @@ void FfmpegWriter::writeFrame( const short * sample ) {
 
 	pkt.data = audio_outbuf;
 	pkt.stream_index = this->pStream_->index;
-	pkt.flags |= PKT_FLAG_KEY;
+	pkt.flags |= AV_PKT_FLAG_KEY;
 
 	if( pCC->coded_frame->pts != static_cast< int64_t >( AV_NOPTS_VALUE ) ) {
 		pkt.pts = av_rescale_q( pCC->coded_frame->pts, pCC->time_base, this->pStream_->time_base );
