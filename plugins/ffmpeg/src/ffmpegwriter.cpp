@@ -76,7 +76,7 @@ void FfmpegWriter::setupMuxer() {
 
 		AVOutputFormat * pOF = oc->oformat;
 		if( !( pOF->flags & AVFMT_NOFILE ) && oc->pb ) {
-			url_fclose( oc->pb );
+			avio_close( oc->pb );
 		}
 
 		av_freep( &oc );
@@ -102,7 +102,7 @@ void FfmpegWriter::setupEncoder() {
 
 	AVCodecContext * pCC = this->pStream_->codec;
 	pCC->codec_id = pOF->audio_codec;
-	pCC->codec_type = CODEC_TYPE_AUDIO;
+	pCC->codec_type = AVMEDIA_TYPE_AUDIO;
 	pCC->time_base.num = 1;
 	pCC->time_base.den = this->getAudioFormat().frequency();
 
@@ -114,9 +114,6 @@ void FfmpegWriter::setupEncoder() {
 		pCC->flags |= CODEC_FLAG_QSCALE;
 		this->pStream_->quality = static_cast< float >( FF_QP2LAMBDA * this->quality_ );
 		pCC->global_quality = static_cast< int >( this->pStream_->quality );
-	}
-	if( av_set_parameters( this->pFormatContext_.get(), NULL ) < 0 ) {
-		throw error::CodecError( "Set parameters failed" );
 	}
 	// NOTE: set complete
 
@@ -166,7 +163,7 @@ void FfmpegWriter::setupEncoder() {
 void FfmpegWriter::openResource() {
 	AVOutputFormat * pOF = this->pFormatContext_->oformat;
 	if( !( pOF->flags & AVFMT_NOFILE ) ) {
-		if( url_fopen( &this->pFormatContext_->pb, fromURI( this->getURI() ), URL_WRONLY ) < 0 ) {
+		if( avio_open( &this->pFormatContext_->pb, fromURI( this->getURI() ), URL_WRONLY ) < 0 ) {
 			throw error::IOError( QString( "Can not open file: `%1\'" ).arg( this->getURI().toString() ) );
 		}
 	}
@@ -180,11 +177,11 @@ void FfmpegWriter::closeResource() {
 }
 
 void FfmpegWriter::writeHeader() {
-	av_metadata_set2( &this->pFormatContext_->metadata, "title", this->getTitle().constData(), 0 );
-	av_metadata_set2( &this->pFormatContext_->metadata, "artist", this->getArtist().constData(), 0 );
-	av_metadata_set2( &this->pFormatContext_->metadata, "album", this->getAlbum().constData(), 0 );
+	av_dict_set( &this->pFormatContext_->metadata, "title", this->getTitle().constData(), 0 );
+	av_dict_set( &this->pFormatContext_->metadata, "artist", this->getArtist().constData(), 0 );
+	av_dict_set( &this->pFormatContext_->metadata, "album", this->getAlbum().constData(), 0 );
 
-	if( av_write_header( this->pFormatContext_.get() ) < 0 ) {
+	if( avformat_write_header( this->pFormatContext_.get(), NULL ) < 0 ) {
 		throw error::CodecError( "Can not write header" );
 	}
 }
@@ -218,7 +215,7 @@ void FfmpegWriter::writeFrame( const short * sample ) {
 
 	pkt.data = audio_outbuf;
 	pkt.stream_index = this->pStream_->index;
-	pkt.flags |= PKT_FLAG_KEY;
+	pkt.flags |= AV_PKT_FLAG_KEY;
 
 	if( pCC->coded_frame->pts != static_cast< int64_t >( AV_NOPTS_VALUE ) ) {
 		pkt.pts = av_rescale_q( pCC->coded_frame->pts, pCC->time_base, this->pStream_->time_base );

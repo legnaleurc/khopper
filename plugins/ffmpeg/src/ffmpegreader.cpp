@@ -92,7 +92,7 @@ void FfmpegReader::doClose() {
 
 void FfmpegReader::openResource_() {
 	AVFormatContext * pFC = NULL;
-	int ret = av_open_input_file( &pFC, fromURI( this->getURI() ), NULL, 0, NULL );
+	int ret = avformat_open_input( &pFC, fromURI( this->getURI() ), NULL, NULL );
 	if( ret != 0 ) {
 		throw IOError( AVUNERROR( ret ) );
 	}
@@ -114,7 +114,7 @@ void FfmpegReader::setupDemuxer_() {
 void FfmpegReader::setupDecoder_() {
 	int a_stream = -1;
 	for( std::size_t i = 0 ; i < this->pFormatContext_->nb_streams; ++i ) {
-		if( this->pFormatContext_->streams[i]->codec->codec_type == CODEC_TYPE_AUDIO ) {
+		if( this->pFormatContext_->streams[i]->codec->codec_type == AVMEDIA_TYPE_AUDIO ) {
 			a_stream = i;
 			break;
 		}
@@ -184,30 +184,30 @@ void FfmpegReader::readHeader_() {
 	}
 }
 
-void FfmpegReader::readMetadata_( AVMetadata * metadata ) {
-	AVMetadataTag * mt = NULL;
-	if( ( mt = av_metadata_get( metadata, "title", NULL, 0 ) ) ) {
+void FfmpegReader::readMetadata_( AVDictionary * metadata ) {
+	AVDictionaryEntry * mt = NULL;
+	if( ( mt = av_dict_get( metadata, "title", NULL, 0 ) ) ) {
 		this->setTitle( mt->value );
 	}
-	if( ( mt = av_metadata_get( metadata, "artist", NULL, 0 ) ) ) {
+	if( ( mt = av_dict_get( metadata, "artist", NULL, 0 ) ) ) {
 		this->setArtist( mt->value );
 	}
-	if( ( mt = av_metadata_get( metadata, "copyright", NULL, 0 ) ) ) {
+	if( ( mt = av_dict_get( metadata, "copyright", NULL, 0 ) ) ) {
 		this->setCopyright( mt->value );
 	}
-	if( ( mt = av_metadata_get( metadata, "comment", NULL, 0 ) ) ) {
+	if( ( mt = av_dict_get( metadata, "comment", NULL, 0 ) ) ) {
 		this->setComment( mt->value );
 	}
-	if( ( mt = av_metadata_get( metadata, "album", NULL, 0 ) ) ) {
+	if( ( mt = av_dict_get( metadata, "album", NULL, 0 ) ) ) {
 		this->setAlbumTitle( mt->value );
 	}
-	if( ( mt = av_metadata_get( metadata, "year", NULL, 0 ) ) ) {
+	if( ( mt = av_dict_get( metadata, "year", NULL, 0 ) ) ) {
 		this->setYear( mt->value );
 	}
-	if( ( mt = av_metadata_get( metadata, "track", NULL, 0 ) ) ) {
+	if( ( mt = av_dict_get( metadata, "track", NULL, 0 ) ) ) {
 		this->setIndex( std::atoi( mt->value ) );
 	}
-	if( ( mt = av_metadata_get( metadata, "genre", NULL, 0 ) ) ) {
+	if( ( mt = av_dict_get( metadata, "genre", NULL, 0 ) ) ) {
 		this->setGenre( mt->value );
 	}
 }
