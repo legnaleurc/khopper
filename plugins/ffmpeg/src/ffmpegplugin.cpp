@@ -61,10 +61,14 @@ void FfmpegPlugin::doInstall() {
 		qDebug() << "verifing FfmpegReader" << uri << fromURI( uri );
 		AVFormatContext * pFC = NULL;
 		if( avformat_open_input( &pFC, fromURI( uri ), NULL, NULL ) == 0 ) {
-			if( av_find_stream_info( pFC ) < 0 ) {
+			int ret = av_find_stream_info( pFC );
+			av_close_input_file( pFC );
+			if( ret < 0 ) {
+				char msg[1024];
+				av_strerror( ret, msg, sizeof( msg ) );
+				qDebug() << msg;
 				return 0;
 			}
-			av_close_input_file( pFC );
 			qDebug() << "returned 100 (from FfmpegReader)";
 			return 100;
 		}
