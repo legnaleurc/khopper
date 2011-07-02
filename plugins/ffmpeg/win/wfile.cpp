@@ -54,17 +54,15 @@ namespace {
 			return AVERROR(ENOENT);
 		}
 
-		int access;
-		if( flags & URL_RDWR ) {
-			access = _O_CREAT | _O_TRUNC | _O_RDWR;
+		int access = 0;
+		if( flags & URL_RDONLY && flags & URL_WRONLY ) {
+			access = _O_CREAT | _O_TRUNC | _O_RDWR | _O_BINARY;
 		} else if (flags & URL_WRONLY) {
-			access = _O_CREAT | _O_TRUNC | _O_WRONLY;
+			access = _O_CREAT | _O_TRUNC | _O_WRONLY | _O_BINARY;
 		} else {
-			access = _O_RDONLY;
+			access = _O_RDONLY | _O_BINARY;
 		}
-#ifdef O_BINARY
-		access |= O_BINARY;
-#endif
+
 		int fd;
 		ret = _wsopen_s( &fd, wfilename, access, _SH_DENYNO, _S_IREAD | _S_IWRITE );
 		if( fd < 0 ) {

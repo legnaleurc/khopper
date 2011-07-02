@@ -60,7 +60,7 @@ void FfmpegPlugin::doInstall() {
 	registerReader( this->getID(), []( const QUrl & uri )->unsigned int {
 		qDebug() << "verifing FfmpegReader" << uri << fromURI( uri );
 		AVFormatContext * pFC = NULL;
-		if( av_open_input_file( &pFC, fromURI( uri ), NULL, 0, NULL ) == 0 ) {
+		if( avformat_open_input( &pFC, fromURI( uri ), NULL, NULL ) == 0 ) {
 			if( av_find_stream_info( pFC ) < 0 ) {
 				return 0;
 			}
