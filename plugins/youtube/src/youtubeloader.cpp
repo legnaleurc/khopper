@@ -120,16 +120,19 @@ YouTubeLoader::Parameter YouTubeLoader::parseHeader_( const QString & header ) {
 	QRegExp pattern( "\\&amp;video_id=([^(\\&|$)]*)" );
 	pattern.indexIn( header, 0 );
 	param.id = pattern.cap( 1 );
+	qDebug() << param.id;
 
 	pattern.setPattern( "\\&amp;t=([^(\\&|$)]*)" );
 	pattern.indexIn( header, 0 );
 	param.ticket = pattern.cap( 1 );
+	qDebug() << param.ticket;
 
-	pattern.setPattern( "\\&amp;fmt_url_map=([^(\\&|$)]*)" );
+	pattern.setPattern( "\\&amp;url_encoded_fmt_stream_map=([^(\\&|$)]*)" );
 	pattern.indexIn( header, 0 );
 	QString videoFormats( pattern.cap( 1 ) );
+	qDebug() << videoFormats;
 
-	pattern.setPattern( "<title>\\s*YouTube\\s*\\-\\s+(.*)</title>" );
+	pattern.setPattern( "<title>\\s*(.+)\\s*\\-\\s*YouTube\\s*</title>" );
 	pattern.setMinimal( true );
 	qDebug() << "pattern" << pattern.isValid();
 	pattern.indexIn( header, 0 );
@@ -139,11 +142,21 @@ YouTubeLoader::Parameter YouTubeLoader::parseHeader_( const QString & header ) {
 
 	QStringList videoFormatsGroup( videoFormats.split( "%2C" ) );
 	std::for_each( videoFormatsGroup.begin(), videoFormatsGroup.end(), [&param]( const QString & format ) {
-		QStringList pair( format.split( "%7C" ) );
+		QStringList par( format.split( "%26" ) );
+		if( par.size() < 4 ) {
+			throw RunTimeError( QObject::tr( "Failed to fetch video from YouTube" ) );
+		}
+		QStringList pair( par.at( 0 ).split( "%3D" ) );
 		if( pair.size() < 2 ) {
 			throw RunTimeError( QObject::tr( "Failed to fetch video from YouTube" ) );
 		}
-		param.formatURLs.insert( std::make_pair( pair[0], QUrl::fromEncoded( QUrl::fromPercentEncoding( pair[1].toUtf8() ).toUtf8() ) ) );
+		QString rawUrl( pair.at( 1 ) );
+		pair = par.at( 4 ).split( "%3D" );
+		if( pair.size() < 2 ) {
+			throw RunTimeError( QObject::tr( "Failed to fetch video from YouTube" ) );
+		}
+		QString itag( pair.at( 1 ) );
+		param.formatURLs.insert( std::make_pair( itag, QUrl::fromEncoded( QUrl::fromPercentEncoding( rawUrl.toUtf8() ).toUtf8() ) ) );
 	} );
 
 	return param;
