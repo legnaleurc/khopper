@@ -20,15 +20,18 @@
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 #include "ffmpegreader.hpp"
-#include "helper.hpp"
 
 #include "khopper/error.hpp"
+#ifdef Q_OS_WIN
+#include "wfile.hpp"
+#endif
 
 extern "C" {
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
 }
 
+#include <QtCore/QFile>
 #include <QtCore/QtDebug>
 
 #include <cstdlib>
@@ -49,10 +52,16 @@ namespace {
 using namespace khopper::codec;
 using khopper::error::IOError;
 using khopper::error::CodecError;
-using khopper::ffmpeg::fromURI;
+using khopper::ffmpeg::read_packet;
+using khopper::ffmpeg::write_packet;
+using khopper::ffmpeg::seek;
 
 FfmpegReader::FfmpegReader( const QUrl & uri ):
 AbstractReader( uri ),
+#ifdef Q_OS_WIN32
+fio_(),
+pIOContext_(),
+#endif
 pFormatContext_(),
 pCodecContext_(),
 pPacket_( static_cast< AVPacket * >( av_malloc( sizeof( AVPacket ) ) ), []( AVPacket * p ) {
@@ -92,7 +101,23 @@ void FfmpegReader::doClose() {
 
 void FfmpegReader::openResource_() {
 	AVFormatContext * pFC = NULL;
-	int ret = avformat_open_input( &pFC, fromURI( this->getURI() ), NULL, NULL );
+#ifdef Q_OS_WIN
+	if( this->getURI().scheme() == "file" ) {
+		this->fio_.reset( new QFile( this->getURI().toLocalFile() ) );
+		if( !this->fio_->open( QIODevice::ReadOnly ) ) {
+			throw IOError( this->fio_->errorString() );
+		}
+		pFC = avformat_alloc_context();
+		const int SIZE = 4 * 4096 * sizeof( unsigned char );
+		unsigned char * buffer = static_cast< unsigned char * >( av_malloc( SIZE ) );
+		pFC->pb = avio_alloc_context( buffer, SIZE, 0, this->fio_.get(), read_packet, write_packet, ::seek );
+		this->pIOContext_.reset( pFC->pb, []( AVIOContext * pb ) {
+			av_free( pb->buffer );
+			av_free( pb );
+		} );
+	}
+#endif
+	int ret = avformat_open_input( &pFC, this->getURI().toString().toUtf8().constData(), NULL, NULL );
 	if( ret != 0 ) {
 		throw IOError( AVUNERROR( ret ) );
 	}
@@ -221,6 +246,10 @@ void FfmpegReader::closeResource_() {
 	av_init_packet( this->pPacket_.get() );
 	this->pCodecContext_.reset();
 	this->pFormatContext_.reset();
+#ifdef Q_OS_WIN32
+	this->pIOContext_.reset();
+	this->fio_.reset();
+#endif
 }
 
 qint64 FfmpegReader::readData( char * data, qint64 maxSize ) {

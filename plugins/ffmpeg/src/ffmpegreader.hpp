@@ -24,6 +24,12 @@
 
 #include "khopper/abstractreader.hpp"
 
+#ifdef Q_OS_WIN
+extern "C" {
+#include <libavformat\avio.h>
+}
+#endif
+
 struct AVFormatContext;
 struct AVCodecContext;
 struct AVPacket;
@@ -65,6 +71,10 @@ namespace khopper {
 			QByteArray readFrame_();
 			void readMetadata_( AVDictionary * );
 
+#ifdef Q_OS_WIN
+			std::shared_ptr< QIODevice > fio_;
+			std::shared_ptr< AVIOContext > pIOContext_;
+#endif
 			std::shared_ptr< AVFormatContext > pFormatContext_;
 			std::shared_ptr< AVCodecContext > pCodecContext_;
 			std::shared_ptr< AVPacket > pPacket_;

@@ -20,14 +20,18 @@
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 #include "ffmpegwriter.hpp"
-#include "helper.hpp"
 
 #include "khopper/error.hpp"
+#ifdef Q_OS_WIN32
+#include "wfile.hpp"
+#endif
 
 extern "C" {
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
 }
+
+#include <QtCore/QFile>
 
 #include <cstring>
 
@@ -37,11 +41,18 @@ namespace {
 }
 
 using namespace khopper::codec;
-using khopper::ffmpeg::fromURI;
+using khopper::ffmpeg::read_packet;
+using khopper::ffmpeg::write_packet;
+using khopper::ffmpeg::seek;
 
 FfmpegWriter::FfmpegWriter( const QUrl & uri ):
 AbstractWriter( uri ),
+#ifdef Q_OS_WIN32
+fio_(),
+pIOContext_(),
+#endif
 pFormatContext_(),
+pCodecContext_(),
 pStream_( NULL ),
 queue_(),
 quality_( QSCALE_NONE ),
@@ -60,33 +71,21 @@ void FfmpegWriter::doClose() {
 }
 
 void FfmpegWriter::setupMuxer() {
-	AVOutputFormat * pOF = av_guess_format( NULL, fromURI( this->getURI() ), NULL );
-	if( pOF == NULL ) {
-		throw error::CodecError( "Can not recognize output format" );
+	AVFormatContext * pFC = NULL;
+	int ret = avformat_alloc_output_context2( &pFC, NULL, NULL, this->getURI().toString().toUtf8().constData() );
+	if( ret != 0 ) {
+		throw error::CodecError( AVUNERROR( ret ) );
 	}
-
-	this->pFormatContext_.reset( avformat_alloc_context(), []( AVFormatContext * oc ) {
-		for( std::size_t i = 0; i < oc->nb_streams; ++i ) {
-			if( oc->streams[i] && oc->streams[i]->codec->codec ) {
-				avcodec_close( oc->streams[i]->codec );
-			}
-			av_freep( &oc->streams[i]->codec );
-			av_freep( &oc->streams[i] );
-		}
-
+	this->pFormatContext_.reset( pFC, []( AVFormatContext * oc ) {
+#ifndef Q_OS_WIN32
 		AVOutputFormat * pOF = oc->oformat;
 		if( !( pOF->flags & AVFMT_NOFILE ) && oc->pb ) {
 			avio_close( oc->pb );
 		}
+#endif
 
-		av_freep( &oc );
+		avformat_free_context( oc );
 	} );
-	if( !this->pFormatContext_ ) {
-		throw error::SystemError( "Memory allocation error" );
-	}
-	this->pFormatContext_->oformat = pOF;
-
-	qstrncpy( this->pFormatContext_->filename, this->getURI().toString().toStdString().c_str(), sizeof( this->pFormatContext_->filename ) );
 }
 
 void FfmpegWriter::setupEncoder() {
@@ -95,14 +94,18 @@ void FfmpegWriter::setupEncoder() {
 		throw error::CodecError( "Can not setup encoder" );
 	}
 
-	this->pStream_ = av_new_stream( this->pFormatContext_.get(), 1 );
+	AVCodec * pC = avcodec_find_encoder( pOF->audio_codec );
+	if( !pC ) {
+		throw error::CodecError( "Find no encoder" );
+	}
+
+	this->pStream_ = avformat_new_stream( this->pFormatContext_.get(), pC );
 	if( !this->pStream_ ) {
 		throw error::CodecError( "Can not create stream" );
 	}
 
 	AVCodecContext * pCC = this->pStream_->codec;
-	pCC->codec_id = pOF->audio_codec;
-	pCC->codec_type = AVMEDIA_TYPE_AUDIO;
+	this->pCodecContext_.reset( pCC, avcodec_close );
 	pCC->time_base.num = 1;
 	pCC->time_base.den = this->getAudioFormat().frequency();
 
@@ -117,14 +120,9 @@ void FfmpegWriter::setupEncoder() {
 	}
 	// NOTE: set complete
 
-	AVCodec * pC = avcodec_find_encoder( pCC->codec_id );
-	if( !pC ) {
-		throw error::CodecError( "Find no encoder" );
-	}
-
 	pCC->sample_fmt = pC->sample_fmts[0];
 
-	if( avcodec_open( pCC, pC ) < 0 ) {
+	if( avcodec_open2( pCC, pC, NULL ) < 0 ) {
 		throw error::CodecError( "Can not open encoder" );
 	}
 
@@ -162,18 +160,41 @@ void FfmpegWriter::setupEncoder() {
 
 void FfmpegWriter::openResource() {
 	AVOutputFormat * pOF = this->pFormatContext_->oformat;
-	if( !( pOF->flags & AVFMT_NOFILE ) ) {
-		if( avio_open( &this->pFormatContext_->pb, fromURI( this->getURI() ), URL_WRONLY ) < 0 ) {
-			throw error::IOError( QString( "Can not open file: `%1\'" ).arg( this->getURI().toString() ) );
-		}
+	if( pOF->flags & AVFMT_NOFILE ) {
+		return;
 	}
+
+#ifndef Q_OS_WIN
+	if( avio_open( &this->pFormatContext_->pb, fromURI( this->getURI() ), URL_WRONLY ) < 0 ) {
+		throw error::IOError( QString( "Can not open file: `%1\'" ).arg( this->getURI().toString() ) );
+	}
+#else
+	// TODO only support local file
+	this->fio_.reset( new QFile( this->getURI().toLocalFile() ) );
+	if( !this->fio_->open( QIODevice::ReadWrite ) ) {
+		throw error::IOError( this->fio_->errorString() );
+	}
+	const int SIZE = 4 * 1024 * sizeof( unsigned char );
+	unsigned char * buffer = static_cast< unsigned char * >( av_malloc( SIZE ) );
+	this->pFormatContext_->pb = avio_alloc_context( buffer, SIZE, 1, this->fio_.get(), read_packet, write_packet, ::seek );
+	this->pIOContext_.reset( this->pFormatContext_->pb, []( AVIOContext * pb ) {
+		av_free( pb->buffer );
+		av_free( pb );
+	} );
+#endif
 }
 
 void FfmpegWriter::closeResource() {
 	this->writeFrame( NULL );
 	av_write_trailer( this->pFormatContext_.get() );
 	this->queue_.clear();
+	this->pCodecContext_.reset();
 	this->pFormatContext_.reset();
+#ifdef Q_OS_WIN32
+	this->pIOContext_.reset();
+	this->fio_->close();
+	this->fio_.reset();
+#endif
 }
 
 void FfmpegWriter::writeHeader() {

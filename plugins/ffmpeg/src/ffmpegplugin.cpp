@@ -22,8 +22,7 @@
 #include "ffmpegplugin.hpp"
 #include "wavpanel.hpp"
 #include "ffmpegreader.hpp"
-#include "helper.hpp"
-#ifdef _WIN32
+#ifdef Q_OS_WIN32
 #include "wfile.hpp"
 #endif
 
@@ -39,7 +38,9 @@ extern "C" {
 Q_EXPORT_PLUGIN2( KHOPPER_PLUGIN_ID, khopper::plugin::FfmpegPlugin )
 
 using namespace khopper::plugin;
-using khopper::ffmpeg::fromURI;
+using khopper::ffmpeg::read_packet;
+using khopper::ffmpeg::write_packet;
+using khopper::ffmpeg::seek;
 using khopper::plugin::registerReader;
 using khopper::plugin::unregisterReader;
 using khopper::widget::WavPanel;
@@ -54,13 +55,29 @@ panel_( new WavPanel ) {
 void FfmpegPlugin::doInstall() {
 	khopper::pApp()->addPanel( this->panel_.get() );
 	av_register_all();
-#ifdef _WIN32
-	av_register_protocol2( &khopper::codec::wfileProtocol, sizeof( khopper::codec::wfileProtocol ) );
-#endif
 	registerReader( this->getID(), []( const QUrl & uri )->unsigned int {
-		qDebug() << "verifing FfmpegReader" << uri << fromURI( uri );
 		AVFormatContext * pFC = NULL;
-		if( avformat_open_input( &pFC, fromURI( uri ), NULL, NULL ) == 0 ) {
+#ifdef Q_OS_WIN32
+		QFile opaque;
+		std::shared_ptr< AVIOContext > pb;
+		if( uri.scheme() == "file" ) {
+			opaque.setFileName( uri.toLocalFile() );
+			if( !opaque.open( QIODevice::ReadOnly ) ) {
+				return 0;
+			}
+			// NOTE will free by av_close_input_file
+			pFC = avformat_alloc_context();
+			const int SIZE = 4 * 1024 * sizeof( unsigned char );
+			unsigned char * buffer = static_cast< unsigned char * >( av_malloc( SIZE ) );
+			pFC->pb = avio_alloc_context( buffer, SIZE, 0, &opaque, read_packet, write_packet, seek );
+			pb.reset( pFC->pb, [&opaque]( AVIOContext * pb ) {
+				opaque.close();
+				av_free( pb->buffer );
+				av_free( pb );
+			} );
+		}
+#endif
+		if( avformat_open_input( &pFC, uri.toString().toUtf8().constData(), NULL, NULL ) == 0 ) {
 			int ret = av_find_stream_info( pFC );
 			av_close_input_file( pFC );
 			if( ret < 0 ) {

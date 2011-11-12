@@ -19,16 +19,18 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_CODEC_WFILE_HPP
-#define KHOPPER_CODEC_WFILE_HPP
+#ifndef KHOPPER_FFMPEG_WFILE_HPP
+#define KHOPPER_FFMPEG_WFILE_HPP
 
-extern "C" {
-#include <libavformat/avformat.h>
-}
+#include <cstdint>
 
 namespace khopper {
-	namespace codec {
-		extern URLProtocol wfileProtocol;
+	namespace ffmpeg {
+
+		int read_packet( void * opaque, uint8_t * buf, int buf_size );
+		int write_packet( void * opaque, uint8_t * buf, int buf_size );
+		int64_t seek( void * opaque, int64_t offset, int whence );
+
 	}
 }
 
