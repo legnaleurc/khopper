@@ -24,7 +24,7 @@ Build Dependencies:
 		TagLib: [LGPL, MPL]
 			http://developer.kde.org/~wheeler/taglib.html
 	Optional:
-		FFmpeg Libraries >= 0.5: [LGPL, GPL]
+		FFmpeg Libraries >= 0.8: [LGPL, GPL]
 			http://www.ffmpeg.org/
 		libFLAC >= 1.2.1: [BSD-3]
 			http://flac.sourceforge.net/
