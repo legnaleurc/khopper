@@ -42,6 +42,9 @@ namespace khopper {
 		 */
 		class KHOPPER_DLL BaseError : public std::exception {
 		public:
+			/**
+			 * @brief Construct with an error code
+			 */
 			explicit BaseError( int code );
 			/**
 			 * @brief Construct with an error message
@@ -51,6 +54,10 @@ namespace khopper {
 			 * @brief Construct with an error message
 			 */
 			explicit BaseError( const std::string & msg );
+			/**
+			 * @brief Construct with an error message
+			 */
+			explicit BaseError( const wchar_t * msg );
 			/**
 			 * @brief Construct with an error message
 			 */
@@ -81,6 +88,9 @@ namespace khopper {
 		template< typename Type >
 		class Error : public BaseError, public Type {
 		public:
+			/**
+			 * @brief Construct with an error code
+			 */
 			explicit Error( int code ) : BaseError( code ) {}
 			/**
 			 * @brief Construct with an error message
@@ -90,6 +100,10 @@ namespace khopper {
 			 * @brief Construct with an error message
 			 */
 			explicit Error( const std::string & msg ) : BaseError( msg ) {}
+			/**
+			 * @brief Construct with an error message
+			 */
+			explicit Error( const wchar_t * msg ) : BaseError( msg ) {}
 			/**
 			 * @brief Construct with an error message
 			 */

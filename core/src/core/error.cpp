@@ -39,6 +39,9 @@ BaseError::BaseError( const char * msg ) : msg_( QString::fromUtf8( msg ) ) {
 BaseError::BaseError( const std::string & msg ) : msg_( QString::fromUtf8( msg.c_str() ) ) {
 }
 
+BaseError::BaseError( const wchar_t * msg ) : msg_( QString::fromWCharArray( msg ) ) {
+}
+
 BaseError::BaseError( const std::wstring & msg ) : msg_( QString::fromStdWString( msg ) ) {
 }
 
