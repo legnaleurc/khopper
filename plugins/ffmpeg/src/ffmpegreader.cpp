@@ -52,9 +52,11 @@ namespace {
 using namespace khopper::codec;
 using khopper::error::IOError;
 using khopper::error::CodecError;
+#ifdef Q_OS_WIN
 using khopper::ffmpeg::read_packet;
 using khopper::ffmpeg::write_packet;
 using khopper::ffmpeg::seek;
+#endif
 
 FfmpegReader::FfmpegReader( const QUrl & uri ):
 AbstractReader( uri ),
@@ -125,7 +127,7 @@ void FfmpegReader::openResource_() {
 }
 
 void FfmpegReader::setupDemuxer_() {
-	if( av_find_stream_info( this->pFormatContext_.get() ) < 0 ) {
+	if( avformat_find_stream_info( this->pFormatContext_.get(), NULL ) < 0 ) {
 		throw CodecError( tr( "FfmpegReader: Can not find codec info!" ) );
 	}
 
@@ -195,7 +197,7 @@ void FfmpegReader::setupDecoder_() {
 		throw error::CodecError( tr( "FfmpegReader: Find no decoder!" ) );
 	}
 
-	if( avcodec_open( pCC, pC ) < 0 ) {
+	if( avcodec_open2( pCC, pC, NULL ) < 0 ) {
 		throw error::CodecError( tr( "FfmpegReader: Can not open decoder." ) );
 	}
 	this->pCodecContext_.reset( pCC, avcodec_close );

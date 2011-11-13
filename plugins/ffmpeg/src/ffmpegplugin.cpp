@@ -38,9 +38,11 @@ extern "C" {
 Q_EXPORT_PLUGIN2( KHOPPER_PLUGIN_ID, khopper::plugin::FfmpegPlugin )
 
 using namespace khopper::plugin;
+#ifdef Q_OS_WIN32
 using khopper::ffmpeg::read_packet;
 using khopper::ffmpeg::write_packet;
 using khopper::ffmpeg::seek;
+#endif
 using khopper::plugin::registerReader;
 using khopper::plugin::unregisterReader;
 using khopper::widget::WavPanel;
@@ -55,6 +57,7 @@ panel_( new WavPanel ) {
 void FfmpegPlugin::doInstall() {
 	khopper::pApp()->addPanel( this->panel_.get() );
 	av_register_all();
+	avformat_network_init();
 	registerReader( this->getID(), []( const QUrl & uri )->unsigned int {
 		AVFormatContext * pFC = NULL;
 #ifdef Q_OS_WIN32
@@ -78,7 +81,7 @@ void FfmpegPlugin::doInstall() {
 		}
 #endif
 		if( avformat_open_input( &pFC, uri.toString().toUtf8().constData(), NULL, NULL ) == 0 ) {
-			int ret = av_find_stream_info( pFC );
+			int ret = avformat_find_stream_info( pFC, NULL );
 			av_close_input_file( pFC );
 			if( ret < 0 ) {
 				char msg[1024];
@@ -98,4 +101,5 @@ void FfmpegPlugin::doInstall() {
 void FfmpegPlugin::doUninstall() {
 	khopper::pApp()->removePanel( this->panel_.get() );
 	unregisterReader( this->getID() );
+	avformat_network_deinit();
 }

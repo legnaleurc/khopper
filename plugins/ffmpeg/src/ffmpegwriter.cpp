@@ -41,9 +41,11 @@ namespace {
 }
 
 using namespace khopper::codec;
+#ifdef Q_OS_WIN32
 using khopper::ffmpeg::read_packet;
 using khopper::ffmpeg::write_packet;
 using khopper::ffmpeg::seek;
+#endif
 
 FfmpegWriter::FfmpegWriter( const QUrl & uri ):
 AbstractWriter( uri ),
@@ -115,8 +117,7 @@ void FfmpegWriter::setupEncoder() {
 	pCC->channels = this->getAudioFormat().channels();
 	if( this->quality_ != QSCALE_NONE ) {
 		pCC->flags |= CODEC_FLAG_QSCALE;
-		this->pStream_->quality = static_cast< float >( FF_QP2LAMBDA * this->quality_ );
-		pCC->global_quality = static_cast< int >( this->pStream_->quality );
+		pCC->global_quality = static_cast< int >( FF_QP2LAMBDA * this->quality_ );
 	}
 	// NOTE: set complete
 
@@ -165,7 +166,7 @@ void FfmpegWriter::openResource() {
 	}
 
 #ifndef Q_OS_WIN
-	if( avio_open( &this->pFormatContext_->pb, fromURI( this->getURI() ), URL_WRONLY ) < 0 ) {
+	if( avio_open( &this->pFormatContext_->pb, this->getURI().toString().toUtf8().constData(), URL_WRONLY ) < 0 ) {
 		throw error::IOError( QString( "Can not open file: `%1\'" ).arg( this->getURI().toString() ) );
 	}
 #else
