@@ -23,13 +23,13 @@
 
 using namespace khopper::error;
 
-BaseError::BaseError( int code ) : msg_() {
-#ifdef Q_CC_MSVC
-	char tmp[1024];
-	strerror_s( tmp, code );
-	this->msg_ = QString::fromUtf8( tmp );
+#ifndef Q_CC_MSVC
+BaseError::BaseError( int code ) : msg_( QString::fromUtf8( strerror( code ) ) ) {
 #else
-	this->msg_ = QString::fromUtf8( strerror( code ) );
+BaseError::BaseError( int code ) : msg_() {
+	wchar_t tmp[1024];
+	_wcserror_s( tmp, code );
+	this->msg_ = QString::fromWCharArray( tmp );
 #endif
 }
 
