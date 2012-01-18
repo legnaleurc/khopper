@@ -63,18 +63,32 @@ uri( uri ) {
 	// FIXME: text codec
 	if( this->uri.scheme() == "file" ) {
 		TagLib::FileRef fin( this->uri.toLocalFile().toUtf8().constData() );
-		if( fin.isNull() ) {
-			goto failback;
+		if( !fin.isNull() ) {
+			if( !fin.tag()->album().isNull() ) {
+				this->album->setTitle( QString::fromUtf8( fin.tag()->album().to8Bit( true ).c_str() ) );
+			}
+			if( !fin.tag()->artist().isNull() ) {
+				this->artist = fin.tag()->artist().to8Bit( true ).c_str();
+			}
+			if( fin.tag()->track() != 0 ) {
+				this->index = fin.tag()->track();
+			}
+			if( !fin.tag()->title().isNull() ) {
+				this->title = fin.tag()->title().to8Bit( true ).c_str();
+			}
 		}
-		this->album->setTitle( QString::fromUtf8( fin.tag()->album().to8Bit( true ).c_str() ) );
-		this->artist = fin.tag()->artist().to8Bit( true ).c_str();
-		this->index = fin.tag()->track();
-		this->title = fin.tag()->title().to8Bit( true ).c_str();
-	} else {
-failback:
+	}
+
+	if( this->album->getTitle().isEmpty() ) {
 		this->album->setTitle( reader->getAlbumTitle() );
+	}
+	if( this->artist.isEmpty() ) {
 		this->artist = reader->getArtist();
+	}
+	if( this->index <= 0 ) {
 		this->index = reader->getIndex();
+	}
+	if( this->title.isEmpty() ) {
 		this->title = reader->getTitle();
 	}
 
