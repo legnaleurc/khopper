@@ -123,7 +123,9 @@ void FfmpegReader::openResource_() {
 	if( ret != 0 ) {
 		throw IOError( AVUNERROR( ret ) );
 	}
-	this->pFormatContext_.reset( pFC, av_close_input_file );
+	this->pFormatContext_.reset( pFC, []( AVFormatContext * p )->void {
+		avformat_close_input( &p );
+	} );
 }
 
 void FfmpegReader::setupDemuxer_() {
