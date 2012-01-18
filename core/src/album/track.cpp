@@ -25,6 +25,7 @@
 #include <fileref.h>
 #include <tag.h>
 
+#include <QtCore/QFileInfo>
 #include <QtCore/QHash>
 #include <QtCore/QtDebug>
 
@@ -89,7 +90,13 @@ uri( uri ) {
 		this->index = reader->getIndex();
 	}
 	if( this->title.isEmpty() ) {
-		this->title = reader->getTitle();
+		if( reader->getTitle().isEmpty() ) {
+			// FIXME may not a local file
+			QFileInfo info( reader->getURI().toLocalFile() );
+			this->title = info.baseName().toUtf8();
+		} else {
+			this->title = reader->getTitle();
+		}
 	}
 
 	reader->close();
