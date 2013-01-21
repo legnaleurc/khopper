@@ -1,6 +1,6 @@
 # root
 
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.8)
 
 project(Khopper)
 set(KHOPPER_VERSION_MAJOR "0")
@@ -18,8 +18,10 @@ add_definitions(-DKHOPPER_VERSION=${KHOPPER_VERSION} -DKHOPPER_VERSION_MAJOR=${K
 foreach(type "RELEASE" "MINSIZEREL")
     set(CMAKE_CXX_FLAGS_${type} "${CMAKE_CXX_FLAGS_${type}} -DQT_NO_DEBUG_OUTPUT -DQT_NO_WARNING_OUTPUT")
 endforeach()
-if(CMAKE_COMPILER_IS_GNUCXX)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -pedantic -Wextra -Wall -pipe")
+if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    list(APPEND CMAKE_CXX_FLAGS "-std=c++11 -stdlib=libc++ -pedantic -Wextra -Wall -pipe")
+elseif(CMAKE_COMPILER_IS_GNUCXX)
+    list(APPEND CMAKE_CXX_FLAGS "-std=c++0x -pedantic -Wextra -Wall -pipe")
 elseif(MSVC)
     # general flags
     add_definitions("/D__STDC_CONSTANT_MACROS")

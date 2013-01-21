@@ -30,22 +30,11 @@
 # else
 #  define KHOPPER_DLL __declspec(dllimport)
 # endif
-// supports C++0x since Visual C++ 10
-# if _MSC_VER >= 1600
-# ifndef __STDC_CONSTANT_MACROS
-#  define __STDC_CONSTANT_MACROS
-# endif
-# else
-#  error Must use Microsoft Visual C++ 10 or newer toolchain.
-# endif
 // GNU GCC settings
 #elif defined( __GNUC__ )
 // need not dll symbol trick
 # define KHOPPER_DLL
 // supports C++0x since GCC 4.5
-# if __GNUC__ < 4 || __GNUC_MINOR__ < 5
-#  error Must use GNU GCC 4.5 or newer toolchain.
-# endif
 #else
 // FIXME: reserved for other compilers
 #endif
