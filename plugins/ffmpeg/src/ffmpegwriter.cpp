@@ -166,7 +166,7 @@ void FfmpegWriter::openResource() {
 	}
 
 #ifndef Q_OS_WIN
-	if( avio_open( &this->pFormatContext_->pb, this->getURI().toString().toUtf8().constData(), URL_WRONLY ) < 0 ) {
+	if( avio_open( &this->pFormatContext_->pb, this->getURI().toString().toUtf8().constData(), AVIO_FLAG_WRITE ) < 0 ) {
 		throw error::IOError( QString( "Can not open file: `%1\'" ).arg( this->getURI().toString() ) );
 	}
 #else

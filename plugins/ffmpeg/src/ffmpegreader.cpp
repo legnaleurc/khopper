@@ -169,23 +169,23 @@ void FfmpegReader::setupDecoder_() {
 		this->setChannelLayout( LayoutNative );
 	}
 	switch( pCC->sample_fmt ) {
-	case SAMPLE_FMT_U8:
+	case AV_SAMPLE_FMT_U8:
 		format.setSampleType( AudioFormat::UnSignedInt );
 		format.setSampleSize( 8 );
 		break;
-	case SAMPLE_FMT_S16:
+	case AV_SAMPLE_FMT_S16:
 		format.setSampleType( AudioFormat::SignedInt );
 		format.setSampleSize( 16 );
 		break;
-	case SAMPLE_FMT_S32:
+	case AV_SAMPLE_FMT_S32:
 		format.setSampleType( AudioFormat::SignedInt );
 		format.setSampleSize( 32 );
 		break;
-	case SAMPLE_FMT_FLT:
+	case AV_SAMPLE_FMT_FLT:
 		format.setSampleType( AudioFormat::Float );
 		format.setSampleSize( 32 );
 		break;
-	case SAMPLE_FMT_DBL:
+	case AV_SAMPLE_FMT_DBL:
 		format.setSampleType( AudioFormat::Float );
 		format.setSampleSize( 64 );
 		break;
