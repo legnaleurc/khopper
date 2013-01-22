@@ -27,6 +27,7 @@
 #endif
 
 #include <QtCore/QFile>
+#include <QtCore/QBuffer>
 #include <QtCore/QtDebug>
 
 #include <cstdlib>
@@ -168,22 +169,27 @@ void FfmpegReader::setupDecoder_() {
 	}
 	switch( pCC->sample_fmt ) {
 	case AV_SAMPLE_FMT_U8:
+	case AV_SAMPLE_FMT_U8P:
 		format.setSampleType( AudioFormat::UnSignedInt );
 		format.setSampleSize( 8 );
 		break;
 	case AV_SAMPLE_FMT_S16:
+	case AV_SAMPLE_FMT_S16P:
 		format.setSampleType( AudioFormat::SignedInt );
 		format.setSampleSize( 16 );
 		break;
 	case AV_SAMPLE_FMT_S32:
+	case AV_SAMPLE_FMT_S32P:
 		format.setSampleType( AudioFormat::SignedInt );
 		format.setSampleSize( 32 );
 		break;
 	case AV_SAMPLE_FMT_FLT:
+	case AV_SAMPLE_FMT_FLTP:
 		format.setSampleType( AudioFormat::Float );
 		format.setSampleSize( 32 );
 		break;
 	case AV_SAMPLE_FMT_DBL:
+	case AV_SAMPLE_FMT_DBLP:
 		format.setSampleType( AudioFormat::Float );
 		format.setSampleSize( 64 );
 		break;
@@ -284,8 +290,10 @@ QByteArray FfmpegReader::readFrame_() {
 	auto channels = this->pFrame_->channels;
 	auto nbSamples = this->pFrame_->nb_samples;
 	auto format = static_cast< AVSampleFormat >( this->pFrame_->format );
+	auto nbPlanes = av_sample_fmt_is_planar( format ) ? channels : 1;
+	auto sampleSize = av_get_bytes_per_sample( format );
 
-	std::shared_ptr< uint8_t * > audioData( static_cast< uint8_t ** >( av_mallocz( sizeof( uint8_t * ) * this->pFrame_->channels ) ), []( uint8_t ** p )->void {
+	std::shared_ptr< uint8_t * > audioData( static_cast< uint8_t ** >( av_mallocz( sizeof( uint8_t * ) * nbPlanes ) ), []( uint8_t ** p )->void {
 		av_freep( &p[0] );
 		av_free( p );
 	} );
@@ -298,10 +306,26 @@ QByteArray FfmpegReader::readFrame_() {
 	av_samples_copy( audioData.get(), this->pFrame_->data, 0, 0, nbSamples, channels, format );
 
 	this->curPos_ += toMS( this->pFrame_->pkt_duration );
-
 	av_free_packet( &this->packet_ );
 
-	return QByteArray( reinterpret_cast< char * >( audioData.get()[0] ), bufferSize );
+	QByteArray pcm( bufferSize, '\0' );
+	if( nbPlanes > 1 ) {
+		auto tmp = audioData.get();
+		QBuffer pcmWriter( &pcm );
+		pcmWriter.open( QIODevice::ReadWrite );
+		for( int i = 0; i < lineSize; i += sampleSize ) {
+			for( int c = 0; c < channels; ++c ) {
+				// NOTE little endian
+				pcmWriter.write( reinterpret_cast< char * >( &tmp[c][i] ), sampleSize );
+			}
+		}
+		pcmWriter.close();
+	} else {
+		// frame already interleaved
+		pcm.setRawData( reinterpret_cast< char * >( audioData.get()[0] ), bufferSize );
+	}
+
+	return pcm;
 }
 
 bool FfmpegReader::seek( qint64 pos ) {
