@@ -73,20 +73,25 @@ bool WavWrapper::open( OpenMode mode ) {
 bool WavWrapper::seek( qint64 pos ) {
 	bool ret = this->QIODevice::seek( pos );
 	if( pos < 44 ) {
-		ret &= this->reader_->seek( 0 );
+		ret &= this->reader_->seek( 0LL );
 	} else {
-		ret &= this->reader_->seek( pos - 44 );
+		ret &= this->reader_->seek( pos - 44LL );
 	}
 	return ret;
 }
 
 qint64 WavWrapper::size() const {
-	return this->reader_->size() + 44;
+	return this->reader_->size() + 44LL;
 }
 
 qint64 WavWrapper::readData( char * data, qint64 maxlen ) {
-	if( this->pos() < 44 ) {
-		const int len = 44 - this->pos();
+	if( this->reader_->atEnd() && !this->QIODevice::atEnd() ) {
+		// NOTE hack for PCM fragment
+		const qint64 len = std::min( maxlen, this->size() - this->pos() );
+		std::fill_n( data, len, '\0' );
+		return len;
+	} else if( this->pos() < 44LL ) {
+		const qint64 len = 44LL - this->pos();
 		std::memcpy( data, this->header_.constData() + this->pos(), len );
 		return this->reader_->read( data + len, maxlen - len ) + len;
 	} else {
