@@ -25,7 +25,7 @@ set(KHOPPER_CORE_MOC_HEADERS
 
 qt4_wrap_cpp(KHOPPER_CORE_MOC_SOURCES ${KHOPPER_CORE_MOC_HEADERS})
 
-include_directories("include/khopper" src ${TAGLIB_INCLUDE_DIR})
+include_directories("include/khopper" src ${TAGLIB_INCLUDE_DIRS})
 
 source_group("Generated Files" FILES ${KHOPPER_CORE_MOC_SOURCES})
 add_library(khopper SHARED ${KHOPPER_CORE_HEADERS} ${KHOPPER_CORE_SOURCES} ${KHOPPER_CORE_MOC_SOURCES} ${KHOPPER_CORE_PLATFORM_SOURCES})
