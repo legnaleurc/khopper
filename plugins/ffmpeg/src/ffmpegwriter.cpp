@@ -29,6 +29,7 @@
 extern "C" {
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
+#include <libavutil/mathematics.h>
 }
 
 #include <QtCore/QFile>
@@ -74,7 +75,7 @@ void FfmpegWriter::doClose() {
 
 void FfmpegWriter::setupMuxer() {
 	AVFormatContext * pFC = NULL;
-	int ret = avformat_alloc_output_context2( &pFC, NULL, NULL, this->getURI().toString().toUtf8().constData() );
+	int ret = avformat_open_input( &pFC, this->getURI().toString().toUtf8().constData(), NULL, NULL );
 	if( ret != 0 ) {
 		throw error::CodecError( AVUNERROR( ret ) );
 	}
