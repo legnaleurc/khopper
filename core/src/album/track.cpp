@@ -66,16 +66,16 @@ uri( uri ) {
 		TagLib::FileRef fin( this->uri.toLocalFile().toUtf8().constData() );
 		if( !fin.isNull() ) {
 			if( !fin.tag()->album().isNull() ) {
-				this->album->setTitle( QString::fromUtf8( fin.tag()->album().to8Bit( true ).c_str() ) );
+				this->album->setTitle( TStringToQString( fin.tag()->album() ) );
 			}
 			if( !fin.tag()->artist().isNull() ) {
-				this->artist = fin.tag()->artist().to8Bit( true ).c_str();
+				this->artist = fin.tag()->artist().toCString( true );
 			}
 			if( fin.tag()->track() != 0 ) {
 				this->index = fin.tag()->track();
 			}
 			if( !fin.tag()->title().isNull() ) {
-				this->title = fin.tag()->title().to8Bit( true ).c_str();
+				this->title = fin.tag()->title().toCString( true );
 			}
 		}
 	}
