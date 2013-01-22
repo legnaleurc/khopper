@@ -42,5 +42,4 @@ if(NOT TAGLIB_FOUND)
     find_package_handle_standard_args(TAGLIB DEFAULT_MSG TAGLIB_INCLUDE_DIRS TAGLIB_LIBRARIES)
 
     mark_as_advanced(TAGLIB_INCLUDE_DIRS TAGLIB_LIBRARIES)
-    message(STATUS ${TAGLIB_LIBRARIES})
 endif()
