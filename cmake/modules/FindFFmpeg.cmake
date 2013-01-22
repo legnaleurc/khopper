@@ -10,7 +10,7 @@
 include(KhopperUtility)
 
 if(NOT FFMPEG_FOUND)
-    find_package(PkgConfig)
+    find_package(PkgConfig QUIET)
     if(PKG_CONFIG_FOUND)
         pkg_check_modules(PC_FFMPEG libavformat libavcodec libavutil)
         if(PC_FFMPEG_FOUND)
@@ -18,13 +18,18 @@ if(NOT FFMPEG_FOUND)
             set(FFMPEG_INCLUDE_DIRS ${PC_FFMPEG_INCLUDE_DIRS})
             set(FFMPEG_LIBRARIES ${PC_FFMPEG_LIBRARIES})
         endif()
-    else()
-        path_from_env(FFMPEG_ROOT)
+    endif()
 
+    path_from_env(FFMPEG_ROOT)
+
+    if(NOT FFMPEG_INCLUDE_DIRS)
         find_path(FFMPEG_INCLUDE_DIRS
             NAMES libavformat/avformat.h libavcodec/avcodec.h
             HINTS ${FFMPEG_ROOT}
             PATH_SUFFIXES "include")
+    endif()
+
+    if(NOT FFMPEG_LIBRARIES)
         find_library(FFMPEG_FORMAT_LIBRARY avformat
             HINTS ${FFMPEG_ROOT}
             PATH_SUFFIXES "lib")
