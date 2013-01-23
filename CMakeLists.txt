@@ -8,11 +8,7 @@ set(KHOPPER_VERSION_MINOR "5")
 set(KHOPPER_VERSION_PATCH "0")
 set(KHOPPER_VERSION "${KHOPPER_VERSION_MAJOR}.${KHOPPER_VERSION_MINOR}.${KHOPPER_VERSION_PATCH}")
 
-set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
-
-find_package(Qt4 4.7 COMPONENTS QtNetwork Phonon REQUIRED)
-
-include(${QT_USE_FILE})
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 
 add_definitions(-DKHOPPER_VERSION=${KHOPPER_VERSION} -DKHOPPER_VERSION_MAJOR=${KHOPPER_VERSION_MAJOR} -DKHOPPER_VERSION_MINOR=${KHOPPER_VERSION_MINOR} -DKHOPPER_VERSION_PATCH=${KHOPPER_VERSION_PATCH})
 foreach(type "RELEASE" "MINSIZEREL")
@@ -40,31 +36,13 @@ elseif(MSVC)
         endif()
     endforeach()
 endif()
+
+# debug version postfix
 set(CMAKE_DEBUG_POSTFIX d)
 
 add_subdirectory(core)
-
-if(QT_PHONON_FOUND)
-    list(APPEND KHOPPER_OPTIONAL_FOUND "[GUI] GUI module enabled.")
-    add_subdirectory(gui)
-else()
-    list(APPEND KHOPPER_OPTIONAL_NOT_FOUND "[GUI] GUI module disabled:")
-    list(APPEND KHOPPER_OPTIONAL_NOT_FOUND "    Qt Phonon not found.")
-endif()
-
+add_subdirectory(gui)
 add_subdirectory(plugins)
 
-list(LENGTH KHOPPER_OPTIONAL_FOUND length)
-if(NOT ${length} EQUAL 0)
-    message("[Find the fallowing build dependencies:]")
-    foreach(msg ${KHOPPER_OPTIONAL_FOUND})
-        message(${msg})
-    endforeach()
-endif()
-list(LENGTH KHOPPER_OPTIONAL_NOT_FOUND length)
-if(NOT ${length} EQUAL 0)
-    message("[The fallowing build dependencies are not found:]")
-    foreach(msg ${KHOPPER_OPTIONAL_NOT_FOUND})
-        message(${msg})
-    endforeach()
-endif()
+include(FeatureSummary)
+feature_summary(WHAT ALL)

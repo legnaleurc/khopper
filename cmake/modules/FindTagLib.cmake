@@ -11,7 +11,7 @@ include(KhopperUtility)
 
 find_package(PkgConfig QUIET)
 if(PKG_CONFIG_FOUND)
-    pkg_check_modules(PC_TAGLIB taglib)
+    pkg_check_modules(PC_TAGLIB QUIET taglib)
     if(PC_TAGLIB_FOUND)
         set(TAGLIB_INCLUDE_DIRS ${PC_TAGLIB_INCLUDE_DIRS})
         set(TAGLIB_LIBRARIES ${PC_TAGLIB_LIBRARIES})
