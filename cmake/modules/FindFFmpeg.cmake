@@ -53,7 +53,6 @@ if(NOT FFMPEG_FOUND)
     endif()
 
     include(FindPackageHandleStandardArgs)
-
     find_package_handle_standard_args(FFMPEG DEFAULT_MSG FFMPEG_INCLUDE_DIRS FFMPEG_LIBRARIES)
 
     mark_as_advanced(FFMPEG_INCLUDE_DIRS FFMPEG_LIBRARIES)

@@ -34,15 +34,11 @@ if(NOT TAGLIB_LIBRARIES)
         HINTS ${TAGLIB_ROOT}
         PATH_SUFFIXES "lib")
 
-    if(TAGLIB_LIBRARIES_RELEASE AND TAGLIB_LIBRARIES_DEBUG)
-        set(TAGLIB_LIBRARIES optimized ${TAGLIB_LIBRARIES_RELEASE} debug ${TAGLIB_LIBRARIES_DEBUG})
-    elseif(TAGLIB_LIBRARIES_RELEASE)
-        set(TAGLIB_LIBRARIES ${TAGLIB_LIBRARIES_RELEASE})
-    endif()
+    include(SelectLibraryConfigurations)
+    select_library_configurations(TAGLIB)
 endif()
 
 include(FindPackageHandleStandardArgs)
-
 find_package_handle_standard_args(TAGLIB DEFAULT_MSG TAGLIB_INCLUDE_DIRS TAGLIB_LIBRARIES)
 
 mark_as_advanced(TAGLIB_INCLUDE_DIRS TAGLIB_LIBRARIES)

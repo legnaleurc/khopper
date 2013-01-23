@@ -18,23 +18,20 @@ if(NOT MP3LAME_INCLUDE_DIRS)
 endif()
 
 if(NOT MP3LAME_LIBRARIES)
-    find_library(MP3LAME_LIBRARIES_RELEASE
+    find_library(MP3LAME_LIBRARY_RELEASE
         NAMES "mp3lame" "libmp3lame"
         HINTS ${MP3LAME_ROOT}
         PATH_SUFFIXES "lib")
-    find_library(MP3LAME_LIBRARIES_DEBUG "mp3lamed"
+    find_library(MP3LAME_LIBRARY_DEBUG
+        NAMES "mp3lamed" "libmp3lamed"
         HINTS ${MP3LAME_ROOT}
         PATH_SUFFIXES "lib")
 
-    if(MP3LAME_LIBRARIES_RELEASE AND MP3LAME_LIBRARIES_DEBUG)
-        set(MP3LAME_LIBRARIES optimized ${MP3LAME_LIBRARIES_RELEASE} debug ${MP3LAME_LIBRARIES_DEBUG})
-    elseif(MP3LAME_LIBRARIES_RELEASE)
-        set(MP3LAME_LIBRARIES ${MP3LAME_LIBRARIES_RELEASE})
-    endif()
+    include(SelectLibraryConfigurations)
+    select_library_configurations(MP3LAME)
 endif()
 
 include(FindPackageHandleStandardArgs)
-
 find_package_handle_standard_args(MP3LAME DEFAULT_MSG MP3LAME_INCLUDE_DIRS MP3LAME_LIBRARIES)
 
 mark_as_advanced(MP3LAME_INCLUDE_DIRS MP3LAME_LIBRARIES)
