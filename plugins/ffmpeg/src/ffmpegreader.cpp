@@ -322,7 +322,7 @@ QByteArray FfmpegReader::readFrame_() {
 		pcmWriter.close();
 	} else {
 		// frame already interleaved
-		pcm.setRawData( reinterpret_cast< char * >( audioData.get()[0] ), bufferSize );
+		memcpy( pcm.data(), audioData.get()[0], bufferSize );
 	}
 
 	return pcm;
