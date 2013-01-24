@@ -19,14 +19,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "albumprivate.hpp"
+#include "album_p.hpp"
 
-using namespace khopper::album;
+using khopper::album::Album;
 
-Album::Album() : p_( new AlbumPrivate ) {
+Album::Album() : p_( new Private ) {
 }
 
 Album::~Album() {
+}
+
+const QString & Album::getArtist() const {
+	return this->p_->artist;
+}
+
+const QString & Album::getSongWriter() const {
+	return this->p_->songWriter;
 }
 
 const QString & Album::getTitle() const {

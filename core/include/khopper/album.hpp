@@ -38,6 +38,7 @@ public:
 	virtual ~Album();
 
 	const QString & getArtist() const;
+	const QString & getSongWriter() const;
 	const QString & getTitle() const;
 
 	void setArtist( const QString & artist );
@@ -45,8 +46,11 @@ public:
 	void setTitle( const QString & title );
 
 private:
-	struct AlbumPrivate;
-	std::shared_ptr< AlbumPrivate > p_;
+	Album( const Album & );
+	Album & operator =( const Album & );
+
+	class Private;
+	std::shared_ptr< Private > p_;
 };
 
 }

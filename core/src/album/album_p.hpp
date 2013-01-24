@@ -1,5 +1,5 @@
 /**
- * @file albumprivate.hpp
+ * @file album_p.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,23 +19,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_ALBUM_ALBUMPRIVATE_HPP
-#define KHOPPER_ALBUM_ALBUMPRIVATE_HPP
+#ifndef KHOPPER_ALBUM_ALBUM_HPP_
+#define KHOPPER_ALBUM_ALBUM_HPP_
 
 #include "album.hpp"
 
 #include <QtCore/QString>
 
 namespace khopper {
-	namespace album {
+namespace album {
 
-		struct Album::AlbumPrivate {
-			QString artist;
-			QString songWriter;
-			QString title;
-		};
+class Album::Private {
+public:
+	QString artist;
+	QString songWriter;
+	QString title;
+};
 
-	}
+}
 }
 
 #endif
