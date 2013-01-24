@@ -20,6 +20,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "trackprivate.hpp"
+#include "album.hpp"
 #include "error.hpp"
 
 #include <fileref.h>

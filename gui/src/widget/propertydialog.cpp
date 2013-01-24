@@ -20,6 +20,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "propertydialog.hpp"
+#include "khopper/album.hpp"
 #include "ui_propertydialog.h"
 
 using namespace khopper::widget;

@@ -20,6 +20,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "converter.hpp"
+#include "khopper/album.hpp"
 
 #include "khopper/abstractreader.hpp"
 #include "khopper/abstractwriter.hpp"

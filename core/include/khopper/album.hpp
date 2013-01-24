@@ -23,36 +23,33 @@
 #define KHOPPER_ALBUM_ALBUM_HPP
 
 #include "config.hpp"
+#include "albumfwd.hpp"
 
 #include <QtCore/QString>
 
 #include <memory>
 
 namespace khopper {
+namespace album {
 
-	namespace album {
+class KHOPPER_DLL Album {
+public:
+	Album();
+	virtual ~Album();
 
-		class KHOPPER_DLL Album {
-		public:
-			Album();
-			virtual ~Album();
+	const QString & getArtist() const;
+	const QString & getTitle() const;
 
-			const QString & getArtist() const;
-			const QString & getTitle() const;
+	void setArtist( const QString & artist );
+	void setSongWriter( const QString & songWriter );
+	void setTitle( const QString & title );
 
-			void setArtist( const QString & artist );
-			void setSongWriter( const QString & songWriter );
-			void setTitle( const QString & title );
+private:
+	struct AlbumPrivate;
+	std::shared_ptr< AlbumPrivate > p_;
+};
 
-		private:
-			struct AlbumPrivate;
-			std::shared_ptr< AlbumPrivate > p_;
-		};
-
-		typedef std::shared_ptr< Album > AlbumSP;
-
-	}
-
+}
 }
 
 #endif

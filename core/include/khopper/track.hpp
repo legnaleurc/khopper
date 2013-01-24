@@ -22,88 +22,77 @@
 #ifndef KHOPPER_ALBUM_TRACK_HPP
 #define KHOPPER_ALBUM_TRACK_HPP
 
-#include "timestamp.hpp"
-#include "album.hpp"
 #include "abstractreader.hpp"
+#include "albumfwd.hpp"
+#include "timestamp.hpp"
 
 #include <QtCore/QByteArray>
 #include <QtCore/QTextCodec>
 #include <QtCore/QUrl>
 
 namespace khopper {
+namespace album {
 
-	namespace album {
+/**
+ * @brief Provides track information.
+ *
+ * This class store data as encoded string, and ALWAYS
+ * gives you decoded strings. Please use setTextCodec to
+ * change the decoder.
+ */
+class KHOPPER_DLL Track {
+public:
+	/**
+	 * @brief Default constructor.
+	 */
+	explicit Track( const QUrl & uri );
+	virtual ~Track();
 
-		/**
-		 * @brief Provides track information.
-		 *
-		 * This class store data as encoded string, and ALWAYS
-		 * gives you decoded strings. Please use setTextCodec to
-		 * change the decoder.
-		 */
-		class KHOPPER_DLL Track {
-		public:
-			/**
-			 * @brief Default constructor.
-			 */
-			explicit Track( const QUrl & uri );
-			virtual ~Track();
+	AlbumSP getAlbum() const;
+	QString getArtist() const;
+	const codec::AudioFormat & getAudioFormat() const;
+	unsigned int getBitRate() const;
+	const Timestamp & getDuration() const;
+	unsigned int getIndex() const;
+	codec::ReaderSP createReader() const;
+	QString getTitle() const;
+	/**
+	 * @brief Get url.
+	 * @sa setFilePath(const QString &) setFilePath(const QByteArray &)
+	 */
+	const QUrl & getURI() const;
 
-			AlbumSP getAlbum() const;
-			QString getArtist() const;
-			const codec::AudioFormat & getAudioFormat() const;
-			unsigned int getBitRate() const;
-			const Timestamp & getDuration() const;
-			unsigned int getIndex() const;
-			codec::ReaderSP createReader() const;
-			QString getTitle() const;
-			/**
-			 * @brief Get url.
-			 * @sa setFilePath(const QString &) setFilePath(const QByteArray &)
-			 */
-			const QUrl & getURI() const;
+	virtual void save() const;
 
-			virtual void save() const;
+	void setAlbum( AlbumSP album );
+	void setArtist( const QByteArray & artist );
+	void setArtist( const QString & artist );
+	void setAudioFormat( const codec::AudioFormat & format );
+	void setBitRate( unsigned int bitRate );
+	void setChannels( unsigned int channels );
+	void setDuration( const Timestamp & duration );
+	void setIndex( unsigned int index );
+	void setSampleRate( unsigned int sampleRate );
+	void setSongWriter( const QByteArray & songWriter );
+	void setSongWriter( const QString & songWriter );
+	/**
+	 * @brief Set metadata text codec.
+	 */
+	void setTextCodec( QTextCodec * textCodec );
+	void setTitle( const QByteArray & title );
+	void setTitle( const QString & title );
 
-			void setAlbum( AlbumSP album );
-			void setArtist( const QByteArray & artist );
-			void setArtist( const QString & artist );
-			void setAudioFormat( const codec::AudioFormat & format );
-			void setBitRate( unsigned int bitRate );
-			void setChannels( unsigned int channels );
-			void setDuration( const Timestamp & duration );
-			void setIndex( unsigned int index );
-			void setSampleRate( unsigned int sampleRate );
-			void setSongWriter( const QByteArray & songWriter );
-			void setSongWriter( const QString & songWriter );
-			/**
-			 * @brief Set metadata text codec.
-			 */
-			void setTextCodec( QTextCodec * textCodec );
-			void setTitle( const QByteArray & title );
-			void setTitle( const QString & title );
+protected:
+	Track( const QUrl & uri, plugin::ReaderCreator creator );
 
-		protected:
-			Track( const QUrl & uri, plugin::ReaderCreator creator );
+	void setReaderCreator( plugin::ReaderCreator creator );
 
-			void setReaderCreator( plugin::ReaderCreator creator );
+private:
+	class Private;
+	std::shared_ptr< Private > p_;
+};
 
-		private:
-			class Private;
-			std::shared_ptr< Private > p_;
-		};
-
-		/**
-		 * @brief Smart pointer of Track.
-		 */
-		typedef std::shared_ptr< Track > TrackSP;
-		/**
-		 * @brief Smart pointer of const Track.
-		 */
-		typedef std::shared_ptr< const Track > TrackCSP;
-
-	}
-
+}
 }
 
 uint KHOPPER_DLL qHash( khopper::album::TrackCSP key );
