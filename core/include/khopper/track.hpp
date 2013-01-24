@@ -48,7 +48,7 @@ public:
 	explicit Track( const QUrl & uri );
 	virtual ~Track();
 
-	AlbumSP getAlbum() const;
+	AlbumWP getAlbum() const;
 	QString getArtist() const;
 	const codec::AudioFormat & getAudioFormat() const;
 	unsigned int getBitRate() const;
@@ -64,7 +64,7 @@ public:
 
 	virtual void save() const;
 
-	void setAlbum( AlbumSP album );
+	void setAlbum( AlbumWP album );
 	void setArtist( const QByteArray & artist );
 	void setArtist( const QString & artist );
 	void setAudioFormat( const codec::AudioFormat & format );

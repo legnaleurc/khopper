@@ -25,6 +25,7 @@
 #include "config.hpp"
 #include "albumfwd.hpp"
 
+#include <QtCore/QList>
 #include <QtCore/QString>
 
 #include <memory>
@@ -32,18 +33,24 @@
 namespace khopper {
 namespace album {
 
-class KHOPPER_DLL Album {
+class KHOPPER_DLL Album: public std::enable_shared_from_this< Album > {
 public:
-	Album();
+	static AlbumSP createAlbum();
+
 	virtual ~Album();
 
 	const QString & getArtist() const;
 	const QString & getSongWriter() const;
 	const QString & getTitle() const;
+	const QList< TrackSP > & getTracks() const;
 
+	void addTrack( TrackSP track );
 	void setArtist( const QString & artist );
 	void setSongWriter( const QString & songWriter );
 	void setTitle( const QString & title );
+
+protected:
+	Album();
 
 private:
 	Album( const Album & );

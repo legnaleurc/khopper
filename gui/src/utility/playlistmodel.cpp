@@ -90,8 +90,11 @@ bool PlayListModel::setData( const QModelIndex & index, const QVariant & value, 
 			this->list_[index.row()]->setArtist( value.toString() );
 			break;
 		case 2:
-			this->list_[index.row()]->getAlbum()->setTitle( value.toString() );
+		{
+			auto album = this->list_[index.row()]->getAlbum().lock();
+			album->setTitle( value.toString() );
 			break;
+		}
 		case 3:
 			this->list_[index.row()]->setDuration( value.value< album::Timestamp >() );
 			break;
@@ -115,7 +118,10 @@ QVariant PlayListModel::data( const QModelIndex & index, int role ) const {
 		case 1:
 			return this->list_[index.row()]->getArtist();
 		case 2:
-			return this->list_[index.row()]->getAlbum()->getTitle();
+		{
+			auto album = this->list_[index.row()]->getAlbum().lock();
+			return album->getTitle();
+		}
 		case 3:
 			return this->list_[index.row()]->getDuration().toString();
 		default:

@@ -22,6 +22,7 @@
 #include "album_p.hpp"
 
 using khopper::album::Album;
+using khopper::album::TrackSP;
 
 Album::Album() : p_( new Private ) {
 }
@@ -39,6 +40,14 @@ const QString & Album::getSongWriter() const {
 
 const QString & Album::getTitle() const {
 	return this->p_->title;
+}
+
+const QList< TrackSP > & Album::getTracks() const {
+	return this->p_->tracks;
+}
+
+void Album::addTrack( TrackSP track ) {
+	this->p_->tracks.push_back( track );
 }
 
 void Album::setArtist( const QString & artist ) {

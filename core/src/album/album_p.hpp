@@ -24,8 +24,6 @@
 
 #include "album.hpp"
 
-#include <QtCore/QString>
-
 namespace khopper {
 namespace album {
 
@@ -34,6 +32,7 @@ public:
 	QString artist;
 	QString songWriter;
 	QString title;
+	QList< TrackSP > tracks;
 };
 
 }

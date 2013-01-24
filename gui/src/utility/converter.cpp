@@ -67,7 +67,8 @@ void Converter::run() {
 	}
 
 	WriterSP encoder( this->creator_( this->getUniqueURI_() ) );
-	encoder->setAlbum( this->track_->getAlbum()->getTitle().toUtf8() );
+	auto album = this->track_->getAlbum().lock();
+	encoder->setAlbum( album->getTitle().toUtf8() );
 	encoder->setArtist( this->track_->getArtist().toUtf8() );
 	encoder->setTitle( this->track_->getTitle().toUtf8() );
 	encoder->setAudioFormat( decoder->getAudioFormat() );

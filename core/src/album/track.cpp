@@ -19,7 +19,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "trackprivate.hpp"
+#include "track_p.hpp"
 #include "album.hpp"
 #include "error.hpp"
 
@@ -39,7 +39,7 @@ using khopper::plugin::getReaderCreator;
 using khopper::plugin::ReaderCreator;
 
 Track::Private::Private( const QUrl & uri ):
-album( new Album ),
+album(),
 artist(),
 bitRate( 0 ),
 creator( getReaderCreator( uri ) ),
@@ -62,12 +62,14 @@ uri( uri ) {
 	this->duration = Timestamp::fromMillisecond( reader->getDuration() );
 	this->format = reader->getAudioFormat();
 
+	auto album = this->album.lock();
+
 	// FIXME: text codec
 	if( this->uri.scheme() == "file" ) {
 		TagLib::FileRef fin( this->uri.toLocalFile().toUtf8().constData() );
 		if( !fin.isNull() ) {
 			if( !fin.tag()->album().isNull() ) {
-				this->album->setTitle( TStringToQString( fin.tag()->album() ) );
+				album->setTitle( TStringToQString( fin.tag()->album() ) );
 			}
 			if( !fin.tag()->artist().isNull() ) {
 				this->artist = fin.tag()->artist().toCString( true );
@@ -81,8 +83,8 @@ uri( uri ) {
 		}
 	}
 
-	if( this->album->getTitle().isEmpty() ) {
-		this->album->setTitle( reader->getAlbumTitle() );
+	if( album->getTitle().isEmpty() ) {
+		album->setTitle( reader->getAlbumTitle() );
 	}
 	if( this->artist.isEmpty() ) {
 		this->artist = reader->getArtist();
@@ -104,7 +106,7 @@ uri( uri ) {
 }
 
 Track::Private::Private( const QUrl & uri, ReaderCreator creator ):
-album( new Album ),
+album(),
 artist(),
 bitRate( 0 ),
 creator( creator ),
@@ -135,7 +137,7 @@ ReaderSP Track::createReader() const {
 	return this->p_->creator( this->p_->uri );
 }
 
-AlbumSP Track::getAlbum() const {
+AlbumWP Track::getAlbum() const {
 	return this->p_->album;
 }
 
@@ -173,7 +175,8 @@ void Track::save() const {
 		qDebug() << "Format not supported, skip tag writing.";
 		return;
 	}
-	fout.tag()->setAlbum( TagLib::String( this->getAlbum()->getTitle().toUtf8().constData(), TagLib::String::UTF8 ) );
+	auto album = this->getAlbum().lock();
+	fout.tag()->setAlbum( TagLib::String( album->getTitle().toUtf8().constData(), TagLib::String::UTF8 ) );
 	fout.tag()->setArtist( TagLib::String( this->getArtist().toUtf8().constData(), TagLib::String::UTF8 ) );
 	fout.tag()->setTitle( TagLib::String( this->getTitle().toUtf8().constData(), TagLib::String::UTF8 ) );
 	fout.tag()->setTrack( this->getIndex() );
@@ -181,7 +184,7 @@ void Track::save() const {
 	fout.save();
 }
 
-void Track::setAlbum( AlbumSP album ) {
+void Track::setAlbum(AlbumWP album ) {
 	this->p_->album = album;
 }
 
