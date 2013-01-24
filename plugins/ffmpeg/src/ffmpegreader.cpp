@@ -26,12 +26,8 @@
 #include "wfile.hpp"
 #endif
 
-extern "C" {
-#include <libavcodec/avcodec.h>
-#include <libavformat/avformat.h>
-}
-
 #include <QtCore/QFile>
+#include <QtCore/QBuffer>
 #include <QtCore/QtDebug>
 
 #include <cstdlib>
@@ -66,14 +62,17 @@ pIOContext_(),
 #endif
 pFormatContext_(),
 pCodecContext_(),
-pPacket_( static_cast< AVPacket * >( av_malloc( sizeof( AVPacket ) ) ), []( AVPacket * p ) {
-	av_freep( &p );
+pFrame_( avcodec_alloc_frame(), []( AVFrame * p )->void {
+	avcodec_free_frame( &p );
 } ),
+packet_(),
 pStream_( NULL ),
 curPos_( 0LL ),
 eof_( true ),
 buffer_() {
-	av_init_packet( this->pPacket_.get() );
+	av_init_packet( &this->packet_ );
+	this->packet_.data = NULL;
+	this->packet_.size = 0;
 }
 
 bool FfmpegReader::atEnd() const {
@@ -123,7 +122,9 @@ void FfmpegReader::openResource_() {
 	if( ret != 0 ) {
 		throw IOError( AVUNERROR( ret ) );
 	}
-	this->pFormatContext_.reset( pFC, av_close_input_file );
+	this->pFormatContext_.reset( pFC, []( AVFormatContext * p )->void {
+		avformat_close_input( &p );
+	} );
 }
 
 void FfmpegReader::setupDemuxer_() {
@@ -167,23 +168,28 @@ void FfmpegReader::setupDecoder_() {
 		this->setChannelLayout( LayoutNative );
 	}
 	switch( pCC->sample_fmt ) {
-	case SAMPLE_FMT_U8:
+	case AV_SAMPLE_FMT_U8:
+	case AV_SAMPLE_FMT_U8P:
 		format.setSampleType( AudioFormat::UnSignedInt );
 		format.setSampleSize( 8 );
 		break;
-	case SAMPLE_FMT_S16:
+	case AV_SAMPLE_FMT_S16:
+	case AV_SAMPLE_FMT_S16P:
 		format.setSampleType( AudioFormat::SignedInt );
 		format.setSampleSize( 16 );
 		break;
-	case SAMPLE_FMT_S32:
+	case AV_SAMPLE_FMT_S32:
+	case AV_SAMPLE_FMT_S32P:
 		format.setSampleType( AudioFormat::SignedInt );
 		format.setSampleSize( 32 );
 		break;
-	case SAMPLE_FMT_FLT:
+	case AV_SAMPLE_FMT_FLT:
+	case AV_SAMPLE_FMT_FLTP:
 		format.setSampleType( AudioFormat::Float );
 		format.setSampleSize( 32 );
 		break;
-	case SAMPLE_FMT_DBL:
+	case AV_SAMPLE_FMT_DBL:
+	case AV_SAMPLE_FMT_DBLP:
 		format.setSampleType( AudioFormat::Float );
 		format.setSampleSize( 64 );
 		break;
@@ -244,8 +250,7 @@ void FfmpegReader::closeResource_() {
 	this->curPos_ = 0LL;
 	this->pStream_ = NULL;
 	// free the members in packet, not itself
-	av_free_packet( this->pPacket_.get() );
-	av_init_packet( this->pPacket_.get() );
+	av_free_packet( &this->packet_ );
 	this->pCodecContext_.reset();
 	this->pFormatContext_.reset();
 #ifdef Q_OS_WIN32
@@ -265,69 +270,62 @@ qint64 FfmpegReader::readData( char * data, qint64 maxSize ) {
 }
 
 QByteArray FfmpegReader::readFrame_() {
-	//stop = false;
-
 	// read a frame
-	int ret = av_read_frame( this->pFormatContext_.get(), this->pPacket_.get() );
+	int ret = av_read_frame( this->pFormatContext_.get(), &this->packet_ );
 	if( ret < 0 ) {
-		//stop = true;
 		this->eof_ = true;
 		return QByteArray();
 	}
 
-	int16_t sampleBuffer[AVCODEC_MAX_AUDIO_FRAME_SIZE*3/2];
-	QByteArray frame;
-	// current presentation timestamp: in second * AV_TIME_BASE
-	//int64_t curPts = -1;
-	// decoded time: in second * AV_TIME_BASE
-	int64_t decoded = 0;
-	//if( this->pPacket_->pts != static_cast< int64_t >( AV_NOPTS_VALUE ) ) {
-	//	// rescale presentation timestamp
-	//	this->msCurrent_ = AV_TIME_BASE * av_rescale(
-	//		this->pPacket_->pts,
-	//		this->pStream_->time_base.num,
-	//		this->pStream_->time_base.den
-	//	);
-	//}
-	// backup buffer pointer
-	uint8_t * pktDataBackup = this->pPacket_->data;
-	while( this->pPacket_->size > 0 ) {
-		//if( this->afterEnd( toMS( curPts ) ) ) {
-		//	stop = true;
-		//	break;
-		//}
-		int sampleByteLength = sizeof( sampleBuffer );
-		int decodedPacketSize = avcodec_decode_audio3(
-			this->pCodecContext_.get(),
-			sampleBuffer,
-			&sampleByteLength,
-			this->pPacket_.get()
-		);
-		if( decodedPacketSize < 0 ) {
-			break;
-		}
-		this->pPacket_->data += decodedPacketSize;
-		this->pPacket_->size -= decodedPacketSize;
-		if( sampleByteLength <= 0 ) {
-			continue;
-		}
-		// decoded time: decoded size in byte / sizeof int16_t * AV_TIME_BASE / ( sample rate * channels )
-		int64_t ptsDiff = ( static_cast< int64_t >( AV_TIME_BASE ) * ( sampleByteLength / sizeof( int16_t ) ) ) / ( this->getAudioFormat().frequency() * this->getAudioFormat().channels() );
-		//if( this->afterBegin( toMS( curPts ) ) ) {
-			const char * tmp = static_cast< char * >( static_cast< void * >( sampleBuffer ) );
-			frame.append( tmp, sampleByteLength );
-			decoded += ptsDiff;
-		//}
-		//curPts += ptsDiff;
-	}
-	if( pktDataBackup ) {
-		this->pPacket_->data = pktDataBackup;
-		av_free_packet( this->pPacket_.get() );
+	int gotFrame = 0;
+	ret = avcodec_decode_audio4( this->pCodecContext_.get(), this->pFrame_.get(), &gotFrame, &this->packet_ );
+	if( ret < 0 ) {
+		throw error::CodecError( AVUNERROR( ret ) );
 	}
 
-	this->curPos_ += toMS( decoded );
+	if( !gotFrame ) {
+		this->eof_ = true;
+		return QByteArray();
+	}
+	auto channels = this->pFrame_->channels;
+	auto nbSamples = this->pFrame_->nb_samples;
+	auto format = static_cast< AVSampleFormat >( this->pFrame_->format );
+	auto nbPlanes = av_sample_fmt_is_planar( format ) ? channels : 1;
+	auto sampleSize = av_get_bytes_per_sample( format );
 
-	return frame;
+	std::shared_ptr< uint8_t * > audioData( static_cast< uint8_t ** >( av_mallocz( sizeof( uint8_t * ) * nbPlanes ) ), []( uint8_t ** p )->void {
+		av_freep( &p[0] );
+		av_free( p );
+	} );
+	int lineSize = 0;
+	ret = av_samples_alloc( audioData.get(), &lineSize, channels, nbSamples, format, 1 );
+	if( ret < 0 ) {
+		throw error::CodecError( AVUNERROR( ret ) );
+	}
+	int bufferSize = av_samples_get_buffer_size( nullptr, channels, nbSamples, format, 1 );
+	av_samples_copy( audioData.get(), this->pFrame_->data, 0, 0, nbSamples, channels, format );
+
+	this->curPos_ += toMS( this->pFrame_->pkt_duration );
+	av_free_packet( &this->packet_ );
+
+	QByteArray pcm( bufferSize, '\0' );
+	if( nbPlanes > 1 ) {
+		auto tmp = audioData.get();
+		QBuffer pcmWriter( &pcm );
+		pcmWriter.open( QIODevice::ReadWrite );
+		for( int i = 0; i < lineSize; i += sampleSize ) {
+			for( int c = 0; c < channels; ++c ) {
+				// NOTE little endian
+				pcmWriter.write( reinterpret_cast< char * >( &tmp[c][i] ), sampleSize );
+			}
+		}
+		pcmWriter.close();
+	} else {
+		// frame already interleaved
+		memcpy( pcm.data(), audioData.get()[0], bufferSize );
+	}
+
+	return pcm;
 }
 
 bool FfmpegReader::seek( qint64 pos ) {

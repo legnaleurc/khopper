@@ -24,17 +24,13 @@
 
 #include "khopper/abstractreader.hpp"
 
-#ifdef Q_OS_WIN
 extern "C" {
-#include <libavformat\avio.h>
-}
+#include <libavcodec/avcodec.h>
+#include <libavformat/avformat.h>
+#ifdef Q_OS_WIN
+#include <libavformat/avio.h>
 #endif
-
-struct AVFormatContext;
-struct AVCodecContext;
-struct AVPacket;
-struct AVStream;
-struct AVDictionary;
+}
 
 namespace khopper {
 
@@ -77,7 +73,8 @@ namespace khopper {
 #endif
 			std::shared_ptr< AVFormatContext > pFormatContext_;
 			std::shared_ptr< AVCodecContext > pCodecContext_;
-			std::shared_ptr< AVPacket > pPacket_;
+			std::shared_ptr< AVFrame > pFrame_;
+			AVPacket packet_;
 			AVStream * pStream_;
 			qint64 curPos_;
 			bool eof_;
