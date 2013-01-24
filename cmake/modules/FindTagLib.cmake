@@ -27,10 +27,10 @@ if(NOT TAGLIB_INCLUDE_DIRS)
 endif()
 
 if(NOT TAGLIB_LIBRARIES)
-    find_library(TAGLIB_LIBRARIES_RELEASE tag
+    find_library(TAGLIB_LIBRARY_RELEASE tag
         HINTS ${TAGLIB_ROOT}
         PATH_SUFFIXES "lib")
-    find_library(TAGLIB_LIBRARIES_DEBUG tagd
+    find_library(TAGLIB_LIBRARY_DEBUG tagd
         HINTS ${TAGLIB_ROOT}
         PATH_SUFFIXES "lib")
 

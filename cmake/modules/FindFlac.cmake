@@ -28,10 +28,10 @@ if(NOT FLAC_INCLUDE_DIRS)
 endif()
 
 if(NOT FLAC_LIBRARIES)
-    find_library(FLAC_LIBRARIES_RELEASE FLAC
+    find_library(FLAC_LIBRARY_RELEASE FLAC
         HINTS ${FLAC_ROOT}
         PATH_SUFFIXES "lib")
-    find_library(FLAC_LIBRARIES_DEBUG FLACd
+    find_library(FLAC_LIBRARY_DEBUG FLACd
         HINTS ${FLAC_ROOT}
         PATH_SUFFIXES "lib")
 
