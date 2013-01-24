@@ -47,7 +47,7 @@ Required
 Optional
 ~~~~~~~~
 
-* `FFmpeg`_ >= 0.8 [LGPL, GPL]
+* `FFmpeg`_ >= 1.1 [LGPL, GPL]
 * `libFLAC`_ >= 1.2.1 [BSD-3]
 * `libvorbis`_ and `libogg`_ [BSD-3]
 * `LAME`_ [LGPL, patent]
