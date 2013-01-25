@@ -29,6 +29,7 @@
 extern "C" {
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
+#include <libavutil/mathematics.h>
 }
 
 #include <QtCore/QFile>
@@ -73,21 +74,21 @@ void FfmpegWriter::doClose() {
 }
 
 void FfmpegWriter::setupMuxer() {
-	AVFormatContext * pFC = NULL;
-	int ret = avformat_alloc_output_context2( &pFC, NULL, NULL, this->getURI().toString().toUtf8().constData() );
-	if( ret != 0 ) {
-		throw error::CodecError( AVUNERROR( ret ) );
+	auto pOF = av_guess_format( NULL, this->getURI().toString().toUtf8().constData(), NULL );
+	if( !pOF ) {
+		throw error::CodecError( QObject::tr( "could not recognize output format" ) );
 	}
-	this->pFormatContext_.reset( pFC, []( AVFormatContext * oc ) {
+	this->pFormatContext_.reset( avformat_alloc_context(), []( AVFormatContext * oc )->void {
 #ifndef Q_OS_WIN32
 		AVOutputFormat * pOF = oc->oformat;
 		if( !( pOF->flags & AVFMT_NOFILE ) && oc->pb ) {
 			avio_close( oc->pb );
 		}
 #endif
-
 		avformat_free_context( oc );
 	} );
+	this->pFormatContext_->oformat = pOF;
+	qstrncpy( this->pFormatContext_->filename, this->getURI().toString().toStdString().c_str(), sizeof( this->pFormatContext_->filename ) );
 }
 
 void FfmpegWriter::setupEncoder() {
