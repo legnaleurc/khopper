@@ -21,6 +21,7 @@ endfunction()
 
 add_subdirectory(cuesheet)
 add_subdirectory(ffmpeg)
+add_subdirectory(libav)
 add_subdirectory(mp3lame)
 add_subdirectory(redbook)
 add_subdirectory(single)
