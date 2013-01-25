@@ -219,7 +219,7 @@ void PluginModel::refreshPlugins() {
 		qDebug() << fileInfo.absoluteFilePath();
 		QPluginLoader loader( fileInfo.absoluteFilePath() );
 		AbstractPlugin * pPlugin = dynamic_cast< AbstractPlugin * >( loader.instance() );
-		if( pPlugin == NULL ) {
+		if( !pPlugin ) {
 			if( loader.isLoaded() ) {
 				emit this->errorOccured( QObject::tr( "Invalid plugin" ), QObject::tr( "This plugin: %1 is not valid for Khopper." ).arg( fileInfo.absoluteFilePath() ) );
 			} else {
@@ -228,16 +228,15 @@ void PluginModel::refreshPlugins() {
 			return;
 		}
 
-		using namespace khopper::plugin;
-		// FIXME: wrap lambda with std::function because the bug of VC10
-		PluginModel::Private::PluginListType::const_iterator it = std::find_if( this->p_->plugins.begin(), this->p_->plugins.end(), std::bind( std::function< bool( const PluginModel::Private::PluginListType::value_type &, const QString & ) >( []( const PluginModel::Private::PluginListType::value_type & that, const QString & id ) {
-			return that->getID() == id;
-		} ), std::placeholders::_1, pPlugin->getID() ) );
+		auto it = std::find_if( this->p_->plugins.begin(), this->p_->plugins.end(), [pPlugin]( const AbstractPlugin * that )->bool {
+			return that->getID() == pPlugin->getID();
+		} );
 		if( it != this->p_->plugins.end() ) {
 			// if find deprecated plugin, unload it
 			if( *it != loader.instance() ) {
 				// NOTE: maybe unsafe with multiple inheritance
-				qDebug() << "unload deprecated plugin:" << loader.unload();
+				bool unloaded = loader.unload();
+				qDebug() << "unload deprecated plugin:" << unloaded;
 			} else {
 				qDebug() << "identical instance: ignored";
 			}

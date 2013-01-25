@@ -22,38 +22,65 @@
 #ifndef KHOPPER_ALBUM_PLAYLIST_HPP
 #define KHOPPER_ALBUM_PLAYLIST_HPP
 
-#include "track.hpp"
-
-#include <QtCore/QList>
-#include <QtCore/QVector>
-#include <QtCore/QSet>
-
 #include <functional>
 
+#include <QtCore/QList>
+
+#include "track.hpp"
+
 namespace khopper {
+namespace album {
 
-	namespace album {
+class KHOPPER_DLL PlayList {
+	typedef QList< TrackSP > TrackList;
 
-		typedef QList< TrackSP > PlayList;
+public:
+	typedef TrackList::value_type value_type;
+	typedef TrackList::const_iterator const_iterator;
+	typedef TrackList::iterator iterator;
+	typedef TrackList::const_reference const_reference;
+	typedef TrackList::reference reference;
+	typedef TrackList::difference_type difference_type;
+	typedef TrackList::size_type size_type;
 
-		PlayList KHOPPER_DLL createPlayList( const QUrl & uri );
-		/**
-		 * @warning This function is under development and is subject to change.
-		 */
-		void exportPlayList( const PlayList & playList, const QUrl & fileURI );
+	static PlayList fromURI( const QUrl & uri );
 
-	}
+	PlayList();
+	PlayList( const PlayList & that );
+	PlayList & operator =( const PlayList & that );
+	PlayList( PlayList && that );
+	PlayList & operator =( PlayList && that );
 
-	namespace plugin {
+	void append( const PlayList & that );
+	const_iterator begin() const;
+	iterator begin();
+	const_iterator end() const;
+	iterator end();
+	iterator erase( iterator pos );
+	bool empty() const;
+	reference front();
+	const_reference front() const;
+	void push_back( TrackSP track );
+	size_type size() const;
+	reference operator []( size_type index );
+	const_reference operator []( size_type index ) const;
 
-		typedef std::function< unsigned int ( const QUrl & ) > PlayListVerifier;
-		typedef std::function< album::PlayList ( const QUrl & ) > PlayListCreator;
+private:
+	class Private;
+	std::shared_ptr< Private > p_;
+};
 
-		bool KHOPPER_DLL registerPlayList( const QString & id, PlayListVerifier v, PlayListCreator c );
-		bool KHOPPER_DLL unregisterPlayList( const QString & id );
+}
 
-	}
+namespace plugin {
 
+typedef std::function< unsigned int ( const QUrl & ) > PlayListVerifier;
+typedef std::function< album::PlayList ( const QUrl & ) > PlayListCreator;
+
+bool KHOPPER_DLL registerPlayList( const QString & id, PlayListVerifier v, PlayListCreator c );
+bool KHOPPER_DLL unregisterPlayList( const QString & id );
+
+}
 }
 
 #endif

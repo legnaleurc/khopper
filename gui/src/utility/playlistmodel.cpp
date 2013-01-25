@@ -20,6 +20,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "playlistmodel.hpp"
+#include "khopper/album.hpp"
 
 #include <algorithm>
 
@@ -38,7 +39,7 @@ QModelIndex PlayListModel::index( int row, int column, const QModelIndex & paren
 	if( column >= this->columnCount( parent ) ) {
 		return QModelIndex();
 	}
-	return this->createIndex( row, column, const_cast< void * >( static_cast< const void * >( &this->list_[row] ) ) );
+	return this->createIndex( row, column, const_cast< void * >( static_cast< const void * >( this->list_[row].get() ) ) );
 }
 
 QModelIndex PlayListModel::parent( const QModelIndex & /*index*/ ) const {
@@ -66,7 +67,7 @@ void PlayListModel::remove( QModelIndexList indexes ) {
 	} );
 	std::for_each( indexes.begin(), indexes.end(), [&]( const QModelIndex & i ) {
 		this->beginRemoveRows( QModelIndex(), i.row(), i.row() );
-		this->list_.removeAt( i.row() );
+		this->list_.erase( std::next( this->list_.begin(), i.row() ) );
 		this->endRemoveRows();
 	} );
 }
@@ -89,8 +90,11 @@ bool PlayListModel::setData( const QModelIndex & index, const QVariant & value, 
 			this->list_[index.row()]->setArtist( value.toString() );
 			break;
 		case 2:
-			this->list_[index.row()]->getAlbum()->setTitle( value.toString() );
+		{
+			auto album = this->list_[index.row()]->getAlbum().lock();
+			album->setTitle( value.toString() );
 			break;
+		}
 		case 3:
 			this->list_[index.row()]->setDuration( value.value< album::Timestamp >() );
 			break;
@@ -114,7 +118,10 @@ QVariant PlayListModel::data( const QModelIndex & index, int role ) const {
 		case 1:
 			return this->list_[index.row()]->getArtist();
 		case 2:
-			return this->list_[index.row()]->getAlbum()->getTitle();
+		{
+			auto album = this->list_[index.row()]->getAlbum().lock();
+			return album->getTitle();
+		}
 		case 3:
 			return this->list_[index.row()]->getDuration().toString();
 		default:

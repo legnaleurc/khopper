@@ -82,7 +82,7 @@ void FfmpegPlugin::doInstall() {
 #endif
 		if( avformat_open_input( &pFC, uri.toString().toUtf8().constData(), NULL, NULL ) == 0 ) {
 			int ret = avformat_find_stream_info( pFC, NULL );
-			av_close_input_file( pFC );
+			avformat_close_input( &pFC );
 			if( ret < 0 ) {
 				char msg[1024];
 				av_strerror( ret, msg, sizeof( msg ) );

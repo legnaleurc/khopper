@@ -1,5 +1,5 @@
 /**
- * @file trackprivate.hpp
+ * @file album_p.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,36 +19,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_ALBUM_TRACKPRIVATE_HPP
-#define KHOPPER_ALBUM_TRACKPRIVATE_HPP
+#ifndef KHOPPER_ALBUM_ALBUM_HPP_
+#define KHOPPER_ALBUM_ALBUM_HPP_
 
-#include "track.hpp"
-
-#include <QtCore/QTextCodec>
-#include <QtCore/QUrl>
+#include "album.hpp"
 
 namespace khopper {
-	namespace album {
+namespace album {
 
-		class Track::Private {
-		public:
-			explicit Private( const QUrl & uri );
-			Private( const QUrl & uri, plugin::ReaderCreator creator );
+class Album::Private {
+public:
+	QString artist;
+	QString songWriter;
+	QString title;
+	QList< TrackSP > tracks;
+};
 
-			AlbumSP album;
-			QByteArray artist;
-			unsigned int bitRate;
-			plugin::ReaderCreator creator;
-			Timestamp duration;
-			codec::AudioFormat format;
-			unsigned int index;
-			QByteArray songWriter;
-			QByteArray title;
-			QTextCodec * textCodec;
-			QUrl uri;
-		};
-
-	}
+}
 }
 
 #endif

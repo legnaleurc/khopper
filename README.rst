@@ -1,0 +1,83 @@
+Khopper
+=======
+
+Supported platform
+------------------
+
+* GNU/Linux
+* Microsoft Windows
+* Mac OS X
+
+Supported Formats
+-----------------
+
+The `FFmpeg`_ plugin provides the most audio codecs, such as wav, ape ... etc.
+
+Please at least enable the `FFmpeg`_ plugin.
+
+License
+-------
+
+* libkhopper: LGPLv2.1 or later
+* khopper_gui: GPLv3 or later
+* plugins: May vary with dependencies, but basically are GPLv3
+
+Build Dependencies
+------------------
+
+Toolchain
+~~~~~~~~~
+
+C++11 support is required.
+
+* Linux: `GNU Compiler Collection`_ >= 4.5
+* Windows: `Microsoft Visual C++`_ >= 2010
+* Mac OS X: `XCode`_ >= 4.5
+
+Required
+~~~~~~~~
+
+* `CMake`_
+* `Qt`_ >= 4.7 [GPL3, LGPL2.1, Commercial]
+
+  * Phonon: for GUI
+
+Optional
+~~~~~~~~
+
+* `FFmpeg`_ >= 1.1 [LGPL, GPL]
+* `libFLAC`_ >= 1.2.1 [BSD-3]
+* `libvorbis`_ and `libogg`_ [BSD-3]
+* `LAME`_ [LGPL, patent]
+* `TagLib`_ [LGPL, MPL]
+
+How To Build
+------------
+
+GNU/Linux or Mac OS X
+~~~~~~~~~~~~~~~~~~~~~
+
+.. code:: bash
+
+  mkdir build
+  cd build
+  cmake -DCMAKE_BUILD_TYPE=Release ..
+  make -j
+
+Microsoft Windows
+~~~~~~~~~~~~~~~~~
+
+Please use `CMake`_ GUI to generate the building system.
+
+
+.. _CMake: http://www.cmake.org/
+.. _FFmpeg: http://ffmpeg.org/
+.. _GNU Compiler Collection: http://gcc.gnu.org/
+.. _LAME: http://lame.sourceforge.net/
+.. _libFLAC: http://flac.sourceforge.net/
+.. _libvorbis: http://www.xiph.org/downloads/
+.. _libogg: http://www.xiph.org/downloads/
+.. _Microsoft Visual C++: http://www.microsoft.com/visualstudio/eng/products/visual-studio-2010-express
+.. _Qt: http://qt-project.org/
+.. _TagLib: http://taglib.github.com/
+.. _XCode: https://developer.apple.com/xcode/

@@ -22,12 +22,12 @@
 #ifndef KHOPPER_PLUGIN_ABSTRACTPLUGIN_HPP
 #define KHOPPER_PLUGIN_ABSTRACTPLUGIN_HPP
 
-#include "config.hpp"
+#include <memory>
 
 #include <QtCore/QFileInfo>
 #include <QtCore/QString>
 
-#include <memory>
+#include "config.hpp"
 
 namespace khopper {
 	namespace plugin {

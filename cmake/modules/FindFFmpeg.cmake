@@ -12,7 +12,7 @@ include(KhopperUtility)
 if(NOT FFMPEG_FOUND)
     find_package(PkgConfig QUIET)
     if(PKG_CONFIG_FOUND)
-        pkg_check_modules(PC_FFMPEG libavformat libavcodec libavutil)
+        pkg_check_modules(PC_FFMPEG QUIET libavformat libavcodec libavutil)
         if(PC_FFMPEG_FOUND)
             set(FFMPEG_DEFINITIONS ${PC_FFMPEG_CFLAGS_OTHER})
             set(FFMPEG_INCLUDE_DIRS ${PC_FFMPEG_INCLUDE_DIRS})
@@ -53,7 +53,6 @@ if(NOT FFMPEG_FOUND)
     endif()
 
     include(FindPackageHandleStandardArgs)
-
     find_package_handle_standard_args(FFMPEG DEFAULT_MSG FFMPEG_INCLUDE_DIRS FFMPEG_LIBRARIES)
 
     mark_as_advanced(FFMPEG_INCLUDE_DIRS FFMPEG_LIBRARIES)

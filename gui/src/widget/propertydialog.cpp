@@ -20,6 +20,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "propertydialog.hpp"
+#include "khopper/album.hpp"
 #include "ui_propertydialog.h"
 
 using namespace khopper::widget;
@@ -39,7 +40,8 @@ int PropertyDialog::exec( TrackSP track ) {
 	this->currentTrack_ = track;
 	this->ui_->title->setText( track->getTitle() );
 	this->ui_->artist->setText( track->getArtist() );
-	this->ui_->albumTitle->setText( track->getAlbum()->getTitle() );
+	auto album = track->getAlbum().lock();
+	this->ui_->albumTitle->setText( album->getTitle() );
 	this->ui_->bitRate->setText( QString( "%1 bps" ).arg( track->getBitRate() ) );
 	this->ui_->channels->setNum( track->getAudioFormat().channels() );
 	this->ui_->frequency->setText( QString( "%1 Hz" ).arg( track->getAudioFormat().frequency() ) );
@@ -68,7 +70,8 @@ void PropertyDialog::perform_( QAbstractButton * button ) {
 void PropertyDialog::write_() {
 	this->currentTrack_->setTitle( this->ui_->title->text() );
 	this->currentTrack_->setArtist( this->ui_->artist->text() );
-	this->currentTrack_->getAlbum()->setTitle( this->ui_->albumTitle->text() );
+	auto album = this->currentTrack_->getAlbum().lock();
+	album->setTitle( this->ui_->albumTitle->text() );
 
 	this->currentTrack_->save();
 }
