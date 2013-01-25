@@ -20,9 +20,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "album_p.hpp"
+#include "track.hpp"
 
 using khopper::album::Album;
+using khopper::album::AlbumCSP;
+using khopper::album::AlbumSP;
 using khopper::album::TrackSP;
+
+AlbumSP Album::create() {
+	return AlbumSP( new Album );
+}
 
 Album::Album() : p_( new Private ) {
 }
@@ -48,6 +55,7 @@ const QList< TrackSP > & Album::getTracks() const {
 
 void Album::addTrack( TrackSP track ) {
 	this->p_->tracks.push_back( track );
+	track->setAlbum( this->shared_from_this() );
 }
 
 void Album::setArtist( const QString & artist ) {
@@ -60,4 +68,8 @@ void Album::setSongWriter( const QString & songWriter ) {
 
 void Album::setTitle( const QString & title ) {
 	this->p_->title = title;
+}
+
+uint khopper::album::qHash( AlbumCSP key ) {
+	return ::qHash( key.get() );
 }

@@ -22,13 +22,13 @@
 #ifndef KHOPPER_CODEC_ABSTRACTREADER_HPP
 #define KHOPPER_CODEC_ABSTRACTREADER_HPP
 
-#include "audioformat.hpp"
+#include <functional>
+#include <memory>
 
 #include <QtCore/QIODevice>
 #include <QtCore/QUrl>
 
-#include <functional>
-#include <memory>
+#include "audioformat.hpp"
 
 namespace khopper {
 

@@ -58,7 +58,7 @@ using khopper::plugin::getReaderCreator;
 PlayList CueSheetParser::load( const QString & content, const QDir & dir, bool freedb ) {
 	CueSheetParser parser;
 	parser.parseCue_( content, dir, freedb );
-	return parser.playList_;
+	return std::move( parser.playList_ );
 }
 
 CueSheetParser::CueSheetParser():

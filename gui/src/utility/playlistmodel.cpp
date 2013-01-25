@@ -39,7 +39,7 @@ QModelIndex PlayListModel::index( int row, int column, const QModelIndex & paren
 	if( column >= this->columnCount( parent ) ) {
 		return QModelIndex();
 	}
-	return this->createIndex( row, column, const_cast< void * >( static_cast< const void * >( &this->list_[row] ) ) );
+	return this->createIndex( row, column, const_cast< void * >( static_cast< const void * >( this->list_[row].get() ) ) );
 }
 
 QModelIndex PlayListModel::parent( const QModelIndex & /*index*/ ) const {
@@ -67,7 +67,7 @@ void PlayListModel::remove( QModelIndexList indexes ) {
 	} );
 	std::for_each( indexes.begin(), indexes.end(), [&]( const QModelIndex & i ) {
 		this->beginRemoveRows( QModelIndex(), i.row(), i.row() );
-		this->list_.removeAt( i.row() );
+		this->list_.erase( std::next( this->list_.begin(), i.row() ) );
 		this->endRemoveRows();
 	} );
 }

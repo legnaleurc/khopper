@@ -3,6 +3,10 @@
 
 #include <memory>
 
+#include <QtCore/QtGlobal>
+
+#include "config.hpp"
+
 namespace khopper {
 namespace album {
 
@@ -11,6 +15,8 @@ typedef std::shared_ptr< Album > AlbumSP;
 typedef std::shared_ptr< const Album > AlbumCSP;
 typedef std::weak_ptr< Album > AlbumWP;
 typedef std::weak_ptr< const Album > AlbumCWP;
+
+uint KHOPPER_DLL qHash( AlbumCSP key );
 
 class Track;
 /**

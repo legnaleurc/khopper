@@ -35,7 +35,7 @@ namespace album {
 
 class KHOPPER_DLL Album: public std::enable_shared_from_this< Album > {
 public:
-	static AlbumSP createAlbum();
+	static AlbumSP create();
 
 	virtual ~Album();
 

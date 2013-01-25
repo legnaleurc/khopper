@@ -42,7 +42,6 @@
 #include <algorithm>
 
 using namespace khopper::widget;
-using khopper::album::createPlayList;
 using khopper::album::PlayList;
 using khopper::error::BaseError;
 
@@ -118,7 +117,7 @@ void MainWindow::open( const QList< QUrl > & uris ) {
 		}
 
 		try {
-			tracks.append( createPlayList( uri ) );
+			tracks.append( PlayList::fromURI( uri ) );
 		} catch( BaseError & e ) {
 			this->showErrorMessage_( tr( "Can not open this file!" ), e.getMessage() );
 		}
