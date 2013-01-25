@@ -32,7 +32,6 @@ namespace album {
 
 class Track::Private {
 public:
-	explicit Private( const QUrl & uri );
 	Private( const QUrl & uri, plugin::ReaderCreator creator );
 
 	AlbumWP album;

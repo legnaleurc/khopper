@@ -22,13 +22,13 @@
 #ifndef KHOPPER_ALBUM_TRACK_HPP
 #define KHOPPER_ALBUM_TRACK_HPP
 
-#include "abstractreader.hpp"
-#include "albumfwd.hpp"
-#include "timestamp.hpp"
-
 #include <QtCore/QByteArray>
 #include <QtCore/QTextCodec>
 #include <QtCore/QUrl>
+
+#include "abstractreader.hpp"
+#include "albumfwd.hpp"
+#include "timestamp.hpp"
 
 namespace khopper {
 namespace album {
@@ -42,10 +42,8 @@ namespace album {
  */
 class KHOPPER_DLL Track {
 public:
-	/**
-	 * @brief Default constructor.
-	 */
-	explicit Track( const QUrl & uri );
+	static TrackSP create( const QUrl & uri, plugin::ReaderCreator creator );
+
 	virtual ~Track();
 
 	AlbumWP getAlbum() const;
@@ -94,7 +92,5 @@ private:
 
 }
 }
-
-uint KHOPPER_DLL qHash( khopper::album::TrackCSP key );
 
 #endif

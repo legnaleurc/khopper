@@ -20,90 +20,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "track_p.hpp"
-#include "album.hpp"
-#include "error.hpp"
 
-#include <fileref.h>
-#include <tag.h>
-
-#include <QtCore/QFileInfo>
-#include <QtCore/QHash>
-#include <QtCore/QtDebug>
-
-using namespace khopper::album;
+using khopper::album::AlbumWP;
+using khopper::album::Timestamp;
+using khopper::album::Track;
+using khopper::album::TrackSP;
 using khopper::codec::AudioFormat;
 using khopper::codec::ReaderSP;
-using khopper::error::RunTimeError;
-using khopper::error::CodecError;
-using khopper::plugin::getReaderCreator;
 using khopper::plugin::ReaderCreator;
-
-Track::Private::Private( const QUrl & uri ):
-album(),
-artist(),
-bitRate( 0 ),
-creator( getReaderCreator( uri ) ),
-duration(),
-format(),
-songWriter(),
-title(),
-textCodec( QTextCodec::codecForName( "UTF-8" ) ),
-uri( uri ) {
-	ReaderSP reader( this->creator( this->uri ) );
-	if( !reader ) {
-		throw RunTimeError( QObject::tr( "Invalid reader (%1)" ).arg( Q_FUNC_INFO ) );
-	}
-
-	reader->open( QIODevice::ReadOnly );
-	if( !reader->isOpen() ) {
-		throw CodecError( QObject::tr( "Can not open `%1\' (%2)" ).arg( uri.toString() ).arg( Q_FUNC_INFO ) );
-	}
-	this->bitRate = reader->getBitRate();
-	this->duration = Timestamp::fromMillisecond( reader->getDuration() );
-	this->format = reader->getAudioFormat();
-
-	auto album = this->album.lock();
-
-	// FIXME: text codec
-	if( this->uri.scheme() == "file" ) {
-		TagLib::FileRef fin( this->uri.toLocalFile().toUtf8().constData() );
-		if( !fin.isNull() ) {
-			if( !fin.tag()->album().isNull() ) {
-				album->setTitle( TStringToQString( fin.tag()->album() ) );
-			}
-			if( !fin.tag()->artist().isNull() ) {
-				this->artist = fin.tag()->artist().toCString( true );
-			}
-			if( fin.tag()->track() != 0 ) {
-				this->index = fin.tag()->track();
-			}
-			if( !fin.tag()->title().isNull() ) {
-				this->title = fin.tag()->title().toCString( true );
-			}
-		}
-	}
-
-	if( album->getTitle().isEmpty() ) {
-		album->setTitle( reader->getAlbumTitle() );
-	}
-	if( this->artist.isEmpty() ) {
-		this->artist = reader->getArtist();
-	}
-	if( this->index <= 0 ) {
-		this->index = reader->getIndex();
-	}
-	if( this->title.isEmpty() ) {
-		if( reader->getTitle().isEmpty() ) {
-			// FIXME may not a local file
-			QFileInfo info( reader->getURI().toLocalFile() );
-			this->title = info.baseName().toUtf8();
-		} else {
-			this->title = reader->getTitle();
-		}
-	}
-
-	reader->close();
-}
 
 Track::Private::Private( const QUrl & uri, ReaderCreator creator ):
 album(),
@@ -118,8 +42,8 @@ textCodec( QTextCodec::codecForName( "UTF-8" ) ),
 uri( uri ) {
 }
 
-Track::Track( const QUrl & uri ):
-p_( new Private( uri ) ) {
+TrackSP Track::create( const QUrl & uri, ReaderCreator creator ) {
+	return TrackSP( new Track( uri, creator ) );
 }
 
 Track::Track( const QUrl & uri, ReaderCreator creator ):
@@ -166,22 +90,6 @@ const QUrl & Track::getURI() const {
 }
 
 void Track::save() const {
-	if( this->p_->uri.scheme() != "file" ) {
-		return;
-	}
-
-	TagLib::FileRef fout( this->p_->uri.toLocalFile().toUtf8().constData() );
-	if( fout.isNull() ) {
-		qDebug() << "Format not supported, skip tag writing.";
-		return;
-	}
-	auto album = this->getAlbum().lock();
-	fout.tag()->setAlbum( TagLib::String( album->getTitle().toUtf8().constData(), TagLib::String::UTF8 ) );
-	fout.tag()->setArtist( TagLib::String( this->getArtist().toUtf8().constData(), TagLib::String::UTF8 ) );
-	fout.tag()->setTitle( TagLib::String( this->getTitle().toUtf8().constData(), TagLib::String::UTF8 ) );
-	fout.tag()->setTrack( this->getIndex() );
-
-	fout.save();
 }
 
 void Track::setAlbum(AlbumWP album ) {
@@ -236,8 +144,4 @@ const AudioFormat & Track::getAudioFormat() const {
 
 void Track::setAudioFormat( const AudioFormat & format ) {
 	this->p_->format = format;
-}
-
-uint qHash( TrackCSP key ) {
-	return qHash( key.get() );
 }

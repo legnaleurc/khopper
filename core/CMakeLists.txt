@@ -11,13 +11,6 @@ set_package_properties(Qt4
     PURPOSE "Necessary for core library")
 include(${QT_USE_FILE})
 
-#find TagLib
-find_package(TagLib REQUIRED)
-set_package_properties(TagLib
-    PROPERTIES
-    TYPE REQUIRED
-    PURPOSE "Necessary for metadata reading")
-
 # hack MSCV path
 if(MSVC)
     set(LIBRARY_OUTPUT_PATH "${CMAKE_BINARY_DIR}")
@@ -44,10 +37,10 @@ find_moc_headers(KHOPPER_CORE_MOC_HEADERS ${KHOPPER_CORE_HEADERS})
 qt4_wrap_cpp(KHOPPER_CORE_MOC_SOURCES ${KHOPPER_CORE_MOC_HEADERS})
 source_group("Generated Files" FILES ${KHOPPER_CORE_MOC_SOURCES})
 
-include_directories("include/khopper" "src" ${TAGLIB_INCLUDE_DIRS})
+include_directories("include/khopper" "src")
 
 add_library(khopper SHARED ${KHOPPER_CORE_HEADERS} ${KHOPPER_CORE_SOURCES} ${KHOPPER_CORE_MOC_SOURCES} ${KHOPPER_CORE_PLATFORM_SOURCES})
-target_link_libraries(khopper ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${TAGLIB_LIBRARIES})
+target_link_libraries(khopper ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY})
 set_target_properties(khopper
     PROPERTIES
         VERSION ${KHOPPER_VERSION}
