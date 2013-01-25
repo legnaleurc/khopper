@@ -40,9 +40,7 @@ Required
 * `CMake`_
 * `Qt`_ >= 4.7 [GPL3, LGPL2.1, Commercial]
 
-  * Phonon
-
-* `TagLib`_ [LGPL, MPL]
+  * Phonon: for GUI
 
 Optional
 ~~~~~~~~
@@ -51,6 +49,7 @@ Optional
 * `libFLAC`_ >= 1.2.1 [BSD-3]
 * `libvorbis`_ and `libogg`_ [BSD-3]
 * `LAME`_ [LGPL, patent]
+* `TagLib`_ [LGPL, MPL]
 
 How To Build
 ------------
