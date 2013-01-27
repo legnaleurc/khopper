@@ -28,6 +28,7 @@
 
 using khopper::album::PlayList;
 using khopper::album::AlbumSP;
+using khopper::album::TrackSP;
 using namespace khopper::plugin;
 
 class PlayList::Private {

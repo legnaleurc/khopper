@@ -9,10 +9,12 @@ endif()
 include_directories("${CMAKE_SOURCE_DIR}/core/include")
 
 function(KHOPPER_ADD_PLUGIN target)
+    find_package(Qt4 REQUIRED QUIET)
+    include(${QT_USE_FILE})
     add_definitions(${QT_DEFINITIONS} -DQT_PLUGIN -DQT_SHARED)
     add_definitions(-DKHOPPER_PLUGIN_ID=${target})
     add_dependencies(${target} khopper)
-    target_link_libraries(${target} khopper)
+    target_link_libraries(${target} khopper ${QT_LIBRARIES})
     set_target_properties(${target} PROPERTIES VERSION ${KHOPPER_VERSION} SOVERSION ${KHOPPER_VERSION})
     install(TARGETS ${target}
         RUNTIME DESTINATION "plugins"

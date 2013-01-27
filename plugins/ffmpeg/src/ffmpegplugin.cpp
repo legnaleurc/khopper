@@ -20,20 +20,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "ffmpegplugin.hpp"
-#include "wavpanel.hpp"
-#include "ffmpegreader.hpp"
-#ifdef Q_OS_WIN32
-#include "wfile.hpp"
-#endif
 
-#include "khopper/application.hpp"
+#include <QtCore/QtDebug>
+#include <QtCore/QtPlugin>
 
 extern "C" {
 #include <libavformat/avformat.h>
 }
 
-#include <QtCore/QtDebug>
-#include <QtCore/QtPlugin>
+#include "khopper/application.hpp"
+#include "wavpanel.hpp"
+#include "ffmpegreader.hpp"
+#ifdef Q_OS_WIN32
+#include "wfile.hpp"
+#endif
 
 Q_EXPORT_PLUGIN2( KHOPPER_PLUGIN_ID, khopper::plugin::FfmpegPlugin )
 

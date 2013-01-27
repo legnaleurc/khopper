@@ -20,11 +20,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "mp3plugin.hpp"
-#include "mp3panel.hpp"
-
-#include "khopper/application.hpp"
 
 #include <QtCore/QtPlugin>
+
+#include "khopper/application.hpp"
+#include "mp3panel.hpp"
 
 Q_EXPORT_PLUGIN2( KHOPPER_PLUGIN_ID, khopper::plugin::Mp3Plugin )
 
