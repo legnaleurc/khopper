@@ -61,6 +61,9 @@ bool AbstractReader::open( OpenMode mode ) {
 }
 
 void AbstractReader::close() {
+	if( !this->isOpen() ) {
+		return;
+	}
 	this->QIODevice::close();
 
 	this->p_.reset( new AbstractReaderPrivate( this->p_->uri ) );
