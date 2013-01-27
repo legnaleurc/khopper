@@ -24,15 +24,13 @@
 
 #include "khopper/abstractwriter.hpp"
 
-#ifdef Q_OS_WIN
 extern "C" {
-#include <libavformat\avio.h>
-}
+#include <libavcodec/avcodec.h>
+#include <libavformat/avformat.h>
+#ifdef Q_OS_WIN
+#include <libavformat/avio.h>
 #endif
-
-struct AVCodecContext;
-struct AVFormatContext;
-struct AVStream;
+}
 
 namespace khopper {
 
@@ -68,7 +66,7 @@ namespace khopper {
 			virtual void openResource();
 			virtual void closeResource();
 			virtual void writeHeader();
-			virtual void writeFrame( const short * sample );
+			virtual void writeFrame( const char * sample );
 			virtual void doOpen();
 			virtual void doClose();
 			virtual void writeFrame( const QByteArray & sample );
@@ -80,10 +78,12 @@ namespace khopper {
 #endif
 			std::shared_ptr< AVFormatContext > pFormatContext_;
 			std::shared_ptr< AVCodecContext > pCodecContext_;
+			std::shared_ptr< AVFrame > pFrame_;
 			AVStream * pStream_;
 			QByteArray queue_;
 			double quality_;
 			int frameSize_;
+			int sampleLength_;
 		};
 
 	}
