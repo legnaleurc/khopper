@@ -28,7 +28,7 @@ namespace khopper {
 namespace error {
 
 /**
- * @brief I/O error
+ * @brief Codec error
  */
 class KHOPPER_DLL CodecError: public BaseError {
 public:

@@ -28,7 +28,7 @@ namespace khopper {
 namespace error {
 
 /**
- * @brief I/O error
+ * @brief System error
  */
 class KHOPPER_DLL SystemError: public BaseError {
 public:
