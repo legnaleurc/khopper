@@ -57,6 +57,7 @@ using khopper::codec::AbstractReader;
 using khopper::codec::AudioFormat;
 using khopper::codec::ChannelLayout;
 using khopper::error::BaseError;
+using khopper::error::RunTimeError;
 using khopper::plugin::ReaderCreator;
 using khopper::plugin::ReaderVerifier;
 
@@ -69,7 +70,11 @@ bool khopper::plugin::unregisterReader( const QString & id ) {
 }
 
 ReaderCreator khopper::plugin::getReaderCreator( const QUrl & uri ) {
-	return ApplicationPrivate::self->readerFactory.getCreator( uri );
+	auto creator = ApplicationPrivate::self->readerFactory.getCreator( uri );
+	if( !creator ) {
+		throw RunTimeError( QObject::tr( "find no suitable codec" ) );
+	}
+	return creator;
 }
 
 AbstractReader::AbstractReader( const QUrl & uri ):

@@ -29,6 +29,7 @@
 using khopper::album::PlayList;
 using khopper::album::AlbumSP;
 using khopper::album::TrackSP;
+using khopper::error::RunTimeError;
 using namespace khopper::plugin;
 
 class PlayList::Private {
@@ -38,7 +39,11 @@ public:
 };
 
 PlayList PlayList::fromURI( const QUrl & uri ) {
-	return ApplicationPrivate::self->playlistFactory.createProduct( uri );
+	auto creator = ApplicationPrivate::self->playlistFactory.getCreator( uri );
+	if( !creator ) {
+		throw RunTimeError( QObject::tr( "this playlist is not supported" ) );
+	}
+	return creator( uri );
 }
 
 PlayList::PlayList(): p_( new Private ) {

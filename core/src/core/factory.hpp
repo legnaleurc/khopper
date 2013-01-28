@@ -28,44 +28,41 @@
 
 namespace khopper {
 
-	template< typename IDType, typename KeyType, typename ProductType, template< typename, typename > class ErrorPolicy >
-	class Factory : private ErrorPolicy< KeyType, std::function< ProductType ( const KeyType & ) > > {
-	public:
-		typedef std::function< int ( const KeyType & ) > VerifierType;
-		typedef std::function< ProductType ( const KeyType & ) > CreatorType;
+template< typename IDType, typename KeyType, typename ProductType, template< typename, typename > class ErrorPolicy >
+class Factory : private ErrorPolicy< KeyType, std::function< ProductType ( const KeyType & ) > > {
+private:
+	typedef std::function< int ( const KeyType & ) > VerifierType;
+	typedef std::function< ProductType ( const KeyType & ) > CreatorType;
+	typedef std::map< IDType, std::pair< VerifierType, CreatorType > > TableType;
 
-		bool registerProduct( const IDType & id, VerifierType verifier, CreatorType creator ) {
-			return this->t_.insert( std::make_pair( id, std::make_pair( verifier, creator ) ) ).second;
-		}
+public:
+	bool registerProduct( const IDType & id, VerifierType verifier, CreatorType creator ) {
+		return this->t_.insert( std::make_pair( id, std::make_pair( verifier, creator ) ) ).second;
+	}
 
-		bool unregisterProduct( const IDType & id ) {
-			return this->t_.erase( id ) == 1;
-		}
+	bool unregisterProduct( const IDType & id ) {
+		return this->t_.erase( id ) == 1;
+	}
 
-		CreatorType getCreator( const KeyType & key ) const {
-			CreatorType maxCreator;
-			int maxScore = 0;
-			std::for_each( this->t_.begin(), this->t_.end(), [&]( const typename TableType::value_type & p ) {
-				int score = p.second.first( key );
-				if( score > maxScore ) {
-					maxScore = score;
-					maxCreator = p.second.second;
-				}
-			} );
-			if( maxScore <= 0 ) {
-				return this->onError( key );
+	CreatorType getCreator( const KeyType & key ) const {
+		CreatorType maxCreator;
+		int maxScore = 0;
+		std::for_each( this->t_.begin(), this->t_.end(), [&]( const typename TableType::value_type & p ) {
+			int score = p.second.first( key );
+			if( score > maxScore ) {
+				maxScore = score;
+				maxCreator = p.second.second;
 			}
-			return maxCreator;
+		} );
+		if( maxScore <= 0 ) {
+			return this->onError( key );
 		}
+		return maxCreator;
+	}
 
-		ProductType createProduct( const KeyType & key ) const {
-			return this->getCreator( key )( key );
-		}
-
-	private:
-		typedef std::map< IDType, std::pair< VerifierType, CreatorType > > TableType;
-		TableType t_;
-	};
+private:
+	TableType t_;
+};
 
 }
 

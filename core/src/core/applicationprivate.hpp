@@ -29,36 +29,34 @@
 
 namespace khopper {
 
-	namespace plugin {
-		class PluginModel;
+namespace plugin {
+	class PluginModel;
+}
+
+template< typename KeyType, typename CreatorType >
+class FactoryError {
+public:
+	CreatorType onError( const KeyType & /*key*/ ) const {
+		return nullptr;
 	}
+};
 
-	template< typename KeyType, typename CreatorType >
-	class FactoryError {
-	public:
-		CreatorType onError( const KeyType & /*key*/ ) const {
-			return []( const KeyType & /*key*/ )->typename CreatorType::result_type {
-				throw error::RunTimeError( "Find no suitable codec." );
-			};
-		}
-	};
+/**
+ * @attention Becareful the initialization order of members, this class
+ * is a part of Singleton. All factories should construct very first and
+ * should destruct very last.
+ */
+class ApplicationPrivate {
+public:
+	static ApplicationPrivate * self;
 
-	/**
-	 * @attention Becareful the initialization order of members, this class
-	 * is a part of Singleton. All factories should construct very first and
-	 * should destruct very last.
-	 */
-	class ApplicationPrivate {
-	public:
-		static ApplicationPrivate * self;
+	ApplicationPrivate();
 
-		ApplicationPrivate();
-
-		int cpuCount;
-		Factory< QString, QUrl, codec::ReaderSP, FactoryError > readerFactory;
-		Factory< QString, QUrl, album::PlayList, FactoryError > playlistFactory;
-		std::shared_ptr< plugin::PluginModel > pm;
-	};
+	int cpuCount;
+	Factory< QString, QUrl, codec::ReaderSP, FactoryError > readerFactory;
+	Factory< QString, QUrl, album::PlayList, FactoryError > playlistFactory;
+	std::shared_ptr< plugin::PluginModel > pm;
+};
 
 }
 
