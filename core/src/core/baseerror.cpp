@@ -1,5 +1,5 @@
 /**
- * @file error.cpp
+ * @file baseerror.cpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>

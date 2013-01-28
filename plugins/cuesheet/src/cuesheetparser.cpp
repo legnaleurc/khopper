@@ -1,5 +1,5 @@
 /**
- * @file cuesheet.cpp
+ * @file cuesheetparser.cpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
