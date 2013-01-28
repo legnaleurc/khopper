@@ -1,6 +1,19 @@
 Khopper
 =======
 
+This is a GUI audio converter, which can parse CUE sheet and convert to another
+audio format.
+
+Feature
+-------
+* Parse CUE sheet
+* Support many codecs (e.g.: wav, ape, mp3 ... etc.)
+* Converts to mp3, flac, ogg, wav
+* Support multi-task convertion
+* Query `FreeDB`_ for CUE sheet
+* Play audio (by Phonon)
+* Extensible by plugins
+
 Supported platform
 ------------------
 
@@ -72,6 +85,7 @@ Please use `CMake`_ GUI to generate the building system.
 
 .. _CMake: http://www.cmake.org/
 .. _FFmpeg: http://ffmpeg.org/
+.. _FreeDB: http://www.freedb.org/
 .. _GNU Compiler Collection: http://gcc.gnu.org/
 .. _LAME: http://lame.sourceforge.net/
 .. _libFLAC: http://flac.sourceforge.net/
