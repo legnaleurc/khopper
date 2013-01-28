@@ -59,9 +59,14 @@ void Converter::run() {
 	ReaderSP decoder;
 	try {
 		decoder = this->track_->createReader();
-		decoder->open( QIODevice::ReadOnly );
 	} catch( BaseError & e ) {
-		emit this->errorOccured( tr( "Decoder Error" ), e.getMessage() );
+		emit this->errorOccured( QObject::tr( "Decoder Error" ), e.getMessage() );
+		emit this->finished();
+		return;
+	}
+	bool opened = decoder->open( QIODevice::ReadOnly );
+	if( !opened ) {
+		emit this->errorOccured( QObject::tr( "Decoder Error" ), decoder->errorString() );
 		emit this->finished();
 		return;
 	}
