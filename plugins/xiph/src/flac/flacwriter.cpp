@@ -23,10 +23,6 @@
 
 #include "khopper/error.hpp"
 
-#include <QtCore/QtDebug>
-
-#include <cstdint>
-
 using namespace khopper::codec;
 using khopper::error::IOError;
 using khopper::error::SystemError;
@@ -41,7 +37,8 @@ ogg_( false ) {
 	}
 }
 
-FlacWriter::~FlacWriter() {
+void FlacWriter::setOggMode( bool ogg ) {
+	this->ogg_ = ogg;
 }
 
 void FlacWriter::doOpen() {
@@ -142,15 +139,15 @@ void FlacWriter::doOpen() {
 	}
 }
 
-void FlacWriter::writeFrame( const QByteArray & sample ) {
-	if( sample.isEmpty() ) {
-		return;
+qint64 FlacWriter::writeData( const char * data, qint64 len ) {
+	if( !data || len <= 0 ) {
+		return len;
 	}
-	const int32_t bufSize = sample.size() / ( this->getAudioFormat().sampleSize() / 8 );
+	const qint64 bufSize = len / ( this->getAudioFormat().sampleSize() / 8 );
 	// TODO: big or little endian
-	const int16_t * audio = static_cast< const int16_t * >( static_cast< const void * >( sample.data() ) );
+	const int16_t * audio = static_cast< const int16_t * >( static_cast< const void * >( data ) );
 	std::vector< int32_t > buffer( bufSize );
-	for( int i = 0; i < bufSize; ++i ) {
+	for( qint64 i = 0; i < bufSize; ++i ) {
 		buffer[i] = audio[i];
 	}
 
@@ -158,13 +155,15 @@ void FlacWriter::writeFrame( const QByteArray & sample ) {
 	if( !ok ) {
 		throw error::CodecError( FLAC__StreamEncoderStateString[FLAC__stream_encoder_get_state( this->pFE_.get() )] );
 	}
+
+	return len;
 }
 
 void FlacWriter::doClose() {
 	FLAC__bool ok = FLAC__stream_encoder_finish( this->pFE_.get() );
 	if( !ok ) {
 		// nothrow
-		qDebug() << FLAC__StreamEncoderStateString[FLAC__stream_encoder_get_state( this->pFE_.get() )];
+		// qDebug() << FLAC__StreamEncoderStateString[FLAC__stream_encoder_get_state( this->pFE_.get() )];
 	}
 	this->metadataOwner_.clear();
 	this->ogg_ = false;

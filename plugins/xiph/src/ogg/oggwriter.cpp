@@ -46,7 +46,8 @@ quality_( -1.f ) {
 	this->out_ = new QFile( this->getURI().toLocalFile(), this );
 }
 
-OggWriter::~OggWriter() {
+void OggWriter::setVBRQuality( float quality ) {
+	this->quality_ = quality;
 }
 
 void OggWriter::doOpen() {
@@ -119,10 +120,10 @@ void OggWriter::doOpen() {
 	}
 }
 
-void OggWriter::writeFrame( const QByteArray & sample ) {
-	if( !sample.isEmpty() ) {
-		const int nSamples = sample.size() / sizeof( short int ) / this->getAudioFormat().channels();
-		const short int * audio = static_cast< const short int * >( static_cast< const void * >( sample.data() ) );
+qint64 OggWriter::writeData( const char * data, qint64 len ) {
+	if( data && len > 0 ) {
+		const qint64 nSamples = len / sizeof( short int ) / this->getAudioFormat().channels();
+		const short int * audio = static_cast< const short int * >( static_cast< const void * >( data ) );
 		float * * buffer = vorbis_analysis_buffer( this->dsp_.get(), nSamples );
 
 		if( this->getAudioFormat().channels() == 1 ) {
@@ -156,6 +157,8 @@ void OggWriter::writeFrame( const QByteArray & sample ) {
 			this->writePage_( og );
 		}
 	}
+
+	return len;
 }
 
 void OggWriter::doClose() {

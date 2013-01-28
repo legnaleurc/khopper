@@ -22,151 +22,135 @@
 #ifndef KHOPPER_CODEC_ABSTRACTWRITER_HPP
 #define KHOPPER_CODEC_ABSTRACTWRITER_HPP
 
-#include "audioformat.hpp"
+#include <functional>
+#include <memory>
 
 #include <QtCore/QIODevice>
 #include <QtCore/QUrl>
 
-#include <functional>
-#include <memory>
+#include "audioformat.hpp"
 
 namespace khopper {
 
-	namespace codec {
+namespace codec {
 
-		/**
-		 * @ingroup Codecs
-		 * @brief Audio writer interface
-		 * @sa AbstractReader
-		 */
-		class KHOPPER_DLL AbstractWriter : public QIODevice {
-		public:
-			/**
-			 * @brief Virtual destructor
-			 */
-			virtual ~AbstractWriter();
+/**
+ * @ingroup Codecs
+ * @brief Audio writer interface
+ * @sa AbstractReader
+ */
+class KHOPPER_DLL AbstractWriter : public QIODevice {
+public:
+	/**
+	 * @brief Virtual destructor
+	 */
+	virtual ~AbstractWriter();
 
-			/**
-			 * @brief Open file
-			 * @param filePath
-			 *
-			 * AbstractWriter do not handle path encoding,
-			 * so you should help yourself.
-			 */
-			virtual bool open( OpenMode mode );
-			/**
-			 * @brief Close file
-			 * @note No fail!
-			 */
-			virtual void close();
+	/**
+	 * @brief Open file
+	 * @param filePath
+	 *
+	 * AbstractWriter do not handle path encoding,
+	 * so you should help yourself.
+	 */
+	virtual bool open( OpenMode mode );
+	/**
+	 * @brief Close file
+	 * @note No fail!
+	 */
+	virtual void close();
 
-			/**
-			 * @brief Write @p data to encoder
-			 * @param [in] data Raw binary data
-			 */
-			//void write( const ByteArray & data = ByteArray() );
-			/**
-			 * @brief Write unwrited data in buffer.
-			 */
-			void flush();
+	/**
+	 * @brief Set album
+	 * @sa getAlbum
+	 */
+	void setAlbum( const QByteArray & album );
+	/**
+	 * @brief Set artist
+	 * @sa getArtist
+	 */
+	void setArtist( const QByteArray & artist );
+	void setAudioFormat( const AudioFormat & format );
+	/**
+	 * @brief Set bitRate
+	 * @sa getBitRate
+	 */
+	void setBitRate( unsigned int bitRate );
+	void setChannelLayout( ChannelLayout channelLayout );
+	/**
+	 * @brief Set title
+	 * @sa getTitle
+	 */
+	void setTitle( const QByteArray & title );
 
-			/**
-			 * @brief Set album
-			 * @sa getAlbum
-			 */
-			void setAlbum( const QByteArray & album );
-			/**
-			 * @brief Set artist
-			 * @sa getArtist
-			 */
-			void setArtist( const QByteArray & artist );
-			void setAudioFormat( const AudioFormat & format );
-			/**
-			 * @brief Set bitRate
-			 * @sa getBitRate
-			 */
-			void setBitRate( unsigned int bitRate );
-			void setChannelLayout( ChannelLayout channelLayout );
-			/**
-			 * @brief Set title
-			 * @sa getTitle
-			 */
-			void setTitle( const QByteArray & title );
+protected:
+	/**
+	 * @brief Constructor
+	 *
+	 * @param uri where this writer is
+	 */
+	explicit AbstractWriter( const QUrl & uri );
 
-		protected:
-			/**
-			 * @brief Constructor
-			 */
-			explicit AbstractWriter( const QUrl & uri );
+	/**
+	 * @brief Get album
+	 * @sa setAlbum
+	 */
+	const QByteArray & getAlbum() const;
+	/**
+	 * @brief Get artist
+	 * @sa setArtist
+	 */
+	const QByteArray & getArtist() const;
+	const AudioFormat & getAudioFormat() const;
+	/**
+	 * @brief Get bit rate
+	 * @sa setBitRate
+	 */
+	unsigned int getBitRate() const;
+	ChannelLayout getChannelLayout() const;
+	/**
+	 * @brief Get file path
+	 * @sa setFilePath
+	 */
+	const QUrl & getURI() const;
+	/**
+	 * @brief Get title
+	 * @sa setTitle
+	 */
+	const QByteArray & getTitle() const;
 
-			/**
-			 * @brief Get album
-			 * @sa setAlbum
-			 */
-			const QByteArray & getAlbum() const;
-			/**
-			 * @brief Get artist
-			 * @sa setArtist
-			 */
-			const QByteArray & getArtist() const;
-			const AudioFormat & getAudioFormat() const;
-			/**
-			 * @brief Get bit rate
-			 * @sa setBitRate
-			 */
-			unsigned int getBitRate() const;
-			ChannelLayout getChannelLayout() const;
-			/**
-			 * @brief Get file path
-			 * @sa setFilePath
-			 */
-			const QUrl & getURI() const;
-			/**
-			 * @brief Get title
-			 * @sa setTitle
-			 */
-			const QByteArray & getTitle() const;
+	virtual qint64 readData( char * data, qint64 maxlen );
 
-			virtual qint64 readData( char * data, qint64 maxlen );
-			virtual qint64 writeData( const char * data, qint64 len );
+	virtual void doOpen() = 0;
+	virtual void doClose() = 0;
 
-			virtual void doOpen() = 0;
-			virtual void doClose() = 0;
-			virtual void writeFrame( const QByteArray & sample ) = 0;
+private:
+	// prevent copying
+	AbstractWriter( const AbstractWriter & );
+	AbstractWriter & operator =( const AbstractWriter & );
 
-		private:
-			// prevent copying
-			AbstractWriter( const AbstractWriter & );
-			AbstractWriter & operator =( const AbstractWriter & );
+	class Private;
+	std::shared_ptr< Private > p_;
+};
 
-			class Private;
-			std::shared_ptr< Private > p_;
-		};
+/**
+ * @ingroup Codecs
+ * @brief AbstractWriter smart pointer
+ * @sa AbstractWriter WriterCSP
+ */
+typedef std::shared_ptr< AbstractWriter > WriterSP;
+/**
+ * @ingroup Codecs
+ * @brief AbstractWriter const smart pointer
+ * @sa AbstractWriter WriterSP
+ */
+typedef std::shared_ptr< const AbstractWriter > WriterCSP;
 
-		/**
-		 * @ingroup Codecs
-		 * @brief AbstractWriter smart pointer
-		 * @sa AbstractWriter WriterCSP
-		 *
-		 * Use TR1 shared pointer.
-		 */
-		typedef std::shared_ptr< AbstractWriter > WriterSP;
-		/**
-		 * @ingroup Codecs
-		 * @brief AbstractWriter const smart pointer
-		 * @sa AbstractWriter WriterSP
-		 *
-		 * Use TR1 shared pointer.
-		 */
-		typedef std::shared_ptr< const AbstractWriter > WriterCSP;
+}
 
-	}
-
-	namespace plugin {
-
-		typedef std::function< codec::WriterSP ( const QUrl & ) > WriterCreator;
-
-	}
+namespace plugin {
+typedef std::function< codec::WriterSP ( const QUrl & ) > WriterCreator;
+}
 
 }
 

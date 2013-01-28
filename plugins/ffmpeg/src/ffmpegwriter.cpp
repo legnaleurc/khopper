@@ -174,7 +174,7 @@ void FfmpegWriter::openResource() {
 
 void FfmpegWriter::closeResource() {
 	// flush remaining samples
-	this->writeFrame( QByteArray() );
+	this->writeData( nullptr, 0 );
 	av_write_trailer( this->pFormatContext_.get() );
 	this->queue_.clear();
 	this->pStream_ = nullptr;
@@ -198,10 +198,10 @@ void FfmpegWriter::writeHeader() {
 	}
 }
 
-void FfmpegWriter::writeFrame( const QByteArray & sample ) {
-	if( !sample.isEmpty() ) {
+qint64 FfmpegWriter::writeData( const char * data, qint64 len ) {
+	if( data && len > 0LL ) {
 		// put samples into queue
-		this->queue_.append( sample );
+		this->queue_.append( data, len );
 		// encode if possible
 		while( this->queue_.size() >= this->sampleLength_ ) {
 			auto tmp = this->queue_.left( this->sampleLength_ );
@@ -214,6 +214,7 @@ void FfmpegWriter::writeFrame( const QByteArray & sample ) {
 			this->queue_.clear();
 		}
 	}
+	return len;
 }
 
 void FfmpegWriter::writeFrame( const char * sample ) {

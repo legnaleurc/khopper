@@ -45,7 +45,7 @@ bool AbstractWriter::open( OpenMode /*mode*/ ) {
 
 void AbstractWriter::close() {
 	try {
-		this->flush();
+//		this->flush();
 		this->doClose();
 	} catch( ... ) {
 		// TODO: log an error
@@ -68,14 +68,14 @@ qint64 AbstractWriter::readData( char * /*data*/, qint64 /*maxlen*/ ) {
 	return -1;
 }
 
-qint64 AbstractWriter::writeData( const char * data, qint64 len ) {
-	this->writeFrame( QByteArray( data, len ) );
-	return len;
-}
+//qint64 AbstractWriter::writeData( const char * data, qint64 len ) {
+//	this->writeFrame( QByteArray( data, len ) );
+//	return len;
+//}
 
-void AbstractWriter::flush() {
-	this->writeData( NULL, 0 );
-}
+//void AbstractWriter::flush() {
+//	this->writeData( NULL, 0 );
+//}
 
 const QUrl & AbstractWriter::getURI() const {
 	return this->p_->uri;

@@ -21,12 +21,12 @@
  */
 #include "mp3writer.hpp"
 
-#include "khopper/error.hpp"
-
 #include <id3v2tag.h>
 
 #include <QtCore/QFile>
 #include <QtCore/QtDebug>
+
+#include "khopper/error.hpp"
 
 using namespace khopper::codec;
 using khopper::error::IOError;
@@ -44,6 +44,10 @@ id3v2Offset_( -1L ) {
 
 	// setup file
 	this->out_ = new QFile( this->getURI().toLocalFile(), this );
+}
+
+void Mp3Writer::setVBRQuality( int quality ) {
+	this->quality_ = quality;
 }
 
 void Mp3Writer::doOpen() {
@@ -86,11 +90,11 @@ void Mp3Writer::doOpen() {
 	}
 }
 
-void Mp3Writer::writeFrame( const QByteArray & sample ) {
-	if( !sample.isEmpty() ) {
-		short int * audio = static_cast< short int * >( const_cast< void * >( static_cast< const void * >( sample.data() ) ) );
+qint64 Mp3Writer::writeData( const char * data, qint64 len ) {
+	if( data && len > 0 ) {
+		short int * audio = static_cast< short int * >( const_cast< void * >( static_cast< const void * >( data ) ) );
 		// FIXME: watch out! should check sample format;
-		const int nSamples = sample.size() / sizeof( short int ) / this->getAudioFormat().channels();
+		const qint64 nSamples = len / sizeof( short int ) / this->getAudioFormat().channels();
 		std::vector< unsigned char > buffer( 1.25 * nSamples + 7200 );
 
 		int ret = 0;
@@ -126,6 +130,8 @@ void Mp3Writer::writeFrame( const QByteArray & sample ) {
 		);
 		this->out_->write( static_cast< char * >( static_cast< void * >( &buffer[0] ) ), ret );
 	}
+
+	return len;
 }
 
 void Mp3Writer::doClose() {
