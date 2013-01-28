@@ -122,9 +122,9 @@ void FfmpegWriter::setupEncoder() {
 
 	// FIXME: find best sample format?
 	pCC->sample_fmt = AV_SAMPLE_FMT_NONE;
-	for( auto fmt = *pC->sample_fmts; fmt != AV_SAMPLE_FMT_NONE; ++fmt ) {
-		if( !av_sample_fmt_is_planar( fmt ) && av_get_bytes_per_sample( fmt ) == 2 ) {
-			pCC->sample_fmt = fmt;
+	for( auto fmt = pC->sample_fmts; *fmt != AV_SAMPLE_FMT_NONE; ++fmt ) {
+		if( !av_sample_fmt_is_planar( *fmt ) && av_get_bytes_per_sample( *fmt ) == 2 ) {
+			pCC->sample_fmt = *fmt;
 			break;
 		}
 	}
