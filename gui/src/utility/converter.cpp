@@ -79,10 +79,9 @@ void Converter::run() {
 	encoder->setAudioFormat( decoder->getAudioFormat() );
 	encoder->setChannelLayout( decoder->getChannelLayout() );
 
-	try {
-		encoder->open( QIODevice::WriteOnly );
-	} catch( BaseError & e ) {
-		emit this->errorOccured( tr( "Encoder Error" ), e.getMessage() );
+	opened = encoder->open( QIODevice::WriteOnly );
+	if( !opened ) {
+		emit this->errorOccured( tr( "Encoder Error" ), encoder->errorString() );
 		emit this->finished();
 		return;
 	}
