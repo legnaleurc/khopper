@@ -19,15 +19,46 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
-#include "abstractreaderprivate.hpp"
-#include "core/applicationprivate.hpp"
+#include "abstractreader.hpp"
 
 #include <cassert>
 #include <cmath>
 #include <cstring>
 
-using namespace khopper::codec;
-using namespace khopper::plugin;
+#include "error.hpp"
+#include "core/applicationprivate.hpp"
+
+
+namespace khopper {
+namespace codec {
+class AbstractReader::Private {
+public:
+	Private( const QUrl & uri );
+
+	QByteArray album;
+	QByteArray artist;
+	unsigned int bitRate;
+	QByteArray buffer;
+	ChannelLayout channelLayout;
+	QByteArray comment;
+	QByteArray copyright;
+	AudioFormat format;
+	int64_t msDuration;
+	QUrl uri;
+	QByteArray genre;
+	unsigned int index;
+	QByteArray title;
+	QString year;
+};
+}
+}
+
+using khopper::codec::AbstractReader;
+using khopper::codec::AudioFormat;
+using khopper::codec::ChannelLayout;
+using khopper::error::BaseError;
+using khopper::plugin::ReaderCreator;
+using khopper::plugin::ReaderVerifier;
 
 bool khopper::plugin::registerReader( const QString & id, ReaderVerifier v, ReaderCreator c ) {
 	return ApplicationPrivate::self->readerFactory.registerProduct( id, v, c );
@@ -43,7 +74,7 @@ ReaderCreator khopper::plugin::getReaderCreator( const QUrl & uri ) {
 
 AbstractReader::AbstractReader( const QUrl & uri ):
 QIODevice(),
-p_( new AbstractReaderPrivate( uri ) ) {
+p_( new Private( uri ) ) {
 }
 
 AbstractReader::~AbstractReader() {
@@ -54,26 +85,40 @@ bool AbstractReader::open( OpenMode mode ) {
 		this->close();
 	}
 
-	bool opened = this->QIODevice::open( mode & ~( WriteOnly & Text ) );
-	this->doOpen();
+	bool opened = this->QIODevice::open( mode & ~( QIODevice::WriteOnly & QIODevice::Text ) );
+	bool good = false;
+	try {
+		this->doOpen();
+		good = true;
+	} catch( BaseError & e ) {
+		this->setErrorString( e.getMessage() );
+		this->close();
+	} catch( std::exception & e ) {
+		this->setErrorString( QString::fromAscii( e.what() ) );
+		this->close();
+	}
 
-	return opened;
+	return opened && good;
 }
 
 void AbstractReader::close() {
 	if( !this->isOpen() ) {
 		return;
 	}
-	this->QIODevice::close();
 
-	this->p_.reset( new AbstractReaderPrivate( this->p_->uri ) );
+	this->p_.reset( new Private( this->p_->uri ) );
 
 	try {
 		this->doClose();
+	} catch( BaseError & e ) {
+		this->setErrorString( e.getMessage() );
+	} catch( std::exception & e ) {
+		this->setErrorString( QString::fromAscii( e.what() ) );
 	} catch( ... ) {
 		// TODO: log an error
-		assert( !"a plugin can not clean up its own mess ..." );
 	}
+
+	this->QIODevice::close();
 }
 
 qint64 AbstractReader::writeData( const char * /*data*/, qint64 /*maxSize*/ ) {
@@ -181,7 +226,7 @@ void AbstractReader::setAudioFormat( const AudioFormat & format ) {
 	this->p_->format.setCodec( "audio/pcm" );
 }
 
-AbstractReader::AbstractReaderPrivate::AbstractReaderPrivate( const QUrl & uri ):
+AbstractReader::Private::Private( const QUrl & uri ):
 album(),
 artist(),
 bitRate( 0 ),
