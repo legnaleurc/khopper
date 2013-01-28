@@ -14,6 +14,11 @@ Feature
 * Play audio (by Phonon)
 * Extensible by plugins
 
+Usage
+-----
+
+Please see `here <https://github.com/legnaleurc/khopper/wiki/Usage>`_.
+
 Supported platform
 ------------------
 
