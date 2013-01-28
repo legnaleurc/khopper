@@ -19,11 +19,32 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
-#include "abstractwriterprivate.hpp"
+#include "abstractwriter.hpp"
 
 #include <cassert>
 
-using namespace khopper::codec;
+#include "error.hpp"
+
+namespace khopper {
+namespace codec {
+class AbstractWriter::Private {
+public:
+	explicit Private( const QUrl & uri );
+
+	QByteArray album;
+	QByteArray artist;
+	unsigned int bitRate;
+	ChannelLayout channelLayout;
+	AudioFormat format;
+	QUrl uri;
+	QByteArray title;
+};
+}
+}
+
+using khopper::codec::AbstractWriter;
+using khopper::error::BaseError;
+using khopper::codec::AudioFormat;
 
 AbstractWriter::AbstractWriter( const QUrl & uri ):
 p_( new Private( uri ) ) {
@@ -38,44 +59,39 @@ bool AbstractWriter::open( OpenMode /*mode*/ ) {
 	}
 
 	bool opened = this->QIODevice::open( WriteOnly );
-	this->doOpen();
+	bool good = false;
+	try {
+		this->doOpen();
+		good = true;
+	} catch( BaseError & e ) {
+		this->setErrorString( e.getMessage() );
+	} catch( std::exception & e ) {
+		this->setErrorString( QString::fromAscii( e.what() ) );
+	}
 
-	return opened;
+	return opened && good;
 }
 
 void AbstractWriter::close() {
+	if( !this->isOpen() ) {
+		return;
+	}
+
 	try {
-//		this->flush();
 		this->doClose();
+	} catch( BaseError & e ) {
+		this->setErrorString( e.getMessage() );
+	} catch( std::exception & e ) {
+		this->setErrorString( QString::fromAscii( e.what() ) );
 	} catch( ... ) {
 		// TODO: log an error
-		assert( !"a plugin can not clean up its own mess ..." );
 	}
-	// FIXME: know what should be reset
-//			this->album_.clear();
-//			this->artist_.clear();.
-//			this->bitRate_ = -1;
-//			this->channelLayout_ = LayoutNative;
-//			this->channels_ = -1;
-//			this->uri_.clear();
-//			this->sampleFormat_ = SF_NONE;
-//			this->sampleRate_ = -1;
-//			this->title_.clear();
 	this->QIODevice::close();
 }
 
 qint64 AbstractWriter::readData( char * /*data*/, qint64 /*maxlen*/ ) {
 	return -1;
 }
-
-//qint64 AbstractWriter::writeData( const char * data, qint64 len ) {
-//	this->writeFrame( QByteArray( data, len ) );
-//	return len;
-//}
-
-//void AbstractWriter::flush() {
-//	this->writeData( NULL, 0 );
-//}
 
 const QUrl & AbstractWriter::getURI() const {
 	return this->p_->uri;
