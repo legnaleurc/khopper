@@ -21,12 +21,15 @@
  */
 #include "flacreader.hpp"
 
+#include <cstring>
+
 #include <QtCore/QFile>
 #include <QtCore/QMultiMap>
 #include <QtCore/QStringList>
 #include <QtCore/QtDebug>
 
-#include <cstring>
+#include "khopper/codecerror.hpp"
+#include "khopper/ioerror.hpp"
 
 using namespace khopper::codec;
 using khopper::error::CodecError;
@@ -38,10 +41,10 @@ in_( NULL ),
 pFD_( FLAC__stream_decoder_new(), FLAC__stream_decoder_delete ),
 buffer_() {
 	if( !this->pFD_ ) {
-		throw CodecError( QObject::tr( "Not enough memory! (from khopper::codec::FlacReader)" ) );
+		throw CodecError( QObject::tr( "Not enough memory! (from khopper::codec::FlacReader)" ), __FILE__, __LINE__ );
 	}
 	if( uri.scheme() != "file" ) {
-		throw IOError( QObject::tr( "%1 protocol is not supported" ).arg( uri.scheme() ) );
+		throw IOError( QObject::tr( "%1 protocol is not supported" ).arg( uri.scheme() ), __FILE__, __LINE__ );
 	}
 	this->in_ = new QFile( uri.toLocalFile(), this );
 }
@@ -52,14 +55,14 @@ bool FlacReader::atEnd() const {
 
 void FlacReader::doOpen() {
 	if( !FLAC__stream_decoder_set_md5_checking( this->pFD_.get(), true ) ) {
-		throw CodecError( QObject::tr( "Can\'t check md5! (from khopper::codec::FlacReader)" ) );
+		throw CodecError( QObject::tr( "Can\'t check md5! (from khopper::codec::FlacReader)" ), __FILE__, __LINE__ );
 	}
 	if( !FLAC__stream_decoder_set_metadata_respond_all( this->pFD_.get() ) ) {
-		throw CodecError( QObject::tr( "Can\'t retrive all metadata! (from khopper::codec::FlacReader)" ) );
+		throw CodecError( QObject::tr( "Can\'t retrive all metadata! (from khopper::codec::FlacReader)" ), __FILE__, __LINE__ );
 	}
 
 	if( !this->in_->open( QIODevice::ReadOnly ) ) {
-		throw IOError( QObject::tr( "Can not open %1 : %2" ).arg( this->getURI().toString() ).arg( this->in_->errorString() ) );
+		throw IOError( QObject::tr( "Can not open %1 : %2" ).arg( this->getURI().toString() ).arg( this->in_->errorString() ), __FILE__, __LINE__ );
 	}
 	FLAC__StreamDecoderInitStatus initStatus = FLAC__stream_decoder_init_stream(
 		this->pFD_.get(),
@@ -74,12 +77,12 @@ void FlacReader::doOpen() {
 		this
 	);
 	if( initStatus != FLAC__STREAM_DECODER_INIT_STATUS_OK ) {
-		throw CodecError( QObject::tr( "%1  (from khopper::codec::FlacReader)" ).arg( FLAC__StreamDecoderInitStatusString[initStatus] ) );
+		throw CodecError( QObject::tr( "%1  (from khopper::codec::FlacReader)" ).arg( FLAC__StreamDecoderInitStatusString[initStatus] ), __FILE__, __LINE__ );
 	}
 
 	FLAC__bool ok = FLAC__stream_decoder_process_until_end_of_metadata( this->pFD_.get() );
 	if( !ok ) {
-		throw CodecError( QObject::tr( "Can\'t read metadata (from khopper::codec::FlacReader)" ) );
+		throw CodecError( QObject::tr( "Can\'t read metadata (from khopper::codec::FlacReader)" ), __FILE__, __LINE__ );
 	}
 }
 
@@ -108,7 +111,7 @@ qint64 FlacReader::readData( char * data, qint64 maxSize ) {
 	while( !this->atEnd() && this->buffer_.size() < maxSize ) {
 		FLAC__bool ok = FLAC__stream_decoder_process_single( this->pFD_.get() );
 		if( !ok ) {
-			throw CodecError( QString( "%1 %2" ).arg( FLAC__StreamDecoderErrorStatusString[FLAC__stream_decoder_get_state( this->pFD_.get() )] ).arg( "(from khopper::codec::FlacReader)" ) );
+			throw CodecError( QString( "%1 %2" ).arg( FLAC__StreamDecoderErrorStatusString[FLAC__stream_decoder_get_state( this->pFD_.get() )] ).arg( "(from khopper::codec::FlacReader)" ), __FILE__, __LINE__ );
 		}
 	}
 	maxSize = qMin( maxSize, static_cast< qint64 >( this->buffer_.size() ) );
@@ -269,7 +272,7 @@ FLAC__StreamDecoderWriteStatus FlacReader::writeCallback_(
 				self->buffer_.push_back( tmp[3] );
 				break;
 			default:
-				throw CodecError( "Unsupported sample resolution (from khopper::codec::FlacReader)" );
+				throw CodecError( QObject::tr( "Unsupported sample resolution (from khopper::codec::FlacReader)" ), __FILE__, __LINE__ );
 			}
 		}
 	}
@@ -278,5 +281,5 @@ FLAC__StreamDecoderWriteStatus FlacReader::writeCallback_(
 }
 
 void FlacReader::errorCallback_(const FLAC__StreamDecoder * /*decoder*/, FLAC__StreamDecoderErrorStatus status, void * /*client_data*/) {
-	throw CodecError( std::string( FLAC__StreamDecoderErrorStatusString[status] ) + " (from khopper::codec::FlacReader)" );
+	throw CodecError( std::string( FLAC__StreamDecoderErrorStatusString[status] ) + " (from khopper::codec::FlacReader)", __FILE__, __LINE__ );
 }

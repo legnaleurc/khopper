@@ -21,15 +21,17 @@
  */
 #include "oggwriter.hpp"
 
-#include "khopper/error.hpp"
-
-#include <QtCore/QFile>
-
 #include <cstdio>
 #include <cstdlib>
 
-using namespace khopper::codec;
+#include <QtCore/QFile>
+
+#include "khopper/codecerror.hpp"
+#include "khopper/ioerror.hpp"
+
+using khopper::codec::OggWriter;
 using khopper::error::IOError;
+using khopper::error::CodecError;
 
 OggWriter::OggWriter( const QUrl & uri ):
 AbstractWriter( uri ),
@@ -41,7 +43,7 @@ block_(),
 comments_(),
 quality_( -1.f ) {
 	if( this->getURI().scheme() != "file" ) {
-		throw IOError( QObject::tr( "Do not support remote access." ) );
+		throw IOError( QObject::tr( "Do not support remote access." ), __FILE__, __LINE__ );
 	}
 	this->out_ = new QFile( this->getURI().toLocalFile(), this );
 }
@@ -65,7 +67,7 @@ void OggWriter::doOpen() {
 	vorbis_info_init( vi );
 	int ret = vorbis_encode_init_vbr( vi, this->getAudioFormat().channels(), this->getAudioFormat().frequency(), this->quality_ );
 	if( ret != 0 ) {
-		throw error::CodecError( "Vorbis initialization error" );
+		throw CodecError( QObject::tr( "Vorbis initialization error" ), __FILE__, __LINE__ );
 	}
 
 	// setup vorbis dsp state
@@ -106,7 +108,7 @@ void OggWriter::doOpen() {
 
 	// open device
 	if( !this->out_->open( QIODevice::WriteOnly ) ) {
-		throw IOError( QObject::tr( "Can not open %1 : %2" ).arg( this->getURI().toString() ).arg( this->out_->errorString() ) );
+		throw IOError( QObject::tr( "Can not open %1 : %2" ).arg( this->getURI().toString() ).arg( this->out_->errorString() ), __FILE__, __LINE__ );
 	}
 
 	// write header

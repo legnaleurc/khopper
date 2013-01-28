@@ -22,7 +22,8 @@
 #include "freedb.hpp"
 
 #include "khopper/application.hpp"
-#include "khopper/error.hpp"
+#include "khopper/ioerror.hpp"
+#include "khopper/runtimeerror.hpp"
 
 #include <QtCore/QtDebug>
 #include <QtCore/QRegExp>
@@ -40,7 +41,8 @@ namespace {
 	}
 }
 
-using namespace khopper::album;
+using khopper::album::DiscData;
+using khopper::album::FreeDB;
 using khopper::error::IOError;
 using khopper::error::RunTimeError;
 
@@ -64,7 +66,7 @@ bool FreeDB::isConnected() const {
 void FreeDB::connectToHost( const QString & hostName, quint16 port ) {
 	this->link_->connectToHost( hostName, port );
 	if( !this->link_->waitForConnected() ) {
-		throw IOError( this->link_->errorString() );
+		throw IOError( this->link_->errorString(), __FILE__, __LINE__ );
 	}
 	QStringList msg( this->getResponse_() );
 	if( msg.empty() || msg.startsWith( "43" ) ) {
@@ -100,14 +102,14 @@ std::pair< QString, QString > FreeDB::query( unsigned int discid, const QStringL
 			return std::make_pair( pattern.cap( 1 ), pattern.cap( 2 ) );
 		}
 	}
-	throw RunTimeError( "find no exact match from FreeDB" );
+	throw RunTimeError( QObject::tr( "find no exact match from FreeDB" ), __FILE__, __LINE__ );
 }
 
 DiscData FreeDB::read( const QString & categ, const QString & discid ) {
 	QString tmp( "cddb read \"%1\" \"%2\"" );
 	QStringList msg( this->sendRequest_( tmp.arg( categ ).arg( discid ).toUtf8() ) );
 	if( !msg[0].startsWith( "210" ) ) {
-		throw RunTimeError( "unexcepted error" );
+		throw RunTimeError( QObject::tr( "unexcepted error" ), __FILE__, __LINE__ );
 	}
 	DiscData data;
 
@@ -170,7 +172,7 @@ QStringList FreeDB::sendRequest_( const QByteArray & cmd ) {
 
 QStringList FreeDB::getResponse_() {
 	if( !this->link_->waitForReadyRead() ) {
-		throw IOError( this->link_->errorString() );
+		throw IOError( this->link_->errorString(), __FILE__, __LINE__ );
 	}
 
 	QByteArray response( this->link_->readLine() );
@@ -179,7 +181,7 @@ QStringList FreeDB::getResponse_() {
 		// NOTE: works, should be more graceful
 		while( !( response.endsWith( "\r.\r" ) || response.endsWith( "\n.\n" ) || response.endsWith( "\r\n.\r\n" ) ) ) {
 			if( !this->link_->waitForReadyRead() ) {
-				throw IOError( this->link_->errorString() );
+				throw IOError( this->link_->errorString(), __FILE__, __LINE__ );
 			}
 			response.append( this->link_->readAll() );
 		}

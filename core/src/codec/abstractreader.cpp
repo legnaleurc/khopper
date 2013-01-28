@@ -25,8 +25,8 @@
 #include <cmath>
 #include <cstring>
 
-#include "error.hpp"
 #include "core/applicationprivate.hpp"
+#include "runtimeerror.hpp"
 
 
 namespace khopper {
@@ -72,7 +72,7 @@ bool khopper::plugin::unregisterReader( const QString & id ) {
 ReaderCreator khopper::plugin::getReaderCreator( const QUrl & uri ) {
 	auto creator = ApplicationPrivate::self->readerFactory.getCreator( uri );
 	if( !creator ) {
-		throw RunTimeError( QObject::tr( "find no suitable codec" ) );
+		throw RunTimeError( QObject::tr( "find no suitable codec" ), __FILE__, __LINE__ );
 	}
 	return creator;
 }

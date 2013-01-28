@@ -19,19 +19,21 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
-#include "pluginmodel.hpp"
 #include "pluginmodelprivate.hpp"
-#include "abstractplugin.hpp"
+
+#include <algorithm>
+#include <functional>
 
 #include <QtCore/QPluginLoader>
 #include <QtCore/QtDebug>
 #include <QtCore/QtGlobal>
 #include <QtGui/QApplication>
 
-#include <algorithm>
-#include <functional>
+#include "abstractplugin.hpp"
+#include "baseerror.hpp"
 
-using namespace khopper::plugin;
+using khopper::error::BaseError;
+using khopper::plugin::PluginModel;
 
 PluginModel::Private::Private():
 searchPaths(),
@@ -175,7 +177,7 @@ void PluginModel::reloadPlugins() {
 	std::for_each( this->p_->plugins.begin(), this->p_->plugins.end(), [&]( const Private::PluginListType::value_type & pPlugin ) {
 		try {
 			pPlugin->install();
-		} catch( error::BaseError & e ) {
+		} catch( BaseError & e ) {
 			emit this->errorOccured( QObject::tr( "Plugin install error" ), e.getMessage() );
 			return;
 		}
@@ -197,7 +199,7 @@ void PluginModel::loadPlugin( const QModelIndex & index ) {
 	}
 	try {
 		this->p_->plugins[index.row()]->install();
-	} catch( error::BaseError & e ) {
+	} catch( BaseError & e ) {
 		emit this->errorOccured( QObject::tr( "Plugin install error" ), e.getMessage() );
 	}
 }
@@ -208,7 +210,7 @@ void PluginModel::unloadPlugin( const QModelIndex & index ) {
 	}
 	try {
 		this->p_->plugins[index.row()]->uninstall();
-	} catch( error::BaseError & e ) {
+	} catch( BaseError & e ) {
 		emit this->errorOccured( QObject::tr( "Plugin uninstall error" ), e.getMessage() );
 	}
 }

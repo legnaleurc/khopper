@@ -27,78 +27,63 @@
 // @}
 
 
-#include "config.hpp"
-#include "error.hpp"
-
 #include <memory>
 
+#include "config.hpp"
+
 namespace khopper {
+/**
+ * @ingroup Codecs
+ * @brief Contains Codecs module
+ */
+namespace codec {
 
-	/**
-	 * @ingroup Codecs
-	 * @brief Contains Codecs module
-	 */
-	namespace codec {
+enum Channel {
+	FrontLeft          = 0x00000001,
+	FrontRight         = 0x00000002,
+	FrontCenter        = 0x00000004,
+	LowFrequency       = 0x00000008,
+	BackLeft           = 0x00000010,
+	BackRight          = 0x00000020,
+	FrontLeftOfCenter  = 0x00000040,
+	FrontRightOfCenter = 0x00000080,
+	BackCenter         = 0x00000100,
+	SideLeft           = 0x00000200,
+	SideRight          = 0x00000400,
+	TopCenter          = 0x00000800,
+	TopFrontLeft       = 0x00001000,
+	TopFrontCenter     = 0x00002000,
+	TopFrontRight      = 0x00004000,
+	TopBackLeft        = 0x00008000,
+	TopBackCenter      = 0x00010000,
+	TopBackRight       = 0x00020000,
+	StereoLeft         = 0x20000000,
+	StereoRight        = 0x40000000,
 
-		enum Channel {
-			FrontLeft          = 0x00000001,
-			FrontRight         = 0x00000002,
-			FrontCenter        = 0x00000004,
-			LowFrequency       = 0x00000008,
-			BackLeft           = 0x00000010,
-			BackRight          = 0x00000020,
-			FrontLeftOfCenter  = 0x00000040,
-			FrontRightOfCenter = 0x00000080,
-			BackCenter         = 0x00000100,
-			SideLeft           = 0x00000200,
-			SideRight          = 0x00000400,
-			TopCenter          = 0x00000800,
-			TopFrontLeft       = 0x00001000,
-			TopFrontCenter     = 0x00002000,
-			TopFrontRight      = 0x00004000,
-			TopBackLeft        = 0x00008000,
-			TopBackCenter      = 0x00010000,
-			TopBackRight       = 0x00020000,
-			StereoLeft         = 0x20000000,
-			StereoRight        = 0x40000000,
+	Invalid            = 0x00000000
+};
 
-			Invalid            = 0x00000000
-		};
+enum ChannelLayout {
+	LayoutMono          = FrontCenter,
+	LayoutStereo        = FrontLeft | FrontRight,
+	Layout21            = LayoutStereo | BackCenter,
+	LayoutSurround      = LayoutStereo | FrontCenter,
+	Layout4Point0       = LayoutSurround | BackCenter,
+	Layout22            = LayoutStereo | SideLeft | SideRight,
+	LayoutQuad          = LayoutStereo | BackLeft | BackRight,
+	Layout5Point0       = LayoutSurround | SideLeft | SideRight,
+	Layout5Point1       = Layout5Point0 | LowFrequency,
+	Layout5Point0Back   = LayoutSurround | BackLeft | BackRight,
+	Layout5Point1Back   = Layout5Point0Back | LowFrequency,
+	Layout7Point0       = Layout5Point0 | BackLeft | BackRight,
+	Layout7Point1       = Layout5Point1 | BackLeft | BackRight,
+	Layout7Point1Wide   = Layout5Point1Back | FrontLeftOfCenter | FrontRightOfCenter,
+	LayoutStereoDownmix = StereoLeft | StereoRight,
 
-		enum ChannelLayout {
-			LayoutMono          = FrontCenter,
-			LayoutStereo        = FrontLeft | FrontRight,
-			Layout21            = LayoutStereo | BackCenter,
-			LayoutSurround      = LayoutStereo | FrontCenter,
-			Layout4Point0       = LayoutSurround | BackCenter,
-			Layout22            = LayoutStereo | SideLeft | SideRight,
-			LayoutQuad          = LayoutStereo | BackLeft | BackRight,
-			Layout5Point0       = LayoutSurround | SideLeft | SideRight,
-			Layout5Point1       = Layout5Point0 | LowFrequency,
-			Layout5Point0Back   = LayoutSurround | BackLeft | BackRight,
-			Layout5Point1Back   = Layout5Point0Back | LowFrequency,
-			Layout7Point0       = Layout5Point0 | BackLeft | BackRight,
-			Layout7Point1       = Layout5Point1 | BackLeft | BackRight,
-			Layout7Point1Wide   = Layout5Point1Back | FrontLeftOfCenter | FrontRightOfCenter,
-			LayoutStereoDownmix = StereoLeft | StereoRight,
+	LayoutNative        = 0x00000000
+};
 
-			LayoutNative        = 0x00000000
-		};
-
-	}
-
-	namespace error {
-
-		/**
-		 * @ingroup Codecs
-		 * @brief Codec error
-		 */
-		class Codec {};
-		/// Error on encoding or decoding
-		typedef Error< Codec > CodecError;
-
-	}
-
+}
 }
 
 #endif

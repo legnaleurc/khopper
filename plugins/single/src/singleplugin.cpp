@@ -30,12 +30,12 @@
 #include "khopper/abstractreader.hpp"
 #include "khopper/album.hpp"
 #include "khopper/playlist.hpp"
-#include "khopper/error.hpp"
+#include "khopper/codecerror.hpp"
 #include "khopper/timestamp.hpp"
 
 Q_EXPORT_PLUGIN2( KHOPPER_PLUGIN_ID, khopper::plugin::SinglePlugin )
 
-using namespace khopper::plugin;
+using khopper::plugin::SinglePlugin;
 using khopper::album::PlayList;
 using khopper::album::Album;
 using khopper::album::Track;
@@ -59,7 +59,7 @@ void SinglePlugin::doInstall() {
 
 		reader->open( QIODevice::ReadOnly );
 		if( !reader->isOpen() ) {
-			throw CodecError( QObject::tr( "Can not open `%1\' (%2)" ).arg( uri.toString() ).arg( Q_FUNC_INFO ) );
+			throw CodecError( QObject::tr( "Can not open `%1\' (%2)" ).arg( uri.toString() ).arg( Q_FUNC_INFO ), __FILE__, __LINE__ );
 		}
 		track->setBitRate( reader->getBitRate() );
 		track->setDuration( Timestamp::fromMillisecond( reader->getDuration() ) );

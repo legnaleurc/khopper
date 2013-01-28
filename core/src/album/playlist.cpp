@@ -20,11 +20,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "playlist.hpp"
+#include "runtimeerror.hpp"
 
 #include <QtCore/QSet>
 
 #include "album.hpp"
 #include "core/applicationprivate.hpp"
+#include "runtimeerror.hpp"
 
 using khopper::album::PlayList;
 using khopper::album::AlbumSP;
@@ -41,7 +43,7 @@ public:
 PlayList PlayList::fromURI( const QUrl & uri ) {
 	auto creator = ApplicationPrivate::self->playlistFactory.getCreator( uri );
 	if( !creator ) {
-		throw RunTimeError( QObject::tr( "this playlist is not supported" ) );
+		throw RunTimeError( QObject::tr( "this playlist is not supported" ), __FILE__, __LINE__ );
 	}
 	return creator( uri );
 }

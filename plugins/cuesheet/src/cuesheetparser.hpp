@@ -25,7 +25,6 @@
 #include "cuesheet.hpp"
 #include "cuesheettrack.hpp"
 
-#include "khopper/error.hpp"
 #include "khopper/playlist.hpp"
 #include "khopper/track.hpp"
 
@@ -81,15 +80,6 @@ namespace khopper {
 			std::vector< Timestamp > currentTOCs_;
 			QStringList currentFrames_;
 		};
-
-	}
-
-	namespace error {
-
-		/// Parsing error policy
-		class Parsing {};
-		/// Error on parsing
-		typedef Error< Parsing > ParsingError;
 
 	}
 

@@ -21,31 +21,32 @@
  */
 #include "ffmpegreader.hpp"
 
-#include "khopper/error.hpp"
-#ifdef Q_OS_WIN
-#include "wfile.hpp"
-#endif
+#include <cstdlib>
+#include <cstring>
 
 #include <QtCore/QFile>
 #include <QtCore/QBuffer>
 #include <QtCore/QtDebug>
 
-#include <cstdlib>
-#include <cstring>
+#include "khopper/codecerror.hpp"
+#include "khopper/ioerror.hpp"
+#ifdef Q_OS_WIN
+#include "wfile.hpp"
+#endif
 
 namespace {
 
-	static inline int64_t toNative( int64_t ms ) {
-		return av_rescale( ms, AV_TIME_BASE, 1000 );
-	}
+static inline int64_t toNative( int64_t ms ) {
+	return av_rescale( ms, AV_TIME_BASE, 1000 );
+}
 
-	static inline int toMS( int64_t timestamp ) {
-		return av_rescale( timestamp, 1000, AV_TIME_BASE );
-	}
+static inline int toMS( int64_t timestamp ) {
+	return av_rescale( timestamp, 1000, AV_TIME_BASE );
+}
 
 }
 
-using namespace khopper::codec;
+using khopper::codec::FfmpegReader;
 using khopper::error::IOError;
 using khopper::error::CodecError;
 #ifdef Q_OS_WIN
@@ -120,7 +121,7 @@ void FfmpegReader::openResource_() {
 #endif
 	int ret = avformat_open_input( &pFC, this->getURI().toString().toUtf8().constData(), NULL, NULL );
 	if( ret != 0 ) {
-		throw IOError( AVUNERROR( ret ) );
+		throw IOError( AVUNERROR( ret ), __FILE__, __LINE__ );
 	}
 	this->pFormatContext_.reset( pFC, []( AVFormatContext * p )->void {
 		avformat_close_input( &p );
@@ -129,13 +130,13 @@ void FfmpegReader::openResource_() {
 
 void FfmpegReader::setupDemuxer_() {
 	if( avformat_find_stream_info( this->pFormatContext_.get(), NULL ) < 0 ) {
-		throw CodecError( tr( "FfmpegReader: Can not find codec info!" ) );
+		throw CodecError( tr( "FfmpegReader: Can not find codec info!" ), __FILE__, __LINE__ );
 	}
 
 	if( this->pFormatContext_->duration != static_cast< int64_t >( AV_NOPTS_VALUE ) ) {
 		this->setDuration( toMS( this->pFormatContext_->duration ) );
 	} else {
-		throw CodecError( tr( "FfmpegReader: Can not get duration!" ) );
+		throw CodecError( tr( "FfmpegReader: Can not get duration!" ), __FILE__, __LINE__ );
 	}
 }
 
@@ -148,7 +149,7 @@ void FfmpegReader::setupDecoder_() {
 		}
 	}
 	if( a_stream == -1 ) {
-		throw CodecError( "FfmpegReader: Find no audio stream!" );
+		throw CodecError( "FfmpegReader: Find no audio stream!", __FILE__, __LINE__ );
 	}
 	this->pStream_ = this->pFormatContext_->streams[a_stream];
 	AVCodecContext * pCC = this->pStream_->codec;
@@ -200,11 +201,11 @@ void FfmpegReader::setupDecoder_() {
 
 	AVCodec * pC = avcodec_find_decoder( pCC->codec_id );
 	if( pC == NULL ) {
-		throw error::CodecError( tr( "FfmpegReader: Find no decoder!" ) );
+		throw error::CodecError( tr( "FfmpegReader: Find no decoder!" ), __FILE__, __LINE__ );
 	}
 
 	if( avcodec_open2( pCC, pC, NULL ) < 0 ) {
-		throw error::CodecError( tr( "FfmpegReader: Can not open decoder." ) );
+		throw error::CodecError( tr( "FfmpegReader: Can not open decoder." ), __FILE__, __LINE__ );
 	}
 	this->pCodecContext_.reset( pCC, avcodec_close );
 }
@@ -280,7 +281,7 @@ QByteArray FfmpegReader::readFrame_() {
 	int gotFrame = 0;
 	ret = avcodec_decode_audio4( this->pCodecContext_.get(), this->pFrame_.get(), &gotFrame, &this->packet_ );
 	if( ret < 0 ) {
-		throw error::CodecError( AVUNERROR( ret ) );
+		throw error::CodecError( AVUNERROR( ret ), __FILE__, __LINE__ );
 	}
 
 	if( !gotFrame ) {
@@ -300,7 +301,7 @@ QByteArray FfmpegReader::readFrame_() {
 	int lineSize = 0;
 	ret = av_samples_alloc( audioData.get(), &lineSize, channels, nbSamples, format, 1 );
 	if( ret < 0 ) {
-		throw error::CodecError( AVUNERROR( ret ) );
+		throw error::CodecError( AVUNERROR( ret ), __FILE__, __LINE__ );
 	}
 	int bufferSize = av_samples_get_buffer_size( nullptr, channels, nbSamples, format, 1 );
 	av_samples_copy( audioData.get(), this->pFrame_->data, 0, 0, nbSamples, channels, format );

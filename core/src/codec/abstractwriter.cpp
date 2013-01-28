@@ -23,7 +23,7 @@
 
 #include <cassert>
 
-#include "error.hpp"
+#include "baseerror.hpp"
 
 namespace khopper {
 namespace codec {

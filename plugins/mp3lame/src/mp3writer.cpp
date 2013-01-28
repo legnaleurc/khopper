@@ -26,9 +26,9 @@
 #include <QtCore/QFile>
 #include <QtCore/QtDebug>
 
-#include "khopper/error.hpp"
+#include "khopper/ioerror.hpp"
 
-using namespace khopper::codec;
+using khopper::codec::Mp3Writer;
 using khopper::error::IOError;
 
 Mp3Writer::Mp3Writer( const QUrl & uri ):
@@ -39,7 +39,7 @@ quality_( -1 ),
 id3v2Offset_( -1L ) {
 	// no remote support
 	if( this->getURI().scheme() != "file" ) {
-		throw IOError( QObject::tr( "This plugin do not support remote writing." ) );
+		throw IOError( QObject::tr( "This plugin do not support remote writing." ), __FILE__, __LINE__ );
 	}
 
 	// setup file
@@ -52,7 +52,7 @@ void Mp3Writer::setVBRQuality( int quality ) {
 
 void Mp3Writer::doOpen() {
 	if( !this->out_->open( QIODevice::WriteOnly ) ) {
-		throw IOError( QObject::tr( "%1 (%2)" ).arg( this->out_->errorString() ).arg( this->getURI().toString() ) );
+		throw IOError( QObject::tr( "%1 (%2)" ).arg( this->out_->errorString() ).arg( this->getURI().toString() ), __FILE__, __LINE__ );
 	}
 
 	// lame encoder setting

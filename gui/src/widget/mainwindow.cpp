@@ -29,7 +29,7 @@
 #include "uriinputdialog.hpp"
 
 #include "khopper/application.hpp"
-#include "khopper/error.hpp"
+#include "khopper/baseerror.hpp"
 #include "khopper/playlist.hpp"
 
 #include <QtCore/QFile>
@@ -41,7 +41,7 @@
 
 #include <algorithm>
 
-using namespace khopper::widget;
+using khopper::widget::MainWindow;
 using khopper::album::PlayList;
 using khopper::error::BaseError;
 
