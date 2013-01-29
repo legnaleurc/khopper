@@ -43,8 +43,9 @@ public:
 }
 
 using khopper::codec::AbstractWriter;
-using khopper::error::BaseError;
 using khopper::codec::AudioFormat;
+using khopper::codec::ChannelLayout;
+using khopper::error::BaseError;
 
 AbstractWriter::AbstractWriter( const QUrl & uri ):
 p_( new Private( uri ) ) {

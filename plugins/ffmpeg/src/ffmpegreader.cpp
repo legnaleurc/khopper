@@ -107,7 +107,7 @@ void FfmpegReader::openResource_() {
 	if( this->getURI().scheme() == "file" ) {
 		this->fio_.reset( new QFile( this->getURI().toLocalFile() ) );
 		if( !this->fio_->open( QIODevice::ReadOnly ) ) {
-			throw IOError( this->fio_->errorString() );
+			throw IOError( this->fio_->errorString(), __FILE__, __LINE__ );
 		}
 		pFC = avformat_alloc_context();
 		const int SIZE = 4 * 4096 * sizeof( unsigned char );

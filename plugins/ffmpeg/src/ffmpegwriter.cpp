@@ -161,7 +161,7 @@ void FfmpegWriter::openResource() {
 	// TODO only support local file
 	this->fio_.reset( new QFile( this->getURI().toLocalFile() ) );
 	if( !this->fio_->open( QIODevice::ReadWrite ) ) {
-		throw IOError( this->fio_->errorString() );
+		throw IOError( this->fio_->errorString(), __FILE__, __LINE__ );
 	}
 	const int SIZE = 4 * 1024 * sizeof( unsigned char );
 	unsigned char * buffer = static_cast< unsigned char * >( av_malloc( SIZE ) );

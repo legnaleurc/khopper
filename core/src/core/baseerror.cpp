@@ -49,7 +49,7 @@ p_( new Private( QString::fromUtf8( strerror( code ) ), file, line ) ) {
 p_( new Private( "", file, line ) ) {
 	wchar_t tmp[1024];
 	_wcserror_s( tmp, code );
-	this->msg_ = QString::fromWCharArray( tmp );
+	this->p_->msg = QString::fromWCharArray( tmp );
 #endif
 }
 
