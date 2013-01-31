@@ -68,6 +68,9 @@ public:
 
 	/// Get error message
 	virtual const char * what() const throw();
+
+	const QString & getFile() const;
+	long getLine() const;
 	/**
 	 * @brief Get the error message
 	 */

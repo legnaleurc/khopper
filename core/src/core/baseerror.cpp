@@ -25,10 +25,10 @@ namespace khopper {
 namespace error {
 class BaseError::Private {
 public:
-	Private( const QString & msg, const std::string & file, long line );
+	Private( const QString & msg, const char * file, long line );
 
 	QString msg;
-	std::string file;
+	QString file;
 	long line;
 };
 }
@@ -36,9 +36,9 @@ public:
 
 using khopper::error::BaseError;
 
-BaseError::Private::Private( const QString & msg, const std::string & file, long line ):
+BaseError::Private::Private( const QString & msg, const char * file, long line ):
 msg( msg ),
-file( file ),
+file( QString::fromUtf8( file ) ),
 line( line ) {
 }
 
@@ -75,6 +75,14 @@ p_( new Private( msg, file, line ) ) {
 
 const char * BaseError::what() const throw() {
 	return this->p_->msg.toUtf8().constData();
+}
+
+const QString & BaseError::getFile() const {
+	return this->p_->file;
+}
+
+long BaseError::getLine() const {
+	return this->p_->line;
 }
 
 const QString & BaseError::getMessage() const {
