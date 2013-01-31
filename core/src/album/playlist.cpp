@@ -30,15 +30,48 @@
 
 using khopper::album::PlayList;
 using khopper::album::AlbumSP;
+using khopper::album::AlbumWP;
 using khopper::album::TrackSP;
 using khopper::error::RunTimeError;
 using namespace khopper::plugin;
 
 class PlayList::Private {
 public:
-	QSet< AlbumSP > albums;
+	void addAlbum( AlbumWP album );
+	void removeAlbum( AlbumWP album );
+
+	std::map< AlbumSP, unsigned long > albums;
 	TrackList tracks;
 };
+
+void PlayList::Private::addAlbum( AlbumWP album ) {
+	auto tmp = album.lock();
+	if( !tmp ) {
+		return;
+	}
+	auto it = this->albums.find( tmp );
+	if( it != this->albums.end() ) {
+		++it->second;
+		return;
+	}
+	this->albums.insert( std::make_pair( tmp, 1UL ) );
+}
+
+void PlayList::Private::removeAlbum( AlbumWP album ) {
+	auto tmp = album.lock();
+	if( !tmp ) {
+		return;
+	}
+	auto it = this->albums.find( tmp );
+	if( it == this->albums.end() ) {
+		return;
+	}
+	if( it->second > 1UL ) {
+		--it->second;
+	} else {
+		this->albums.erase( it );
+	}
+}
 
 PlayList PlayList::fromURI( const QUrl & uri ) {
 	auto creator = ApplicationPrivate::self->playlistFactory.getCreator( uri );
@@ -57,8 +90,7 @@ PlayList::PlayList( PlayList && that ): p_( std::move( that.p_ ) ) {
 void PlayList::append( const PlayList & that ) {
 	this->p_->tracks.append( that.p_->tracks );
 	for( auto it = that.p_->tracks.begin(); it != that.p_->tracks.end(); ++it ) {
-		auto album = ( *it )->getAlbum().lock();
-		this->p_->albums.insert( album );
+		this->p_->addAlbum( ( *it )->getAlbum() );
 	}
 }
 
@@ -83,13 +115,9 @@ PlayList::iterator PlayList::end() {
 }
 
 PlayList::iterator PlayList::erase( iterator pos ) {
+	auto track = *pos;
 	auto it = this->p_->tracks.erase( pos );
-	QSet< AlbumSP > tmp;
-	for( auto it = this->begin(); it != this->end(); ++it ) {
-		auto album = ( *it )->getAlbum().lock();
-		tmp.insert( album );
-	}
-	this->p_->albums = tmp;
+	this->p_->removeAlbum( track->getAlbum() );
 	return it;
 }
 
@@ -101,10 +129,9 @@ PlayList::reference PlayList::front() {
 	return this->p_->tracks.front();
 }
 
-void PlayList::push_back( TrackSP track ) {
+void PlayList::push_back( const_reference track ) {
 	this->p_->tracks.push_back( track );
-	auto album = track->getAlbum().lock();
-	this->p_->albums.insert( album );
+	this->p_->addAlbum( track->getAlbum() );
 }
 
 PlayList::size_type PlayList::size() const {

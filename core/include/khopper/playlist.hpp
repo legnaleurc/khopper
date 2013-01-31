@@ -60,7 +60,7 @@ public:
 	bool empty() const;
 	reference front();
 	const_reference front() const;
-	void push_back( TrackSP track );
+	void push_back( const_reference track );
 	size_type size() const;
 	reference operator []( size_type index );
 	const_reference operator []( size_type index ) const;
