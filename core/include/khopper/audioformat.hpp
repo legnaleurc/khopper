@@ -24,6 +24,7 @@
 
 #include <QtCore/QSysInfo>
 
+#include "config.hpp"
 #include "codectypes.hpp"
 
 namespace khopper {

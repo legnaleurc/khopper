@@ -26,11 +26,6 @@
 // @{
 // @}
 
-
-#include <memory>
-
-#include "config.hpp"
-
 namespace khopper {
 /**
  * @ingroup Codecs
