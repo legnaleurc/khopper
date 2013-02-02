@@ -31,8 +31,8 @@
 
 Q_EXPORT_PLUGIN2( KHOPPER_PLUGIN_ID, khopper::plugin::CueSheetPlugin )
 
-using namespace khopper::plugin;
 using khopper::album::PlayList;
+using khopper::plugin::CueSheetPlugin;
 
 CueSheetPlugin::CueSheetPlugin():
 AbstractPlugin() {
@@ -41,7 +41,7 @@ AbstractPlugin() {
 }
 
 void CueSheetPlugin::doInstall() {
-	registerPlayList( this->getID(), []( const QUrl & uri )->unsigned int {
+	PlayList::install( this->getID(), []( const QUrl & uri )->unsigned int {
 		if( uri.scheme() != "file" ) {
 			// TODO: network support
 			qDebug() << "CueSheetPlugin returned 0" << uri;
@@ -79,5 +79,5 @@ void CueSheetPlugin::doInstall() {
 }
 
 void CueSheetPlugin::doUninstall() {
-	unregisterPlayList( this->getID() );
+	PlayList::uninstall( this->getID() );
 }

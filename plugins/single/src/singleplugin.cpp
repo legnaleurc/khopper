@@ -40,6 +40,7 @@ using khopper::album::PlayList;
 using khopper::album::Album;
 using khopper::album::Track;
 using khopper::album::Timestamp;
+using khopper::codec::AbstractReader;
 using khopper::error::CodecError;
 
 SinglePlugin::SinglePlugin():
@@ -49,10 +50,10 @@ AbstractPlugin() {
 }
 
 void SinglePlugin::doInstall() {
-	registerPlayList( this->getID(), []( const QUrl & /*uri*/ )->unsigned int {
+	PlayList::install( this->getID(), []( const QUrl & /*uri*/ )->unsigned int {
 		return 100;
 	}, []( const QUrl & uri )->PlayList {
-		auto rc = getReaderCreator( uri );
+		auto rc = AbstractReader::getCreator( uri );
 		auto reader = rc( uri );
 		auto album = Album::create();
 		auto track = Track::create( uri, rc );
@@ -114,5 +115,5 @@ void SinglePlugin::doInstall() {
 }
 
 void SinglePlugin::doUninstall() {
-	unregisterPlayList( this->getID() );
+	PlayList::uninstall( this->getID() );
 }

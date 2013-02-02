@@ -25,12 +25,13 @@
 #include <cmath>
 #include <cstring>
 
-#include "core/applicationprivate.hpp"
+#include "core/factory.hpp"
 #include "runtimeerror.hpp"
 
 
 namespace khopper {
 namespace codec {
+
 class AbstractReader::Private {
 public:
 	Private( const QUrl & uri );
@@ -50,6 +51,19 @@ public:
 	QByteArray title;
 	QString year;
 };
+
+template< typename KeyType, typename CreatorType >
+class FactoryError {
+public:
+	CreatorType onError( const KeyType & /*key*/ ) const {
+		return nullptr;
+	}
+};
+
+typedef core::Factory< QString, QUrl, ReaderSP, FactoryError > Factory;
+
+Factory factory;
+
 }
 }
 
@@ -58,19 +72,17 @@ using khopper::codec::AudioFormat;
 using khopper::codec::ChannelLayout;
 using khopper::error::BaseError;
 using khopper::error::RunTimeError;
-using khopper::plugin::ReaderCreator;
-using khopper::plugin::ReaderVerifier;
 
-bool khopper::plugin::registerReader( const QString & id, ReaderVerifier v, ReaderCreator c ) {
-	return ApplicationPrivate::self->readerFactory.registerProduct( id, v, c );
+bool khopper::codec::AbstractReader::install( const QString & id, Verifier v, Creator c ) {
+	return factory.installCreator( id, v, c );
 }
 
-bool khopper::plugin::unregisterReader( const QString & id ) {
-	return ApplicationPrivate::self->readerFactory.unregisterProduct( id );
+bool khopper::codec::AbstractReader::uninstall( const QString & id ) {
+	return factory.uninstallCreator( id );
 }
 
-ReaderCreator khopper::plugin::getReaderCreator( const QUrl & uri ) {
-	auto creator = ApplicationPrivate::self->readerFactory.getCreator( uri );
+AbstractReader::Creator khopper::codec::AbstractReader::getCreator( const QUrl & uri ) {
+	auto creator = factory.getCreator( uri );
 	if( !creator ) {
 		throw RunTimeError( QObject::tr( "find no suitable codec" ), __FILE__, __LINE__ );
 	}

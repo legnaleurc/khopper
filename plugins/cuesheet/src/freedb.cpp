@@ -21,14 +21,14 @@
  */
 #include "freedb.hpp"
 
-#include "khopper/application.hpp"
-#include "khopper/ioerror.hpp"
-#include "khopper/runtimeerror.hpp"
-
 #include <QtCore/QtDebug>
+#include <QtCore/QCoreApplication>
 #include <QtCore/QRegExp>
 #include <QtCore/QTextStream>
 #include <QtCore/QTextCodec>
+
+#include "khopper/ioerror.hpp"
+#include "khopper/runtimeerror.hpp"
 
 namespace {
 	void disconnectAndWarn( QTcpSocket * socket ) {

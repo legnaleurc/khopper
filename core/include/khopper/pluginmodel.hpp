@@ -36,10 +36,12 @@ namespace plugin {
  * @ingroup Plugins
  * @brief Private plugin manager
  */
-class KHOPPER_DLL PluginModel : public QAbstractItemModel {
+class KHOPPER_DLL PluginModel: public QAbstractItemModel {
 	Q_OBJECT
 
 public:
+	static PluginModel & instance();
+
 	/// default constructor
 	PluginModel();
 	virtual ~PluginModel();

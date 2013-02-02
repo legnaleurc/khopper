@@ -24,13 +24,12 @@
 #include <QtCore/QtPlugin>
 #include <QtCore/QtDebug>
 
-#include "khopper/application.hpp"
 #include "redbookreader.hpp"
 
 Q_EXPORT_PLUGIN2( KHOPPER_PLUGIN_ID, khopper::plugin::RedbookPlugin )
 
-using namespace khopper::plugin;
-using khopper::plugin::registerReader;
+using khopper::codec::AbstractReader;
+using khopper::plugin::RedbookPlugin;
 
 RedbookPlugin::RedbookPlugin():
 AbstractPlugin() {
@@ -42,7 +41,7 @@ RedbookPlugin::~RedbookPlugin() {
 }
 
 void RedbookPlugin::doInstall() {
-	registerReader( this->getID(), []( const QUrl & uri )->int {
+	AbstractReader::install( this->getID(), []( const QUrl & uri )->int {
 		QFileInfo info( uri.toLocalFile() );
 		if( info.suffix().toLower() == "bin" ) {
 			qDebug() << "returned 200 (" << Q_FUNC_INFO << ")";
@@ -55,5 +54,5 @@ void RedbookPlugin::doInstall() {
 }
 
 void RedbookPlugin::doUninstall() {
-	unregisterReader( this->getID() );
+	AbstractReader::uninstall( this->getID() );
 }

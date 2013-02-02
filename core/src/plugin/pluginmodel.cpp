@@ -19,7 +19,7 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
-#include "pluginmodelprivate.hpp"
+#include "pluginmodel.hpp"
 
 #include <algorithm>
 #include <functional>
@@ -31,13 +31,39 @@
 
 #include "abstractplugin.hpp"
 #include "baseerror.hpp"
+#include "runtimeerror.hpp"
+
+
+namespace khopper {
+namespace plugin {
+
+class PluginModel::Private {
+public:
+	typedef std::vector< AbstractPlugin * > PluginListType;
+
+	Private();
+
+	QFileInfoList getPluginsFileInfo() const;
+
+	std::list< QDir > searchPaths;
+	PluginListType plugins;
+};
+
+PluginModel * self = nullptr;
+
+}
+}
 
 using khopper::error::BaseError;
+using khopper::error::RunTimeError;
 using khopper::plugin::PluginModel;
 
 PluginModel::Private::Private():
 searchPaths(),
 plugins() {
+	if( self ) {
+		throw RunTimeError( QObject::tr( "PluginModel has been initialized" ), __FILE__, __LINE__ );
+	}
 }
 
 QFileInfoList PluginModel::Private::getPluginsFileInfo() const {
@@ -53,9 +79,18 @@ QFileInfoList PluginModel::Private::getPluginsFileInfo() const {
 	return list;
 }
 
+PluginModel & PluginModel::instance() {
+	if( !self ) {
+		throw RunTimeError( QObject::tr( "PluginModel has not been initialized yet" ), __FILE__, __LINE__ );
+	}
+	return *self;
+}
+
 PluginModel::PluginModel():
 QAbstractItemModel( 0 ),
 p_( new Private ) {
+	self = this;
+
 	// initialize search paths
 
 	// first search binary related paths, for build time testing
@@ -93,6 +128,7 @@ p_( new Private ) {
 
 PluginModel::~PluginModel() {
 	this->unloadPlugins();
+	self = nullptr;
 }
 
 QModelIndex PluginModel::index( int row, int column, const QModelIndex & parent ) const {

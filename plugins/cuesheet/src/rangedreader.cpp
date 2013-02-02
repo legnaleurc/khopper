@@ -35,15 +35,14 @@ namespace {
 
 }
 
-using namespace khopper::codec;
-using khopper::plugin::getReaderCreator;
+using khopper::codec::RangedReader;
 
 RangedReader::RangedReader( const QUrl & uri, qint64 msBegin, qint64 msDuration ):
 AbstractReader( uri ),
 client_(),
 msBegin_( msBegin ),
 msDuration_( msDuration ) {
-	this->client_ = getReaderCreator( uri )( uri );
+	this->client_ = AbstractReader::getCreator( uri )( uri );
 }
 
 bool RangedReader::atEnd() const {

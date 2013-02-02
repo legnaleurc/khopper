@@ -20,20 +20,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "playlist.hpp"
-#include "runtimeerror.hpp"
+
+#include <map>
 
 #include <QtCore/QSet>
 
+#include "core/factory.hpp"
 #include "album.hpp"
-#include "core/applicationprivate.hpp"
 #include "runtimeerror.hpp"
 
-using khopper::album::PlayList;
-using khopper::album::AlbumSP;
-using khopper::album::AlbumWP;
-using khopper::album::TrackSP;
-using khopper::error::RunTimeError;
-using namespace khopper::plugin;
+
+namespace khopper {
+namespace album {
 
 class PlayList::Private {
 public:
@@ -43,6 +41,29 @@ public:
 	std::map< AlbumSP, unsigned long > albums;
 	TrackList tracks;
 };
+
+template< typename KeyType, typename CreatorType >
+class FactoryError {
+public:
+	CreatorType onError( const KeyType & /*key*/ ) const {
+		return nullptr;
+	}
+};
+
+typedef core::Factory< QString, QUrl, PlayList, FactoryError > Factory;
+
+Factory factory;
+
+}
+}
+
+
+using khopper::album::PlayList;
+using khopper::album::AlbumSP;
+using khopper::album::AlbumWP;
+using khopper::album::TrackSP;
+using khopper::error::RunTimeError;
+
 
 void PlayList::Private::addAlbum( AlbumWP album ) {
 	auto tmp = album.lock();
@@ -73,8 +94,16 @@ void PlayList::Private::removeAlbum( AlbumWP album ) {
 	}
 }
 
+bool PlayList::install( const QString & id, Verifier v, Creator c ) {
+	return factory.installCreator( id, v, c );
+}
+
+bool PlayList::uninstall( const QString & id ) {
+	return factory.uninstallCreator( id );
+}
+
 PlayList PlayList::fromURI( const QUrl & uri ) {
-	auto creator = ApplicationPrivate::self->playlistFactory.getCreator( uri );
+	auto creator = factory.getCreator( uri );
 	if( !creator ) {
 		throw RunTimeError( QObject::tr( "this playlist is not supported" ), __FILE__, __LINE__ );
 	}
@@ -144,12 +173,4 @@ PlayList::const_reference PlayList::operator []( size_type index ) const {
 
 PlayList::reference PlayList::operator []( size_type index ) {
 	return this->p_->tracks[index];
-}
-
-bool khopper::plugin::registerPlayList( const QString & id, PlayListVerifier v, PlayListCreator c ) {
-	return ApplicationPrivate::self->playlistFactory.registerProduct( id, v, c );
-}
-
-bool khopper::plugin::unregisterPlayList( const QString & id ) {
-	return ApplicationPrivate::self->playlistFactory.unregisterProduct( id );
 }

@@ -57,6 +57,27 @@ typedef std::shared_ptr< const AbstractReader > ReaderCSP;
  */
 class KHOPPER_DLL AbstractReader : public QIODevice {
 public:
+	typedef std::function< int ( const QUrl & ) > Verifier;
+	typedef std::function< codec::ReaderSP ( const QUrl & ) > Creator;
+
+	/**
+	 * @ingroup Plugins
+	 * @brief Register plugin to factory
+	 * @param key the key used in program
+	 * @param name plugin name
+	 * @return true if registered in factory
+	 */
+	static bool KHOPPER_DLL install( const QString & id, Verifier v, Creator c );
+	static bool KHOPPER_DLL uninstall( const QString & id );
+	/**
+	 * @ingroup Plugins
+	 * @brief Create reader
+	 * @param key format key
+	 * @return Smart pointer of Product
+	 * @throws RunTimeError Can not load any plugin
+	 */
+	static Creator KHOPPER_DLL getCreator( const QUrl & uri );
+
 	/**
 	 * @brief Virtual destructor
 	 */
@@ -229,31 +250,6 @@ private:
 	class Private;
 	std::shared_ptr< Private > p_;
 };
-
-}
-
-namespace plugin {
-
-typedef std::function< int ( const QUrl & ) > ReaderVerifier;
-typedef std::function< codec::ReaderSP ( const QUrl & ) > ReaderCreator;
-
-/**
- * @ingroup Plugins
- * @brief Register plugin to factory
- * @param key the key used in program
- * @param name plugin name
- * @return true if registered in factory
- */
-bool KHOPPER_DLL registerReader( const QString & id, ReaderVerifier v, ReaderCreator c );
-bool KHOPPER_DLL unregisterReader( const QString & id );
-/**
- * @ingroup Plugins
- * @brief Create reader
- * @param key format key
- * @return Smart pointer of Product
- * @throws RunTimeError Can not load any plugin
- */
-ReaderCreator KHOPPER_DLL getReaderCreator( const QUrl & uri );
 
 }
 

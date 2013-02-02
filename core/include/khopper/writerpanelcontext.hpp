@@ -1,5 +1,5 @@
 /**
- * @file xiphplugin.hpp
+ * @file writerpanelcontext.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,38 +19,36 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_PLUGIN_XIPHPLUGIN_HPP
-#define KHOPPER_PLUGIN_XIPHPLUGIN_HPP
+#ifndef KHOPPER_WIDGET_WRITERPANELCONTEXT_HPP
+#define KHOPPER_WIDGET_WRITERPANELCONTEXT_HPP
 
-#include "khopper/abstractplugin.hpp"
+#include <QtCore/QObject>
+
+#include "config.hpp"
 
 namespace khopper {
-
 namespace widget {
-class FlacPanel;
-class OggPanel;
-}
 
-namespace plugin {
+class AbstractPanel;
 
-/**
- * @brief flac option widget
- */
-class XiphPlugin : public AbstractPlugin {
+class KHOPPER_DLL WriterPanelContext: public QObject {
+	Q_OBJECT
+
 public:
-	XiphPlugin();
+	static WriterPanelContext & instance();
 
-protected:
-	virtual void doInstall();
-	virtual void doUninstall();
+	WriterPanelContext();
+	virtual ~WriterPanelContext();
 
-private:
-	std::shared_ptr< widget::FlacPanel > flacPanel_;
-	std::shared_ptr< widget::OggPanel > oggPanel_;
+	void install( AbstractPanel * panel );
+	void uninstall( AbstractPanel * panel );
+
+signals:
+	void installed( khopper::widget::AbstractPanel * panel );
+	void uninstalled( khopper::widget::AbstractPanel * panel );
 };
 
 }
-
 }
 
 #endif

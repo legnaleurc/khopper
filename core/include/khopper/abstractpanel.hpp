@@ -22,54 +22,55 @@
 #ifndef KHOPPER_WIDGET_ABSTRACTPANEL_HPP
 #define KHOPPER_WIDGET_ABSTRACTPANEL_HPP
 
-#include "abstractwriter.hpp"
-
 #include <QtGui/QWidget>
 
+#include "abstractwriter.hpp"
+
+
 namespace khopper {
-	namespace widget {
+namespace widget {
 
-		/**
-		 * @brief Abstract panel widget
-		 *
-		 * All output option panel will inherit this class, \n
-		 * and must register to factory. \n
-		 */
-		class KHOPPER_DLL AbstractPanel : public QWidget {
-		public:
-			/**
-			 * @brief Default constructor
-			 * @param parent Parent widget
-			 * @param f Window flags
-			 */
-			AbstractPanel();
+/**
+ * @brief Abstract panel widget
+ *
+ * All output option panel will inherit this class, \n
+ * and must register to factory. \n
+ */
+class KHOPPER_DLL AbstractPanel : public QWidget {
+public:
+	/**
+	 * @brief Default constructor
+	 * @param parent Parent widget
+	 * @param f Window flags
+	 */
+	AbstractPanel();
 
-			/**
-			 * @brief Get encoder setting object
-			 * @return Smart pointer contains AbstractWriter
-			 */
-			virtual plugin::WriterCreator getWriterCreator() const = 0;
-			/**
-			 * @brief Get file suffix
-			 * @return File extension, without leading '.'
-			 */
-			const QString & getSuffix() const;
-			/**
-			 * @brief Get tab title
-			 * @return Title use in tab widget
-			 */
-			const QString & getTitle() const;
+	/**
+	 * @brief Get encoder setting object
+	 * @return Smart pointer contains AbstractWriter
+	 */
+	virtual plugin::WriterCreator getWriterCreator() const = 0;
+	/**
+	 * @brief Get file suffix
+	 * @return File extension, without leading '.'
+	 */
+	const QString & getSuffix() const;
+	/**
+	 * @brief Get tab title
+	 * @return Title use in tab widget
+	 */
+	const QString & getTitle() const;
 
-		protected:
-			void setSuffix( const QString & suffix );
-			void setTitle( const QString & title );
+protected:
+	void setSuffix( const QString & suffix );
+	void setTitle( const QString & title );
 
-		private:
-			struct AbstractPanelPrivate;
-			std::shared_ptr< AbstractPanelPrivate > p_;
-		};
+private:
+	class Private;
+	std::shared_ptr< Private > p_;
+};
 
-	}
+}
 }
 
 #endif

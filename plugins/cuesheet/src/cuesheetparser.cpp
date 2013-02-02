@@ -50,13 +50,13 @@ inline QString stripQuote( const QString & s ) {
 
 using khopper::album::CueSheetParser;
 using khopper::album::PlayList;
+using khopper::codec::AbstractReader;
+using khopper::codec::ReaderSP;
+using khopper::codec::RangedReader;
 using khopper::error::BaseError;
 using khopper::error::CodecError;
 using khopper::error::IOError;
 using khopper::error::RunTimeError;
-using khopper::codec::ReaderSP;
-using khopper::codec::RangedReader;
-using khopper::plugin::getReaderCreator;
 
 PlayList CueSheetParser::load( const QString & content, const QDir & dir, bool freedb ) {
 	CueSheetParser parser;
@@ -232,7 +232,7 @@ void CueSheetParser::parseGarbage_( const QString & line ) {
 
 void CueSheetParser::updateLastTrack_() {
 	// get the total length, because cue sheet don't provide it
-	ReaderSP decoder( getReaderCreator( this->currentFileURI_ )( this->currentFileURI_ ) );
+	ReaderSP decoder( AbstractReader::getCreator( this->currentFileURI_ )( this->currentFileURI_ ) );
 	try {
 		// NOTE: may throw exception
 		decoder->open( QIODevice::ReadOnly );

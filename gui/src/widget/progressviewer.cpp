@@ -20,23 +20,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "progressviewer.hpp"
+
+#include <algorithm>
+
+#include <QtCore/QMutexLocker>
+#include <QtCore/QThreadPool>
+
 #include "ui_progressviewer.h"
 #include "progressbar.hpp"
 #include "converter.hpp"
-#include "khopper/application.hpp"
-
-#include <QtCore/QMutexLocker>
-
-#include <algorithm>
 
 namespace {
 	static QMutex mutex;
 }
 
-using namespace khopper::widget;
 using khopper::album::PlayList;
 using khopper::codec::WriterSP;
 using khopper::utility::Converter;
+using khopper::widget::ProgressViewer;
 
 ProgressViewer::ProgressViewer( QWidget * parent ):
 QWidget( parent, Qt::Window ),
@@ -46,8 +47,9 @@ tasks_(),
 ui_( new Ui::ProgressViewer ) {
 	this->ui_->setupUi( this );
 	QObject::connect( this->ui_->cancel, SIGNAL( clicked() ), this, SLOT( cancel_() ) );
+	const auto MAX_TASKS = QThreadPool::globalInstance()->maxThreadCount();
 
-	for( int i = 0; i < khopper::pApp()->getCpuCount(); ++i ) {
+	for( int i = 0; i < MAX_TASKS; ++i ) {
 		this->lp_.append( new ProgressBar( this ) );
 		this->ui_->layout->addWidget( this->lp_.last() );
 		QObject::connect( this->lp_.last(), SIGNAL( finished() ), this, SLOT( dispatch_() ) );

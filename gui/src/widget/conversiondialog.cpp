@@ -26,7 +26,7 @@
 #include "pathcompletermodel.hpp"
 
 #include "khopper/abstractpanel.hpp"
-#include "khopper/application.hpp"
+#include "khopper/writerpanelcontext.hpp"
 
 #include <QtCore/QSettings>
 #include <QtGui/QCompleter>
@@ -37,7 +37,6 @@
 #include <algorithm>
 #include <set>
 
-using namespace khopper::widget;
 using khopper::album::TrackCSP;
 using khopper::album::TrackSP;
 using khopper::album::PlayList;
@@ -45,6 +44,9 @@ using khopper::codec::WriterSP;
 using khopper::plugin::WriterCreator;
 using khopper::utility::Converter;
 using khopper::utility::PathCompleterModel;
+using khopper::widget::AbstractPanel;
+using khopper::widget::ConversionDialog;
+using khopper::widget::WriterPanelContext;
 
 ConversionDialog::ConversionDialog( QWidget * parent ):
 QDialog( parent ),
@@ -62,8 +64,8 @@ table_() {
 
 	this->connect( this->ui_->browse, SIGNAL( clicked() ), SLOT( changeOutputPath_() ) );
 
-	this->connect( khopper::pApp(), SIGNAL( panelAdded( khopper::widget::AbstractPanel * ) ), SLOT( addPanel( khopper::widget::AbstractPanel * ) ) );
-	this->connect( khopper::pApp(), SIGNAL( panelRemoved( khopper::widget::AbstractPanel * ) ), SLOT( removePanel( khopper::widget::AbstractPanel * ) ) );
+	this->connect( &WriterPanelContext::instance(), SIGNAL( installed( khopper::widget::AbstractPanel * ) ), SLOT( addPanel( khopper::widget::AbstractPanel * ) ) );
+	this->connect( &WriterPanelContext::instance(), SIGNAL( uninstalled( khopper::widget::AbstractPanel * ) ), SLOT( removePanel( khopper::widget::AbstractPanel * ) ) );
 
 	QCompleter * completer = new QCompleter( this );
 	PathCompleterModel * model = new PathCompleterModel( this );

@@ -19,13 +19,25 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
-#include "abstractpanelprivate.hpp"
+#include "abstractpanel.hpp"
 
-using namespace khopper::widget;
+namespace khopper {
+namespace widget {
+
+class AbstractPanel::Private {
+public:
+	QString title;
+	QString suffix;
+};
+
+}
+}
+
+using khopper::widget::AbstractPanel;
 
 AbstractPanel::AbstractPanel():
 QWidget(),
-p_( new AbstractPanelPrivate ) {
+p_( new Private ) {
 }
 
 void AbstractPanel::setTitle( const QString & title ) {

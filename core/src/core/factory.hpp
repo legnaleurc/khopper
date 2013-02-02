@@ -27,6 +27,7 @@
 #include <map>
 
 namespace khopper {
+namespace core {
 
 template< typename IDType, typename KeyType, typename ProductType, template< typename, typename > class ErrorPolicy >
 class Factory : private ErrorPolicy< KeyType, std::function< ProductType ( const KeyType & ) > > {
@@ -36,11 +37,11 @@ private:
 	typedef std::map< IDType, std::pair< VerifierType, CreatorType > > TableType;
 
 public:
-	bool registerProduct( const IDType & id, VerifierType verifier, CreatorType creator ) {
+	bool installCreator( const IDType & id, VerifierType verifier, CreatorType creator ) {
 		return this->t_.insert( std::make_pair( id, std::make_pair( verifier, creator ) ) ).second;
 	}
 
-	bool unregisterProduct( const IDType & id ) {
+	bool uninstallCreator( const IDType & id ) {
 		return this->t_.erase( id ) == 1;
 	}
 
@@ -64,6 +65,7 @@ private:
 	TableType t_;
 };
 
+}
 }
 
 #endif

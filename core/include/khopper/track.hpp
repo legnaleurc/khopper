@@ -42,7 +42,7 @@ namespace album {
  */
 class KHOPPER_DLL Track {
 public:
-	static TrackSP create( const QUrl & uri, plugin::ReaderCreator creator );
+	static TrackSP create( const QUrl & uri, codec::AbstractReader::Creator creator );
 
 	virtual ~Track();
 
@@ -81,9 +81,9 @@ public:
 	void setTitle( const QString & title );
 
 protected:
-	Track( const QUrl & uri, plugin::ReaderCreator creator );
+	Track( const QUrl & uri, codec::AbstractReader::Creator creator );
 
-	void setReaderCreator( plugin::ReaderCreator creator );
+	void setReaderCreator( codec::AbstractReader::Creator creator );
 
 private:
 	class Private;

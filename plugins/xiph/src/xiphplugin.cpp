@@ -24,17 +24,17 @@
 #include "flac/flacreader.hpp"
 #include "ogg/oggpanel.hpp"
 
-#include "khopper/application.hpp"
+#include "khopper/writerpanelcontext.hpp"
 
 #include <QtCore/QtPlugin>
 
 Q_EXPORT_PLUGIN2( KHOPPER_PLUGIN_ID, khopper::plugin::XiphPlugin )
 
-using namespace khopper::plugin;
+using khopper::codec::AbstractReader;
+using khopper::plugin::XiphPlugin;
 using khopper::widget::FlacPanel;
 using khopper::widget::OggPanel;
-using khopper::plugin::registerReader;
-using khopper::plugin::unregisterReader;
+using khopper::widget::WriterPanelContext;
 
 XiphPlugin::XiphPlugin():
 AbstractPlugin(),
@@ -44,15 +44,10 @@ oggPanel_( new OggPanel ) {
 	this->setVersion( KHOPPER_STRINGIZE(KHOPPER_VERSION) );
 }
 
-XiphPlugin::~XiphPlugin() {
-	delete this->flacPanel_;
-	delete this->oggPanel_;
-}
-
 void XiphPlugin::doInstall() {
-	khopper::pApp()->addPanel( this->flacPanel_ );
-	khopper::pApp()->addPanel( this->oggPanel_ );
-	registerReader( this->getID(), []( const QUrl & uri )->unsigned int {
+	WriterPanelContext::instance().install( this->flacPanel_.get() );
+	WriterPanelContext::instance().install( this->oggPanel_.get() );
+	AbstractReader::install( this->getID(), []( const QUrl & uri )->unsigned int {
 		// FIXME
 		QFileInfo info( uri.toLocalFile() );
 		if( info.suffix().toLower() == "flac" ) {
@@ -65,7 +60,7 @@ void XiphPlugin::doInstall() {
 }
 
 void XiphPlugin::doUninstall() {
-	khopper::pApp()->removePanel( this->flacPanel_ );
-	khopper::pApp()->removePanel( this->oggPanel_ );
-	unregisterReader( this->getID() );
+	AbstractReader::uninstall( this->getID() );
+	WriterPanelContext::instance().uninstall( this->oggPanel_.get() );
+	WriterPanelContext::instance().uninstall( this->flacPanel_.get() );
 }
