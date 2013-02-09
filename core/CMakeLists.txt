@@ -37,13 +37,10 @@ target_link_libraries(khopper ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY})
 set_target_properties(khopper
     PROPERTIES
         VERSION ${KHOPPER_VERSION}
-        SOVERSION ${KHOPPER_VERSION}
-        FRAMEWORK TRUE
-        PUBLIC_HEADER "${KHOPPER_CORE_PUBLIC_HEADERS}")
+        SOVERSION ${KHOPPER_VERSION})
 
+install(DIRECTORY "include/khopper" DESTINATION "include")
 install(TARGETS khopper
     RUNTIME DESTINATION "bin"
     LIBRARY DESTINATION "lib"
-    ARCHIVE DESTINATION "lib"
-    FRAMEWORK DESTINATION "/Library/Frameworks"
-    PUBLIC_HEADER DESTINATION "include/khopper")
+    ARCHIVE DESTINATION "lib")
