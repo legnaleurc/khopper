@@ -25,6 +25,9 @@ endif()
 # debug version postfix
 set(CMAKE_DEBUG_POSTFIX d)
 
+set(EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}/bin")
+set(LIBRARY_OUTPUT_PATH "${CMAKE_BINARY_DIR}/lib")
+
 add_subdirectory(core)
 add_subdirectory(gui)
 add_subdirectory(plugins)

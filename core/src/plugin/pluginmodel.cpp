@@ -102,11 +102,7 @@ p_( new Private ) {
 	}
 	tmp = qApp->applicationDirPath();
 #endif
-
-	if( tmp.cd( "../plugins" ) ) {
-		this->p_->searchPaths.push_back( tmp );
-	}
-	if( tmp.cd( "../lib/plugins" ) ) {
+	if( tmp.cd( "../lib" ) ) {
 		this->p_->searchPaths.push_back( tmp );
 	}
 

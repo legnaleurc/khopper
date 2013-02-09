@@ -1,11 +1,5 @@
 # plugins
 
-if(MSVC)
-    set(LIBRARY_OUTPUT_PATH "${CMAKE_BINARY_DIR}/plugins")
-else()
-    set(LIBRARY_OUTPUT_PATH "${CMAKE_BINARY_DIR}/lib/plugins")
-endif()
-
 include_directories("${CMAKE_SOURCE_DIR}/core/include")
 
 function(KHOPPER_ADD_PLUGIN target)

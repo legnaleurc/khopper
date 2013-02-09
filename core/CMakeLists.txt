@@ -11,13 +11,6 @@ set_package_properties(Qt4
     PURPOSE "Necessary for core library")
 include(${QT_USE_FILE})
 
-# hack MSCV path
-if(MSVC)
-    set(LIBRARY_OUTPUT_PATH "${CMAKE_BINARY_DIR}")
-else()
-    set(LIBRARY_OUTPUT_PATH "${CMAKE_BINARY_DIR}/lib")
-endif()
-
 add_definitions(-DKHOPPER_LIBRARY)
 
 file(GLOB_RECURSE KHOPPER_CORE_PUBLIC_HEADERS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "include/*.hpp")
