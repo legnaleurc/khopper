@@ -22,47 +22,44 @@
 #ifndef KHOPPER_ALBUM_CUESHEETTRACK_HPP
 #define KHOPPER_ALBUM_CUESHEETTRACK_HPP
 
-#include "rangedreader.hpp"
+#include <QtCore/QStringList>
 
 #include "khopper/track.hpp"
 
-#include <QtCore/QStringList>
-
 namespace khopper {
-	namespace album {
+namespace album {
 
-		class CueSheetTrack : public Track {
-		public:
-			explicit CueSheetTrack( const QUrl & url );
+class CueSheetTrack : public Track {
+public:
+	explicit CueSheetTrack( const QUrl & url );
 
-			virtual void save() const;
+	virtual void save() const;
 
-			const QStringList & getComments() const;
-			const QStringList & getGarbage() const;
-			const Timestamp & getStartTime() const;
+	const QStringList & getComments() const;
+	const QStringList & getGarbage() const;
+	const Timestamp & getStartTime() const;
 
-			void setComments( const QStringList & comments );
-			void setDataType( const QString & dataType );
-			void setFileType( const QString & fileType );
-			void setGarbage( const QStringList & garbage );
-			void setISRC( const QString & isrc );
-			void setPostgap( const Timestamp & postgap );
-			void setPregap( const Timestamp & pregap );
-			void setStartTime( const Timestamp & startTime );
+	void setComments( const QStringList & comments );
+	void setDataType( const QString & dataType );
+	void setFileType( const QString & fileType );
+	void setGarbage( const QStringList & garbage );
+	void setISRC( const QString & isrc );
+	void setPostgap( const Timestamp & postgap );
+	void setPregap( const Timestamp & pregap );
+	void setStartTime( const Timestamp & startTime );
 
-		private:
-			QStringList comments_;
-			QString dataType_;
-			QString fileType_;
-			QStringList garbage_;
-			QString isrc_;
-			Timestamp postgap_;
-			Timestamp pregap_;
-			codec::RangedReader * reader_;
-			Timestamp startTime_;
-		};
+private:
+	QStringList comments_;
+	QString dataType_;
+	QString fileType_;
+	QStringList garbage_;
+	QString isrc_;
+	Timestamp postgap_;
+	Timestamp pregap_;
+	Timestamp startTime_;
+};
 
-	}
+}
 }
 
 #endif
