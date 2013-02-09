@@ -5,7 +5,7 @@ include(FeatureSummary)
 if(MSVC)
     set(QT_USE_QTMAIN TRUE)
 endif()
-find_package(Qt4 4.7 COMPONENTS Phonon)
+find_package(Qt4 4.7 QUIET COMPONENTS Phonon)
 set_package_properties(Qt4
     PROPERTIES
     TYPE RECOMMENDED

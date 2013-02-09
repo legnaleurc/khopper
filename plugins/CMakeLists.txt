@@ -9,7 +9,7 @@ endif()
 include_directories("${CMAKE_SOURCE_DIR}/core/include")
 
 function(KHOPPER_ADD_PLUGIN target)
-    find_package(Qt4 REQUIRED QUIET)
+    find_package(Qt4 4.7 QUIET)
     include(${QT_USE_FILE})
     add_definitions(${QT_DEFINITIONS} -DQT_PLUGIN -DQT_SHARED)
     add_definitions(-DKHOPPER_PLUGIN_ID=${target})
