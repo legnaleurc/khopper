@@ -1,5 +1,5 @@
 /**
- * @file abstractwriter.hpp
+ * @file writer.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,8 +19,8 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_CODEC_ABSTRACTWRITER_HPP
-#define KHOPPER_CODEC_ABSTRACTWRITER_HPP
+#ifndef KHOPPER_CODEC_WRITER_HPP
+#define KHOPPER_CODEC_WRITER_HPP
 
 #include <functional>
 #include <memory>
@@ -31,20 +31,36 @@
 #include "audioformat.hpp"
 
 namespace khopper {
-
 namespace codec {
+
+class Writer;
+
+/**
+ * @ingroup Codecs
+ * @brief AbstractWriter smart pointer
+ * @sa AbstractWriter WriterCSP
+ */
+typedef std::shared_ptr< Writer > WriterSP;
+/**
+ * @ingroup Codecs
+ * @brief AbstractWriter const smart pointer
+ * @sa AbstractWriter WriterSP
+ */
+typedef std::shared_ptr< const Writer > WriterCSP;
 
 /**
  * @ingroup Codecs
  * @brief Audio writer interface
  * @sa AbstractReader
  */
-class KHOPPER_DLL AbstractWriter : public QIODevice {
+class KHOPPER_DLL Writer : public QIODevice {
 public:
+	typedef std::function< WriterSP ( const QUrl & ) > Creator;
+
 	/**
 	 * @brief Virtual destructor
 	 */
-	virtual ~AbstractWriter();
+	virtual ~Writer();
 
 	/**
 	 * @brief Open file
@@ -89,7 +105,7 @@ protected:
 	 *
 	 * @param uri where this writer is
 	 */
-	explicit AbstractWriter( const QUrl & uri );
+	explicit Writer( const QUrl & uri );
 
 	/**
 	 * @brief Get album
@@ -126,32 +142,14 @@ protected:
 
 private:
 	// prevent copying
-	AbstractWriter( const AbstractWriter & );
-	AbstractWriter & operator =( const AbstractWriter & );
+	Writer( const Writer & );
+	Writer & operator =( const Writer & );
 
 	class Private;
 	std::shared_ptr< Private > p_;
 };
 
-/**
- * @ingroup Codecs
- * @brief AbstractWriter smart pointer
- * @sa AbstractWriter WriterCSP
- */
-typedef std::shared_ptr< AbstractWriter > WriterSP;
-/**
- * @ingroup Codecs
- * @brief AbstractWriter const smart pointer
- * @sa AbstractWriter WriterSP
- */
-typedef std::shared_ptr< const AbstractWriter > WriterCSP;
-
 }
-
-namespace plugin {
-typedef std::function< codec::WriterSP ( const QUrl & ) > WriterCreator;
-}
-
 }
 
 #endif

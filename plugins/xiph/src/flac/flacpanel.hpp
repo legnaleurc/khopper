@@ -22,38 +22,38 @@
 #ifndef KHOPPER_PLUGIN_FLACPANEL_HPP
 #define KHOPPER_PLUGIN_FLACPANEL_HPP
 
-#include "khopper/abstractpanel.hpp"
+#include "khopper/panel.hpp"
 
 namespace Ui {
-	class FlacPanel;
+class FlacPanel;
 }
 
 namespace khopper {
-	namespace widget {
+namespace widget {
 
-		/**
-		 * @brief flac option widget
-		 */
-		class FlacPanel : public AbstractPanel {
-		public:
-			/**
-			 * @brief Default constructor
-			 * @param parent Parent widget
-			 * @param f Window flags
-			 */
-			FlacPanel();
+/**
+ * @brief flac option widget
+ */
+class FlacPanel : public Panel {
+public:
+	/**
+	 * @brief Default constructor
+	 * @param parent Parent widget
+	 * @param f Window flags
+	 */
+	FlacPanel();
 
-			/**
-			 * @brief Get encoder setting object
-			 * @return Smart pointer contains AbstractWriter
-			 */
-			virtual plugin::WriterCreator getWriterCreator() const;
+	/**
+	 * @brief Get encoder setting object
+	 * @return Smart pointer contains AbstractWriter
+	 */
+	virtual codec::Writer::Creator getWriterCreator() const;
 
-		private:
-			std::shared_ptr< Ui::FlacPanel > ui_;
-		};
+private:
+	std::shared_ptr< Ui::FlacPanel > ui_;
+};
 
-	}
+}
 }
 
 #endif

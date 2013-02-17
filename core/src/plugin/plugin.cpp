@@ -1,5 +1,5 @@
 /**
-* @file abstractplugin.cpp
+* @file plugin.cpp
 * @author Wei-Cheng Pan
 *
 * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,48 +19,64 @@
 * You should have received a copy of the GNU Lesser General Public
 * License along with this library; if not, see <http://www.gnu.org/licenses/>.
 */
-#include "abstractpluginprivate.hpp"
+#include "plugin.hpp"
+
+namespace khopper {
+namespace plugin {
+
+class Plugin::Private {
+public:
+	Private();
+
+	bool installed;
+	QString id;
+	QString version;
+	QFileInfo info;
+};
+
+}
+}
 
 using namespace khopper::plugin;
 
-AbstractPlugin::Private::Private():
+Plugin::Private::Private():
 installed( false ),
 id(),
 version(),
 info() {
 }
 
-AbstractPlugin::AbstractPlugin() : p_( new Private ) {
+Plugin::Plugin() : p_( new Private ) {
 }
 
-AbstractPlugin::~AbstractPlugin() {
+Plugin::~Plugin() {
 }
 
-void AbstractPlugin::setFileInfo( const QFileInfo & fileInfo ) {
+void Plugin::setFileInfo( const QFileInfo & fileInfo ) {
 	this->p_->info = fileInfo;
 }
 
-const QFileInfo & AbstractPlugin::getFileInfo() const {
+const QFileInfo & Plugin::getFileInfo() const {
 	return this->p_->info;
 }
 
-void AbstractPlugin::setID( const QString & id ) {
+void Plugin::setID( const QString & id ) {
 	this->p_->id = id;
 }
 
-void AbstractPlugin::setVersion( const QString & version ) {
+void Plugin::setVersion( const QString & version ) {
 	this->p_->version = version;
 }
 
-const QString & AbstractPlugin::getID() const {
+const QString & Plugin::getID() const {
 	return this->p_->id;
 }
 
-const QString & AbstractPlugin::getVersion() const {
+const QString & Plugin::getVersion() const {
 	return this->p_->version;
 }
 
-void AbstractPlugin::install() {
+void Plugin::install() {
 	if( this->p_->installed ) {
 		return;
 	}
@@ -68,7 +84,7 @@ void AbstractPlugin::install() {
 	this->p_->installed = true;
 }
 
-void AbstractPlugin::uninstall() {
+void Plugin::uninstall() {
 	if( !this->p_->installed ) {
 		return;
 	}
@@ -76,6 +92,6 @@ void AbstractPlugin::uninstall() {
 	this->p_->installed = false;
 }
 
-bool AbstractPlugin::isInstalled() const {
+bool Plugin::isInstalled() const {
 	return this->p_->installed;
 }

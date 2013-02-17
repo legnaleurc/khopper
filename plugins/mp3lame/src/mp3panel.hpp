@@ -22,40 +22,40 @@
 #ifndef KHOPPER_WIDGET_MP3PANEL_HPP
 #define KHOPPER_WIDGET_MP3PANEL_HPP
 
-#include "khopper/abstractpanel.hpp"
+#include "khopper/panel.hpp"
 
 class QButtonGroup;
 namespace Ui {
-	class Mp3Panel;
+class Mp3Panel;
 }
 
 namespace khopper {
-	namespace widget {
+namespace widget {
 
-		/**
-		 * @brief Mp3 option widget
-		 */
-		class Mp3Panel : public AbstractPanel {
-		public:
-			/**
-			 * @brief Default constructor
-			 * @param parent Parent widget
-			 * @param f Window flags
-			 */
-			Mp3Panel();
+/**
+ * @brief Mp3 option widget
+ */
+class Mp3Panel : public Panel {
+public:
+	/**
+	 * @brief Default constructor
+	 * @param parent Parent widget
+	 * @param f Window flags
+	 */
+	Mp3Panel();
 
-			/**
-			 * @brief Get encoder setting object
-			 * @return Smart pointer contains AbstractWriter
-			 */
-			virtual plugin::WriterCreator getWriterCreator() const;
+	/**
+	 * @brief Get encoder setting object
+	 * @return Smart pointer contains AbstractWriter
+	 */
+	virtual codec::Writer::Creator getWriterCreator() const;
 
-		private:
-			std::shared_ptr< Ui::Mp3Panel > ui_;
-			QButtonGroup * choise_;
-		};
+private:
+	std::shared_ptr< Ui::Mp3Panel > ui_;
+	QButtonGroup * choise_;
+};
 
-	}
+}
 }
 
 #endif

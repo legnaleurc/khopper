@@ -25,7 +25,7 @@
 #include "converter.hpp"
 #include "pathcompletermodel.hpp"
 
-#include "khopper/abstractpanel.hpp"
+#include "khopper/panel.hpp"
 #include "khopper/writerpanelcontext.hpp"
 
 #include <QtCore/QSettings>
@@ -40,11 +40,11 @@
 using khopper::album::TrackCSP;
 using khopper::album::TrackSP;
 using khopper::album::PlayList;
+using khopper::codec::Writer;
 using khopper::codec::WriterSP;
-using khopper::plugin::WriterCreator;
 using khopper::utility::Converter;
 using khopper::utility::PathCompleterModel;
-using khopper::widget::AbstractPanel;
+using khopper::widget::Panel;
 using khopper::widget::ConversionDialog;
 using khopper::widget::WriterPanelContext;
 
@@ -80,8 +80,8 @@ void ConversionDialog::convert( const PlayList & tracks ) {
 		return;
 	}
 
-	AbstractPanel * panel = this->getCurrent();
-	WriterCreator wc( panel->getWriterCreator() );
+	Panel * panel = this->getCurrent();
+	Writer::Creator wc( panel->getWriterCreator() );
 	std::set< QString > failureDirs;
 
 	QList< Converter * > tasks;
@@ -110,15 +110,15 @@ void ConversionDialog::convert( const PlayList & tracks ) {
 	}
 }
 
-AbstractPanel * ConversionDialog::getCurrent() const {
+Panel * ConversionDialog::getCurrent() const {
 	return this->table_.find( this->ui_->tabWidget->currentIndex() )->second;
 }
 
-void ConversionDialog::addPanel( AbstractPanel * panel ) {
+void ConversionDialog::addPanel( Panel * panel ) {
 	this->table_.insert( std::make_pair( this->ui_->tabWidget->addTab( panel, panel->getTitle() ), panel ) );
 }
 
-void ConversionDialog::removePanel( AbstractPanel * panel ) {
+void ConversionDialog::removePanel( Panel * panel ) {
 	int index = this->ui_->tabWidget->indexOf( panel );
 	this->table_.erase( index );
 	this->ui_->tabWidget->removeTab( index );

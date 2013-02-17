@@ -22,48 +22,44 @@
 #ifndef KHOPPER_CODEC_FLACREADER_HPP
 #define KHOPPER_CODEC_FLACREADER_HPP
 
-#include "khopper/abstractreader.hpp"
-
 #include <FLAC/stream_decoder.h>
 
-#include <cstdint>
+#include "khopper/reader.hpp"
 
 namespace khopper {
+namespace codec {
 
-	namespace codec {
+class FlacReader: public Reader {
+public:
+	explicit FlacReader( const QUrl & uri );
 
-		class FlacReader : public AbstractReader {
-		public:
-			explicit FlacReader( const QUrl & uri );
+	virtual bool atEnd() const;
+	virtual bool seek( qint64 pos );
+	virtual qint64 size() const;
 
-			virtual bool atEnd() const;
-			virtual bool seek( qint64 pos );
-			virtual qint64 size() const;
+protected:
+	virtual qint64 readData( char * data, qint64 maxSize );
+	virtual void doOpen();
+	virtual void doClose();
 
-		protected:
-			virtual qint64 readData( char * data, qint64 maxSize );
-			virtual void doOpen();
-			virtual void doClose();
+private:
+	static FLAC__StreamDecoderReadStatus readCallback_( const FLAC__StreamDecoder *, FLAC__byte[], size_t *, void * );
+	static FLAC__StreamDecoderSeekStatus seekCallback_( const FLAC__StreamDecoder *, FLAC__uint64, void * );
+	static FLAC__StreamDecoderTellStatus tellCallback_( const FLAC__StreamDecoder *, FLAC__uint64 *, void * );
+	static FLAC__StreamDecoderLengthStatus lengthCallback_( const FLAC__StreamDecoder *, FLAC__uint64 *, void * );
+	static FLAC__bool eofCallback_( const FLAC__StreamDecoder *, void * );
+	static FLAC__StreamDecoderWriteStatus writeCallback_( const FLAC__StreamDecoder *, const FLAC__Frame *, const FLAC__int32 * const [], void * );
+	static void metadataCallback_( const FLAC__StreamDecoder *, const FLAC__StreamMetadata *, void * );
+	static void errorCallback_( const FLAC__StreamDecoder *, FLAC__StreamDecoderErrorStatus, void * );
 
-		private:
-			static FLAC__StreamDecoderReadStatus readCallback_( const FLAC__StreamDecoder *, FLAC__byte[], size_t *, void * );
-			static FLAC__StreamDecoderSeekStatus seekCallback_( const FLAC__StreamDecoder *, FLAC__uint64, void * );
-			static FLAC__StreamDecoderTellStatus tellCallback_( const FLAC__StreamDecoder *, FLAC__uint64 *, void * );
-			static FLAC__StreamDecoderLengthStatus lengthCallback_( const FLAC__StreamDecoder *, FLAC__uint64 *, void * );
-			static FLAC__bool eofCallback_( const FLAC__StreamDecoder *, void * );
-			static FLAC__StreamDecoderWriteStatus writeCallback_( const FLAC__StreamDecoder *, const FLAC__Frame *, const FLAC__int32 * const [], void * );
-			static void metadataCallback_( const FLAC__StreamDecoder *, const FLAC__StreamMetadata *, void * );
-			static void errorCallback_( const FLAC__StreamDecoder *, FLAC__StreamDecoderErrorStatus, void * );
+	void parseVorbisComments_( const FLAC__StreamMetadata_VorbisComment & );
 
-			void parseVorbisComments_( const FLAC__StreamMetadata_VorbisComment & );
+	QIODevice * in_;
+	std::shared_ptr< FLAC__StreamDecoder > pFD_;
+	QByteArray buffer_;
+};
 
-			QIODevice * in_;
-			std::shared_ptr< FLAC__StreamDecoder > pFD_;
-			QByteArray buffer_;
-		};
-
-	}
-
+}
 }
 
 #endif

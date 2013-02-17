@@ -25,13 +25,13 @@
 #include "khopper/ioerror.hpp"
 #include "khopper/systemerror.hpp"
 
-using namespace khopper::codec;
+using khopper::codec::FlacWriter;
 using khopper::error::CodecError;
 using khopper::error::IOError;
 using khopper::error::SystemError;
 
 FlacWriter::FlacWriter( const QUrl & uri ):
-AbstractWriter( uri ),
+Writer( uri ),
 pFE_( FLAC__stream_encoder_new(), FLAC__stream_encoder_delete ),
 metadataOwner_(),
 ogg_( false ) {

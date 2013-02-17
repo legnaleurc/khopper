@@ -22,31 +22,31 @@
 #ifndef KHOPPER_CODEC_RANGEDREADER_HPP
 #define KHOPPER_CODEC_RANGEDREADER_HPP
 
-#include "khopper/abstractreader.hpp"
+#include "khopper/reader.hpp"
 
 namespace khopper {
-	namespace codec {
+namespace codec {
 
-		class RangedReader : public AbstractReader {
-		public:
-			RangedReader( const QUrl & uri, qint64 msBegin, qint64 msDuration );
+class RangedReader: public Reader {
+public:
+	RangedReader( const QUrl & uri, qint64 msBegin, qint64 msDuration );
 
-			virtual bool atEnd() const;
-			bool seek( qint64 pos );
-			virtual qint64 size() const;
+	virtual bool atEnd() const;
+	bool seek( qint64 pos );
+	virtual qint64 size() const;
 
-		protected:
-			virtual void doOpen();
-			virtual void doClose();
-			virtual qint64 readData( char * data, qint64 maxSize );
+protected:
+	virtual void doOpen();
+	virtual void doClose();
+	virtual qint64 readData( char * data, qint64 maxSize );
 
-		private:
-			ReaderSP client_;
-			qint64 msBegin_;
-			qint64 msDuration_;
-		};
+private:
+	ReaderSP client_;
+	qint64 msBegin_;
+	qint64 msDuration_;
+};
 
-	}
+}
 }
 
 #endif

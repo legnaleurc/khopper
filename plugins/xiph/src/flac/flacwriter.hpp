@@ -22,17 +22,17 @@
 #ifndef KHOPPER_CODEC_FLACWRITER_HPP
 #define KHOPPER_CODEC_FLACWRITER_HPP
 
-#include "khopper/abstractwriter.hpp"
-
 #include <vector>
 
 #include <FLAC/stream_encoder.h>
 #include <FLAC/metadata.h>
 
+#include "khopper/writer.hpp"
+
 namespace khopper {
 namespace codec {
 
-class FlacWriter: public AbstractWriter {
+class FlacWriter: public Writer {
 public:
 	explicit FlacWriter( const QUrl & uri );
 

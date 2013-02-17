@@ -37,7 +37,7 @@ extern "C" {
 
 Q_EXPORT_PLUGIN2( KHOPPER_PLUGIN_ID, khopper::plugin::FfmpegPlugin )
 
-using khopper::codec::AbstractReader;
+using khopper::codec::Reader;
 #ifdef Q_OS_WIN32
 using khopper::ffmpeg::read_packet;
 using khopper::ffmpeg::write_packet;
@@ -48,7 +48,7 @@ using khopper::widget::WriterPanelContext;
 using khopper::widget::WavPanel;
 
 FfmpegPlugin::FfmpegPlugin():
-AbstractPlugin(),
+Plugin(),
 panel_( new WavPanel ) {
 	this->setID( KHOPPER_STRINGIZE(KHOPPER_PLUGIN_ID) );
 	this->setVersion( KHOPPER_STRINGIZE(KHOPPER_VERSION) );
@@ -60,7 +60,7 @@ void FfmpegPlugin::doInstall() {
 	av_register_all();
 	avformat_network_init();
 
-	AbstractReader::install( this->getID(), []( const QUrl & uri )->unsigned int {
+	Reader::install( this->getID(), []( const QUrl & uri )->unsigned int {
 		AVFormatContext * pFC = NULL;
 #ifdef Q_OS_WIN32
 		QFile opaque;
@@ -101,7 +101,7 @@ void FfmpegPlugin::doInstall() {
 }
 
 void FfmpegPlugin::doUninstall() {
-	AbstractReader::uninstall( this->getID() );
+	Reader::uninstall( this->getID() );
 	WriterPanelContext::instance().uninstall( this->panel_.get() );
 
 	avformat_network_deinit();

@@ -24,12 +24,12 @@
 
 #include <lame/lame.h>
 
-#include "khopper/abstractwriter.hpp"
+#include "khopper/writer.hpp"
 
 namespace khopper {
 namespace codec {
 
-class Mp3Writer: public AbstractWriter {
+class Mp3Writer: public Writer {
 public:
 	explicit Mp3Writer( const QUrl & uri );
 

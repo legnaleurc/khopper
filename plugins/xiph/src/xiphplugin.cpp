@@ -20,24 +20,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "xiphplugin.hpp"
-#include "flac/flacpanel.hpp"
-#include "flac/flacreader.hpp"
-#include "ogg/oggpanel.hpp"
-
-#include "khopper/writerpanelcontext.hpp"
 
 #include <QtCore/QtPlugin>
 
+#include "flac/flacpanel.hpp"
+#include "flac/flacreader.hpp"
+#include "ogg/oggpanel.hpp"
+#include "khopper/writerpanelcontext.hpp"
+
 Q_EXPORT_PLUGIN2( KHOPPER_PLUGIN_ID, khopper::plugin::XiphPlugin )
 
-using khopper::codec::AbstractReader;
+using khopper::codec::Reader;
 using khopper::plugin::XiphPlugin;
 using khopper::widget::FlacPanel;
 using khopper::widget::OggPanel;
 using khopper::widget::WriterPanelContext;
 
 XiphPlugin::XiphPlugin():
-AbstractPlugin(),
+Plugin(),
 flacPanel_( new FlacPanel ),
 oggPanel_( new OggPanel ) {
 	this->setID( KHOPPER_STRINGIZE(KHOPPER_PLUGIN_ID) );
@@ -47,7 +47,7 @@ oggPanel_( new OggPanel ) {
 void XiphPlugin::doInstall() {
 	WriterPanelContext::instance().install( this->flacPanel_.get() );
 	WriterPanelContext::instance().install( this->oggPanel_.get() );
-	AbstractReader::install( this->getID(), []( const QUrl & uri )->unsigned int {
+	Reader::install( this->getID(), []( const QUrl & uri )->unsigned int {
 		// FIXME
 		QFileInfo info( uri.toLocalFile() );
 		if( info.suffix().toLower() == "flac" ) {
@@ -60,7 +60,7 @@ void XiphPlugin::doInstall() {
 }
 
 void XiphPlugin::doUninstall() {
-	AbstractReader::uninstall( this->getID() );
+	Reader::uninstall( this->getID() );
 	WriterPanelContext::instance().uninstall( this->oggPanel_.get() );
 	WriterPanelContext::instance().uninstall( this->flacPanel_.get() );
 }

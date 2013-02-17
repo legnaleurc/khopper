@@ -31,12 +31,12 @@
 #include "khopper/codecerror.hpp"
 #include "khopper/ioerror.hpp"
 
-using namespace khopper::codec;
+using khopper::codec::FlacReader;
 using khopper::error::CodecError;
 using khopper::error::IOError;
 
 FlacReader::FlacReader( const QUrl & uri ):
-AbstractReader( uri ),
+Reader( uri ),
 in_( NULL ),
 pFD_( FLAC__stream_decoder_new(), FLAC__stream_decoder_delete ),
 buffer_() {
@@ -93,7 +93,7 @@ void FlacReader::doClose() {
 }
 
 bool FlacReader::seek( qint64 pos ) {
-	bool ret = this->AbstractReader::seek( pos );
+	bool ret = this->Reader::seek( pos );
 	FLAC__bool ok = FLAC__stream_decoder_seek_absolute( this->pFD_.get(), pos / this->getAudioFormat().channels() / ( this->getAudioFormat().sampleSize() / 8 ) );
 	if( ok && ret ) {
 		this->buffer_.clear();

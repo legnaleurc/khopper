@@ -27,9 +27,9 @@ using khopper::album::Track;
 using khopper::album::TrackSP;
 using khopper::codec::AudioFormat;
 using khopper::codec::ReaderSP;
-using khopper::codec::AbstractReader;
+using khopper::codec::Reader;
 
-Track::Private::Private( const QUrl & uri, AbstractReader::Creator creator ):
+Track::Private::Private( const QUrl & uri, Reader::Creator creator ):
 album(),
 artist(),
 bitRate( 0 ),
@@ -42,18 +42,18 @@ textCodec( QTextCodec::codecForName( "UTF-8" ) ),
 uri( uri ) {
 }
 
-TrackSP Track::create( const QUrl & uri, AbstractReader::Creator creator ) {
+TrackSP Track::create( const QUrl & uri, Reader::Creator creator ) {
 	return TrackSP( new Track( uri, creator ) );
 }
 
-Track::Track( const QUrl & uri, AbstractReader::Creator creator ):
+Track::Track( const QUrl & uri, Reader::Creator creator ):
 p_( new Private( uri, creator ) ) {
 }
 
 Track::~Track() {
 }
 
-void Track::setReaderCreator( AbstractReader::Creator creator ) {
+void Track::setReaderCreator( Reader::Creator creator ) {
 	this->p_->creator = creator;
 }
 

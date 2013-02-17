@@ -22,7 +22,7 @@
 #ifndef KHOPPER_PLUGIN_XIPHPLUGIN_HPP
 #define KHOPPER_PLUGIN_XIPHPLUGIN_HPP
 
-#include "khopper/abstractplugin.hpp"
+#include "khopper/plugin.hpp"
 
 namespace khopper {
 
@@ -36,7 +36,7 @@ namespace plugin {
 /**
  * @brief flac option widget
  */
-class XiphPlugin : public AbstractPlugin {
+class XiphPlugin: public Plugin {
 public:
 	XiphPlugin();
 

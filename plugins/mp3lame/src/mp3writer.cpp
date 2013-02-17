@@ -32,7 +32,7 @@ using khopper::codec::Mp3Writer;
 using khopper::error::IOError;
 
 Mp3Writer::Mp3Writer( const QUrl & uri ):
-AbstractWriter( uri ),
+Writer( uri ),
 out_( NULL ),
 gfp_(),
 quality_( -1 ),

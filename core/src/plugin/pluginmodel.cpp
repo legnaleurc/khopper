@@ -29,7 +29,7 @@
 #include <QtCore/QtGlobal>
 #include <QtGui/QApplication>
 
-#include "abstractplugin.hpp"
+#include "plugin.hpp"
 #include "baseerror.hpp"
 #include "runtimeerror.hpp"
 
@@ -39,7 +39,7 @@ namespace plugin {
 
 class PluginModel::Private {
 public:
-	typedef std::vector< AbstractPlugin * > PluginListType;
+	typedef std::vector< Plugin * > PluginListType;
 
 	Private();
 
@@ -150,7 +150,6 @@ QVariant PluginModel::data( const QModelIndex & index, int role ) const {
 	if( !index.isValid() ) {
 		return QVariant();
 	}
-	std::map< std::string, AbstractPlugin * >::const_iterator it;
 	switch( role ) {
 	case Qt::DisplayRole:
 		switch( index.column() ) {
@@ -252,7 +251,7 @@ void PluginModel::refreshPlugins() {
 	std::for_each( pfi.begin(), pfi.end(), [&]( const QFileInfo & fileInfo ) {
 		qDebug() << fileInfo.absoluteFilePath();
 		QPluginLoader loader( fileInfo.absoluteFilePath() );
-		AbstractPlugin * pPlugin = dynamic_cast< AbstractPlugin * >( loader.instance() );
+		Plugin * pPlugin = dynamic_cast< Plugin * >( loader.instance() );
 		if( !pPlugin ) {
 			if( loader.isLoaded() ) {
 				emit this->errorOccured( QObject::tr( "Invalid plugin" ), QObject::tr( "This plugin: %1 is not valid for Khopper." ).arg( fileInfo.absoluteFilePath() ) );
@@ -262,7 +261,7 @@ void PluginModel::refreshPlugins() {
 			return;
 		}
 
-		auto it = std::find_if( this->p_->plugins.begin(), this->p_->plugins.end(), [pPlugin]( const AbstractPlugin * that )->bool {
+		auto it = std::find_if( this->p_->plugins.begin(), this->p_->plugins.end(), [pPlugin]( const Plugin * that )->bool {
 			return that->getID() == pPlugin->getID();
 		} );
 		if( it != this->p_->plugins.end() ) {

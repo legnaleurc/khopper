@@ -22,56 +22,56 @@
 #ifndef KHOPPER_UTILITY_CONVERTER_HPP
 #define KHOPPER_UTILITY_CONVERTER_HPP
 
-#include "khopper/abstractwriter.hpp"
-#include "khopper/track.hpp"
-
 #include <QtCore/QRunnable>
 
+#include "khopper/writer.hpp"
+#include "khopper/track.hpp"
+
 namespace khopper {
-	namespace utility {
+namespace utility {
 
-		/**
-		 * @brief Controller of converting
-		 */
-		class Converter : public QObject, public QRunnable {
-			Q_OBJECT
+/**
+ * @brief Controller of converting
+ */
+class Converter : public QObject, public QRunnable {
+	Q_OBJECT
 
-		public:
-			/**
-			 * @brief Constructor
-			 */
-			Converter( album::TrackCSP track, plugin::WriterCreator creator, const QString & path );
+public:
+	/**
+	 * @brief Constructor
+	 */
+	Converter( album::TrackCSP track, codec::Writer::Creator creator, const QString & path );
 
-			virtual void run();
+	virtual void run();
 
-			QString getTitle() const;
-			qint64 getMaximumValue() const;
+	QString getTitle() const;
+	qint64 getMaximumValue() const;
 
-		public slots:
-			/**
-			 * @brief Cancel converting
-			 */
-			void cancel();
+public slots:
+	/**
+	 * @brief Cancel converting
+	 */
+	void cancel();
 
-		signals:
-			/**
-			 * @brief Decoded duration
-			 * @param ms Time in second * 1000
-			 */
-			void decodedTime( qint64 ms );
-			void errorOccured( const QString & title, const QString & message );
-			void finished();
+signals:
+	/**
+	 * @brief Decoded duration
+	 * @param ms Time in second * 1000
+	 */
+	void decodedTime( qint64 ms );
+	void errorOccured( const QString & title, const QString & message );
+	void finished();
 
-		private:
-			QUrl getUniqueURI_() const;
+private:
+	QUrl getUniqueURI_() const;
 
-			bool canceled_;
-			plugin::WriterCreator creator_;
-			album::TrackCSP track_;
-			QString path_;
-		};
+	bool canceled_;
+	codec::Writer::Creator creator_;
+	album::TrackCSP track_;
+	QString path_;
+};
 
-	}
+}
 }
 
 #endif

@@ -22,43 +22,43 @@
 #ifndef KHOPPER_WIDGET_PROGRESSBAR_HPP
 #define KHOPPER_WIDGET_PROGRESSBAR_HPP
 
-#include "khopper/track.hpp"
-#include "khopper/abstractwriter.hpp"
-
 #include <QtGui/QWidget>
 
+#include "khopper/track.hpp"
+#include "khopper/writer.hpp"
+
 namespace Ui {
-	class ProgressBar;
+class ProgressBar;
 }
 
 namespace khopper {
 
-	namespace utility {
-		class Converter;
-	}
+namespace utility {
+class Converter;
+}
 
-	namespace widget {
+namespace widget {
 
-		class ProgressBar : public QWidget {
-			Q_OBJECT
-		public:
-			explicit ProgressBar( QWidget * parent );
+class ProgressBar : public QWidget {
+	Q_OBJECT
+public:
+	explicit ProgressBar( QWidget * parent );
 
-			void cancel();
-			void start( utility::Converter * task );
+	void cancel();
+	void start( utility::Converter * task );
 
-		signals:
-			void finished();
+signals:
+	void finished();
 
-		private slots:
-			void increase_( qint64 );
+private slots:
+	void increase_( qint64 );
 
-		private:
-			utility::Converter * task_;
-			std::shared_ptr< Ui::ProgressBar > ui_;
-		};
+private:
+	utility::Converter * task_;
+	std::shared_ptr< Ui::ProgressBar > ui_;
+};
 
-	}
+}
 
 }
 

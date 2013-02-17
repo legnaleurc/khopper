@@ -1,5 +1,5 @@
 /**
- * @file abstractwriter.cpp
+ * @file writer.cpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,7 +19,7 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
-#include "abstractwriter.hpp"
+#include "writer.hpp"
 
 #include <cassert>
 
@@ -27,7 +27,7 @@
 
 namespace khopper {
 namespace codec {
-class AbstractWriter::Private {
+class Writer::Private {
 public:
 	explicit Private( const QUrl & uri );
 
@@ -42,19 +42,19 @@ public:
 }
 }
 
-using khopper::codec::AbstractWriter;
+using khopper::codec::Writer;
 using khopper::codec::AudioFormat;
 using khopper::codec::ChannelLayout;
 using khopper::error::BaseError;
 
-AbstractWriter::AbstractWriter( const QUrl & uri ):
+Writer::Writer( const QUrl & uri ):
 p_( new Private( uri ) ) {
 }
 
-AbstractWriter::~AbstractWriter() {
+Writer::~Writer() {
 }
 
-bool AbstractWriter::open( OpenMode /*mode*/ ) {
+bool Writer::open( OpenMode /*mode*/ ) {
 	if( this->isOpen() ) {
 		this->close();
 	}
@@ -73,7 +73,7 @@ bool AbstractWriter::open( OpenMode /*mode*/ ) {
 	return opened && good;
 }
 
-void AbstractWriter::close() {
+void Writer::close() {
 	if( !this->isOpen() ) {
 		return;
 	}
@@ -90,59 +90,59 @@ void AbstractWriter::close() {
 	this->QIODevice::close();
 }
 
-qint64 AbstractWriter::readData( char * /*data*/, qint64 /*maxlen*/ ) {
+qint64 Writer::readData( char * /*data*/, qint64 /*maxlen*/ ) {
 	return -1;
 }
 
-const QUrl & AbstractWriter::getURI() const {
+const QUrl & Writer::getURI() const {
 	return this->p_->uri;
 }
 
-unsigned int AbstractWriter::getBitRate() const {
+unsigned int Writer::getBitRate() const {
 	return this->p_->bitRate;
 }
 
-const QByteArray & AbstractWriter::getAlbum() const {
+const QByteArray & Writer::getAlbum() const {
 	return this->p_->album;
 }
 
-const QByteArray & AbstractWriter::getArtist() const {
+const QByteArray & Writer::getArtist() const {
 	return this->p_->artist;
 }
 
-const QByteArray & AbstractWriter::getTitle() const {
+const QByteArray & Writer::getTitle() const {
 	return this->p_->title;
 }
 
-void AbstractWriter::setBitRate( unsigned int bitRate ) {
+void Writer::setBitRate( unsigned int bitRate ) {
 	this->p_->bitRate = bitRate;
 }
 
-void AbstractWriter::setAlbum( const QByteArray & album ) {
+void Writer::setAlbum( const QByteArray & album ) {
 	this->p_->album = album;
 }
 
-void AbstractWriter::setArtist( const QByteArray & artist ) {
+void Writer::setArtist( const QByteArray & artist ) {
 	this->p_->artist = artist;
 }
 
-void AbstractWriter::setTitle( const QByteArray & title ) {
+void Writer::setTitle( const QByteArray & title ) {
 	this->p_->title = title;
 }
 
-void AbstractWriter::setChannelLayout( ChannelLayout channelLayout ) {
+void Writer::setChannelLayout( ChannelLayout channelLayout ) {
 	this->p_->channelLayout = channelLayout;
 }
 
-const AudioFormat & AbstractWriter::getAudioFormat() const {
+const AudioFormat & Writer::getAudioFormat() const {
 	return this->p_->format;
 }
 
-void AbstractWriter::setAudioFormat( const AudioFormat & format ) {
+void Writer::setAudioFormat( const AudioFormat & format ) {
 	this->p_->format = format;
 }
 
-AbstractWriter::Private::Private( const QUrl & uri ):
+Writer::Private::Private( const QUrl & uri ):
 album(),
 artist(),
 bitRate( 0 ),

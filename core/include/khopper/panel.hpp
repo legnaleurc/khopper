@@ -1,5 +1,5 @@
 /**
- * @file abstractpanel.hpp
+ * @file panel.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,12 +19,12 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_WIDGET_ABSTRACTPANEL_HPP
-#define KHOPPER_WIDGET_ABSTRACTPANEL_HPP
+#ifndef KHOPPER_WIDGET_PANEL_HPP
+#define KHOPPER_WIDGET_PANEL_HPP
 
 #include <QtGui/QWidget>
 
-#include "abstractwriter.hpp"
+#include "writer.hpp"
 
 
 namespace khopper {
@@ -36,20 +36,20 @@ namespace widget {
  * All output option panel will inherit this class, \n
  * and must register to factory. \n
  */
-class KHOPPER_DLL AbstractPanel : public QWidget {
+class KHOPPER_DLL Panel: public QWidget {
 public:
 	/**
 	 * @brief Default constructor
 	 * @param parent Parent widget
 	 * @param f Window flags
 	 */
-	AbstractPanel();
+	Panel();
 
 	/**
 	 * @brief Get encoder setting object
 	 * @return Smart pointer contains AbstractWriter
 	 */
-	virtual plugin::WriterCreator getWriterCreator() const = 0;
+	virtual codec::Writer::Creator getWriterCreator() const = 0;
 	/**
 	 * @brief Get file suffix
 	 * @return File extension, without leading '.'

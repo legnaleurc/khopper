@@ -27,7 +27,7 @@ using khopper::codec::RedbookReader;
 using khopper::error::IOError;
 
 RedbookReader::RedbookReader( const QUrl & uri ):
-AbstractReader( uri ),
+Reader( uri ),
 file_( uri.toLocalFile() ) {
 	AudioFormat format;
 	format.setByteOrder( AudioFormat::LittleEndian );
@@ -43,7 +43,7 @@ bool RedbookReader::atEnd() const {
 }
 
 bool RedbookReader::seek( qint64 pos ) {
-	bool ret = this->AbstractReader::seek( pos );
+	bool ret = this->Reader::seek( pos );
 	ret &= this->file_.seek( pos );
 	return ret;
 }

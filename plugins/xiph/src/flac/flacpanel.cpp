@@ -25,13 +25,13 @@
 
 #include <QtCore/QVariant>
 
-using namespace khopper::widget;
+using khopper::widget::FlacPanel;
+using khopper::codec::Writer;
 using khopper::codec::WriterSP;
 using khopper::codec::FlacWriter;
-using khopper::plugin::WriterCreator;
 
 FlacPanel::FlacPanel():
-AbstractPanel(),
+Panel(),
 ui_( new Ui::FlacPanel ) {
 	this->setTitle( "FLAC" );
 	this->setSuffix( "flac" );
@@ -46,7 +46,7 @@ ui_( new Ui::FlacPanel ) {
 	this->ui_->channels->setCurrentIndex( 1 );
 }
 
-WriterCreator FlacPanel::getWriterCreator() const {
+Writer::Creator FlacPanel::getWriterCreator() const {
 	return []( const QUrl & uri )->WriterSP {
 		FlacWriter * encoder = new FlacWriter( uri );
 

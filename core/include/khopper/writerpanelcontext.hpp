@@ -29,7 +29,7 @@
 namespace khopper {
 namespace widget {
 
-class AbstractPanel;
+class Panel;
 
 class KHOPPER_DLL WriterPanelContext: public QObject {
 	Q_OBJECT
@@ -40,12 +40,12 @@ public:
 	WriterPanelContext();
 	virtual ~WriterPanelContext();
 
-	void install( AbstractPanel * panel );
-	void uninstall( AbstractPanel * panel );
+	void install( Panel * panel );
+	void uninstall( Panel * panel );
 
 signals:
-	void installed( khopper::widget::AbstractPanel * panel );
-	void uninstalled( khopper::widget::AbstractPanel * panel );
+	void installed( khopper::widget::Panel * panel );
+	void uninstalled( khopper::widget::Panel * panel );
 };
 
 }

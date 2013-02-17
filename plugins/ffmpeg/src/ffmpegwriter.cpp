@@ -44,7 +44,7 @@ using khopper::ffmpeg::seek;
 #endif
 
 FfmpegWriter::FfmpegWriter( const QUrl & uri ):
-AbstractWriter( uri ),
+Writer( uri ),
 #ifdef Q_OS_WIN32
 fio_(),
 pIOContext_(),

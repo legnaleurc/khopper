@@ -1,5 +1,5 @@
 /**
- * @file abstractreader.hpp
+ * @file reader.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,8 +19,8 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_CODEC_ABSTRACTREADER_HPP
-#define KHOPPER_CODEC_ABSTRACTREADER_HPP
+#ifndef KHOPPER_CODEC_READER_HPP
+#define KHOPPER_CODEC_READER_HPP
 
 #include <functional>
 #include <memory>
@@ -31,22 +31,21 @@
 #include "audioformat.hpp"
 
 namespace khopper {
-
 namespace codec {
 
-class AbstractReader;
+class Reader;
 /**
  * @ingroup Codecs
  * @brief AbstractReader smart pointer
  * @sa AbstractReader ReaderCSP
  */
-typedef std::shared_ptr< AbstractReader > ReaderSP;
+typedef std::shared_ptr< Reader > ReaderSP;
 /**
  * @ingroup Codecs
  * @brief AbstractReader const smart pointer
  * @sa AbstractReader ReaderSP
  */
-typedef std::shared_ptr< const AbstractReader > ReaderCSP;
+typedef std::shared_ptr< const Reader > ReaderCSP;
 
 /**
  * @ingroup Codecs
@@ -55,10 +54,10 @@ typedef std::shared_ptr< const AbstractReader > ReaderCSP;
  * @attention This class may and usaully use in threads. <b>Do NOT
  * @attention hold any GUI Object in this class</b>.
  */
-class KHOPPER_DLL AbstractReader : public QIODevice {
+class KHOPPER_DLL Reader : public QIODevice {
 public:
-	typedef std::function< int ( const QUrl & ) > Verifier;
-	typedef std::function< codec::ReaderSP ( const QUrl & ) > Creator;
+	typedef std::function< unsigned int ( const QUrl & ) > Verifier;
+	typedef std::function< ReaderSP ( const QUrl & ) > Creator;
 
 	/**
 	 * @ingroup Plugins
@@ -81,7 +80,7 @@ public:
 	/**
 	 * @brief Virtual destructor
 	 */
-	virtual ~AbstractReader();
+	virtual ~Reader();
 
 	/**
 	 * @brief Open file
@@ -171,7 +170,7 @@ protected:
 	 *
 	 * @param uri where this reader is
 	 */
-	explicit AbstractReader( const QUrl & uri );
+	explicit Reader( const QUrl & uri );
 
 	/**
 	 * @brief Set album
@@ -244,15 +243,14 @@ protected:
 
 private:
 	// prevent copying
-	AbstractReader( const AbstractReader & );
-	AbstractReader & operator =( const AbstractReader & );
+	Reader( const Reader & );
+	Reader & operator =( const Reader & );
 
 	class Private;
 	std::shared_ptr< Private > p_;
 };
 
 }
-
 }
 
 #endif

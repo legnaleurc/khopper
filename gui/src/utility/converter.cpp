@@ -19,25 +19,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "converter.hpp"
-#include "khopper/album.hpp"
-
-#include "khopper/abstractreader.hpp"
-#include "khopper/abstractwriter.hpp"
-#include "khopper/codecerror.hpp"
-
 #include <QtCore/QDir>
 #include <QtCore/QFileInfo>
 
-using namespace khopper::utility;
+#include "converter.hpp"
+#include "khopper/album.hpp"
+#include "khopper/reader.hpp"
+#include "khopper/writer.hpp"
+#include "khopper/codecerror.hpp"
+
+using khopper::utility::Converter;
 using khopper::album::TrackCSP;
+using khopper::codec::Writer;
 using khopper::codec::WriterSP;
 using khopper::codec::ReaderSP;
 using khopper::error::BaseError;
 using khopper::error::CodecError;
-using khopper::plugin::WriterCreator;
 
-Converter::Converter( TrackCSP track, WriterCreator creator, const QString & path ):
+Converter::Converter( TrackCSP track, Writer::Creator creator, const QString & path ):
 QObject( 0 ),
 QRunnable(),
 canceled_( false ),

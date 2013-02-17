@@ -22,9 +22,9 @@
 #ifndef KHOPPER_CODEC_OGGWRITER_HPP
 #define KHOPPER_CODEC_OGGWRITER_HPP
 
-#include "khopper/abstractwriter.hpp"
-
 #include <vorbis/vorbisenc.h>
+
+#include "khopper/writer.hpp"
 
 namespace khopper {
 namespace codec {
@@ -34,7 +34,7 @@ namespace codec {
  *
  * This class provides a ogg audio writer implementation.
  */
-class OggWriter: public AbstractWriter {
+class OggWriter: public Writer {
 public:
 	/**
 	 * @brief Default constructor

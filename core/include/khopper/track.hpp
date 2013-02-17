@@ -26,7 +26,7 @@
 #include <QtCore/QTextCodec>
 #include <QtCore/QUrl>
 
-#include "abstractreader.hpp"
+#include "reader.hpp"
 #include "albumfwd.hpp"
 #include "timestamp.hpp"
 
@@ -42,7 +42,7 @@ namespace album {
  */
 class KHOPPER_DLL Track {
 public:
-	static TrackSP create( const QUrl & uri, codec::AbstractReader::Creator creator );
+	static TrackSP create( const QUrl & uri, codec::Reader::Creator creator );
 
 	virtual ~Track();
 
@@ -81,9 +81,9 @@ public:
 	void setTitle( const QString & title );
 
 protected:
-	Track( const QUrl & uri, codec::AbstractReader::Creator creator );
+	Track( const QUrl & uri, codec::Reader::Creator creator );
 
-	void setReaderCreator( codec::AbstractReader::Creator creator );
+	void setReaderCreator( codec::Reader::Creator creator );
 
 private:
 	class Private;

@@ -34,7 +34,7 @@ using khopper::error::IOError;
 using khopper::error::CodecError;
 
 OggWriter::OggWriter( const QUrl & uri ):
-AbstractWriter( uri ),
+Writer( uri ),
 out_( NULL ),
 encoder_(),
 muxer_(),

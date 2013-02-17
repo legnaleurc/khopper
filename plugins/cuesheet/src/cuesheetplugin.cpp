@@ -19,15 +19,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "cuesheetplugin.hpp"
-#include "codecselector.hpp"
-#include "cuesheetparser.hpp"
-
-#include "khopper/playlist.hpp"
-
 #include <QtCore/QDir>
 #include <QtCore/QtPlugin>
 #include <QtCore/QtDebug>
+
+#include "cuesheetplugin.hpp"
+
+#include "codecselector.hpp"
+#include "cuesheetparser.hpp"
+#include "khopper/playlist.hpp"
 
 Q_EXPORT_PLUGIN2( KHOPPER_PLUGIN_ID, khopper::plugin::CueSheetPlugin )
 
@@ -35,7 +35,7 @@ using khopper::album::PlayList;
 using khopper::plugin::CueSheetPlugin;
 
 CueSheetPlugin::CueSheetPlugin():
-AbstractPlugin() {
+Plugin() {
 	this->setID( KHOPPER_STRINGIZE(KHOPPER_PLUGIN_ID) );
 	this->setVersion( KHOPPER_STRINGIZE(KHOPPER_VERSION) );
 }

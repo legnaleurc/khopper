@@ -22,33 +22,31 @@
 #ifndef KHOPPER_WIDGET_OGGPANEL_HPP
 #define KHOPPER_WIDGET_OGGPANEL_HPP
 
-#include "khopper/abstractpanel.hpp"
+#include "khopper/panel.hpp"
 
 class QButtonGroup;
 namespace Ui {
-	class OggPanel;
+class OggPanel;
 }
 
 namespace khopper {
+namespace widget {
 
-	namespace widget {
+/// Ogg output option
+class OggPanel: public Panel {
+public:
+	/// Default constructor
+	OggPanel();
 
-		/// Ogg output option
-		class OggPanel : public AbstractPanel {
-		public:
-			/// Default constructor
-			OggPanel();
+	/// Get configured Writer instance
+	virtual codec::Writer::Creator getWriterCreator() const;
 
-			/// Get configured Writer instance
-			virtual plugin::WriterCreator getWriterCreator() const;
+private:
+	std::shared_ptr< Ui::OggPanel > ui_;
+	QButtonGroup * choise_;
+};
 
-		private:
-			std::shared_ptr< Ui::OggPanel > ui_;
-			QButtonGroup * choise_;
-		};
-
-	}
-
+}
 }
 
 #endif

@@ -27,7 +27,7 @@
 #include <fileref.h>
 #include <tag.h>
 
-#include "khopper/abstractreader.hpp"
+#include "khopper/reader.hpp"
 #include "khopper/album.hpp"
 #include "khopper/playlist.hpp"
 #include "khopper/codecerror.hpp"
@@ -40,11 +40,11 @@ using khopper::album::PlayList;
 using khopper::album::Album;
 using khopper::album::Track;
 using khopper::album::Timestamp;
-using khopper::codec::AbstractReader;
+using khopper::codec::Reader;
 using khopper::error::CodecError;
 
 SinglePlugin::SinglePlugin():
-AbstractPlugin() {
+Plugin() {
 	this->setID( KHOPPER_STRINGIZE(KHOPPER_PLUGIN_ID) );
 	this->setVersion( KHOPPER_STRINGIZE(KHOPPER_VERSION) );
 }
@@ -53,7 +53,7 @@ void SinglePlugin::doInstall() {
 	PlayList::install( this->getID(), []( const QUrl & /*uri*/ )->unsigned int {
 		return 100;
 	}, []( const QUrl & uri )->PlayList {
-		auto rc = AbstractReader::getCreator( uri );
+		auto rc = Reader::getCreator( uri );
 		auto reader = rc( uri );
 		auto album = Album::create();
 		auto track = Track::create( uri, rc );

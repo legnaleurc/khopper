@@ -1,5 +1,5 @@
 /**
- * @file abstractreader.cpp
+ * @file reader.cpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,7 +19,7 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
-#include "abstractreader.hpp"
+#include "reader.hpp"
 
 #include <cassert>
 #include <cmath>
@@ -32,7 +32,7 @@
 namespace khopper {
 namespace codec {
 
-class AbstractReader::Private {
+class Reader::Private {
 public:
 	Private( const QUrl & uri );
 
@@ -67,21 +67,21 @@ Factory factory;
 }
 }
 
-using khopper::codec::AbstractReader;
+using khopper::codec::Reader;
 using khopper::codec::AudioFormat;
 using khopper::codec::ChannelLayout;
 using khopper::error::BaseError;
 using khopper::error::RunTimeError;
 
-bool khopper::codec::AbstractReader::install( const QString & id, Verifier v, Creator c ) {
+bool khopper::codec::Reader::install( const QString & id, Verifier v, Creator c ) {
 	return factory.installCreator( id, v, c );
 }
 
-bool khopper::codec::AbstractReader::uninstall( const QString & id ) {
+bool khopper::codec::Reader::uninstall( const QString & id ) {
 	return factory.uninstallCreator( id );
 }
 
-AbstractReader::Creator khopper::codec::AbstractReader::getCreator( const QUrl & uri ) {
+Reader::Creator khopper::codec::Reader::getCreator( const QUrl & uri ) {
 	auto creator = factory.getCreator( uri );
 	if( !creator ) {
 		throw RunTimeError( QObject::tr( "find no suitable codec" ), __FILE__, __LINE__ );
@@ -89,15 +89,15 @@ AbstractReader::Creator khopper::codec::AbstractReader::getCreator( const QUrl &
 	return creator;
 }
 
-AbstractReader::AbstractReader( const QUrl & uri ):
+Reader::Reader( const QUrl & uri ):
 QIODevice(),
 p_( new Private( uri ) ) {
 }
 
-AbstractReader::~AbstractReader() {
+Reader::~Reader() {
 }
 
-bool AbstractReader::open( OpenMode mode ) {
+bool Reader::open( OpenMode mode ) {
 	if( this->isOpen() ) {
 		this->close();
 	}
@@ -118,7 +118,7 @@ bool AbstractReader::open( OpenMode mode ) {
 	return opened && good;
 }
 
-void AbstractReader::close() {
+void Reader::close() {
 	if( !this->isOpen() ) {
 		return;
 	}
@@ -138,112 +138,112 @@ void AbstractReader::close() {
 	this->QIODevice::close();
 }
 
-qint64 AbstractReader::writeData( const char * /*data*/, qint64 /*maxSize*/ ) {
+qint64 Reader::writeData( const char * /*data*/, qint64 /*maxSize*/ ) {
 	return -1;
 }
 
-const QUrl & AbstractReader::getURI() const {
+const QUrl & Reader::getURI() const {
 	return this->p_->uri;
 }
 
-void AbstractReader::setDuration( qint64 msDuration ) {
+void Reader::setDuration( qint64 msDuration ) {
 	this->p_->msDuration = msDuration;
 }
 
-void AbstractReader::setChannelLayout( ChannelLayout channelLayout ) {
+void Reader::setChannelLayout( ChannelLayout channelLayout ) {
 	this->p_->channelLayout = channelLayout;
 }
 
-void AbstractReader::setBitRate( unsigned int bitRate ) {
+void Reader::setBitRate( unsigned int bitRate ) {
 	this->p_->bitRate = bitRate;
 }
 
-void AbstractReader::setGenre( const QByteArray & genre ) {
+void Reader::setGenre( const QByteArray & genre ) {
 	this->p_->genre = genre;
 }
 
-void AbstractReader::setIndex( unsigned int index ) {
+void Reader::setIndex( unsigned int index ) {
 	this->p_->index = index;
 }
 
-void AbstractReader::setYear( const QString & year ) {
+void Reader::setYear( const QString & year ) {
 	this->p_->year = year;
 }
 
-void AbstractReader::setAlbumTitle( const QByteArray & album ) {
+void Reader::setAlbumTitle( const QByteArray & album ) {
 	this->p_->album = album;
 }
 
-void AbstractReader::setComment( const QByteArray & comment ) {
+void Reader::setComment( const QByteArray & comment ) {
 	this->p_->comment = comment;
 }
 
-void AbstractReader::setCopyright( const QByteArray & copyright ) {
+void Reader::setCopyright( const QByteArray & copyright ) {
 	this->p_->copyright = copyright;
 }
 
-void AbstractReader::setArtist( const QByteArray & artist ) {
+void Reader::setArtist( const QByteArray & artist ) {
 	this->p_->artist = artist;
 }
 
-void AbstractReader::setTitle( const QByteArray & title ) {
+void Reader::setTitle( const QByteArray & title ) {
 	this->p_->title = title;
 }
 
-qint64 AbstractReader::getDuration() const {
+qint64 Reader::getDuration() const {
 	return this->p_->msDuration;
 }
 
-const QByteArray & AbstractReader::getTitle() const {
+const QByteArray & Reader::getTitle() const {
 	return this->p_->title;
 }
 
-unsigned int AbstractReader::getBitRate() const {
+unsigned int Reader::getBitRate() const {
 	return this->p_->bitRate;
 }
 
-const QByteArray & AbstractReader::getArtist() const {
+const QByteArray & Reader::getArtist() const {
 	return this->p_->artist;
 }
 
-const QByteArray & AbstractReader::getAlbumTitle() const {
+const QByteArray & Reader::getAlbumTitle() const {
 	return this->p_->album;
 }
 
-unsigned int AbstractReader::getIndex() const {
+unsigned int Reader::getIndex() const {
 	return this->p_->index;
 }
 
-ChannelLayout AbstractReader::getChannelLayout() const {
+ChannelLayout Reader::getChannelLayout() const {
 	return this->p_->channelLayout;
 }
 
-const QString & AbstractReader::getYear() const {
+const QString & Reader::getYear() const {
 	return this->p_->year;
 }
 
-const QByteArray & AbstractReader::getGenre() const {
+const QByteArray & Reader::getGenre() const {
 	return this->p_->genre;
 }
 
-const QByteArray & AbstractReader::getCopyright() const {
+const QByteArray & Reader::getCopyright() const {
 	return this->p_->copyright;
 }
 
-const QByteArray & AbstractReader::getComment() const {
+const QByteArray & Reader::getComment() const {
 	return this->p_->comment;
 }
 
-const AudioFormat & AbstractReader::getAudioFormat() const {
+const AudioFormat & Reader::getAudioFormat() const {
 	return this->p_->format;
 }
 
-void AbstractReader::setAudioFormat( const AudioFormat & format ) {
+void Reader::setAudioFormat( const AudioFormat & format ) {
 	this->p_->format = format;
 	this->p_->format.setCodec( "audio/pcm" );
 }
 
-AbstractReader::Private::Private( const QUrl & uri ):
+Reader::Private::Private( const QUrl & uri ):
 album(),
 artist(),
 bitRate( 0 ),

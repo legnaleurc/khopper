@@ -32,12 +32,12 @@ namespace album {
 
 class Track::Private {
 public:
-	Private( const QUrl & uri, codec::AbstractReader::Creator creator );
+	Private( const QUrl & uri, codec::Reader::Creator creator );
 
 	AlbumWP album;
 	QByteArray artist;
 	unsigned int bitRate;
-	codec::AbstractReader::Creator creator;
+	codec::Reader::Creator creator;
 	Timestamp duration;
 	codec::AudioFormat format;
 	unsigned int index;

@@ -22,7 +22,7 @@
 #ifndef KHOPPER_CODEC_FFMPEGWRITER_HPP
 #define KHOPPER_CODEC_FFMPEGWRITER_HPP
 
-#include "khopper/abstractwriter.hpp"
+#include "khopper/writer.hpp"
 
 extern "C" {
 #include <libavcodec/avcodec.h>
@@ -41,7 +41,7 @@ namespace codec {
  *
  * This class provides a default audio writer implementation.
  */
-class FfmpegWriter: public AbstractWriter {
+class FfmpegWriter: public Writer {
 public:
 	/**
 	 * @brief Constructor
@@ -69,7 +69,6 @@ protected:
 	virtual qint64 writeData( const char * data, qint64 len );
 	virtual void doOpen();
 	virtual void doClose();
-//			virtual void writeFrame( const QByteArray & sample );
 
 private:
 #ifdef Q_OS_WIN32

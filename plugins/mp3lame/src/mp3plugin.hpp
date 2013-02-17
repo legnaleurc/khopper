@@ -22,7 +22,7 @@
 #ifndef KHOPPER_PLUGIN_MP3PLUGIN_HPP
 #define KHOPPER_PLUGIN_MP3PLUGIN_HPP
 
-#include "khopper/abstractplugin.hpp"
+#include "khopper/plugin.hpp"
 
 namespace khopper {
 
@@ -35,7 +35,7 @@ namespace plugin {
 /**
  * @brief Mp3 option widget
  */
-class Mp3Plugin : public AbstractPlugin {
+class Mp3Plugin : public Plugin {
 public:
 	/**
 	 * @brief Default constructor

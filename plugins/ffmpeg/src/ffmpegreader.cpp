@@ -56,7 +56,7 @@ using khopper::ffmpeg::seek;
 #endif
 
 FfmpegReader::FfmpegReader( const QUrl & uri ):
-AbstractReader( uri ),
+Reader( uri ),
 #ifdef Q_OS_WIN32
 fio_(),
 pIOContext_(),
@@ -330,7 +330,7 @@ QByteArray FfmpegReader::readFrame_() {
 }
 
 bool FfmpegReader::seek( qint64 pos ) {
-	bool succeed = this->AbstractReader::seek( pos );
+	bool succeed = this->Reader::seek( pos );
 	// internal position = pos / frequency / channels / samplesize/ AVStream::time_base
 	int64_t internalPos = av_rescale( pos, this->pStream_->time_base.den, this->pStream_->time_base.num * this->getAudioFormat().frequency() * this->getAudioFormat().channels() * this->getAudioFormat().sampleSize() / 8 );
 	int ret = av_seek_frame( this->pFormatContext_.get(), this->pStream_->index, internalPos, AVSEEK_FLAG_ANY | AVSEEK_FLAG_BACKWARD );

@@ -52,10 +52,10 @@ WriterPanelContext::~WriterPanelContext() {
 	self = nullptr;
 }
 
-void WriterPanelContext::install( AbstractPanel * panel ) {
+void WriterPanelContext::install( Panel * panel ) {
 	emit this->installed( panel );
 }
 
-void WriterPanelContext::uninstall( AbstractPanel * panel ) {
+void WriterPanelContext::uninstall( Panel * panel ) {
 	emit this->uninstalled( panel );
 }

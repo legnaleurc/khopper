@@ -24,31 +24,31 @@
 
 #include <QtCore/QIODevice>
 
-#include "khopper/abstractreader.hpp"
+#include "khopper/reader.hpp"
 
 namespace khopper {
-	namespace utility {
+namespace utility {
 
-		class WavWrapper : public QIODevice {
-		public:
-			explicit WavWrapper( codec::ReaderSP reader );
+class WavWrapper : public QIODevice {
+public:
+	explicit WavWrapper( codec::ReaderSP reader );
 
-			virtual bool atEnd() const;
-			virtual void close();
-			virtual bool open( OpenMode mode );
-			virtual bool seek( qint64 pos );
-			virtual qint64 size() const;
+	virtual bool atEnd() const;
+	virtual void close();
+	virtual bool open( OpenMode mode );
+	virtual bool seek( qint64 pos );
+	virtual qint64 size() const;
 
-		protected:
-			virtual qint64 readData( char * data, qint64 maxlen );
-			virtual qint64 writeData( const char * data, qint64 maxlen );
+protected:
+	virtual qint64 readData( char * data, qint64 maxlen );
+	virtual qint64 writeData( const char * data, qint64 maxlen );
 
-		private:
-			codec::ReaderSP reader_;
-			QByteArray header_;
-		};
+private:
+	codec::ReaderSP reader_;
+	QByteArray header_;
+};
 
-	}
+}
 }
 
 #endif
