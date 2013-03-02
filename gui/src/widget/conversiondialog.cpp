@@ -64,8 +64,8 @@ table_() {
 
 	this->connect( this->ui_->browse, SIGNAL( clicked() ), SLOT( changeOutputPath_() ) );
 
-	this->connect( &WriterPanelContext::instance(), SIGNAL( installed( khopper::widget::AbstractPanel * ) ), SLOT( addPanel( khopper::widget::AbstractPanel * ) ) );
-	this->connect( &WriterPanelContext::instance(), SIGNAL( uninstalled( khopper::widget::AbstractPanel * ) ), SLOT( removePanel( khopper::widget::AbstractPanel * ) ) );
+	this->connect( &WriterPanelContext::instance(), SIGNAL( installed( khopper::widget::Panel * ) ), SLOT( addPanel( khopper::widget::Panel * ) ) );
+	this->connect( &WriterPanelContext::instance(), SIGNAL( uninstalled( khopper::widget::Panel * ) ), SLOT( removePanel( khopper::widget::Panel * ) ) );
 
 	QCompleter * completer = new QCompleter( this );
 	PathCompleterModel * model = new PathCompleterModel( this );
