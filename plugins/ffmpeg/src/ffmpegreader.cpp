@@ -195,7 +195,8 @@ void FfmpegReader::setupDecoder_() {
 		format.setSampleSize( 64 );
 		break;
 	default:
-		;
+		// no default
+		assert( !"undefined sample format" );
 	}
 	this->setAudioFormat( format );
 
