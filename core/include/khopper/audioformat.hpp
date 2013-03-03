@@ -22,6 +22,8 @@
 #ifndef KHOPPER_CODEC_AUDIOFORMAT_HPP
 #define KHOPPER_CODEC_AUDIOFORMAT_HPP
 
+#include <memory>
+
 #include <QtCore/QSysInfo>
 
 #include "config.hpp"
@@ -65,12 +67,11 @@ public:
 	bool operator ==( const AudioFormat & that ) const;
 
 private:
-	class AudioFormatPrivate;
-	std::shared_ptr< AudioFormatPrivate > p_;
+	class Private;
+	std::shared_ptr< Private > p_;
 };
 
 }
 }
-
 
 #endif

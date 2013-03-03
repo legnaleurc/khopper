@@ -26,9 +26,9 @@
 namespace khopper {
 namespace codec {
 
-class AudioFormat::AudioFormatPrivate {
+class AudioFormat::Private {
 public:
-	AudioFormatPrivate();
+	Private();
 
 	Endian byteOrder;
 	int channels;
@@ -41,9 +41,9 @@ public:
 }
 }
 
-using namespace khopper::codec;
+using khopper::codec::AudioFormat;
 
-AudioFormat::AudioFormatPrivate::AudioFormatPrivate():
+AudioFormat::Private::Private():
 byteOrder( AudioFormat::Endian( QSysInfo::ByteOrder ) ),
 channels( -1 ),
 codec(),
@@ -52,10 +52,10 @@ sampleSize( -1 ),
 sampleType( Unknown ) {
 }
 
-AudioFormat::AudioFormat() : p_( new AudioFormatPrivate ) {
+AudioFormat::AudioFormat() : p_( new Private ) {
 }
 
-AudioFormat::AudioFormat( const AudioFormat & that ) : p_( new AudioFormatPrivate( *that.p_ ) ) {
+AudioFormat::AudioFormat( const AudioFormat & that ) : p_( new Private( *that.p_ ) ) {
 }
 
 AudioFormat::Endian AudioFormat::byteOrder() const {

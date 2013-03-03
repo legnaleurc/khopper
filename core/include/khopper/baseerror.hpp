@@ -23,6 +23,7 @@
 #define KHOPPER_CORE_BASEERROR_HPP
 
 #include <exception>
+#include <memory>
 #include <string>
 
 #include <QtCore/QString>
