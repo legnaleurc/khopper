@@ -21,6 +21,7 @@
  */
 #include "ffmpegreader.hpp"
 
+#include <cassert>
 #include <cstdlib>
 #include <cstring>
 
