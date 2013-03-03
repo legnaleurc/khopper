@@ -279,6 +279,10 @@ QByteArray FfmpegReader::readFrame_() {
 		this->eof_ = true;
 		return QByteArray();
 	}
+	if( this->packet_.stream_index != this->pStream_->index ) {
+		// not an audio frame
+		return QByteArray();
+	}
 
 	int gotFrame = 0;
 	ret = avcodec_decode_audio4( this->pCodecContext_.get(), this->pFrame_.get(), &gotFrame, &this->packet_ );
@@ -287,6 +291,7 @@ QByteArray FfmpegReader::readFrame_() {
 	}
 
 	if( !gotFrame ) {
+		// FIXME is this really means EOF?
 		this->eof_ = true;
 		return QByteArray();
 	}
