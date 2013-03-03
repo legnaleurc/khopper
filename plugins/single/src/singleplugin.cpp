@@ -52,7 +52,11 @@ Plugin() {
 void SinglePlugin::doInstall() {
 	PlayList::install( this->getID(), []( const QUrl & /*uri*/ )->unsigned int {
 		return 100;
-	}, []( const QUrl & uri )->PlayList {
+	}, [&]( const QUrl & uri )->PlayList {
+		// HACK: capturing '&' is a dirty hack for a gcc bug (prior to 4.7)
+		// somehow it can not access static member ('QObject::tr' in this case) without capturing 'this'
+		// please consider to remove this hack after they fix this bug
+
 		auto rc = Reader::getCreator( uri );
 		auto reader = rc( uri );
 		auto album = Album::create();
