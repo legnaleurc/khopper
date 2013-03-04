@@ -29,9 +29,9 @@ Supported platform
 Supported Formats
 -----------------
 
-The `FFmpeg`_ plugin provides the most audio codecs, such as wav, ape ... etc.
+The `FFmpeg`_/`Libav`_ plugin provides the most audio codecs, such as wav, ape ... etc.
 
-Please at least enable the `FFmpeg`_ plugin.
+Please at least enable the `FFmpeg`_/`Libav`_ plugin.
 
 License
 -------
@@ -64,6 +64,7 @@ Optional
 ~~~~~~~~
 
 * `FFmpeg`_ >= 1.1 [LGPL, GPL]
+* `Libav`_ >= 9 [LGPL, GPL]
 * `libFLAC`_ >= 1.2.1 [BSD-3]
 * `libvorbis`_ and `libogg`_ [BSD-3]
 * `LAME`_ [LGPL, patent]
@@ -93,6 +94,7 @@ Please use `CMake`_ GUI to generate the building system.
 .. _FreeDB: http://www.freedb.org/
 .. _GNU Compiler Collection: http://gcc.gnu.org/
 .. _LAME: http://lame.sourceforge.net/
+.. _Libav: http://libav.org/
 .. _libFLAC: http://flac.sourceforge.net/
 .. _libvorbis: http://www.xiph.org/downloads/
 .. _libogg: http://www.xiph.org/downloads/
