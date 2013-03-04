@@ -94,11 +94,16 @@ p_( new Private ) {
 	// initialize search paths
 
 	// first search binary related paths, for build time testing
-	QDir tmp( qApp->applicationDirPath() );
+	QDir tmp = qApp->applicationDirPath();
 	// for MSVC
 	this->p_->searchPaths.push_back( tmp );
 	// for UNIX-like
 	if( tmp.cd( "../lib" ) ) {
+		this->p_->searchPaths.push_back( tmp );
+	}
+	// for Windows installed bundle
+	tmp = qApp->applicationDirPath();
+	if( tmp.cd( "plugins" ) ) {
 		this->p_->searchPaths.push_back( tmp );
 	}
 
