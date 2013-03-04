@@ -23,6 +23,8 @@
 
 #include <cstring>
 
+#include "khopper/codecerror.hpp"
+
 namespace {
 
 	inline static qint64 posFromMs( qint64 ms, const khopper::codec::AudioFormat & format ) {
@@ -36,6 +38,7 @@ namespace {
 }
 
 using khopper::codec::RangedReader;
+using khopper::error::CodecError;
 
 RangedReader::RangedReader( const QUrl & uri, qint64 msBegin, qint64 msDuration ):
 Reader( uri ),
@@ -54,7 +57,9 @@ qint64 RangedReader::size() const {
 }
 
 void RangedReader::doOpen() {
-	this->client_->open( ReadOnly );
+	if( !this->client_->open( ReadOnly ) ) {
+		throw CodecError( QObject::tr( "can not open media" ), __FILE__, __LINE__ );
+	}
 
 	this->setAlbumTitle( this->client_->getAlbumTitle() );
 	this->setArtist( this->client_->getArtist() );
@@ -69,7 +74,9 @@ void RangedReader::doOpen() {
 	this->setTitle( this->client_->getTitle() );
 	this->setYear( this->client_->getYear() );
 
-	this->client_->seek( posFromMs( this->msBegin_, this->getAudioFormat() ) );
+	if( !this->client_->seek( posFromMs( this->msBegin_, this->getAudioFormat() ) ) ) {
+		throw CodecError( QObject::tr( "seek failed" ), __FILE__, __LINE__ );
+	}
 }
 
 void RangedReader::doClose() {
