@@ -22,70 +22,68 @@
 #ifndef KHOPPER_CODEC_FFMPEGREADER_HPP
 #define KHOPPER_CODEC_FFMPEGREADER_HPP
 
-#include "khopper/abstractreader.hpp"
+#include "khopper/reader.hpp"
 
-#ifdef Q_OS_WIN
 extern "C" {
-#include <libavformat\avio.h>
-}
+#include <libavcodec/avcodec.h>
+#include <libavformat/avformat.h>
+#ifdef Q_OS_WIN
+#include <libavformat/avio.h>
 #endif
-
-struct AVFormatContext;
-struct AVCodecContext;
-struct AVPacket;
-struct AVStream;
-struct AVDictionary;
+#include <libavresample/avresample.h>
+}
 
 namespace khopper {
+namespace codec {
 
-	namespace codec {
+/**
+ * @brief Default audio reader
+ * @sa DefaultWriter
+ *
+ * This class provides a default audio reader implementation.
+ */
+class FfmpegReader : public Reader {
+public:
+	/**
+	 * @brief Default constructor
+	 */
+	explicit FfmpegReader( const QUrl & uri );
 
-		/**
-		 * @brief Default audio reader
-		 * @sa DefaultWriter
-		 *
-		 * This class provides a default audio reader implementation.
-		 */
-		class FfmpegReader : public AbstractReader {
-		public:
-			/**
-			 * @brief Default constructor
-			 */
-			explicit FfmpegReader( const QUrl & uri );
+	virtual bool atEnd() const;
+	virtual qint64 pos( qint64 msec ) const;
+	virtual bool seek( qint64 pos );
+	virtual qint64 size() const;
 
-			virtual bool atEnd() const;
-			virtual bool seek( qint64 pos );
-			virtual qint64 size() const;
+protected:
+	virtual void doOpen();
+	virtual void doClose();
+	virtual qint64 readData( char * data, qint64 maxSize );
 
-		protected:
-			virtual void doOpen();
-			virtual void doClose();
-			virtual qint64 readData( char * data, qint64 maxSize );
-
-		private:
-			void openResource_();
-			void closeResource_();
-			void setupDemuxer_();
-			void setupDecoder_();
-			void readHeader_();
-			QByteArray readFrame_();
-			void readMetadata_( AVDictionary * );
+private:
+	void openResource_();
+	void closeResource_();
+	void setupDemuxer_();
+	void setupDecoder_();
+	void readHeader_();
+	QByteArray readFrame_();
+	void readMetadata_( AVDictionary * );
 
 #ifdef Q_OS_WIN
-			std::shared_ptr< QIODevice > fio_;
-			std::shared_ptr< AVIOContext > pIOContext_;
+	std::shared_ptr< QIODevice > fio_;
+	std::shared_ptr< AVIOContext > pIOContext_;
 #endif
-			std::shared_ptr< AVFormatContext > pFormatContext_;
-			std::shared_ptr< AVCodecContext > pCodecContext_;
-			std::shared_ptr< AVPacket > pPacket_;
-			AVStream * pStream_;
-			qint64 curPos_;
-			bool eof_;
-			QByteArray buffer_;
-		};
+	std::shared_ptr< AVFormatContext > pFormatContext_;
+	std::shared_ptr< AVCodecContext > pCodecContext_;
+	std::shared_ptr< AVFrame > pFrame_;
+	std::shared_ptr< AVAudioResampleContext > pArContext_;
+	AVPacket packet_;
+	AVStream * pStream_;
+	qint64 curPos_;
+	bool eof_;
+	QByteArray buffer_;
+};
 
-	}
-
+}
 }
 
 #endif

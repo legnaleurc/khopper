@@ -21,27 +21,26 @@
  */
 #include "ffmpegwriter.hpp"
 
-#include "khopper/error.hpp"
-#ifdef Q_OS_WIN32
-#include "wfile.hpp"
-#endif
-
 extern "C" {
-#include <libavcodec/avcodec.h>
-#include <libavformat/avformat.h>
 #include <libavutil/mathematics.h>
 }
 
 #include <QtCore/QFile>
 
-#include <cstring>
+#include "khopper/codecerror.hpp"
+#include "khopper/ioerror.hpp"
+#ifdef Q_OS_WIN32
+#include "wfile.hpp"
+#endif
+
+using khopper::error::CodecError;
+using khopper::error::IOError;
 
 namespace {
-	static const double QSCALE_NONE = -99999.;
-	static const int OUTPUT_BUFFER_SIZE = FF_MIN_BUFFER_SIZE * 4;
+static const double QSCALE_NONE = -99999.;
 }
 
-using namespace khopper::codec;
+using khopper::codec::FfmpegWriter;
 #ifdef Q_OS_WIN32
 using khopper::ffmpeg::read_packet;
 using khopper::ffmpeg::write_packet;
@@ -49,17 +48,21 @@ using khopper::ffmpeg::seek;
 #endif
 
 FfmpegWriter::FfmpegWriter( const QUrl & uri ):
-AbstractWriter( uri ),
+Writer( uri ),
 #ifdef Q_OS_WIN32
 fio_(),
 pIOContext_(),
 #endif
 pFormatContext_(),
 pCodecContext_(),
+pFrame_( avcodec_alloc_frame(), []( AVFrame * p )->void {
+	avcodec_free_frame( &p );
+} ),
 pStream_( NULL ),
 queue_(),
 quality_( QSCALE_NONE ),
-frameSize_( -1 ) {
+frameSize_( -1 ),
+sampleLength_( -1 ) {
 }
 
 void FfmpegWriter::doOpen() {
@@ -76,7 +79,7 @@ void FfmpegWriter::doClose() {
 void FfmpegWriter::setupMuxer() {
 	auto pOF = av_guess_format( NULL, this->getURI().toString().toUtf8().constData(), NULL );
 	if( !pOF ) {
-		throw error::CodecError( QObject::tr( "could not recognize output format" ) );
+		throw CodecError( QObject::tr( "could not recognize output format" ), __FILE__, __LINE__ );
 	}
 	this->pFormatContext_.reset( avformat_alloc_context(), []( AVFormatContext * oc )->void {
 #ifndef Q_OS_WIN32
@@ -94,18 +97,19 @@ void FfmpegWriter::setupMuxer() {
 void FfmpegWriter::setupEncoder() {
 	AVOutputFormat * pOF = this->pFormatContext_->oformat;
 	if( pOF->audio_codec == CODEC_ID_NONE ) {
-		throw error::CodecError( "Can not setup encoder" );
+		throw CodecError( QObject::tr( "Can not setup encoder" ), __FILE__, __LINE__ );
 	}
 
 	AVCodec * pC = avcodec_find_encoder( pOF->audio_codec );
 	if( !pC ) {
-		throw error::CodecError( "Find no encoder" );
+		throw CodecError( QObject::tr( "Find no encoder" ), __FILE__, __LINE__ );
 	}
 
 	this->pStream_ = avformat_new_stream( this->pFormatContext_.get(), pC );
 	if( !this->pStream_ ) {
-		throw error::CodecError( "Can not create stream" );
+		throw CodecError( QObject::tr( "Can not create stream" ), __FILE__, __LINE__ );
 	}
+	this->pStream_->id = this->pFormatContext_->nb_streams - 1;
 
 	AVCodecContext * pCC = this->pStream_->codec;
 	this->pCodecContext_.reset( pCC, avcodec_close );
@@ -122,42 +126,30 @@ void FfmpegWriter::setupEncoder() {
 	}
 	// NOTE: set complete
 
-	pCC->sample_fmt = pC->sample_fmts[0];
-
-	if( avcodec_open2( pCC, pC, NULL ) < 0 ) {
-		throw error::CodecError( "Can not open encoder" );
+	// FIXME: find best sample format?
+	pCC->sample_fmt = AV_SAMPLE_FMT_NONE;
+	for( auto fmt = pC->sample_fmts; *fmt != AV_SAMPLE_FMT_NONE; ++fmt ) {
+		if( !av_sample_fmt_is_planar( *fmt ) && av_get_bytes_per_sample( *fmt ) == 2 ) {
+			pCC->sample_fmt = *fmt;
+			break;
+		}
+	}
+	if( pCC->sample_fmt == AV_SAMPLE_FMT_NONE ) {
+		throw CodecError( QObject::tr( "this codec does not support PCM S16LE" ), __FILE__, __LINE__ );
 	}
 
-	switch( pCC->codec_id ) {
-	case CODEC_ID_PCM_S16LE:
-	case CODEC_ID_PCM_S16BE:
-	case CODEC_ID_PCM_U16LE:
-	case CODEC_ID_PCM_U16BE:
-	case CODEC_ID_PCM_S8:
-	case CODEC_ID_PCM_U8:
-	case CODEC_ID_PCM_MULAW:
-	case CODEC_ID_PCM_ALAW:
-	case CODEC_ID_PCM_S32LE:
-	case CODEC_ID_PCM_S32BE:
-	case CODEC_ID_PCM_U32LE:
-	case CODEC_ID_PCM_U32BE:
-	case CODEC_ID_PCM_S24LE:
-	case CODEC_ID_PCM_S24BE:
-	case CODEC_ID_PCM_U24LE:
-	case CODEC_ID_PCM_U24BE:
-	case CODEC_ID_PCM_S24DAUD:
-	case CODEC_ID_PCM_ZORK:
-	case CODEC_ID_PCM_S16LE_PLANAR:
-	case CODEC_ID_PCM_DVD:
-	case CODEC_ID_PCM_F32BE:
-	case CODEC_ID_PCM_F32LE:
-	case CODEC_ID_PCM_F64BE:
-	case CODEC_ID_PCM_F64LE:
-		this->frameSize_ = OUTPUT_BUFFER_SIZE;
-		break;
-	default:
-		this->frameSize_ = pCC->frame_size * sizeof( short ) * pCC->channels;
+	int ret = avcodec_open2( pCC, pC, NULL );
+	if( ret < 0 ) {
+		throw CodecError( AVUNERROR( ret ), __FILE__, __LINE__ );
 	}
+
+	if( pC->capabilities & CODEC_CAP_VARIABLE_FRAME_SIZE ) {
+		this->frameSize_ = FF_MIN_BUFFER_SIZE;
+	} else {
+		this->frameSize_ = pCC->frame_size;
+	}
+
+	this->sampleLength_ = this->frameSize_ * av_get_bytes_per_sample( pCC->sample_fmt ) * pCC->channels;
 }
 
 void FfmpegWriter::openResource() {
@@ -167,14 +159,14 @@ void FfmpegWriter::openResource() {
 	}
 
 #ifndef Q_OS_WIN
-	if( avio_open( &this->pFormatContext_->pb, this->getURI().toString().toUtf8().constData(), URL_WRONLY ) < 0 ) {
-		throw error::IOError( QString( "Can not open file: `%1\'" ).arg( this->getURI().toString() ) );
+	if( avio_open( &this->pFormatContext_->pb, this->getURI().toString().toUtf8().constData(), AVIO_FLAG_WRITE ) < 0 ) {
+		throw IOError( QObject::tr( "Can not open file: `%1\'" ).arg( this->getURI().toString() ), __FILE__, __LINE__ );
 	}
 #else
 	// TODO only support local file
 	this->fio_.reset( new QFile( this->getURI().toLocalFile() ) );
 	if( !this->fio_->open( QIODevice::ReadWrite ) ) {
-		throw error::IOError( this->fio_->errorString() );
+		throw IOError( this->fio_->errorString(), __FILE__, __LINE__ );
 	}
 	const int SIZE = 4 * 1024 * sizeof( unsigned char );
 	unsigned char * buffer = static_cast< unsigned char * >( av_malloc( SIZE ) );
@@ -187,9 +179,12 @@ void FfmpegWriter::openResource() {
 }
 
 void FfmpegWriter::closeResource() {
-	this->writeFrame( NULL );
+	// flush remaining samples
+	this->writeData( nullptr, 0 );
 	av_write_trailer( this->pFormatContext_.get() );
 	this->queue_.clear();
+	this->pStream_ = nullptr;
+	this->pFrame_.reset();
 	this->pCodecContext_.reset();
 	this->pFormatContext_.reset();
 #ifdef Q_OS_WIN32
@@ -205,46 +200,59 @@ void FfmpegWriter::writeHeader() {
 	av_dict_set( &this->pFormatContext_->metadata, "album", this->getAlbum().constData(), 0 );
 
 	if( avformat_write_header( this->pFormatContext_.get(), NULL ) < 0 ) {
-		throw error::CodecError( "Can not write header" );
+		throw CodecError( QObject::tr( "Can not write header" ), __FILE__, __LINE__ );
 	}
 }
 
-void FfmpegWriter::writeFrame( const QByteArray & sample ) {
-	if( !sample.isEmpty() ) {
+qint64 FfmpegWriter::writeData( const char * data, qint64 len ) {
+	if( data && len > 0LL ) {
 		// put samples into queue
-		this->queue_.append( sample );
+		this->queue_.append( data, len );
 		// encode if possible
-		while( this->queue_.size() >= this->frameSize_ ) {
-			this->writeFrame( static_cast< const short * >( static_cast< const void * >( this->queue_.left( this->frameSize_ ).constData() ) ) );
-			this->queue_.remove( 0, this->frameSize_ );
+		while( this->queue_.size() >= this->sampleLength_ ) {
+			auto tmp = this->queue_.left( this->sampleLength_ );
+			this->writeFrame( tmp.constData() );
+			this->queue_.remove( 0, this->sampleLength_ );
 		}
 	} else {
 		if( !this->queue_.isEmpty() ) {
-			this->writeFrame( static_cast< const short * >( static_cast< const void * >( this->queue_.constData() ) ) );
+			this->writeFrame( this->queue_.constData() );
 			this->queue_.clear();
 		}
 	}
+	return len;
 }
 
-void FfmpegWriter::writeFrame( const short * sample ) {
+void FfmpegWriter::writeFrame( const char * sample ) {
 	AVCodecContext * pCC = this->pStream_->codec;
-
-	static uint8_t audio_outbuf[OUTPUT_BUFFER_SIZE];
+	this->pFrame_->nb_samples = this->frameSize_;
+	auto tmp = static_cast< const uint8_t * >( static_cast< const void * >( sample ) );
+	int ret = avcodec_fill_audio_frame( this->pFrame_.get(), pCC->channels, pCC->sample_fmt, tmp, this->sampleLength_, 1 );
+	if( ret < 0 ) {
+		throw CodecError( AVUNERROR( ret ), __FILE__, __LINE__ );
+	}
 
 	AVPacket pkt;
 	av_init_packet( &pkt );
+	pkt.data = nullptr;
+	pkt.size = 0;
+	int got_frame = 0;
+	ret = avcodec_encode_audio2( pCC, &pkt, this->pFrame_.get(), &got_frame );
+	if( ret < 0 ) {
+		throw CodecError( AVUNERROR( ret ), __FILE__, __LINE__ );
+	}
+	if( !got_frame ) {
+		return;
+	}
 
-	pkt.size = avcodec_encode_audio( pCC, audio_outbuf, sizeof( audio_outbuf ), sample );
-
-	pkt.data = audio_outbuf;
 	pkt.stream_index = this->pStream_->index;
-	pkt.flags |= AV_PKT_FLAG_KEY;
 
-	if( pCC->coded_frame->pts != static_cast< int64_t >( AV_NOPTS_VALUE ) ) {
+	if( pCC->coded_frame->pts != AV_NOPTS_VALUE ) {
 		pkt.pts = av_rescale_q( pCC->coded_frame->pts, pCC->time_base, this->pStream_->time_base );
 	}
 
-	if( av_interleaved_write_frame( this->pFormatContext_.get(), &pkt ) != 0 ) {
-		throw error::CodecError( "Can not write frame" );
+	ret = av_interleaved_write_frame( this->pFormatContext_.get(), &pkt );
+	if( ret != 0 ) {
+		throw CodecError( QObject::tr( "Can not write frame" ), __FILE__, __LINE__ );
 	}
 }

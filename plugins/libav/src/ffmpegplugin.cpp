@@ -20,45 +20,47 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "ffmpegplugin.hpp"
+
+#include <QtCore/QtDebug>
+#include <QtCore/QtPlugin>
+
+extern "C" {
+#include <libavformat/avformat.h>
+}
+
+#include "khopper/writerpanelcontext.hpp"
 #include "wavpanel.hpp"
 #include "ffmpegreader.hpp"
 #ifdef Q_OS_WIN32
 #include "wfile.hpp"
 #endif
 
-#include "khopper/application.hpp"
-
-extern "C" {
-#include <libavformat/avformat.h>
-}
-
-#include <QtCore/QtDebug>
-#include <QtCore/QtPlugin>
-
 Q_EXPORT_PLUGIN2( KHOPPER_PLUGIN_ID, khopper::plugin::FfmpegPlugin )
 
-using namespace khopper::plugin;
+using khopper::codec::Reader;
 #ifdef Q_OS_WIN32
 using khopper::ffmpeg::read_packet;
 using khopper::ffmpeg::write_packet;
 using khopper::ffmpeg::seek;
 #endif
-using khopper::plugin::registerReader;
-using khopper::plugin::unregisterReader;
+using khopper::plugin::FfmpegPlugin;
+using khopper::widget::WriterPanelContext;
 using khopper::widget::WavPanel;
 
 FfmpegPlugin::FfmpegPlugin():
-AbstractPlugin(),
+Plugin(),
 panel_( new WavPanel ) {
 	this->setID( KHOPPER_STRINGIZE(KHOPPER_PLUGIN_ID) );
 	this->setVersion( KHOPPER_STRINGIZE(KHOPPER_VERSION) );
 }
 
 void FfmpegPlugin::doInstall() {
-	khopper::pApp()->addPanel( this->panel_.get() );
+	WriterPanelContext::instance().install( this->panel_.get() );
+
 	av_register_all();
 	avformat_network_init();
-	registerReader( this->getID(), []( const QUrl & uri )->unsigned int {
+
+	Reader::install( this->getID(), []( const QUrl & uri )->unsigned int {
 		AVFormatContext * pFC = NULL;
 #ifdef Q_OS_WIN32
 		QFile opaque;
@@ -68,7 +70,7 @@ void FfmpegPlugin::doInstall() {
 			if( !opaque.open( QIODevice::ReadOnly ) ) {
 				return 0;
 			}
-			// NOTE will free by av_close_input_file
+			// NOTE will free by avformat_close_input
 			pFC = avformat_alloc_context();
 			const int SIZE = 4 * 1024 * sizeof( unsigned char );
 			unsigned char * buffer = static_cast< unsigned char * >( av_malloc( SIZE ) );
@@ -82,7 +84,7 @@ void FfmpegPlugin::doInstall() {
 #endif
 		if( avformat_open_input( &pFC, uri.toString().toUtf8().constData(), NULL, NULL ) == 0 ) {
 			int ret = avformat_find_stream_info( pFC, NULL );
-			av_close_input_file( pFC );
+			avformat_close_input( &pFC );
 			if( ret < 0 ) {
 				char msg[1024];
 				av_strerror( ret, msg, sizeof( msg ) );
@@ -99,7 +101,8 @@ void FfmpegPlugin::doInstall() {
 }
 
 void FfmpegPlugin::doUninstall() {
-	khopper::pApp()->removePanel( this->panel_.get() );
-	unregisterReader( this->getID() );
+	Reader::uninstall( this->getID() );
+	WriterPanelContext::instance().uninstall( this->panel_.get() );
+
 	avformat_network_deinit();
 }

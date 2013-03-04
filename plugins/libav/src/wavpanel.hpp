@@ -22,40 +22,38 @@
 #ifndef KHOPPER_WIDGET_WAVPANEL_HPP
 #define KHOPPER_WIDGET_WAVPANEL_HPP
 
-#include "khopper/abstractpanel.hpp"
+#include "khopper/panel.hpp"
 
 namespace Ui {
-	class WavPanel;
+class WavPanel;
 }
 
 namespace khopper {
+namespace widget {
 
-	namespace widget {
+/**
+ * @brief Wav option widget
+ */
+class WavPanel : public Panel {
+public:
+	/**
+	 * @brief Default constructor
+	 * @param parent Parent widget
+	 * @param f Window flags
+	 */
+	WavPanel();
 
-		/**
-		 * @brief Wav option widget
-		 */
-		class WavPanel : public AbstractPanel {
-		public:
-			/**
-			 * @brief Default constructor
-			 * @param parent Parent widget
-			 * @param f Window flags
-			 */
-			WavPanel();
+	/**
+	 * @brief Get encoder setting object
+	 * @return Smart pointer contains AbstractWriter
+	 */
+	virtual codec::Writer::Creator getWriterCreator() const;
 
-			/**
-			 * @brief Get encoder setting object
-			 * @return Smart pointer contains AbstractWriter
-			 */
-			virtual plugin::WriterCreator getWriterCreator() const;
+private:
+	std::shared_ptr< Ui::WavPanel > ui_;
+};
 
-		private:
-			std::shared_ptr< Ui::WavPanel > ui_;
-		};
-
-	}
-
+}
 }
 
 #endif
