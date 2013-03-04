@@ -95,14 +95,9 @@ p_( new Private ) {
 
 	// first search binary related paths, for build time testing
 	QDir tmp( qApp->applicationDirPath() );
+	// for MSVC
 	this->p_->searchPaths.push_back( tmp );
-#ifdef CMAKE_INTDIR
-	// hack for MSVC
-	if( tmp.cd( "../plugins/" CMAKE_INTDIR ) ) {
-		this->p_->searchPaths.push_back( tmp );
-	}
-	tmp = qApp->applicationDirPath();
-#endif
+	// for UNIX-like
 	if( tmp.cd( "../lib" ) ) {
 		this->p_->searchPaths.push_back( tmp );
 	}
