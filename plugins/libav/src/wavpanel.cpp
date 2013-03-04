@@ -22,14 +22,14 @@
 #include "wavpanel.hpp"
 #include "ui_wavpanel.h"
 
-#include "ffmpegwriter.hpp"
+#include "libavwriter.hpp"
 
 #include <QtCore/QVariant>
 
 using namespace khopper::widget;
 using khopper::codec::Writer;
 using khopper::codec::WriterSP;
-using khopper::codec::FfmpegWriter;
+using khopper::codec::LibavWriter;
 
 WavPanel::WavPanel():
 Panel(),
@@ -49,7 +49,7 @@ ui_( new Ui::WavPanel ) {
 
 Writer::Creator WavPanel::getWriterCreator() const {
 	return []( const QUrl & uri )->WriterSP {
-		WriterSP encoder( new FfmpegWriter( uri ) );
+		WriterSP encoder( new LibavWriter( uri ) );
 
 		//if( this->ui_->custom->isChecked() ) {
 			//encoder->setSampleRate( this->ui_->sampleRate->itemData( this->ui_->sampleRate->currentIndex() ).toInt() );

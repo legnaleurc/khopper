@@ -27,17 +27,17 @@
 
 #include <QtCore/QIODevice>
 
-int khopper::ffmpeg::read_packet( void * opaque, uint8_t * buf, int buf_size ) {
+int khopper::libav::read_packet( void * opaque, uint8_t * buf, int buf_size ) {
 	QIODevice * device = static_cast< QIODevice * >( opaque );
 	return device->read( static_cast< char * >( static_cast< void * >( buf ) ), buf_size );
 }
 
-int khopper::ffmpeg::write_packet( void * opaque, uint8_t * buf, int buf_size ) {
+int khopper::libav::write_packet( void * opaque, uint8_t * buf, int buf_size ) {
 	QIODevice * device = static_cast< QIODevice * >( opaque );
 	return device->write( static_cast< char * >( static_cast< void * >( buf ) ), buf_size );
 }
 
-int64_t khopper::ffmpeg::seek( void * opaque, int64_t offset, int whence ) {
+int64_t khopper::libav::seek( void * opaque, int64_t offset, int whence ) {
 	QIODevice * device = static_cast< QIODevice * >( opaque );
 	switch( whence ) {
 	case SEEK_CUR:

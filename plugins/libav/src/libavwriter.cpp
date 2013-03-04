@@ -1,5 +1,5 @@
 /**
- * @file ffmpegwriter.cpp
+ * @file libavwriter.cpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,7 +19,7 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
-#include "ffmpegwriter.hpp"
+#include "libavwriter.hpp"
 
 extern "C" {
 #include <libavutil/mathematics.h>
@@ -40,14 +40,14 @@ namespace {
 static const double QSCALE_NONE = -99999.;
 }
 
-using khopper::codec::FfmpegWriter;
+using khopper::codec::LibavWriter;
 #ifdef Q_OS_WIN32
-using khopper::ffmpeg::read_packet;
-using khopper::ffmpeg::write_packet;
-using khopper::ffmpeg::seek;
+using khopper::libav::read_packet;
+using khopper::libav::write_packet;
+using khopper::libav::seek;
 #endif
 
-FfmpegWriter::FfmpegWriter( const QUrl & uri ):
+LibavWriter::LibavWriter( const QUrl & uri ):
 Writer( uri ),
 #ifdef Q_OS_WIN32
 fio_(),
@@ -65,18 +65,18 @@ frameSize_( -1 ),
 sampleLength_( -1 ) {
 }
 
-void FfmpegWriter::doOpen() {
+void LibavWriter::doOpen() {
 	this->setupMuxer();
 	this->setupEncoder();
 	this->openResource();
 	this->writeHeader();
 }
 
-void FfmpegWriter::doClose() {
+void LibavWriter::doClose() {
 	this->closeResource();
 }
 
-void FfmpegWriter::setupMuxer() {
+void LibavWriter::setupMuxer() {
 	auto pOF = av_guess_format( NULL, this->getURI().toString().toUtf8().constData(), NULL );
 	if( !pOF ) {
 		throw CodecError( QObject::tr( "could not recognize output format" ), __FILE__, __LINE__ );
@@ -94,7 +94,7 @@ void FfmpegWriter::setupMuxer() {
 	qstrncpy( this->pFormatContext_->filename, this->getURI().toString().toStdString().c_str(), sizeof( this->pFormatContext_->filename ) );
 }
 
-void FfmpegWriter::setupEncoder() {
+void LibavWriter::setupEncoder() {
 	AVOutputFormat * pOF = this->pFormatContext_->oformat;
 	if( pOF->audio_codec == CODEC_ID_NONE ) {
 		throw CodecError( QObject::tr( "Can not setup encoder" ), __FILE__, __LINE__ );
@@ -152,7 +152,7 @@ void FfmpegWriter::setupEncoder() {
 	this->sampleLength_ = this->frameSize_ * av_get_bytes_per_sample( pCC->sample_fmt ) * pCC->channels;
 }
 
-void FfmpegWriter::openResource() {
+void LibavWriter::openResource() {
 	AVOutputFormat * pOF = this->pFormatContext_->oformat;
 	if( pOF->flags & AVFMT_NOFILE ) {
 		return;
@@ -178,7 +178,7 @@ void FfmpegWriter::openResource() {
 #endif
 }
 
-void FfmpegWriter::closeResource() {
+void LibavWriter::closeResource() {
 	// flush remaining samples
 	this->writeData( nullptr, 0 );
 	av_write_trailer( this->pFormatContext_.get() );
@@ -194,7 +194,7 @@ void FfmpegWriter::closeResource() {
 #endif
 }
 
-void FfmpegWriter::writeHeader() {
+void LibavWriter::writeHeader() {
 	av_dict_set( &this->pFormatContext_->metadata, "title", this->getTitle().constData(), 0 );
 	av_dict_set( &this->pFormatContext_->metadata, "artist", this->getArtist().constData(), 0 );
 	av_dict_set( &this->pFormatContext_->metadata, "album", this->getAlbum().constData(), 0 );
@@ -204,7 +204,7 @@ void FfmpegWriter::writeHeader() {
 	}
 }
 
-qint64 FfmpegWriter::writeData( const char * data, qint64 len ) {
+qint64 LibavWriter::writeData( const char * data, qint64 len ) {
 	if( data && len > 0LL ) {
 		// put samples into queue
 		this->queue_.append( data, len );
@@ -223,7 +223,7 @@ qint64 FfmpegWriter::writeData( const char * data, qint64 len ) {
 	return len;
 }
 
-void FfmpegWriter::writeFrame( const char * sample ) {
+void LibavWriter::writeFrame( const char * sample ) {
 	AVCodecContext * pCC = this->pStream_->codec;
 	this->pFrame_->nb_samples = this->frameSize_;
 	auto tmp = static_cast< const uint8_t * >( static_cast< const void * >( sample ) );

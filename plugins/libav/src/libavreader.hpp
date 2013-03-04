@@ -1,5 +1,5 @@
 /**
- * @file ffmpegreader.hpp
+ * @file libavreader.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,8 +19,8 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_CODEC_FFMPEGREADER_HPP
-#define KHOPPER_CODEC_FFMPEGREADER_HPP
+#ifndef KHOPPER_CODEC_LIBAVREADER_HPP
+#define KHOPPER_CODEC_LIBAVREADER_HPP
 
 #include "khopper/reader.hpp"
 
@@ -42,12 +42,12 @@ namespace codec {
  *
  * This class provides a default audio reader implementation.
  */
-class FfmpegReader : public Reader {
+class LibavReader : public Reader {
 public:
 	/**
 	 * @brief Default constructor
 	 */
-	explicit FfmpegReader( const QUrl & uri );
+	explicit LibavReader( const QUrl & uri );
 
 	virtual bool atEnd() const;
 	virtual qint64 pos( qint64 msec ) const;

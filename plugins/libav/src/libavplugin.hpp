@@ -1,5 +1,5 @@
 /**
- * @file ffmpegplugin.hpp
+ * @file libavplugin.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,8 +19,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_PLUGIN_FFMPEGPLUGIN_HPP
-#define KHOPPER_PLUGIN_FFMPEGPLUGIN_HPP
+#ifndef KHOPPER_PLUGIN_LIBAVPLUGIN_HPP
+#define KHOPPER_PLUGIN_LIBAVPLUGIN_HPP
 
 #include "khopper/plugin.hpp"
 
@@ -35,14 +35,14 @@ namespace plugin {
 /**
  * @brief Wav option widget
  */
-class FfmpegPlugin : public Plugin {
+class LibavPlugin : public Plugin {
 public:
 	/**
 	 * @brief Default constructor
 	 * @param parent Parent widget
 	 * @param f Window flags
 	 */
-	FfmpegPlugin();
+	LibavPlugin();
 
 protected:
 	virtual void doInstall();

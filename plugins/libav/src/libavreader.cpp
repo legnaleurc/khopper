@@ -1,5 +1,5 @@
 /**
- * @file ffmpegreader.cpp
+ * @file libavreader.cpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,7 +19,7 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
-#include "ffmpegreader.hpp"
+#include "libavreader.hpp"
 
 #include <cassert>
 #include <cstdlib>
@@ -52,16 +52,16 @@ static inline int toMS( int64_t timestamp ) {
 
 }
 
-using khopper::codec::FfmpegReader;
+using khopper::codec::LibavReader;
 using khopper::error::IOError;
 using khopper::error::CodecError;
 #ifdef Q_OS_WIN
-using khopper::ffmpeg::read_packet;
-using khopper::ffmpeg::write_packet;
-using khopper::ffmpeg::seek;
+using khopper::libav::read_packet;
+using khopper::libav::write_packet;
+using khopper::libav::seek;
 #endif
 
-FfmpegReader::FfmpegReader( const QUrl & uri ):
+LibavReader::LibavReader( const QUrl & uri ):
 Reader( uri ),
 #ifdef Q_OS_WIN32
 fio_(),
@@ -83,11 +83,11 @@ buffer_() {
 	this->packet_.size = 0;
 }
 
-bool FfmpegReader::atEnd() const {
+bool LibavReader::atEnd() const {
 	return this->eof_;
 }
 
-qint64 FfmpegReader::size() const {
+qint64 LibavReader::size() const {
 	if( !this->isOpen() ) {
 		return 0;
 	}
@@ -95,7 +95,7 @@ qint64 FfmpegReader::size() const {
 	return av_rescale( this->pStream_->duration, this->pStream_->time_base.num* this->getAudioFormat().frequency() * this->getAudioFormat().channels() * this->getAudioFormat().sampleSize() / 8, this->pStream_->time_base.den );
 }
 
-void FfmpegReader::doOpen() {
+void LibavReader::doOpen() {
 	this->openResource_();
 	this->setupDemuxer_();
 	this->setupDecoder_();
@@ -103,12 +103,12 @@ void FfmpegReader::doOpen() {
 	this->eof_ = false;
 }
 
-void FfmpegReader::doClose() {
+void LibavReader::doClose() {
 	this->eof_ = true;
 	this->closeResource_();
 }
 
-void FfmpegReader::openResource_() {
+void LibavReader::openResource_() {
 	AVFormatContext * pFC = NULL;
 #ifdef Q_OS_WIN
 	if( this->getURI().scheme() == "file" ) {
@@ -135,19 +135,19 @@ void FfmpegReader::openResource_() {
 	} );
 }
 
-void FfmpegReader::setupDemuxer_() {
+void LibavReader::setupDemuxer_() {
 	if( avformat_find_stream_info( this->pFormatContext_.get(), NULL ) < 0 ) {
-		throw CodecError( tr( "FfmpegReader: Can not find codec info!" ), __FILE__, __LINE__ );
+		throw CodecError( tr( "LibavReader: Can not find codec info!" ), __FILE__, __LINE__ );
 	}
 
 	if( this->pFormatContext_->duration != static_cast< int64_t >( AV_NOPTS_VALUE ) ) {
 		this->setDuration( toMS( this->pFormatContext_->duration ) );
 	} else {
-		throw CodecError( tr( "FfmpegReader: Can not get duration!" ), __FILE__, __LINE__ );
+		throw CodecError( tr( "LibavReader: Can not get duration!" ), __FILE__, __LINE__ );
 	}
 }
 
-void FfmpegReader::setupDecoder_() {
+void LibavReader::setupDecoder_() {
 	int ret = -1;
 	for( std::size_t i = 0 ; i < this->pFormatContext_->nb_streams; ++i ) {
 		if( this->pFormatContext_->streams[i]->codec->codec_type == AVMEDIA_TYPE_AUDIO ) {
@@ -156,7 +156,7 @@ void FfmpegReader::setupDecoder_() {
 		}
 	}
 	if( ret == -1 ) {
-		throw CodecError( "FfmpegReader: Find no audio stream!", __FILE__, __LINE__ );
+		throw CodecError( "LibavReader: Find no audio stream!", __FILE__, __LINE__ );
 	}
 	this->pStream_ = this->pFormatContext_->streams[ret];
 	AVCodecContext * pCC = this->pStream_->codec;
@@ -210,7 +210,7 @@ void FfmpegReader::setupDecoder_() {
 	}
 }
 
-void FfmpegReader::readHeader_() {
+void LibavReader::readHeader_() {
 	if( this->pStream_->metadata ) {
 		this->readMetadata_( this->pStream_->metadata );
 	} else {
@@ -218,7 +218,7 @@ void FfmpegReader::readHeader_() {
 	}
 }
 
-void FfmpegReader::readMetadata_( AVDictionary * metadata ) {
+void LibavReader::readMetadata_( AVDictionary * metadata ) {
 	AVDictionaryEntry * mt = NULL;
 	if( ( mt = av_dict_get( metadata, "title", NULL, 0 ) ) ) {
 		this->setTitle( mt->value );
@@ -246,7 +246,7 @@ void FfmpegReader::readMetadata_( AVDictionary * metadata ) {
 	}
 }
 
-void FfmpegReader::closeResource_() {
+void LibavReader::closeResource_() {
 	// clear native information
 	this->curPos_ = 0LL;
 	this->pStream_ = NULL;
@@ -261,7 +261,7 @@ void FfmpegReader::closeResource_() {
 #endif
 }
 
-qint64 FfmpegReader::readData( char * data, qint64 maxSize ) {
+qint64 LibavReader::readData( char * data, qint64 maxSize ) {
 	while( !this->atEnd() && this->buffer_.size() < maxSize ) {
 		this->buffer_.append( this->readFrame_() );
 	}
@@ -271,7 +271,7 @@ qint64 FfmpegReader::readData( char * data, qint64 maxSize ) {
 	return maxSize;
 }
 
-QByteArray FfmpegReader::readFrame_() {
+QByteArray LibavReader::readFrame_() {
 	// read a frame
 	int ret = av_read_frame( this->pFormatContext_.get(), &this->packet_ );
 	if( ret < 0 ) {
@@ -359,7 +359,7 @@ QByteArray FfmpegReader::readFrame_() {
 	return pcm;
 }
 
-bool FfmpegReader::seek( qint64 pos ) {
+bool LibavReader::seek( qint64 pos ) {
 	bool succeed = this->Reader::seek( pos );
 	// internal position = pos / frequency / channels / samplesize / AVStream::time_base
 	auto frequency = this->pCodecContext_->sample_rate;
@@ -376,7 +376,7 @@ bool FfmpegReader::seek( qint64 pos ) {
 	return succeed && ret >= 0;
 }
 
-qint64 FfmpegReader::pos( qint64 msec ) const {
+qint64 LibavReader::pos( qint64 msec ) const {
 	auto frequency = this->pCodecContext_->sample_rate;
 	auto channels = this->pCodecContext_->channels;
 	auto sampleBytes = av_get_bytes_per_sample( this->pCodecContext_->sample_fmt );

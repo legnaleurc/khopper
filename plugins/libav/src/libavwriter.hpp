@@ -1,5 +1,5 @@
 /**
- * @file ffmpegwriter.hpp
+ * @file libavwriter.hpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,8 +19,8 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_CODEC_FFMPEGWRITER_HPP
-#define KHOPPER_CODEC_FFMPEGWRITER_HPP
+#ifndef KHOPPER_CODEC_LIBAVWRITER_HPP
+#define KHOPPER_CODEC_LIBAVWRITER_HPP
 
 #include "khopper/writer.hpp"
 
@@ -41,12 +41,12 @@ namespace codec {
  *
  * This class provides a default audio writer implementation.
  */
-class FfmpegWriter: public Writer {
+class LibavWriter: public Writer {
 public:
 	/**
 	 * @brief Constructor
 	 */
-	explicit FfmpegWriter( const QUrl & uri );
+	explicit LibavWriter( const QUrl & uri );
 
 	void setQuality( double quality );
 

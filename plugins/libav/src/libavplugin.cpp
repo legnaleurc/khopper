@@ -1,5 +1,5 @@
 /**
- * @file ffmpegplugin.cpp
+ * @file libavplugin.cpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,7 +19,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "ffmpegplugin.hpp"
+#include "libavplugin.hpp"
 
 #include <QtCore/QtDebug>
 #include <QtCore/QtPlugin>
@@ -30,31 +30,31 @@ extern "C" {
 
 #include "khopper/writerpanelcontext.hpp"
 #include "wavpanel.hpp"
-#include "ffmpegreader.hpp"
+#include "libavreader.hpp"
 #ifdef Q_OS_WIN32
 #include "wfile.hpp"
 #endif
 
-Q_EXPORT_PLUGIN2( KHOPPER_PLUGIN_ID, khopper::plugin::FfmpegPlugin )
+Q_EXPORT_PLUGIN2( KHOPPER_PLUGIN_ID, khopper::plugin::LibavPlugin )
 
 using khopper::codec::Reader;
 #ifdef Q_OS_WIN32
-using khopper::ffmpeg::read_packet;
-using khopper::ffmpeg::write_packet;
-using khopper::ffmpeg::seek;
+using khopper::libav::read_packet;
+using khopper::libav::write_packet;
+using khopper::libav::seek;
 #endif
-using khopper::plugin::FfmpegPlugin;
+using khopper::plugin::LibavPlugin;
 using khopper::widget::WriterPanelContext;
 using khopper::widget::WavPanel;
 
-FfmpegPlugin::FfmpegPlugin():
+LibavPlugin::LibavPlugin():
 Plugin(),
 panel_( new WavPanel ) {
 	this->setID( KHOPPER_STRINGIZE(KHOPPER_PLUGIN_ID) );
 	this->setVersion( KHOPPER_STRINGIZE(KHOPPER_VERSION) );
 }
 
-void FfmpegPlugin::doInstall() {
+void LibavPlugin::doInstall() {
 	WriterPanelContext::instance().install( this->panel_.get() );
 
 	av_register_all();
@@ -91,16 +91,16 @@ void FfmpegPlugin::doInstall() {
 				qDebug() << msg;
 				return 0;
 			}
-			qDebug() << "returned 100 (from FfmpegReader)";
+			qDebug() << "returned 100 (from LibavReader)";
 			return 100;
 		}
 		return 0;
 	}, []( const QUrl & uri )->khopper::codec::ReaderSP {
-		return khopper::codec::ReaderSP( new khopper::codec::FfmpegReader( uri ) );
+		return khopper::codec::ReaderSP( new khopper::codec::LibavReader( uri ) );
 	} );
 }
 
-void FfmpegPlugin::doUninstall() {
+void LibavPlugin::doUninstall() {
 	Reader::uninstall( this->getID() );
 	WriterPanelContext::instance().uninstall( this->panel_.get() );
 
