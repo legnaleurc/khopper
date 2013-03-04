@@ -22,41 +22,36 @@
 #ifndef KHOPPER_CODEC_FLACWRITER_HPP
 #define KHOPPER_CODEC_FLACWRITER_HPP
 
-#include "khopper/abstractwriter.hpp"
+#include <vector>
 
 #include <FLAC/stream_encoder.h>
 #include <FLAC/metadata.h>
 
-#include <vector>
+#include "khopper/writer.hpp"
 
 namespace khopper {
+namespace codec {
 
-	namespace codec {
+class FlacWriter: public Writer {
+public:
+	explicit FlacWriter( const QUrl & uri );
 
-		class FlacWriter : public AbstractWriter {
-		public:
-			explicit FlacWriter( const QUrl & uri );
-			virtual ~FlacWriter();
+	void setOggMode( bool ogg );
 
-			void setOggMode( bool ogg ) {
-				this->ogg_ = ogg;
-			}
+protected:
+	virtual void doOpen();
+	virtual void doClose();
+	virtual qint64 writeData( const char * data, qint64 len );
 
-		protected:
-			virtual void doOpen();
-			virtual void doClose();
-			virtual void writeFrame( const QByteArray & sample );
+private:
+	static void progressCallback_( const FLAC__StreamEncoder *, FLAC__uint64, FLAC__uint64, unsigned, unsigned, void * );
 
-		private:
-			static void progressCallback_( const FLAC__StreamEncoder *, FLAC__uint64, FLAC__uint64, unsigned, unsigned, void * );
+	std::shared_ptr< FLAC__StreamEncoder > pFE_;
+	std::vector< std::shared_ptr< FLAC__StreamMetadata > > metadataOwner_;
+	bool ogg_;
+};
 
-			std::shared_ptr< FLAC__StreamEncoder > pFE_;
-			std::vector< std::shared_ptr< FLAC__StreamMetadata > > metadataOwner_;
-			bool ogg_;
-		};
-
-	}
-
+}
 }
 
 #endif

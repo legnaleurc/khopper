@@ -43,6 +43,12 @@ public:
 	typedef TrackList::difference_type difference_type;
 	typedef TrackList::size_type size_type;
 
+	typedef std::function< unsigned int ( const QUrl & ) > Verifier;
+	typedef std::function< PlayList ( const QUrl & ) > Creator;
+
+	static bool install( const QString & id, Verifier v, Creator c );
+	static bool uninstall( const QString & id );
+
 	static PlayList fromURI( const QUrl & uri );
 
 	PlayList();
@@ -60,7 +66,7 @@ public:
 	bool empty() const;
 	reference front();
 	const_reference front() const;
-	void push_back( TrackSP track );
+	void push_back( const_reference track );
 	size_type size() const;
 	reference operator []( size_type index );
 	const_reference operator []( size_type index ) const;
@@ -69,16 +75,6 @@ private:
 	class Private;
 	std::shared_ptr< Private > p_;
 };
-
-}
-
-namespace plugin {
-
-typedef std::function< unsigned int ( const QUrl & ) > PlayListVerifier;
-typedef std::function< album::PlayList ( const QUrl & ) > PlayListCreator;
-
-bool KHOPPER_DLL registerPlayList( const QString & id, PlayListVerifier v, PlayListCreator c );
-bool KHOPPER_DLL unregisterPlayList( const QString & id );
 
 }
 }

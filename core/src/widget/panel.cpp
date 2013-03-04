@@ -1,5 +1,5 @@
 /**
- * @file abstractpanelprivate.hpp
+ * @file panel.cpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,22 +19,39 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_WIDGET_ABSTRACTPANELPRIVATE_HPP
-#define KHOPPER_WIDGET_ABSTRACTPANELPRIVATE_HPP
-
-#include "abstractpanel.hpp"
-
-#include <QtCore/QString>
+#include "panel.hpp"
 
 namespace khopper {
-	namespace widget {
+namespace widget {
 
-		struct AbstractPanel::AbstractPanelPrivate {
-			QString title;
-			QString suffix;
-		};
+class Panel::Private {
+public:
+	QString title;
+	QString suffix;
+};
 
-	}
+}
 }
 
-#endif
+using khopper::widget::Panel;
+
+Panel::Panel():
+QWidget(),
+p_( new Private ) {
+}
+
+void Panel::setTitle( const QString & title ) {
+	this->p_->title = title;
+}
+
+const QString & Panel::getTitle() const {
+	return this->p_->title;
+}
+
+void Panel::setSuffix( const QString & suffix ) {
+	this->p_->suffix = suffix;
+}
+
+const QString & Panel::getSuffix() const {
+	return this->p_->suffix;
+}

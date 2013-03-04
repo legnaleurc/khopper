@@ -27,39 +27,44 @@
 #include <fileref.h>
 #include <tag.h>
 
-#include "khopper/abstractreader.hpp"
+#include "khopper/reader.hpp"
 #include "khopper/album.hpp"
 #include "khopper/playlist.hpp"
-#include "khopper/error.hpp"
+#include "khopper/codecerror.hpp"
 #include "khopper/timestamp.hpp"
 
 Q_EXPORT_PLUGIN2( KHOPPER_PLUGIN_ID, khopper::plugin::SinglePlugin )
 
-using namespace khopper::plugin;
+using khopper::plugin::SinglePlugin;
 using khopper::album::PlayList;
 using khopper::album::Album;
 using khopper::album::Track;
 using khopper::album::Timestamp;
+using khopper::codec::Reader;
 using khopper::error::CodecError;
 
 SinglePlugin::SinglePlugin():
-AbstractPlugin() {
+Plugin() {
 	this->setID( KHOPPER_STRINGIZE(KHOPPER_PLUGIN_ID) );
 	this->setVersion( KHOPPER_STRINGIZE(KHOPPER_VERSION) );
 }
 
 void SinglePlugin::doInstall() {
-	registerPlayList( this->getID(), []( const QUrl & /*uri*/ )->unsigned int {
+	PlayList::install( this->getID(), []( const QUrl & /*uri*/ )->unsigned int {
 		return 100;
-	}, []( const QUrl & uri )->PlayList {
-		auto rc = getReaderCreator( uri );
+	}, [&]( const QUrl & uri )->PlayList {
+		// HACK: capturing '&' is a dirty hack for a gcc bug (prior to 4.7)
+		// somehow it can not access static member ('QObject::tr' in this case) without capturing 'this'
+		// please consider to remove this hack after they fix this bug
+
+		auto rc = Reader::getCreator( uri );
 		auto reader = rc( uri );
 		auto album = Album::create();
 		auto track = Track::create( uri, rc );
 
 		reader->open( QIODevice::ReadOnly );
 		if( !reader->isOpen() ) {
-			throw CodecError( QObject::tr( "Can not open `%1\' (%2)" ).arg( uri.toString() ).arg( Q_FUNC_INFO ) );
+			throw CodecError( QObject::tr( "Can not open `%1\' (%2)" ).arg( uri.toString() ).arg( Q_FUNC_INFO ), __FILE__, __LINE__ );
 		}
 		track->setBitRate( reader->getBitRate() );
 		track->setDuration( Timestamp::fromMillisecond( reader->getDuration() ) );
@@ -114,5 +119,5 @@ void SinglePlugin::doInstall() {
 }
 
 void SinglePlugin::doUninstall() {
-	unregisterPlayList( this->getID() );
+	PlayList::uninstall( this->getID() );
 }

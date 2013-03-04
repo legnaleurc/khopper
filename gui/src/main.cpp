@@ -23,18 +23,19 @@
  * @namespace khopper
  * @brief All componets in this program
  */
-#include "mainwindow.hpp"
-
-#include "khopper/application.hpp"
+#include <algorithm>
 
 #include <QtCore/QSettings>
 #include <QtCore/QTextCodec>
+#include <QtGui/QApplication>
 
-#include <algorithm>
+#include "mainwindow.hpp"
+#include "khopper/pluginmodel.hpp"
+#include "khopper/writerpanelcontext.hpp"
 
 /// Main program
 int main( int argc, char * argv[] ) {
-	khopper::Application app( argc, argv );
+	QApplication app( argc, argv );
 
 	QApplication::setWindowIcon( QIcon( ":/share/pixmap/logo.png" ) );
 	QApplication::setOrganizationName( "FoolproofProject" );
@@ -44,12 +45,16 @@ int main( int argc, char * argv[] ) {
 	QTextCodec::setCodecForCStrings( QTextCodec::codecForName( "UTF-8" ) );
 	QTextCodec::setCodecForTr( QTextCodec::codecForName( "UTF-8" ) );
 
+	khopper::widget::WriterPanelContext wpc;
+	khopper::plugin::PluginModel model;
+	Q_UNUSED( wpc );
+
 	khopper::widget::MainWindow window;
 	window.setWindowTitle( "Khopper" );
 	window.resize( 640, 480 );
 	window.show();
 
-	app.reloadPlugins();
+	model.reloadPlugins();
 
 	QList< QUrl > tmp;
 	QStringList args( QApplication::arguments().mid( 1 ) );

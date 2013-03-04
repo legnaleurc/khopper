@@ -1,5 +1,5 @@
 /**
- * @file cuesheet.cpp
+ * @file cuesheetparser.cpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -20,11 +20,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "cuesheetparser.hpp"
-#include "rangedreader.hpp"
-#include "freedb.hpp"
 
-#include "khopper/error.hpp"
-#include "khopper/track.hpp"
+#include <algorithm>
 
 #include <QtCore/QRegExp>
 #include <QtCore/QStringList>
@@ -32,28 +29,34 @@
 #include <QtCore/QTextStream>
 #include <QtCore/QEventLoop>
 
-#include <algorithm>
+#include "khopper/codecerror.hpp"
+#include "khopper/ioerror.hpp"
+#include "khopper/runtimeerror.hpp"
+#include "khopper/track.hpp"
+#include "rangedreader.hpp"
+#include "freedb.hpp"
 
 namespace {
 
-	inline QString stripQuote( const QString & s ) {
-		if( s[0] == '\"' && s[s.length()-1] == '\"' ) {
-			return s.mid( 1, s.length() - 2 );
-		} else {
-			return s;
-		}
+inline QString stripQuote( const QString & s ) {
+	if( s[0] == '\"' && s[s.length()-1] == '\"' ) {
+		return s.mid( 1, s.length() - 2 );
+	} else {
+		return s;
 	}
+}
 
 }
 
-using namespace khopper::album;
+using khopper::album::CueSheetParser;
+using khopper::album::PlayList;
+using khopper::codec::Reader;
+using khopper::codec::ReaderSP;
+using khopper::codec::RangedReader;
 using khopper::error::BaseError;
 using khopper::error::CodecError;
 using khopper::error::IOError;
 using khopper::error::RunTimeError;
-using khopper::codec::ReaderSP;
-using khopper::codec::RangedReader;
-using khopper::plugin::getReaderCreator;
 
 PlayList CueSheetParser::load( const QString & content, const QDir & dir, bool freedb ) {
 	CueSheetParser parser;
@@ -144,7 +147,7 @@ void CueSheetParser::parseFile_( const QString & fileName, const QString & type,
 
 	QString sFileName( stripQuote( fileName ) );
 	if( !dir.exists( sFileName ) ) {
-		throw IOError( QObject::tr( "%1 not exists, please check the corresponding cue sheet" ).arg( sFileName ) );
+		throw IOError( QObject::tr( "%1 not exists, please check the corresponding cue sheet" ).arg( sFileName ), __FILE__, __LINE__ );
 	}
 	this->currentFileURI_ = QUrl::fromLocalFile( dir.filePath( sFileName ) );
 	this->currentFileType_ = type;
@@ -229,7 +232,7 @@ void CueSheetParser::parseGarbage_( const QString & line ) {
 
 void CueSheetParser::updateLastTrack_() {
 	// get the total length, because cue sheet don't provide it
-	ReaderSP decoder( getReaderCreator( this->currentFileURI_ )( this->currentFileURI_ ) );
+	ReaderSP decoder( Reader::getCreator( this->currentFileURI_ )( this->currentFileURI_ ) );
 	try {
 		// NOTE: may throw exception
 		decoder->open( QIODevice::ReadOnly );

@@ -22,50 +22,45 @@
 #ifndef KHOPPER_CODEC_OGGWRITER_HPP
 #define KHOPPER_CODEC_OGGWRITER_HPP
 
-#include "khopper/abstractwriter.hpp"
-
 #include <vorbis/vorbisenc.h>
 
+#include "khopper/writer.hpp"
+
 namespace khopper {
+namespace codec {
 
-	namespace codec {
+/**
+ * @brief Ogg writer
+ *
+ * This class provides a ogg audio writer implementation.
+ */
+class OggWriter: public Writer {
+public:
+	/**
+	 * @brief Default constructor
+	 */
+	explicit OggWriter( const QUrl & uri );
 
-		/**
-		 * @brief Ogg writer
-		 *
-		 * This class provides a ogg audio writer implementation.
-		 */
-		class OggWriter : public AbstractWriter {
-		public:
-			/**
-			 * @brief Default constructor
-			 */
-			explicit OggWriter( const QUrl & uri );
-			virtual ~OggWriter();
+	void setVBRQuality( float quality );
 
-			void setVBRQuality( float quality ) {
-				this->quality_ = quality;
-			}
+protected:
+	virtual void doOpen();
+	virtual void doClose();
+	virtual qint64 writeData( const char * data, qint64 len );
 
-		protected:
-			virtual void doOpen();
-			virtual void doClose();
-			virtual void writeFrame( const QByteArray & sample );
+private:
+	void writePage_( const ogg_page & );
 
-		private:
-			void writePage_( const ogg_page & );
+	QIODevice * out_;
+	std::shared_ptr< vorbis_info > encoder_;
+	std::shared_ptr< ogg_stream_state > muxer_;
+	std::shared_ptr< vorbis_dsp_state > dsp_;
+	std::shared_ptr< vorbis_block > block_;
+	std::shared_ptr< vorbis_comment > comments_;
+	float quality_;
+};
 
-			QIODevice * out_;
-			std::shared_ptr< vorbis_info > encoder_;
-			std::shared_ptr< ogg_stream_state > muxer_;
-			std::shared_ptr< vorbis_dsp_state > dsp_;
-			std::shared_ptr< vorbis_block > block_;
-			std::shared_ptr< vorbis_comment > comments_;
-			float quality_;
-		};
-
-	}
-
+}
 }
 
 #endif

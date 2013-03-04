@@ -23,39 +23,39 @@
 
 #include <cstring>
 
+#include "khopper/codecerror.hpp"
+
 namespace {
 
-	inline static qint64 posFromMs( qint64 ms, const khopper::codec::AudioFormat & format ) {
-		return ms * format.frequency() * format.channels() * format.sampleSize() / 8 / 1000;
-	}
-
-	inline static qint64 msFromPos( qint64 pos, const khopper::codec::AudioFormat & format ) {
-		return pos * 8 * 1000 / format.frequency() / format.channels() / format.sampleSize();
-	}
+//	inline static qint64 posFromMs( qint64 ms, const khopper::codec::AudioFormat & format ) {
+//		return ms * format.frequency() * format.channels() * format.sampleSize() / 8 / 1000;
+//	}
 
 }
 
-using namespace khopper::codec;
-using khopper::plugin::getReaderCreator;
+using khopper::codec::RangedReader;
+using khopper::error::CodecError;
 
 RangedReader::RangedReader( const QUrl & uri, qint64 msBegin, qint64 msDuration ):
-AbstractReader( uri ),
+Reader( uri ),
 client_(),
 msBegin_( msBegin ),
 msDuration_( msDuration ) {
-	this->client_ = getReaderCreator( uri )( uri );
+	this->client_ = Reader::getCreator( uri )( uri );
 }
 
 bool RangedReader::atEnd() const {
-	return this->client_->atEnd() || this->client_->pos() >= posFromMs( this->msBegin_ + this->msDuration_, this->getAudioFormat() );
+	return this->client_->atEnd() || this->client_->pos() >= this->client_->pos( this->msBegin_ + this->msDuration_ );
 }
 
 qint64 RangedReader::size() const {
-	return posFromMs( this->msDuration_, this->getAudioFormat() );
+	return this->pos( this->msDuration_ );
 }
 
 void RangedReader::doOpen() {
-	this->client_->open( ReadOnly );
+	if( !this->client_->open( ReadOnly ) ) {
+		throw CodecError( QObject::tr( "can not open media" ), __FILE__, __LINE__ );
+	}
 
 	this->setAlbumTitle( this->client_->getAlbumTitle() );
 	this->setArtist( this->client_->getArtist() );
@@ -70,7 +70,9 @@ void RangedReader::doOpen() {
 	this->setTitle( this->client_->getTitle() );
 	this->setYear( this->client_->getYear() );
 
-	this->client_->seek( posFromMs( this->msBegin_, this->getAudioFormat() ) );
+	if( !this->client_->seek( this->client_->pos( this->msBegin_ ) ) ) {
+		throw CodecError( QObject::tr( "seek failed" ), __FILE__, __LINE__ );
+	}
 }
 
 void RangedReader::doClose() {
@@ -81,8 +83,8 @@ qint64 RangedReader::readData( char * data, qint64 maxSize ) {
 	qint64 frameBegin = this->client_->pos();
 	QByteArray frame( this->client_->read( maxSize ) );
 	qint64 frameLength = frame.size();
-	qint64 begin = posFromMs( this->msBegin_, this->getAudioFormat() );
-	qint64 length = posFromMs( this->msDuration_, this->getAudioFormat() );
+	qint64 begin = this->client_->pos( this->msBegin_ );
+	qint64 length = this->client_->pos( this->msDuration_ );
 
 	qint64 bufferBegin = 0, bufferLength = frameLength;
 	
@@ -97,6 +99,6 @@ qint64 RangedReader::readData( char * data, qint64 maxSize ) {
 }
 
 bool RangedReader::seek( qint64 pos ) {
-	qint64 begin = posFromMs( this->msBegin_, this->getAudioFormat() );
+	qint64 begin = this->client_->pos( this->msBegin_ );
 	return this->client_->seek( begin + pos );
 }

@@ -25,8 +25,8 @@
 #include "converter.hpp"
 #include "pathcompletermodel.hpp"
 
-#include "khopper/abstractpanel.hpp"
-#include "khopper/application.hpp"
+#include "khopper/panel.hpp"
+#include "khopper/writerpanelcontext.hpp"
 
 #include <QtCore/QSettings>
 #include <QtGui/QCompleter>
@@ -37,14 +37,16 @@
 #include <algorithm>
 #include <set>
 
-using namespace khopper::widget;
 using khopper::album::TrackCSP;
 using khopper::album::TrackSP;
 using khopper::album::PlayList;
+using khopper::codec::Writer;
 using khopper::codec::WriterSP;
-using khopper::plugin::WriterCreator;
 using khopper::utility::Converter;
 using khopper::utility::PathCompleterModel;
+using khopper::widget::Panel;
+using khopper::widget::ConversionDialog;
+using khopper::widget::WriterPanelContext;
 
 ConversionDialog::ConversionDialog( QWidget * parent ):
 QDialog( parent ),
@@ -62,8 +64,8 @@ table_() {
 
 	this->connect( this->ui_->browse, SIGNAL( clicked() ), SLOT( changeOutputPath_() ) );
 
-	this->connect( khopper::pApp(), SIGNAL( panelAdded( khopper::widget::AbstractPanel * ) ), SLOT( addPanel( khopper::widget::AbstractPanel * ) ) );
-	this->connect( khopper::pApp(), SIGNAL( panelRemoved( khopper::widget::AbstractPanel * ) ), SLOT( removePanel( khopper::widget::AbstractPanel * ) ) );
+	this->connect( &WriterPanelContext::instance(), SIGNAL( installed( khopper::widget::Panel * ) ), SLOT( addPanel( khopper::widget::Panel * ) ) );
+	this->connect( &WriterPanelContext::instance(), SIGNAL( uninstalled( khopper::widget::Panel * ) ), SLOT( removePanel( khopper::widget::Panel * ) ) );
 
 	QCompleter * completer = new QCompleter( this );
 	PathCompleterModel * model = new PathCompleterModel( this );
@@ -78,8 +80,8 @@ void ConversionDialog::convert( const PlayList & tracks ) {
 		return;
 	}
 
-	AbstractPanel * panel = this->getCurrent();
-	WriterCreator wc( panel->getWriterCreator() );
+	Panel * panel = this->getCurrent();
+	Writer::Creator wc( panel->getWriterCreator() );
 	std::set< QString > failureDirs;
 
 	QList< Converter * > tasks;
@@ -108,15 +110,15 @@ void ConversionDialog::convert( const PlayList & tracks ) {
 	}
 }
 
-AbstractPanel * ConversionDialog::getCurrent() const {
+Panel * ConversionDialog::getCurrent() const {
 	return this->table_.find( this->ui_->tabWidget->currentIndex() )->second;
 }
 
-void ConversionDialog::addPanel( AbstractPanel * panel ) {
+void ConversionDialog::addPanel( Panel * panel ) {
 	this->table_.insert( std::make_pair( this->ui_->tabWidget->addTab( panel, panel->getTitle() ), panel ) );
 }
 
-void ConversionDialog::removePanel( AbstractPanel * panel ) {
+void ConversionDialog::removePanel( Panel * panel ) {
 	int index = this->ui_->tabWidget->indexOf( panel );
 	this->table_.erase( index );
 	this->ui_->tabWidget->removeTab( index );

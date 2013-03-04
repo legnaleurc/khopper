@@ -20,32 +20,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "mp3plugin.hpp"
-#include "mp3panel.hpp"
-
-#include "khopper/application.hpp"
 
 #include <QtCore/QtPlugin>
 
+#include "khopper/writerpanelcontext.hpp"
+#include "mp3panel.hpp"
+
 Q_EXPORT_PLUGIN2( KHOPPER_PLUGIN_ID, khopper::plugin::Mp3Plugin )
 
-using namespace khopper::plugin;
+using khopper::plugin::Mp3Plugin;
 using khopper::widget::Mp3Panel;
+using khopper::widget::WriterPanelContext;
 
 Mp3Plugin::Mp3Plugin():
-AbstractPlugin(),
+Plugin(),
 panel_( new Mp3Panel ) {
 	this->setID( KHOPPER_STRINGIZE(KHOPPER_PLUGIN_ID) );
 	this->setVersion( KHOPPER_STRINGIZE(KHOPPER_VERSION) );
 }
 
-Mp3Plugin::~Mp3Plugin() {
-	delete this->panel_;
-}
-
 void Mp3Plugin::doInstall() {
-	khopper::pApp()->addPanel( this->panel_ );
+	WriterPanelContext::instance().install( this->panel_.get() );
 }
 
 void Mp3Plugin::doUninstall() {
-	khopper::pApp()->removePanel( this->panel_ );
+	WriterPanelContext::instance().uninstall( this->panel_.get() );
 }

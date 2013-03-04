@@ -22,35 +22,34 @@
 #ifndef KHOPPER_PLUGIN_XIPHPLUGIN_HPP
 #define KHOPPER_PLUGIN_XIPHPLUGIN_HPP
 
-#include "khopper/abstractplugin.hpp"
+#include "khopper/plugin.hpp"
 
 namespace khopper {
 
-	namespace widget {
-		class FlacPanel;
-		class OggPanel;
-	}
+namespace widget {
+class FlacPanel;
+class OggPanel;
+}
 
-	namespace plugin {
+namespace plugin {
 
-		/**
-		 * @brief flac option widget
-		 */
-		class XiphPlugin : public AbstractPlugin {
-		public:
-			XiphPlugin();
-			virtual ~XiphPlugin();
+/**
+ * @brief flac option widget
+ */
+class XiphPlugin: public Plugin {
+public:
+	XiphPlugin();
 
-		protected:
-			virtual void doInstall();
-			virtual void doUninstall();
+protected:
+	virtual void doInstall();
+	virtual void doUninstall();
 
-		private:
-			widget::FlacPanel * flacPanel_;
-			widget::OggPanel * oggPanel_;
-		};
+private:
+	std::shared_ptr< widget::FlacPanel > flacPanel_;
+	std::shared_ptr< widget::OggPanel > oggPanel_;
+};
 
-	}
+}
 
 }
 

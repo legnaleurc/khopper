@@ -19,29 +19,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "cuesheetplugin.hpp"
-#include "codecselector.hpp"
-#include "cuesheetparser.hpp"
-
-#include "khopper/playlist.hpp"
-
 #include <QtCore/QDir>
 #include <QtCore/QtPlugin>
 #include <QtCore/QtDebug>
 
+#include "cuesheetplugin.hpp"
+
+#include "codecselector.hpp"
+#include "cuesheetparser.hpp"
+#include "khopper/playlist.hpp"
+
 Q_EXPORT_PLUGIN2( KHOPPER_PLUGIN_ID, khopper::plugin::CueSheetPlugin )
 
-using namespace khopper::plugin;
 using khopper::album::PlayList;
+using khopper::plugin::CueSheetPlugin;
 
 CueSheetPlugin::CueSheetPlugin():
-AbstractPlugin() {
+Plugin() {
 	this->setID( KHOPPER_STRINGIZE(KHOPPER_PLUGIN_ID) );
 	this->setVersion( KHOPPER_STRINGIZE(KHOPPER_VERSION) );
 }
 
 void CueSheetPlugin::doInstall() {
-	registerPlayList( this->getID(), []( const QUrl & uri )->unsigned int {
+	PlayList::install( this->getID(), []( const QUrl & uri )->unsigned int {
 		if( uri.scheme() != "file" ) {
 			// TODO: network support
 			qDebug() << "CueSheetPlugin returned 0" << uri;
@@ -79,5 +79,5 @@ void CueSheetPlugin::doInstall() {
 }
 
 void CueSheetPlugin::doUninstall() {
-	unregisterPlayList( this->getID() );
+	PlayList::uninstall( this->getID() );
 }

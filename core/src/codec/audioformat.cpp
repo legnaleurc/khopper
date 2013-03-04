@@ -20,11 +20,30 @@
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 #include "audioformat.hpp"
-#include "audioformatprivate.hpp"
 
-using namespace khopper::codec;
+#include <QtCore/QString>
 
-AudioFormat::AudioFormatPrivate::AudioFormatPrivate():
+namespace khopper {
+namespace codec {
+
+class AudioFormat::Private {
+public:
+	Private();
+
+	Endian byteOrder;
+	int channels;
+	QString codec;
+	int frequency;
+	int sampleSize;
+	SampleType sampleType;
+};
+
+}
+}
+
+using khopper::codec::AudioFormat;
+
+AudioFormat::Private::Private():
 byteOrder( AudioFormat::Endian( QSysInfo::ByteOrder ) ),
 channels( -1 ),
 codec(),
@@ -33,10 +52,10 @@ sampleSize( -1 ),
 sampleType( Unknown ) {
 }
 
-AudioFormat::AudioFormat() : p_( new AudioFormatPrivate ) {
+AudioFormat::AudioFormat() : p_( new Private ) {
 }
 
-AudioFormat::AudioFormat( const AudioFormat & that ) : p_( new AudioFormatPrivate( *that.p_ ) ) {
+AudioFormat::AudioFormat( const AudioFormat & that ) : p_( new Private( *that.p_ ) ) {
 }
 
 AudioFormat::Endian AudioFormat::byteOrder() const {

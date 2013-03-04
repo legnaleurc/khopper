@@ -26,14 +26,14 @@
 
 #include <QtCore/QVariant>
 
-using namespace khopper::widget;
+using khopper::widget::OggPanel;
+using khopper::codec::Writer;
 using khopper::codec::WriterSP;
 using khopper::codec::FlacWriter;
 using khopper::codec::OggWriter;
-using khopper::plugin::WriterCreator;
 
 OggPanel::OggPanel():
-AbstractPanel(),
+Panel(),
 ui_( new Ui::OggPanel ),
 choise_( new QButtonGroup( this ) ) {
 	this->setTitle( "Ogg Vorbis" );
@@ -60,7 +60,7 @@ choise_( new QButtonGroup( this ) ) {
 	this->ui_->sampleRate->addItem( tr( "48000 Hz" ), QVariant( 48000 ) );
 }
 
-WriterCreator OggPanel::getWriterCreator() const {
+Writer::Creator OggPanel::getWriterCreator() const {
 	int id = this->choise_->checkedId();
 	int quality = this->ui_->quality->itemData( this->ui_->quality->currentIndex() ).toInt();
 	// NOTE: workaround for VC10

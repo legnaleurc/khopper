@@ -21,11 +21,13 @@
  */
 #include "redbookreader.hpp"
 
-using namespace khopper::codec;
+#include "khopper/ioerror.hpp"
+
+using khopper::codec::RedbookReader;
 using khopper::error::IOError;
 
 RedbookReader::RedbookReader( const QUrl & uri ):
-AbstractReader( uri ),
+Reader( uri ),
 file_( uri.toLocalFile() ) {
 	AudioFormat format;
 	format.setByteOrder( AudioFormat::LittleEndian );
@@ -41,7 +43,7 @@ bool RedbookReader::atEnd() const {
 }
 
 bool RedbookReader::seek( qint64 pos ) {
-	bool ret = this->AbstractReader::seek( pos );
+	bool ret = this->Reader::seek( pos );
 	ret &= this->file_.seek( pos );
 	return ret;
 }
@@ -53,7 +55,7 @@ qint64 RedbookReader::size() const {
 void RedbookReader::doOpen() {
 	bool ret = this->file_.open( QIODevice::ReadOnly );
 	if( !ret ) {
-		throw IOError( QString( "%1 : %2 (from khopper::codec::RedbookReader)" ).arg( this->file_.fileName() ).arg( this->file_.errorString() ) );
+		throw IOError( QString( "%1 : %2 (from khopper::codec::RedbookReader)" ).arg( this->file_.fileName() ).arg( this->file_.errorString() ), __FILE__, __LINE__ );
 	}
 	this->setDuration( this->file_.size() * 1000 / 44100 / 2 / 2 );
 }

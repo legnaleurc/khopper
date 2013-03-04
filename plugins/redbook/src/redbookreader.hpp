@@ -22,29 +22,31 @@
 #ifndef KHOPPER_CODEC_REDBOOKREADER_HPP
 #define KHOPPER_CODEC_REDBOOKREADER_HPP
 
-#include "khopper/abstractreader.hpp"
-
 #include <QtCore/QFile>
 
+#include "khopper/reader.hpp"
+
 namespace khopper {
-	namespace codec {
-		class RedbookReader : public AbstractReader {
-		public:
-			explicit RedbookReader( const QUrl & uri );
+namespace codec {
 
-			virtual bool atEnd() const;
-			virtual bool seek( qint64 pos );
-			virtual qint64 size() const;
+class RedbookReader: public Reader {
+public:
+	explicit RedbookReader( const QUrl & uri );
 
-		protected:
-			virtual void doOpen();
-			virtual void doClose();
-			virtual qint64 readData( char * data, qint64 maxSize );
+	virtual bool atEnd() const;
+	virtual bool seek( qint64 pos );
+	virtual qint64 size() const;
 
-		private:
-			QFile file_;
-		};
-	}
+protected:
+	virtual void doOpen();
+	virtual void doClose();
+	virtual qint64 readData( char * data, qint64 maxSize );
+
+private:
+	QFile file_;
+};
+
+}
 }
 
 #endif

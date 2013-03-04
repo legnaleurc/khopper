@@ -21,32 +21,32 @@
  */
 #include "flacwriter.hpp"
 
-#include "khopper/error.hpp"
+#include "khopper/codecerror.hpp"
+#include "khopper/ioerror.hpp"
+#include "khopper/systemerror.hpp"
 
-#include <QtCore/QtDebug>
-
-#include <cstdint>
-
-using namespace khopper::codec;
+using khopper::codec::FlacWriter;
+using khopper::error::CodecError;
 using khopper::error::IOError;
 using khopper::error::SystemError;
 
 FlacWriter::FlacWriter( const QUrl & uri ):
-AbstractWriter( uri ),
+Writer( uri ),
 pFE_( FLAC__stream_encoder_new(), FLAC__stream_encoder_delete ),
 metadataOwner_(),
 ogg_( false ) {
 	if( !this->pFE_ ) {
-		throw SystemError( "memory allocation error" );
+		throw SystemError( QObject::tr( "memory allocation error" ), __FILE__, __LINE__ );
 	}
 }
 
-FlacWriter::~FlacWriter() {
+void FlacWriter::setOggMode( bool ogg ) {
+	this->ogg_ = ogg;
 }
 
 void FlacWriter::doOpen() {
 	if( this->getURI().scheme() != "file" ) {
-		throw IOError( tr( "This plugin do not support remote access." ) );
+		throw IOError( QObject::tr( "This plugin do not support remote access." ), __FILE__, __LINE__ );
 	}
 	// open files
 	FILE * fout = NULL;
@@ -58,7 +58,7 @@ void FlacWriter::doOpen() {
 #else
 	fout = fopen( this->getURI().toLocalFile().toStdString().c_str(), "wb" );
 	if( fout == NULL ) {
-		throw IOError( QString( "Can not open: %1" ).arg( this->getURI().toString() ) );
+		throw IOError( QObject::tr( "Can not open: %1" ).arg( this->getURI().toString() ), __FILE__, __LINE__ );
 	}
 #endif
 
@@ -68,7 +68,7 @@ void FlacWriter::doOpen() {
 	// setup metadata
 	FLAC__StreamMetadata * tmp = FLAC__metadata_object_new( FLAC__METADATA_TYPE_VORBIS_COMMENT );
 	if( tmp == NULL ) {
-		throw error::SystemError( "memory allocation error" );
+		throw error::SystemError( QObject::tr( "memory allocation error" ), __FILE__, __LINE__ );
 	}
 	FLAC__StreamMetadata_VorbisComment_Entry entry;
 	ok &= FLAC__metadata_object_vorbiscomment_entry_from_name_value_pair( &entry, "TITLE", this->getTitle().constData() );
@@ -78,14 +78,14 @@ void FlacWriter::doOpen() {
 	ok &= FLAC__metadata_object_vorbiscomment_entry_from_name_value_pair( &entry, "ARTIST", this->getArtist().constData() );
 	ok &= FLAC__metadata_object_vorbiscomment_append_comment( tmp, entry, false );
 	if( !ok ) {
-		throw error::CodecError( "encoder vorbis comment error" );
+		throw CodecError( QObject::tr( "encoder vorbis comment error" ), __FILE__, __LINE__ );
 	}
 	this->metadataOwner_.push_back( std::shared_ptr< FLAC__StreamMetadata >( tmp, FLAC__metadata_object_delete ) );
 	metadata.push_back( tmp );
 
 	tmp = FLAC__metadata_object_new( FLAC__METADATA_TYPE_SEEKTABLE );
 	if( tmp == NULL ) {
-		throw error::SystemError( "memory allocation error" );
+		throw error::SystemError( QObject::tr( "memory allocation error" ), __FILE__, __LINE__ );
 	}
 	// FIXME: dirty hack, I don't know how to rescale seek table size
 	FLAC__metadata_object_seektable_template_append_spaced_points_by_samples( tmp, this->getAudioFormat().frequency(), this->getAudioFormat().frequency() * 7200 );
@@ -103,7 +103,7 @@ void FlacWriter::doOpen() {
 
 	ok &= FLAC__stream_encoder_set_metadata( this->pFE_.get(), &metadata[0], metadata.size() );
 	if( !ok ) {
-		throw error::CodecError( "encoder metadata error" );
+		throw CodecError( QObject::tr( "encoder metadata error" ), __FILE__, __LINE__ );
 	}
 
 	// setup encoder setting
@@ -118,7 +118,7 @@ void FlacWriter::doOpen() {
 	ok &= FLAC__stream_encoder_set_verify( this->pFE_.get(), true );
 	// FLAC__stream_encoder_set_total_samples_estimate()
 	if( !ok ) {
-		throw error::CodecError( "encoder parameter error" );
+		throw CodecError( QObject::tr( "encoder parameter error" ), __FILE__, __LINE__ );
 	}
 
 	FLAC__StreamEncoderInitStatus init_status;
@@ -138,33 +138,35 @@ void FlacWriter::doOpen() {
 		);
 	}
 	if( init_status != FLAC__STREAM_ENCODER_INIT_STATUS_OK ) {
-		throw error::CodecError( FLAC__StreamEncoderInitStatusString[init_status] );
+		throw CodecError( FLAC__StreamEncoderInitStatusString[init_status], __FILE__, __LINE__ );
 	}
 }
 
-void FlacWriter::writeFrame( const QByteArray & sample ) {
-	if( sample.isEmpty() ) {
-		return;
+qint64 FlacWriter::writeData( const char * data, qint64 len ) {
+	if( !data || len <= 0 ) {
+		return len;
 	}
-	const int32_t bufSize = sample.size() / ( this->getAudioFormat().sampleSize() / 8 );
+	const qint64 bufSize = len / ( this->getAudioFormat().sampleSize() / 8 );
 	// TODO: big or little endian
-	const int16_t * audio = static_cast< const int16_t * >( static_cast< const void * >( sample.data() ) );
+	const int16_t * audio = static_cast< const int16_t * >( static_cast< const void * >( data ) );
 	std::vector< int32_t > buffer( bufSize );
-	for( int i = 0; i < bufSize; ++i ) {
+	for( qint64 i = 0; i < bufSize; ++i ) {
 		buffer[i] = audio[i];
 	}
 
 	FLAC__bool ok = FLAC__stream_encoder_process_interleaved( this->pFE_.get(), &buffer[0], bufSize / this->getAudioFormat().channels() );
 	if( !ok ) {
-		throw error::CodecError( FLAC__StreamEncoderStateString[FLAC__stream_encoder_get_state( this->pFE_.get() )] );
+		throw CodecError( FLAC__StreamEncoderStateString[FLAC__stream_encoder_get_state( this->pFE_.get() )], __FILE__, __LINE__ );
 	}
+
+	return len;
 }
 
 void FlacWriter::doClose() {
 	FLAC__bool ok = FLAC__stream_encoder_finish( this->pFE_.get() );
 	if( !ok ) {
 		// nothrow
-		qDebug() << FLAC__StreamEncoderStateString[FLAC__stream_encoder_get_state( this->pFE_.get() )];
+		// qDebug() << FLAC__StreamEncoderStateString[FLAC__stream_encoder_get_state( this->pFE_.get() )];
 	}
 	this->metadataOwner_.clear();
 	this->ogg_ = false;

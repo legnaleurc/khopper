@@ -22,36 +22,32 @@
 #ifndef KHOPPER_CODEC_MP3WRITER_HPP
 #define KHOPPER_CODEC_MP3WRITER_HPP
 
-#include "khopper/abstractwriter.hpp"
-
 #include <lame/lame.h>
 
+#include "khopper/writer.hpp"
+
 namespace khopper {
+namespace codec {
 
-	namespace codec {
+class Mp3Writer: public Writer {
+public:
+	explicit Mp3Writer( const QUrl & uri );
 
-		class Mp3Writer : public AbstractWriter {
-		public:
-			explicit Mp3Writer( const QUrl & uri );
+	void setVBRQuality( int quality );
 
-			void setVBRQuality( int quality ) {
-				this->quality_ = quality;
-			}
+protected:
+	virtual void doOpen();
+	virtual void doClose();
+	virtual qint64 writeData( const char * data, qint64 len );
 
-		protected:
-			virtual void doOpen();
-			virtual void doClose();
-			virtual void writeFrame( const QByteArray & sample );
+private:
+	QIODevice * out_;
+	std::shared_ptr< lame_global_flags > gfp_;
+	int quality_;
+	long id3v2Offset_;
+};
 
-		private:
-			QIODevice * out_;
-			std::shared_ptr< lame_global_flags > gfp_;
-			int quality_;
-			long id3v2Offset_;
-		};
-
-	}
-
+}
 }
 
 #endif

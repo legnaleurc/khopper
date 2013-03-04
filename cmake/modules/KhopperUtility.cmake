@@ -15,7 +15,7 @@ function(group_sources root)
 	endfunction()
 
 	get_filename_component(prefix "${root}" NAME)
-	__group_sources__("${root}" "${prefix}")
+	__group_sources__("${CMAKE_CURRENT_SOURCE_DIR}/${root}" "${prefix}")
 endfunction()
 
 # automatically find all moc headers

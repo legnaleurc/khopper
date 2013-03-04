@@ -22,38 +22,37 @@
 #ifndef KHOPPER_PLUGIN_MP3PLUGIN_HPP
 #define KHOPPER_PLUGIN_MP3PLUGIN_HPP
 
-#include "khopper/abstractplugin.hpp"
+#include "khopper/plugin.hpp"
 
 namespace khopper {
 
-	namespace widget {
-		class Mp3Panel;
-	}
+namespace widget {
+class Mp3Panel;
+}
 
-	namespace plugin {
+namespace plugin {
 
-		/**
-		 * @brief Mp3 option widget
-		 */
-		class Mp3Plugin : public AbstractPlugin {
-		public:
-			/**
-			 * @brief Default constructor
-			 * @param parent Parent widget
-			 * @param f Window flags
-			 */
-			Mp3Plugin();
-			virtual ~Mp3Plugin();
+/**
+ * @brief Mp3 option widget
+ */
+class Mp3Plugin : public Plugin {
+public:
+	/**
+	 * @brief Default constructor
+	 * @param parent Parent widget
+	 * @param f Window flags
+	 */
+	Mp3Plugin();
 
-		protected:
-			virtual void doInstall();
-			virtual void doUninstall();
+protected:
+	virtual void doInstall();
+	virtual void doUninstall();
 
-		private:
-			widget::Mp3Panel * panel_;
-		};
+private:
+	std::shared_ptr< widget::Mp3Panel > panel_;
+};
 
-	}
+}
 
 }
 

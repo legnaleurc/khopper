@@ -26,12 +26,12 @@
 #include <QtCore/QVariant>
 
 using namespace khopper::widget;
+using khopper::codec::Writer;
 using khopper::codec::WriterSP;
 using khopper::codec::Mp3Writer;
-using khopper::plugin::WriterCreator;
 
 Mp3Panel::Mp3Panel():
-AbstractPanel(),
+Panel(),
 ui_( new Ui::Mp3Panel ),
 choise_( new QButtonGroup( this ) ) {
 	this->setTitle( "MPEG Layer 3" );
@@ -65,7 +65,7 @@ choise_( new QButtonGroup( this ) ) {
 	this->ui_->channels->setCurrentIndex( 1 );
 }
 
-WriterCreator Mp3Panel::getWriterCreator() const {
+Writer::Creator Mp3Panel::getWriterCreator() const {
 	int id = this->choise_->checkedId();
 	int bitRate = this->ui_->bitRate->itemData( this->ui_->bitRate->currentIndex() ).toInt();
 	int quality = this->ui_->level->itemData( this->ui_->level->currentIndex() ).toInt();

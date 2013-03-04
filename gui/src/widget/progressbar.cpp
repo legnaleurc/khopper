@@ -20,17 +20,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "progressbar.hpp"
+
+#include <QtCore/QThreadPool>
+
 #include "ui_progressbar.h"
 #include "progressviewer.hpp"
 #include "converter.hpp"
 
-#include <QtCore/QThreadPool>
-
-using namespace khopper::widget;
-using khopper::album::TrackSP;
-using khopper::codec::ReaderSP;
-using khopper::codec::WriterSP;
-using khopper::error::RunTimeError;
+using khopper::widget::ProgressBar;
 using khopper::utility::Converter;
 
 ProgressBar::ProgressBar( QWidget * parent ):

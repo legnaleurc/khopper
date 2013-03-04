@@ -11,13 +11,6 @@ set_package_properties(Qt4
     PURPOSE "Necessary for core library")
 include(${QT_USE_FILE})
 
-# hack MSCV path
-if(MSVC)
-    set(LIBRARY_OUTPUT_PATH "${CMAKE_BINARY_DIR}")
-else()
-    set(LIBRARY_OUTPUT_PATH "${CMAKE_BINARY_DIR}/lib")
-endif()
-
 add_definitions(-DKHOPPER_LIBRARY)
 
 file(GLOB_RECURSE KHOPPER_CORE_PUBLIC_HEADERS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "include/*.hpp")
@@ -44,13 +37,10 @@ target_link_libraries(khopper ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY})
 set_target_properties(khopper
     PROPERTIES
         VERSION ${KHOPPER_VERSION}
-        SOVERSION ${KHOPPER_VERSION}
-        FRAMEWORK TRUE
-        PUBLIC_HEADER "${KHOPPER_CORE_PUBLIC_HEADERS}")
+        SOVERSION ${KHOPPER_VERSION})
 
+install(DIRECTORY "include/khopper" DESTINATION "include")
 install(TARGETS khopper
     RUNTIME DESTINATION "bin"
     LIBRARY DESTINATION "lib"
-    ARCHIVE DESTINATION "lib"
-    FRAMEWORK DESTINATION "/Library/Frameworks"
-    PUBLIC_HEADER DESTINATION "include/khopper")
+    ARCHIVE DESTINATION "lib")

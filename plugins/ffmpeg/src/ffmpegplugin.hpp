@@ -22,37 +22,37 @@
 #ifndef KHOPPER_PLUGIN_FFMPEGPLUGIN_HPP
 #define KHOPPER_PLUGIN_FFMPEGPLUGIN_HPP
 
-#include "khopper/abstractplugin.hpp"
+#include "khopper/plugin.hpp"
 
 namespace khopper {
 
-	namespace widget {
-		class WavPanel;
-	}
+namespace widget {
+class WavPanel;
+}
 
-	namespace plugin {
+namespace plugin {
 
-		/**
-		 * @brief Wav option widget
-		 */
-		class FfmpegPlugin : public AbstractPlugin {
-		public:
-			/**
-			 * @brief Default constructor
-			 * @param parent Parent widget
-			 * @param f Window flags
-			 */
-			FfmpegPlugin();
+/**
+ * @brief Wav option widget
+ */
+class FfmpegPlugin : public Plugin {
+public:
+	/**
+	 * @brief Default constructor
+	 * @param parent Parent widget
+	 * @param f Window flags
+	 */
+	FfmpegPlugin();
 
-		protected:
-			virtual void doInstall();
-			virtual void doUninstall();
+protected:
+	virtual void doInstall();
+	virtual void doUninstall();
 
-		private:
-			std::shared_ptr< widget::WavPanel > panel_;
-		};
+private:
+	std::shared_ptr< widget::WavPanel > panel_;
+};
 
-	}
+}
 
 }
 

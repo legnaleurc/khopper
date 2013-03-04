@@ -1,5 +1,5 @@
 /**
- * @file abstractpluginprivate.hpp
+ * @file systemerror.cpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,27 +19,30 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_PLUGIN_ABSTRACTPLUGINPRIVATE_HPP
-#define KHOPPER_PLUGIN_ABSTRACTPLUGINPRIVATE_HPP
+#include "systemerror.hpp"
 
-#include "abstractplugin.hpp"
+using khopper::error::SystemError;
 
-#include <QtCore/QString>
-
-namespace khopper {
-	namespace plugin {
-
-		class AbstractPlugin::Private {
-		public:
-			Private();
-
-			bool installed;
-			QString id;
-			QString version;
-			QFileInfo info;
-		};
-
-	}
+SystemError::SystemError( int code, const char * file, long line ):
+BaseError( code, file, line ) {
 }
 
-#endif
+SystemError::SystemError( const char * msg, const char * file, long line ):
+BaseError( msg, file, line ) {
+}
+
+SystemError::SystemError( const std::string & msg, const char * file, long line ):
+BaseError( msg, file, line ) {
+}
+
+SystemError::SystemError( const wchar_t * msg, const char * file, long line ):
+BaseError( msg, file, line ) {
+}
+
+SystemError::SystemError( const std::wstring & msg, const char * file, long line ):
+BaseError( msg, file, line ) {
+}
+
+SystemError::SystemError( const QString & msg, const char * file, long line ):
+BaseError( msg, file, line ) {
+}

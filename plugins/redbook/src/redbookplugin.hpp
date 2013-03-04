@@ -22,35 +22,35 @@
 #ifndef KHOPPER_PLUGIN_REDBOOKPLUGIN_HPP
 #define KHOPPER_PLUGIN_REDBOOKPLUGIN_HPP
 
-#include "khopper/abstractplugin.hpp"
+#include "khopper/plugin.hpp"
 
 namespace khopper {
 
-	namespace widget {
-		class Mp3Panel;
-	}
+namespace widget {
+class Mp3Panel;
+}
 
-	namespace plugin {
+namespace plugin {
 
-		/**
-		 * @brief Mp3 option widget
-		 */
-		class RedbookPlugin : public AbstractPlugin {
-		public:
-			/**
-			 * @brief Default constructor
-			 * @param parent Parent widget
-			 * @param f Window flags
-			 */
-			RedbookPlugin();
-			virtual ~RedbookPlugin();
+/**
+ * @brief Mp3 option widget
+ */
+class RedbookPlugin: public Plugin {
+public:
+	/**
+	 * @brief Default constructor
+	 * @param parent Parent widget
+	 * @param f Window flags
+	 */
+	RedbookPlugin();
+	virtual ~RedbookPlugin();
 
-		protected:
-			virtual void doInstall();
-			virtual void doUninstall();
-		};
+protected:
+	virtual void doInstall();
+	virtual void doUninstall();
+};
 
-	}
+}
 
 }
 

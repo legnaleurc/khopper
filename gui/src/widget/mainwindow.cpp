@@ -28,8 +28,7 @@
 #include "preference.hpp"
 #include "uriinputdialog.hpp"
 
-#include "khopper/application.hpp"
-#include "khopper/error.hpp"
+#include "khopper/baseerror.hpp"
 #include "khopper/playlist.hpp"
 
 #include <QtCore/QFile>
@@ -41,9 +40,9 @@
 
 #include <algorithm>
 
-using namespace khopper::widget;
 using khopper::album::PlayList;
 using khopper::error::BaseError;
+using khopper::widget::MainWindow;
 
 MainWindow::MainWindow():
 QMainWindow( 0, 0 ),
@@ -57,8 +56,6 @@ uriInput_( new UriInputDialog( this ) ) {
 	this->ui_->setupUi( this );
 	// Setting menu bar
 	this->initMenuBar_();
-
-	QObject::connect( khopper::pApp(), SIGNAL( errorOccured( const QString &, const QString & ) ), this, SLOT( showErrorMessage_( const QString &, const QString & ) ) );
 
 	QObject::connect( this->ui_->player, SIGNAL( fileDropped( const QList< QUrl > & ) ), this, SLOT( open( const QList< QUrl > & ) ) );
 	QObject::connect( this->ui_->player, SIGNAL( requireConvert( const khopper::album::PlayList & ) ), this, SLOT( fire_( const khopper::album::PlayList & ) ) );

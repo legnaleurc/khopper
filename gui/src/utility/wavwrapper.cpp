@@ -20,11 +20,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "wavwrapper.hpp"
+#include "khopper/codecerror.hpp"
 
 #include <cstring>
 
 using namespace khopper::utility;
 using khopper::codec::ReaderSP;
+using khopper::error::CodecError;
 
 WavWrapper::WavWrapper( ReaderSP reader ):
 QIODevice(),
@@ -93,9 +95,19 @@ qint64 WavWrapper::readData( char * data, qint64 maxlen ) {
 	} else if( this->pos() < 44LL ) {
 		const qint64 len = 44LL - this->pos();
 		std::memcpy( data, this->header_.constData() + this->pos(), len );
-		return this->reader_->read( data + len, maxlen - len ) + len;
+		try {
+			return this->reader_->read( data + len, maxlen - len ) + len;
+		} catch( CodecError & e ) {
+			this->setErrorString( e.getMessage() );
+			return -1;
+		}
 	} else {
-		return this->reader_->read( data, maxlen );
+		try {
+			return this->reader_->read( data, maxlen );
+		} catch( CodecError & e ) {
+			this->setErrorString( e.getMessage() );
+			return -1;
+		}
 	}
 }
 

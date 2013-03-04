@@ -19,25 +19,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "converter.hpp"
-#include "khopper/album.hpp"
-
-#include "khopper/abstractreader.hpp"
-#include "khopper/abstractwriter.hpp"
-#include "khopper/error.hpp"
-
 #include <QtCore/QDir>
 #include <QtCore/QFileInfo>
 
-using namespace khopper::utility;
+#include "converter.hpp"
+#include "khopper/album.hpp"
+#include "khopper/reader.hpp"
+#include "khopper/writer.hpp"
+#include "khopper/codecerror.hpp"
+
+using khopper::utility::Converter;
 using khopper::album::TrackCSP;
+using khopper::codec::Writer;
 using khopper::codec::WriterSP;
 using khopper::codec::ReaderSP;
 using khopper::error::BaseError;
 using khopper::error::CodecError;
-using khopper::plugin::WriterCreator;
 
-Converter::Converter( TrackCSP track, WriterCreator creator, const QString & path ):
+Converter::Converter( TrackCSP track, Writer::Creator creator, const QString & path ):
 QObject( 0 ),
 QRunnable(),
 canceled_( false ),
@@ -59,9 +58,14 @@ void Converter::run() {
 	ReaderSP decoder;
 	try {
 		decoder = this->track_->createReader();
-		decoder->open( QIODevice::ReadOnly );
 	} catch( BaseError & e ) {
-		emit this->errorOccured( tr( "Decoder Error" ), e.getMessage() );
+		emit this->errorOccured( QObject::tr( "Decoder Error" ), e.getMessage() );
+		emit this->finished();
+		return;
+	}
+	bool opened = decoder->open( QIODevice::ReadOnly );
+	if( !opened ) {
+		emit this->errorOccured( QObject::tr( "Decoder Error" ), decoder->errorString() );
 		emit this->finished();
 		return;
 	}
@@ -74,10 +78,9 @@ void Converter::run() {
 	encoder->setAudioFormat( decoder->getAudioFormat() );
 	encoder->setChannelLayout( decoder->getChannelLayout() );
 
-	try {
-		encoder->open( QIODevice::WriteOnly );
-	} catch( BaseError & e ) {
-		emit this->errorOccured( tr( "Encoder Error" ), e.getMessage() );
+	opened = encoder->open( QIODevice::WriteOnly );
+	if( !opened ) {
+		emit this->errorOccured( tr( "Encoder Error" ), encoder->errorString() );
 		emit this->finished();
 		return;
 	}

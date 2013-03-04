@@ -22,61 +22,61 @@
 #ifndef KHOPPER_PLUGIN_PLUGINMODEL_HPP
 #define KHOPPER_PLUGIN_PLUGINMODEL_HPP
 
-#include "error.hpp"
+#include <memory>
 
 #include <QtCore/QAbstractItemModel>
 #include <QtCore/QDir>
 
-#include <memory>
+#include "config.hpp"
 
 namespace khopper {
+namespace plugin {
 
-	namespace plugin {
+/**
+ * @ingroup Plugins
+ * @brief Private plugin manager
+ */
+class KHOPPER_DLL PluginModel: public QAbstractItemModel {
+	Q_OBJECT
 
-		/**
-		 * @ingroup Plugins
-		 * @brief Private plugin manager
-		 */
-		class KHOPPER_DLL PluginModel : public QAbstractItemModel {
-			Q_OBJECT
+public:
+	static PluginModel & instance();
 
-		public:
-			/// default constructor
-			PluginModel();
-			virtual ~PluginModel();
+	/// default constructor
+	PluginModel();
+	virtual ~PluginModel();
 
-			virtual QModelIndex index( int row, int column, const QModelIndex & parent = QModelIndex() ) const;
-			virtual QModelIndex parent( const QModelIndex & index ) const;
-			virtual int rowCount( const QModelIndex & parent = QModelIndex() ) const;
-			virtual int columnCount( const QModelIndex & parent = QModelIndex() ) const;
-			virtual QVariant data( const QModelIndex & index, int role = Qt::DisplayRole ) const;
-			virtual QVariant headerData( int section, Qt::Orientation orientation, int role = Qt::DisplayRole ) const;
+	virtual QModelIndex index( int row, int column, const QModelIndex & parent = QModelIndex() ) const;
+	virtual QModelIndex parent( const QModelIndex & index ) const;
+	virtual int rowCount( const QModelIndex & parent = QModelIndex() ) const;
+	virtual int columnCount( const QModelIndex & parent = QModelIndex() ) const;
+	virtual QVariant data( const QModelIndex & index, int role = Qt::DisplayRole ) const;
+	virtual QVariant headerData( int section, Qt::Orientation orientation, int role = Qt::DisplayRole ) const;
 
-			const std::list< QDir > & getSearchPaths() const;
+	const std::list< QDir > & getSearchPaths() const;
 
-			/**
-			 * @brief reload all plugins
-			 *
-			 * Will discard duplicated plugins.
-			 */
-			void reloadPlugins();
-			void unloadPlugins();
+	/**
+	 * @brief reload all plugins
+	 *
+	 * Will discard duplicated plugins.
+	 */
+	void reloadPlugins();
+	void unloadPlugins();
 
-		public slots:
-			void loadPlugin( const QModelIndex & index );
-			void unloadPlugin( const QModelIndex & index );
-			void refreshPlugins();
+public slots:
+	void loadPlugin( const QModelIndex & index );
+	void unloadPlugin( const QModelIndex & index );
+	void refreshPlugins();
 
-		signals:
-			void errorOccured( const QString & title, const QString & message );
+signals:
+	void errorOccured( const QString & title, const QString & message );
 
-		private:
-			class Private;
-			std::shared_ptr< Private > p_;
-		};
+private:
+	class Private;
+	std::shared_ptr< Private > p_;
+};
 
-	}
-
+}
 }
 
 #endif

@@ -1,5 +1,5 @@
 /**
- * @file pluginmanager.cpp
+ * @file pluginmodel.cpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -20,22 +20,50 @@
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 #include "pluginmodel.hpp"
-#include "pluginmodelprivate.hpp"
-#include "abstractplugin.hpp"
+
+#include <algorithm>
+#include <functional>
 
 #include <QtCore/QPluginLoader>
 #include <QtCore/QtDebug>
 #include <QtCore/QtGlobal>
 #include <QtGui/QApplication>
 
-#include <algorithm>
-#include <functional>
+#include "plugin.hpp"
+#include "baseerror.hpp"
+#include "runtimeerror.hpp"
 
-using namespace khopper::plugin;
+
+namespace khopper {
+namespace plugin {
+
+class PluginModel::Private {
+public:
+	typedef std::vector< Plugin * > PluginListType;
+
+	Private();
+
+	QFileInfoList getPluginsFileInfo() const;
+
+	std::list< QDir > searchPaths;
+	PluginListType plugins;
+};
+
+PluginModel * self = nullptr;
+
+}
+}
+
+using khopper::error::BaseError;
+using khopper::error::RunTimeError;
+using khopper::plugin::PluginModel;
 
 PluginModel::Private::Private():
 searchPaths(),
 plugins() {
+	if( self ) {
+		throw RunTimeError( QObject::tr( "PluginModel has been initialized" ), __FILE__, __LINE__ );
+	}
 }
 
 QFileInfoList PluginModel::Private::getPluginsFileInfo() const {
@@ -51,25 +79,31 @@ QFileInfoList PluginModel::Private::getPluginsFileInfo() const {
 	return list;
 }
 
+PluginModel & PluginModel::instance() {
+	if( !self ) {
+		throw RunTimeError( QObject::tr( "PluginModel has not been initialized yet" ), __FILE__, __LINE__ );
+	}
+	return *self;
+}
+
 PluginModel::PluginModel():
 QAbstractItemModel( 0 ),
 p_( new Private ) {
+	self = this;
+
 	// initialize search paths
 
 	// first search binary related paths, for build time testing
-	QDir tmp( qApp->applicationDirPath() );
-#ifdef CMAKE_INTDIR
-	// hack for MSVC
-	if( tmp.cd( "../plugins/" CMAKE_INTDIR ) ) {
+	QDir tmp = qApp->applicationDirPath();
+	// for MSVC
+	this->p_->searchPaths.push_back( tmp );
+	// for UNIX-like
+	if( tmp.cd( "../lib" ) ) {
 		this->p_->searchPaths.push_back( tmp );
 	}
+	// for Windows installed bundle
 	tmp = qApp->applicationDirPath();
-#endif
-
-	if( tmp.cd( "../plugins" ) ) {
-		this->p_->searchPaths.push_back( tmp );
-	}
-	if( tmp.cd( "../lib/plugins" ) ) {
+	if( tmp.cd( "plugins" ) ) {
 		this->p_->searchPaths.push_back( tmp );
 	}
 
@@ -91,6 +125,7 @@ p_( new Private ) {
 
 PluginModel::~PluginModel() {
 	this->unloadPlugins();
+	self = nullptr;
 }
 
 QModelIndex PluginModel::index( int row, int column, const QModelIndex & parent ) const {
@@ -116,7 +151,6 @@ QVariant PluginModel::data( const QModelIndex & index, int role ) const {
 	if( !index.isValid() ) {
 		return QVariant();
 	}
-	std::map< std::string, AbstractPlugin * >::const_iterator it;
 	switch( role ) {
 	case Qt::DisplayRole:
 		switch( index.column() ) {
@@ -175,7 +209,7 @@ void PluginModel::reloadPlugins() {
 	std::for_each( this->p_->plugins.begin(), this->p_->plugins.end(), [&]( const Private::PluginListType::value_type & pPlugin ) {
 		try {
 			pPlugin->install();
-		} catch( error::BaseError & e ) {
+		} catch( BaseError & e ) {
 			emit this->errorOccured( QObject::tr( "Plugin install error" ), e.getMessage() );
 			return;
 		}
@@ -197,7 +231,7 @@ void PluginModel::loadPlugin( const QModelIndex & index ) {
 	}
 	try {
 		this->p_->plugins[index.row()]->install();
-	} catch( error::BaseError & e ) {
+	} catch( BaseError & e ) {
 		emit this->errorOccured( QObject::tr( "Plugin install error" ), e.getMessage() );
 	}
 }
@@ -208,7 +242,7 @@ void PluginModel::unloadPlugin( const QModelIndex & index ) {
 	}
 	try {
 		this->p_->plugins[index.row()]->uninstall();
-	} catch( error::BaseError & e ) {
+	} catch( BaseError & e ) {
 		emit this->errorOccured( QObject::tr( "Plugin uninstall error" ), e.getMessage() );
 	}
 }
@@ -218,7 +252,7 @@ void PluginModel::refreshPlugins() {
 	std::for_each( pfi.begin(), pfi.end(), [&]( const QFileInfo & fileInfo ) {
 		qDebug() << fileInfo.absoluteFilePath();
 		QPluginLoader loader( fileInfo.absoluteFilePath() );
-		AbstractPlugin * pPlugin = dynamic_cast< AbstractPlugin * >( loader.instance() );
+		Plugin * pPlugin = dynamic_cast< Plugin * >( loader.instance() );
 		if( !pPlugin ) {
 			if( loader.isLoaded() ) {
 				emit this->errorOccured( QObject::tr( "Invalid plugin" ), QObject::tr( "This plugin: %1 is not valid for Khopper." ).arg( fileInfo.absoluteFilePath() ) );
@@ -228,7 +262,7 @@ void PluginModel::refreshPlugins() {
 			return;
 		}
 
-		auto it = std::find_if( this->p_->plugins.begin(), this->p_->plugins.end(), [pPlugin]( const AbstractPlugin * that )->bool {
+		auto it = std::find_if( this->p_->plugins.begin(), this->p_->plugins.end(), [pPlugin]( const Plugin * that )->bool {
 			return that->getID() == pPlugin->getID();
 		} );
 		if( it != this->p_->plugins.end() ) {

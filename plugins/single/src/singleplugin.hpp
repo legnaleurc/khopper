@@ -22,21 +22,21 @@
 #ifndef KHOPPER_PLUGIN_SINGLEPLUGIN_HPP
 #define KHOPPER_PLUGIN_SINGLEPLUGIN_HPP
 
-#include "khopper/abstractplugin.hpp"
+#include "khopper/plugin.hpp"
 
 namespace khopper {
-	namespace plugin {
+namespace plugin {
 
-		class SinglePlugin : public AbstractPlugin {
-		public:
-			SinglePlugin();
+class SinglePlugin: public Plugin {
+public:
+	SinglePlugin();
 
-		protected:
-			virtual void doInstall();
-			virtual void doUninstall();
-		};
+protected:
+	virtual void doInstall();
+	virtual void doUninstall();
+};
 
-	}
+}
 }
 
 #endif

@@ -22,56 +22,54 @@
 #ifndef KHOPPER_WIDGET_CONVERSIONDIALOG_HPP
 #define KHOPPER_WIDGET_CONVERSIONDIALOG_HPP
 
-#include "khopper/playlist.hpp"
+#include <map>
 
 #include <QtCore/QDir>
 #include <QtGui/QDialog>
 
-#include <map>
+#include "khopper/playlist.hpp"
 
 namespace Ui {
-	class ConversionDialog;
+class ConversionDialog;
 }
 
 namespace khopper {
+namespace widget {
 
-	namespace widget {
+class ProgressViewer;
+class Panel;
 
-		class ProgressViewer;
-		class AbstractPanel;
+/// Output format option widget
+class ConversionDialog : public QDialog {
+	Q_OBJECT
+public:
+	/// Default constructor
+	explicit ConversionDialog( QWidget * parent );
 
-		/// Output format option widget
-		class ConversionDialog : public QDialog {
-			Q_OBJECT
-		public:
-			/// Default constructor
-			explicit ConversionDialog( QWidget * parent );
+	/// Get current panel
+	Panel * getCurrent() const;
+	void convert( const album::PlayList & tracks );
 
-			/// Get current panel
-			AbstractPanel * getCurrent() const;
-			void convert( const album::PlayList & tracks );
+public slots:
+	void addPanel( khopper::widget::Panel * panel );
+	void removePanel( khopper::widget::Panel * panel );
 
-		public slots:
-			void addPanel( khopper::widget::AbstractPanel * panel );
-			void removePanel( khopper::widget::AbstractPanel * panel );
+signals:
+	void errorOccured( const QString & title, const QString & message );
 
-		signals:
-			void errorOccured( const QString & title, const QString & message );
+private slots:
+	void changeOutputPath_();
 
-		private slots:
-			void changeOutputPath_();
+private:
+	QDir getOutputDir_( album::TrackSP );
+	QString getOutputName_( album::TrackSP );
 
-		private:
-			QDir getOutputDir_( album::TrackSP );
-			QString getOutputName_( album::TrackSP );
+	std::shared_ptr< Ui::ConversionDialog > ui_;
+	ProgressViewer * progress_;
+	std::map< int, Panel * > table_;
+};
 
-			std::shared_ptr< Ui::ConversionDialog > ui_;
-			ProgressViewer * progress_;
-			std::map< int, widget::AbstractPanel * > table_;
-		};
-
-	}
-
+}
 }
 
 #endif

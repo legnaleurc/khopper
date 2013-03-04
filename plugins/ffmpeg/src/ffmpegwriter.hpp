@@ -22,72 +22,70 @@
 #ifndef KHOPPER_CODEC_FFMPEGWRITER_HPP
 #define KHOPPER_CODEC_FFMPEGWRITER_HPP
 
-#include "khopper/abstractwriter.hpp"
+#include "khopper/writer.hpp"
 
-#ifdef Q_OS_WIN
 extern "C" {
-#include <libavformat\avio.h>
-}
+#include <libavcodec/avcodec.h>
+#include <libavformat/avformat.h>
+#ifdef Q_OS_WIN
+#include <libavformat/avio.h>
 #endif
-
-struct AVCodecContext;
-struct AVFormatContext;
-struct AVStream;
+}
 
 namespace khopper {
+namespace codec {
 
-	namespace codec {
+/**
+ * @brief Default audio writer
+ * @sa DefaultReader
+ *
+ * This class provides a default audio writer implementation.
+ */
+class FfmpegWriter: public Writer {
+public:
+	/**
+	 * @brief Constructor
+	 */
+	explicit FfmpegWriter( const QUrl & uri );
 
-		/**
-		 * @brief Default audio writer
-		 * @sa DefaultReader
-		 *
-		 * This class provides a default audio writer implementation.
-		 */
-		class FfmpegWriter : public AbstractWriter {
-		public:
-			/**
-			 * @brief Constructor
-			 */
-			explicit FfmpegWriter( const QUrl & uri );
+	void setQuality( double quality );
 
-			void setQuality( double quality );
+protected:
+	/**
+	 * @brief setup muxer
+	 * @throws CodecError Unknown output format
+	 * @throws SystemError Memory allocation failure
+	 */
+	virtual void setupMuxer();
+	/**
+	 * @brief setup encoder
+	 * @throws CodecError Can not setup encoder
+	 */
+	virtual void setupEncoder();
+	virtual void openResource();
+	virtual void closeResource();
+	virtual void writeHeader();
+	virtual void writeFrame( const char * sample );
+	virtual qint64 writeData( const char * data, qint64 len );
+	virtual void doOpen();
+	virtual void doClose();
 
-		protected:
-			/**
-			 * @brief setup muxer
-			 * @throws CodecError Unknown output format
-			 * @throws SystemError Memory allocation failure
-			 */
-			virtual void setupMuxer();
-			/**
-			 * @brief setup encoder
-			 * @throws CodecError Can not setup encoder
-			 */
-			virtual void setupEncoder();
-			virtual void openResource();
-			virtual void closeResource();
-			virtual void writeHeader();
-			virtual void writeFrame( const short * sample );
-			virtual void doOpen();
-			virtual void doClose();
-			virtual void writeFrame( const QByteArray & sample );
-
-		private:
+private:
 #ifdef Q_OS_WIN32
-			std::shared_ptr< QIODevice > fio_;
-			std::shared_ptr< AVIOContext > pIOContext_;
+	std::shared_ptr< QIODevice > fio_;
+	std::shared_ptr< AVIOContext > pIOContext_;
 #endif
-			std::shared_ptr< AVFormatContext > pFormatContext_;
-			std::shared_ptr< AVCodecContext > pCodecContext_;
-			AVStream * pStream_;
-			QByteArray queue_;
-			double quality_;
-			int frameSize_;
-		};
+	std::shared_ptr< AVFormatContext > pFormatContext_;
+	std::shared_ptr< AVCodecContext > pCodecContext_;
+	std::shared_ptr< AVFrame > pFrame_;
+	AVStream * pStream_;
+	QByteArray queue_;
+	double quality_;
+	int frameSize_;
+	int sampleLength_;
+};
 
-	}
-
+}
 }
 
 #endif

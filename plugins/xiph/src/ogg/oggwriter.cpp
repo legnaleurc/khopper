@@ -21,18 +21,20 @@
  */
 #include "oggwriter.hpp"
 
-#include "khopper/error.hpp"
-
-#include <QtCore/QFile>
-
 #include <cstdio>
 #include <cstdlib>
 
-using namespace khopper::codec;
+#include <QtCore/QFile>
+
+#include "khopper/codecerror.hpp"
+#include "khopper/ioerror.hpp"
+
+using khopper::codec::OggWriter;
 using khopper::error::IOError;
+using khopper::error::CodecError;
 
 OggWriter::OggWriter( const QUrl & uri ):
-AbstractWriter( uri ),
+Writer( uri ),
 out_( NULL ),
 encoder_(),
 muxer_(),
@@ -41,12 +43,13 @@ block_(),
 comments_(),
 quality_( -1.f ) {
 	if( this->getURI().scheme() != "file" ) {
-		throw IOError( QObject::tr( "Do not support remote access." ) );
+		throw IOError( QObject::tr( "Do not support remote access." ), __FILE__, __LINE__ );
 	}
 	this->out_ = new QFile( this->getURI().toLocalFile(), this );
 }
 
-OggWriter::~OggWriter() {
+void OggWriter::setVBRQuality( float quality ) {
+	this->quality_ = quality;
 }
 
 void OggWriter::doOpen() {
@@ -64,7 +67,7 @@ void OggWriter::doOpen() {
 	vorbis_info_init( vi );
 	int ret = vorbis_encode_init_vbr( vi, this->getAudioFormat().channels(), this->getAudioFormat().frequency(), this->quality_ );
 	if( ret != 0 ) {
-		throw error::CodecError( "Vorbis initialization error" );
+		throw CodecError( QObject::tr( "Vorbis initialization error" ), __FILE__, __LINE__ );
 	}
 
 	// setup vorbis dsp state
@@ -105,7 +108,7 @@ void OggWriter::doOpen() {
 
 	// open device
 	if( !this->out_->open( QIODevice::WriteOnly ) ) {
-		throw IOError( QObject::tr( "Can not open %1 : %2" ).arg( this->getURI().toString() ).arg( this->out_->errorString() ) );
+		throw IOError( QObject::tr( "Can not open %1 : %2" ).arg( this->getURI().toString() ).arg( this->out_->errorString() ), __FILE__, __LINE__ );
 	}
 
 	// write header
@@ -119,10 +122,10 @@ void OggWriter::doOpen() {
 	}
 }
 
-void OggWriter::writeFrame( const QByteArray & sample ) {
-	if( !sample.isEmpty() ) {
-		const int nSamples = sample.size() / sizeof( short int ) / this->getAudioFormat().channels();
-		const short int * audio = static_cast< const short int * >( static_cast< const void * >( sample.data() ) );
+qint64 OggWriter::writeData( const char * data, qint64 len ) {
+	if( data && len > 0 ) {
+		const qint64 nSamples = len / sizeof( short int ) / this->getAudioFormat().channels();
+		const short int * audio = static_cast< const short int * >( static_cast< const void * >( data ) );
 		float * * buffer = vorbis_analysis_buffer( this->dsp_.get(), nSamples );
 
 		if( this->getAudioFormat().channels() == 1 ) {
@@ -156,6 +159,8 @@ void OggWriter::writeFrame( const QByteArray & sample ) {
 			this->writePage_( og );
 		}
 	}
+
+	return len;
 }
 
 void OggWriter::doClose() {

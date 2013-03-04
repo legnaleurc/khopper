@@ -22,21 +22,21 @@
 #ifndef KHOPPER_PLUGIN_CUESHEETPLUGIN_HPP
 #define KHOPPER_PLUGIN_CUESHEETPLUGIN_HPP
 
-#include "khopper/abstractplugin.hpp"
+#include "khopper/plugin.hpp"
 
 namespace khopper {
-	namespace plugin {
+namespace plugin {
 
-		class CueSheetPlugin : public AbstractPlugin {
-		public:
-			CueSheetPlugin();
+class CueSheetPlugin : public Plugin {
+public:
+	CueSheetPlugin();
 
-		protected:
-			virtual void doInstall();
-			virtual void doUninstall();
-		};
+protected:
+	virtual void doInstall();
+	virtual void doUninstall();
+};
 
-	}
+}
 }
 
 #endif

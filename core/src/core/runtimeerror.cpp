@@ -1,5 +1,5 @@
 /**
- * @file abstractwriterprivate.hpp
+ * @file runtimeerror.cpp
  * @author Wei-Cheng Pan
  *
  * Copyright (C) 2008 Wei-Cheng Pan <legnaleurc@gmail.com>
@@ -19,28 +19,30 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KHOPPER_CODEC_ABSTRACTWRITERPRIVATE_HPP
-#define KHOPPER_CODEC_ABSTRACTWRITERPRIVATE_HPP
+#include "runtimeerror.hpp"
 
-#include "abstractwriter.hpp"
+using khopper::error::RunTimeError;
 
-namespace khopper {
-	namespace codec {
-
-		class AbstractWriter::Private {
-		public:
-			explicit Private( const QUrl & uri );
-
-			QByteArray album;
-			QByteArray artist;
-			unsigned int bitRate;
-			ChannelLayout channelLayout;
-			AudioFormat format;
-			QUrl uri;
-			QByteArray title;
-		};
-
-	}
+RunTimeError::RunTimeError( int code, const char * file, long line ):
+BaseError( code, file, line ) {
 }
 
-#endif
+RunTimeError::RunTimeError( const char * msg, const char * file, long line ):
+BaseError( msg, file, line ) {
+}
+
+RunTimeError::RunTimeError( const std::string & msg, const char * file, long line ):
+BaseError( msg, file, line ) {
+}
+
+RunTimeError::RunTimeError( const wchar_t * msg, const char * file, long line ):
+BaseError( msg, file, line ) {
+}
+
+RunTimeError::RunTimeError( const std::wstring & msg, const char * file, long line ):
+BaseError( msg, file, line ) {
+}
+
+RunTimeError::RunTimeError( const QString & msg, const char * file, long line ):
+BaseError( msg, file, line ) {
+}

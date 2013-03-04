@@ -20,20 +20,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "redbookplugin.hpp"
-#include "redbookreader.hpp"
-
-#include "khopper/application.hpp"
 
 #include <QtCore/QtPlugin>
 #include <QtCore/QtDebug>
 
+#include "redbookreader.hpp"
+
 Q_EXPORT_PLUGIN2( KHOPPER_PLUGIN_ID, khopper::plugin::RedbookPlugin )
 
-using namespace khopper::plugin;
-using khopper::plugin::registerReader;
+using khopper::codec::Reader;
+using khopper::plugin::RedbookPlugin;
 
 RedbookPlugin::RedbookPlugin():
-AbstractPlugin() {
+Plugin() {
 	this->setID( KHOPPER_STRINGIZE(KHOPPER_PLUGIN_ID) );
 	this->setVersion( KHOPPER_STRINGIZE(KHOPPER_VERSION) );
 }
@@ -42,7 +41,7 @@ RedbookPlugin::~RedbookPlugin() {
 }
 
 void RedbookPlugin::doInstall() {
-	registerReader( this->getID(), []( const QUrl & uri )->int {
+	Reader::install( this->getID(), []( const QUrl & uri )->int {
 		QFileInfo info( uri.toLocalFile() );
 		if( info.suffix().toLower() == "bin" ) {
 			qDebug() << "returned 200 (" << Q_FUNC_INFO << ")";
@@ -55,5 +54,5 @@ void RedbookPlugin::doInstall() {
 }
 
 void RedbookPlugin::doUninstall() {
-	unregisterReader( this->getID() );
+	Reader::uninstall( this->getID() );
 }

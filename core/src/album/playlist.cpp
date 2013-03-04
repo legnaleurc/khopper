@@ -21,23 +21,93 @@
  */
 #include "playlist.hpp"
 
+#include <map>
+
 #include <QtCore/QSet>
 
+#include "core/factory.hpp"
 #include "album.hpp"
-#include "core/applicationprivate.hpp"
+#include "runtimeerror.hpp"
 
-using khopper::album::PlayList;
-using khopper::album::AlbumSP;
-using namespace khopper::plugin;
+
+namespace khopper {
+namespace album {
 
 class PlayList::Private {
 public:
-	QSet< AlbumSP > albums;
+	void addAlbum( AlbumWP album );
+	void removeAlbum( AlbumWP album );
+
+	std::map< AlbumSP, unsigned long > albums;
 	TrackList tracks;
 };
 
+template< typename KeyType, typename CreatorType >
+class FactoryError {
+public:
+	CreatorType onError( const KeyType & /*key*/ ) const {
+		return nullptr;
+	}
+};
+
+typedef core::Factory< QString, QUrl, PlayList, FactoryError > Factory;
+
+Factory factory;
+
+}
+}
+
+
+using khopper::album::PlayList;
+using khopper::album::AlbumSP;
+using khopper::album::AlbumWP;
+using khopper::album::TrackSP;
+using khopper::error::RunTimeError;
+
+
+void PlayList::Private::addAlbum( AlbumWP album ) {
+	auto tmp = album.lock();
+	if( !tmp ) {
+		return;
+	}
+	auto it = this->albums.find( tmp );
+	if( it != this->albums.end() ) {
+		++it->second;
+		return;
+	}
+	this->albums.insert( std::make_pair( tmp, 1UL ) );
+}
+
+void PlayList::Private::removeAlbum( AlbumWP album ) {
+	auto tmp = album.lock();
+	if( !tmp ) {
+		return;
+	}
+	auto it = this->albums.find( tmp );
+	if( it == this->albums.end() ) {
+		return;
+	}
+	if( it->second > 1UL ) {
+		--it->second;
+	} else {
+		this->albums.erase( it );
+	}
+}
+
+bool PlayList::install( const QString & id, Verifier v, Creator c ) {
+	return factory.installCreator( id, v, c );
+}
+
+bool PlayList::uninstall( const QString & id ) {
+	return factory.uninstallCreator( id );
+}
+
 PlayList PlayList::fromURI( const QUrl & uri ) {
-	return ApplicationPrivate::self->playlistFactory.createProduct( uri );
+	auto creator = factory.getCreator( uri );
+	if( !creator ) {
+		throw RunTimeError( QObject::tr( "this playlist is not supported" ), __FILE__, __LINE__ );
+	}
+	return creator( uri );
 }
 
 PlayList::PlayList(): p_( new Private ) {
@@ -49,8 +119,7 @@ PlayList::PlayList( PlayList && that ): p_( std::move( that.p_ ) ) {
 void PlayList::append( const PlayList & that ) {
 	this->p_->tracks.append( that.p_->tracks );
 	for( auto it = that.p_->tracks.begin(); it != that.p_->tracks.end(); ++it ) {
-		auto album = ( *it )->getAlbum().lock();
-		this->p_->albums.insert( album );
+		this->p_->addAlbum( ( *it )->getAlbum() );
 	}
 }
 
@@ -75,13 +144,9 @@ PlayList::iterator PlayList::end() {
 }
 
 PlayList::iterator PlayList::erase( iterator pos ) {
+	auto track = *pos;
 	auto it = this->p_->tracks.erase( pos );
-	QSet< AlbumSP > tmp;
-	for( auto it = this->begin(); it != this->end(); ++it ) {
-		auto album = ( *it )->getAlbum().lock();
-		tmp.insert( album );
-	}
-	this->p_->albums = tmp;
+	this->p_->removeAlbum( track->getAlbum() );
 	return it;
 }
 
@@ -93,10 +158,9 @@ PlayList::reference PlayList::front() {
 	return this->p_->tracks.front();
 }
 
-void PlayList::push_back( TrackSP track ) {
+void PlayList::push_back( const_reference track ) {
 	this->p_->tracks.push_back( track );
-	auto album = track->getAlbum().lock();
-	this->p_->albums.insert( album );
+	this->p_->addAlbum( track->getAlbum() );
 }
 
 PlayList::size_type PlayList::size() const {
@@ -109,12 +173,4 @@ PlayList::const_reference PlayList::operator []( size_type index ) const {
 
 PlayList::reference PlayList::operator []( size_type index ) {
 	return this->p_->tracks[index];
-}
-
-bool khopper::plugin::registerPlayList( const QString & id, PlayListVerifier v, PlayListCreator c ) {
-	return ApplicationPrivate::self->playlistFactory.registerProduct( id, v, c );
-}
-
-bool khopper::plugin::unregisterPlayList( const QString & id ) {
-	return ApplicationPrivate::self->playlistFactory.unregisterProduct( id );
 }

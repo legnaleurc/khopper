@@ -22,48 +22,48 @@
 #ifndef KHOPPER_WIDGET_PROGRESSVIEWER_HPP
 #define KHOPPER_WIDGET_PROGRESSVIEWER_HPP
 
-#include "khopper/playlist.hpp"
-#include "khopper/abstractwriter.hpp"
-
 #include <QtCore/QList>
 #include <QtCore/QQueue>
 #include <QtGui/QWidget>
 
+#include "khopper/playlist.hpp"
+#include "khopper/writer.hpp"
+
 namespace Ui {
-	class ProgressViewer;
+class ProgressViewer;
 }
 
 namespace khopper {
 
-	namespace utility {
-		class Converter;
-	}
+namespace utility {
+class Converter;
+}
 
-	namespace widget {
+namespace widget {
 
-		class ProgressBar;
+class ProgressBar;
 
-		class ProgressViewer : public QWidget {
-			Q_OBJECT
-		public:
-			explicit ProgressViewer( QWidget * parent );
+class ProgressViewer: public QWidget {
+	Q_OBJECT
+public:
+	explicit ProgressViewer( QWidget * parent );
 
-			void start( const QList< utility::Converter * > & tasks );
+	void start( const QList< utility::Converter * > & tasks );
 
-		private slots:
-			void cancel_();
-			void dispatch_();
+private slots:
+	void cancel_();
+	void dispatch_();
 
-		private:
-			void dispatch_( ProgressBar * );
+private:
+	void dispatch_( ProgressBar * );
 
-			int rc_;
-			QList< ProgressBar * > lp_;
-			QList< utility::Converter * > tasks_;
-			std::shared_ptr< Ui::ProgressViewer > ui_;
-		};
+	int rc_;
+	QList< ProgressBar * > lp_;
+	QList< utility::Converter * > tasks_;
+	std::shared_ptr< Ui::ProgressViewer > ui_;
+};
 
-	}
+}
 
 }
 

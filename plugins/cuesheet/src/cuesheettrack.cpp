@@ -20,8 +20,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "cuesheettrack.hpp"
+#include "rangedreader.hpp"
 
-using namespace khopper::album;
+using khopper::album::CueSheetTrack;
+using khopper::album::Timestamp;
 using khopper::codec::ReaderSP;
 using khopper::codec::RangedReader;
 

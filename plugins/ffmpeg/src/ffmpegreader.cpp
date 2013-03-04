@@ -21,31 +21,37 @@
  */
 #include "ffmpegreader.hpp"
 
-#include "khopper/error.hpp"
-#ifdef Q_OS_WIN
-#include "wfile.hpp"
-#endif
+#include <cassert>
+#include <cstdlib>
+#include <cstring>
+
+extern "C" {
+#include <libavutil/opt.h>
+}
 
 #include <QtCore/QFile>
 #include <QtCore/QBuffer>
 #include <QtCore/QtDebug>
 
-#include <cstdlib>
-#include <cstring>
+#include "khopper/codecerror.hpp"
+#include "khopper/ioerror.hpp"
+#ifdef Q_OS_WIN
+#include "wfile.hpp"
+#endif
 
 namespace {
 
-	static inline int64_t toNative( int64_t ms ) {
-		return av_rescale( ms, AV_TIME_BASE, 1000 );
-	}
+static inline int64_t toNative( int64_t ms ) {
+	return av_rescale( ms, AV_TIME_BASE, 1000 );
+}
 
-	static inline int toMS( int64_t timestamp ) {
-		return av_rescale( timestamp, 1000, AV_TIME_BASE );
-	}
+static inline int toMS( int64_t timestamp ) {
+	return av_rescale( timestamp, 1000, AV_TIME_BASE );
+}
 
 }
 
-using namespace khopper::codec;
+using khopper::codec::FfmpegReader;
 using khopper::error::IOError;
 using khopper::error::CodecError;
 #ifdef Q_OS_WIN
@@ -55,7 +61,7 @@ using khopper::ffmpeg::seek;
 #endif
 
 FfmpegReader::FfmpegReader( const QUrl & uri ):
-AbstractReader( uri ),
+Reader( uri ),
 #ifdef Q_OS_WIN32
 fio_(),
 pIOContext_(),
@@ -65,6 +71,7 @@ pCodecContext_(),
 pFrame_( avcodec_alloc_frame(), []( AVFrame * p )->void {
 	avcodec_free_frame( &p );
 } ),
+pSwrContext_(),
 packet_(),
 pStream_( NULL ),
 curPos_( 0LL ),
@@ -106,7 +113,7 @@ void FfmpegReader::openResource_() {
 	if( this->getURI().scheme() == "file" ) {
 		this->fio_.reset( new QFile( this->getURI().toLocalFile() ) );
 		if( !this->fio_->open( QIODevice::ReadOnly ) ) {
-			throw IOError( this->fio_->errorString() );
+			throw IOError( this->fio_->errorString(), __FILE__, __LINE__ );
 		}
 		pFC = avformat_alloc_context();
 		const int SIZE = 4 * 4096 * sizeof( unsigned char );
@@ -120,7 +127,7 @@ void FfmpegReader::openResource_() {
 #endif
 	int ret = avformat_open_input( &pFC, this->getURI().toString().toUtf8().constData(), NULL, NULL );
 	if( ret != 0 ) {
-		throw IOError( AVUNERROR( ret ) );
+		throw IOError( AVUNERROR( ret ), __FILE__, __LINE__ );
 	}
 	this->pFormatContext_.reset( pFC, []( AVFormatContext * p )->void {
 		avformat_close_input( &p );
@@ -129,33 +136,35 @@ void FfmpegReader::openResource_() {
 
 void FfmpegReader::setupDemuxer_() {
 	if( avformat_find_stream_info( this->pFormatContext_.get(), NULL ) < 0 ) {
-		throw CodecError( tr( "FfmpegReader: Can not find codec info!" ) );
+		throw CodecError( tr( "FfmpegReader: Can not find codec info!" ), __FILE__, __LINE__ );
 	}
 
 	if( this->pFormatContext_->duration != static_cast< int64_t >( AV_NOPTS_VALUE ) ) {
 		this->setDuration( toMS( this->pFormatContext_->duration ) );
 	} else {
-		throw CodecError( tr( "FfmpegReader: Can not get duration!" ) );
+		throw CodecError( tr( "FfmpegReader: Can not get duration!" ), __FILE__, __LINE__ );
 	}
 }
 
 void FfmpegReader::setupDecoder_() {
-	int a_stream = -1;
+	int ret = -1;
 	for( std::size_t i = 0 ; i < this->pFormatContext_->nb_streams; ++i ) {
 		if( this->pFormatContext_->streams[i]->codec->codec_type == AVMEDIA_TYPE_AUDIO ) {
-			a_stream = i;
+			ret = i;
 			break;
 		}
 	}
-	if( a_stream == -1 ) {
-		throw CodecError( "FfmpegReader: Find no audio stream!" );
+	if( ret == -1 ) {
+		throw CodecError( "FfmpegReader: Find no audio stream!", __FILE__, __LINE__ );
 	}
-	this->pStream_ = this->pFormatContext_->streams[a_stream];
+	this->pStream_ = this->pFormatContext_->streams[ret];
 	AVCodecContext * pCC = this->pStream_->codec;
 	// getting codec information
 	this->setBitRate( pCC->bit_rate );
+
+	// setup sample format
 	AudioFormat format;
-	format.setFrequency( pCC->sample_rate );
+	format.setFrequency( 44100 );
 	format.setChannels( pCC->channels );
 	switch( pCC->channels ) {
 	case 1:
@@ -167,46 +176,36 @@ void FfmpegReader::setupDecoder_() {
 	default:
 		this->setChannelLayout( LayoutNative );
 	}
-	switch( pCC->sample_fmt ) {
-	case AV_SAMPLE_FMT_U8:
-	case AV_SAMPLE_FMT_U8P:
-		format.setSampleType( AudioFormat::UnSignedInt );
-		format.setSampleSize( 8 );
-		break;
-	case AV_SAMPLE_FMT_S16:
-	case AV_SAMPLE_FMT_S16P:
-		format.setSampleType( AudioFormat::SignedInt );
-		format.setSampleSize( 16 );
-		break;
-	case AV_SAMPLE_FMT_S32:
-	case AV_SAMPLE_FMT_S32P:
-		format.setSampleType( AudioFormat::SignedInt );
-		format.setSampleSize( 32 );
-		break;
-	case AV_SAMPLE_FMT_FLT:
-	case AV_SAMPLE_FMT_FLTP:
-		format.setSampleType( AudioFormat::Float );
-		format.setSampleSize( 32 );
-		break;
-	case AV_SAMPLE_FMT_DBL:
-	case AV_SAMPLE_FMT_DBLP:
-		format.setSampleType( AudioFormat::Float );
-		format.setSampleSize( 64 );
-		break;
-	default:
-		;
-	}
+	format.setSampleType( AudioFormat::SignedInt );
+	format.setSampleSize( 16 );
 	this->setAudioFormat( format );
 
 	AVCodec * pC = avcodec_find_decoder( pCC->codec_id );
 	if( pC == NULL ) {
-		throw error::CodecError( tr( "FfmpegReader: Find no decoder!" ) );
+		throw CodecError( tr( "find no decoder" ), __FILE__, __LINE__ );
 	}
 
 	if( avcodec_open2( pCC, pC, NULL ) < 0 ) {
-		throw error::CodecError( tr( "FfmpegReader: Can not open decoder." ) );
+		throw CodecError( tr( "can not open decoder" ), __FILE__, __LINE__ );
 	}
 	this->pCodecContext_.reset( pCC, avcodec_close );
+
+	// resampling
+	if( pCC->channel_layout > 0 ) {
+		this->pSwrContext_.reset( swr_alloc(), []( SwrContext * p )->void {
+			swr_free( &p );
+		} );
+		av_opt_set_int( this->pSwrContext_.get(), "in_channel_layout", pCC->channel_layout, 0 );
+		av_opt_set_int( this->pSwrContext_.get(), "in_sample_rate", pCC->sample_rate, 0 );
+		av_opt_set_sample_fmt( this->pSwrContext_.get(), "in_sample_fmt", pCC->sample_fmt, 0 );
+		av_opt_set_int( this->pSwrContext_.get(), "out_channel_layout", this->getChannelLayout(), 0);
+		av_opt_set_int( this->pSwrContext_.get(), "out_sample_rate", format.frequency(), 0);
+		av_opt_set_sample_fmt( this->pSwrContext_.get(), "out_sample_fmt", AV_SAMPLE_FMT_S16, 0);
+		ret = swr_init( this->pSwrContext_.get() );
+		if( ret < 0 ) {
+			throw CodecError( QObject::tr( "SwrContext initial failed" ), __FILE__, __LINE__ );
+		}
+	}
 }
 
 void FfmpegReader::readHeader_() {
@@ -249,6 +248,7 @@ void FfmpegReader::closeResource_() {
 	// clear native information
 	this->curPos_ = 0LL;
 	this->pStream_ = NULL;
+	this->pSwrContext_.reset();
 	// free the members in packet, not itself
 	av_free_packet( &this->packet_ );
 	this->pCodecContext_.reset();
@@ -276,19 +276,23 @@ QByteArray FfmpegReader::readFrame_() {
 		this->eof_ = true;
 		return QByteArray();
 	}
+	if( this->packet_.stream_index != this->pStream_->index ) {
+		// not an audio frame
+		return QByteArray();
+	}
 
 	int gotFrame = 0;
 	ret = avcodec_decode_audio4( this->pCodecContext_.get(), this->pFrame_.get(), &gotFrame, &this->packet_ );
 	if( ret < 0 ) {
-		throw error::CodecError( AVUNERROR( ret ) );
+		throw CodecError( AVUNERROR( ret ), __FILE__, __LINE__ );
 	}
 
 	if( !gotFrame ) {
-		this->eof_ = true;
 		return QByteArray();
 	}
 	auto channels = this->pFrame_->channels;
 	auto nbSamples = this->pFrame_->nb_samples;
+	auto sampleRate = this->pFrame_->sample_rate;
 	auto format = static_cast< AVSampleFormat >( this->pFrame_->format );
 	auto nbPlanes = av_sample_fmt_is_planar( format ) ? channels : 1;
 	auto sampleSize = av_get_bytes_per_sample( format );
@@ -300,10 +304,35 @@ QByteArray FfmpegReader::readFrame_() {
 	int lineSize = 0;
 	ret = av_samples_alloc( audioData.get(), &lineSize, channels, nbSamples, format, 1 );
 	if( ret < 0 ) {
-		throw error::CodecError( AVUNERROR( ret ) );
+		throw CodecError( AVUNERROR( ret ), __FILE__, __LINE__ );
 	}
 	int bufferSize = av_samples_get_buffer_size( nullptr, channels, nbSamples, format, 1 );
 	av_samples_copy( audioData.get(), this->pFrame_->data, 0, 0, nbSamples, channels, format );
+
+	// resampling
+	if( this->pSwrContext_ && ( format != AV_SAMPLE_FMT_S16 || sampleRate != 44100 ) ) {
+		auto dstChannels = channels;
+		auto dstSampleRate = 44100;
+		auto dstFormat = AV_SAMPLE_FMT_S16;
+		auto dstNbSamples = av_rescale_rnd( swr_get_delay( this->pSwrContext_.get(), sampleRate ) + nbSamples, dstSampleRate, sampleRate, AV_ROUND_UP );
+		std::shared_ptr< uint8_t * > dstAudioData( static_cast< uint8_t ** >( av_mallocz( sizeof( uint8_t * ) ) ), []( uint8_t ** p )->void {
+			av_freep( &p[0] );
+			av_free( p );
+		} );
+		ret = av_samples_alloc( dstAudioData.get(), &lineSize, dstChannels, dstNbSamples, dstFormat, 1 );
+		if( ret < 0 ) {
+			throw CodecError( AVUNERROR( ret ), __FILE__, __LINE__ );
+		}
+		ret = swr_convert( this->pSwrContext_.get(), dstAudioData.get(), dstNbSamples, (const uint8_t **)audioData.get(), nbSamples );
+		if( ret < 0 ) {
+			throw CodecError( AVUNERROR( ret ), __FILE__, __LINE__ );
+		}
+		int dstBufferSize = av_samples_get_buffer_size( &lineSize, dstChannels, ret, dstFormat, 1 );
+		bufferSize = dstBufferSize;
+		nbPlanes = 1;
+		audioData = dstAudioData;
+		sampleSize = 2;
+	}
 
 	this->curPos_ += toMS( this->pFrame_->pkt_duration );
 	av_free_packet( &this->packet_ );
@@ -329,18 +358,25 @@ QByteArray FfmpegReader::readFrame_() {
 }
 
 bool FfmpegReader::seek( qint64 pos ) {
-	bool succeed = this->AbstractReader::seek( pos );
-	// internal position = pos / frequency / channels / samplesize/ AVStream::time_base
-	int64_t internalPos = av_rescale( pos, this->pStream_->time_base.den, this->pStream_->time_base.num * this->getAudioFormat().frequency() * this->getAudioFormat().channels() * this->getAudioFormat().sampleSize() / 8 );
+	bool succeed = this->Reader::seek( pos );
+	// internal position = pos / frequency / channels / samplesize / AVStream::time_base
+	auto frequency = this->pCodecContext_->sample_rate;
+	auto channels = this->pCodecContext_->channels;
+	auto sampleBytes = av_get_bytes_per_sample( this->pCodecContext_->sample_fmt );
+	auto timeBase = this->pStream_->time_base;
+	int64_t internalPos = av_rescale( pos, timeBase.den, timeBase.num * frequency * channels * sampleBytes );
 	int ret = av_seek_frame( this->pFormatContext_.get(), this->pStream_->index, internalPos, AVSEEK_FLAG_ANY | AVSEEK_FLAG_BACKWARD );
 	if( ret >= 0 ) {
 		avcodec_flush_buffers( this->pCodecContext_.get() );
 		this->buffer_.clear();
 		this->curPos_ = pos;
-		//this->msCurrent_ = msPos;
-		//if( this->pStream_->cur_pkt.pts != static_cast< int64_t >( AV_NOPTS_VALUE ) ) {
-		//	this->msCurrent_ = av_rescale( this->pStream_->cur_pkt.pts, this->pStream_->time_base.num * 1000, this->pStream_->time_base.den );
-		//}
 	}
 	return succeed && ret >= 0;
+}
+
+qint64 FfmpegReader::pos( qint64 msec ) const {
+	auto frequency = this->pCodecContext_->sample_rate;
+	auto channels = this->pCodecContext_->channels;
+	auto sampleBytes = av_get_bytes_per_sample( this->pCodecContext_->sample_fmt );
+	return msec * frequency * channels * sampleBytes / 1000;
 }
