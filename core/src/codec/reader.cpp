@@ -44,7 +44,7 @@ public:
 	QByteArray comment;
 	QByteArray copyright;
 	AudioFormat format;
-	int64_t msDuration;
+	qint64 msDuration;
 	QUrl uri;
 	QByteArray genre;
 	unsigned int index;

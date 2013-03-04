@@ -33,6 +33,7 @@ WriterPanelContext * self = nullptr;
 
 using khopper::error::RunTimeError;
 using khopper::widget::WriterPanelContext;
+using khopper::widget::Panel;
 
 WriterPanelContext & WriterPanelContext::instance() {
 	if( !self ) {

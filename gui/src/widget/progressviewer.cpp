@@ -38,6 +38,7 @@ using khopper::album::PlayList;
 using khopper::codec::WriterSP;
 using khopper::utility::Converter;
 using khopper::widget::ProgressViewer;
+using khopper::widget::ProgressBar;
 
 ProgressViewer::ProgressViewer( QWidget * parent ):
 QWidget( parent, Qt::Window ),

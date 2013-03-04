@@ -39,6 +39,9 @@ if(NOT FFMPEG_FOUND)
         find_library(FFMPEG_UTIL_LIBRARY avutil
             HINTS ${FFMPEG_ROOT}
             PATH_SUFFIXES "lib")
+        find_library(FFMPEG_RESAMPLE_LIBRARY swresample
+            HINTS ${FFMPEG_ROOT}
+            PATH_SUFFIXES "lib")
 
         set(FFMPEG_LIBRARIES)
         if(FFMPEG_FORMAT_LIBRARY)
@@ -49,6 +52,9 @@ if(NOT FFMPEG_FOUND)
         endif()
         if(FFMPEG_UTIL_LIBRARY)
             list(APPEND FFMPEG_LIBRARIES ${FFMPEG_UTIL_LIBRARY})
+        endif()
+        if(FFMPEG_RESAMPLE_LIBRARY)
+            list(APPEND FFMPEG_LIBRARIES ${FFMPEG_RESAMPLE_LIBRARY})
         endif()
     endif()
 

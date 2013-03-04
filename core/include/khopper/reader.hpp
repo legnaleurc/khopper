@@ -66,8 +66,8 @@ public:
 	 * @param name plugin name
 	 * @return true if registered in factory
 	 */
-	static bool KHOPPER_DLL install( const QString & id, Verifier v, Creator c );
-	static bool KHOPPER_DLL uninstall( const QString & id );
+	static bool install( const QString & id, Verifier v, Creator c );
+	static bool uninstall( const QString & id );
 	/**
 	 * @ingroup Plugins
 	 * @brief Create reader
@@ -75,7 +75,7 @@ public:
 	 * @return Smart pointer of Product
 	 * @throws RunTimeError Can not load any plugin
 	 */
-	static Creator KHOPPER_DLL getCreator( const QUrl & uri );
+	static Creator getCreator( const QUrl & uri );
 
 	/**
 	 * @brief Virtual destructor
