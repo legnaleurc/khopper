@@ -50,6 +50,7 @@ public:
 	explicit FfmpegReader( const QUrl & uri );
 
 	virtual bool atEnd() const;
+	virtual qint64 pos( qint64 msec ) const;
 	virtual bool seek( qint64 pos );
 	virtual qint64 size() const;
 

@@ -142,6 +142,11 @@ qint64 Reader::writeData( const char * /*data*/, qint64 /*maxSize*/ ) {
 	return -1;
 }
 
+qint64 Reader::pos( qint64 msec ) const {
+	const auto & format = this->getAudioFormat();
+	return msec * format.frequency() * format.channels() * format.sampleSize() / 8 / 1000;
+}
+
 const QUrl & Reader::getURI() const {
 	return this->p_->uri;
 }

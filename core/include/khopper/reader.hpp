@@ -143,12 +143,6 @@ public:
 	 * @sa setIndex
 	 */
 	unsigned int getIndex() const;
-	//SampleFormat getSampleFormat() const;
-	/**
-	 * @brief Get sample rate
-	 * @sa setSampleRate
-	 */
-	//unsigned int getSampleRate() const;
 	/**
 	 * @brief Get title
 	 * @sa setTitle
@@ -163,6 +157,10 @@ public:
 	 * @sa setYear
 	 */
 	const QString & getYear() const;
+
+	using QIODevice::pos;
+	/// Get PCM position from millisecond
+	virtual qint64 pos( qint64 msec ) const;
 
 protected:
 	/**
@@ -190,11 +188,6 @@ protected:
 	void setBitRate( unsigned int bitRate );
 	void setChannelLayout( ChannelLayout channelLayout );
 	/**
-	 * @brief Set channels
-	 * @sa getChannels
-	 */
-	//void setChannels( unsigned int channels );
-	/**
 	 * @brief Set comment
 	 * @sa getComment
 	 */
@@ -219,12 +212,6 @@ protected:
 	 * @sa getIndex
 	 */
 	void setIndex( unsigned int index );
-	//void setSampleFormat( SampleFormat sampleFormat );
-	/**
-	 * @brief Set sample rate
-	 * @sa getSampleRate
-	 */
-	//void setSampleRate( unsigned int sampleRate );
 	/**
 	 * @brief Set track title
 	 * @sa getTitle
