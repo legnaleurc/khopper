@@ -30,6 +30,7 @@ extern "C" {
 #ifdef Q_OS_WIN
 #include <libavformat/avio.h>
 #endif
+#include <libswresample/swresample.h>
 }
 
 namespace khopper {
@@ -73,6 +74,7 @@ private:
 	std::shared_ptr< AVFormatContext > pFormatContext_;
 	std::shared_ptr< AVCodecContext > pCodecContext_;
 	std::shared_ptr< AVFrame > pFrame_;
+	std::shared_ptr< SwrContext > pSwrContext_;
 	AVPacket packet_;
 	AVStream * pStream_;
 	qint64 curPos_;
