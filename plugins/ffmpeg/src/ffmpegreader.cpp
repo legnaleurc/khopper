@@ -359,8 +359,13 @@ QByteArray FfmpegReader::readFrame_() {
 
 bool FfmpegReader::seek( qint64 pos ) {
 	bool succeed = this->Reader::seek( pos );
-	// internal position = pos / frequency / channels / samplesize/ AVStream::time_base
-	int64_t internalPos = av_rescale( pos, this->pStream_->time_base.den, this->pStream_->time_base.num * this->pCodecContext_->sample_rate * this->pCodecContext_->channels * av_get_bytes_per_sample( this->pCodecContext_->sample_fmt ) / 8 );
+	// NOTE: @pos is in ENTERNAL format (i.e.: PCMS16LE), so I am not using native format here
+	// internal position = @pos / frequency / channels / sample_size_in_byte / AVStream::time_base
+	auto frequency = this->getAudioFormat().frequency();
+	auto channels = this->getAudioFormat().channels();
+	auto sampleSize = this->getAudioFormat().sampleSize() / 8;
+	auto timeBase = this->pStream_->time_base;
+	int64_t internalPos = av_rescale( pos, timeBase.den, timeBase.num * frequency * channels * sampleSize );
 	int ret = av_seek_frame( this->pFormatContext_.get(), this->pStream_->index, internalPos, AVSEEK_FLAG_ANY | AVSEEK_FLAG_BACKWARD );
 	if( ret >= 0 ) {
 		avcodec_flush_buffers( this->pCodecContext_.get() );
