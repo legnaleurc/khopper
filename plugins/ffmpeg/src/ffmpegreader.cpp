@@ -359,12 +359,8 @@ QByteArray FfmpegReader::readFrame_() {
 
 bool FfmpegReader::seek( qint64 pos ) {
 	bool succeed = this->Reader::seek( pos );
-	// internal position = pos / frequency / channels / samplesize / AVStream::time_base
-	auto frequency = this->pCodecContext_->sample_rate;
-	auto channels = this->pCodecContext_->channels;
-	auto sampleBytes = av_get_bytes_per_sample( this->pCodecContext_->sample_fmt );
-	auto timeBase = this->pStream_->time_base;
-	int64_t internalPos = av_rescale( pos, timeBase.den, timeBase.num * frequency * channels * sampleBytes );
+	// internal position = pos / frequency / channels / samplesize/ AVStream::time_base
+	int64_t internalPos = av_rescale( pos, this->pStream_->time_base.den, this->pStream_->time_base.num * this->pCodecContext_->sample_rate * this->pCodecContext_->channels * av_get_bytes_per_sample( this->pCodecContext_->sample_fmt ) / 8 );
 	int ret = av_seek_frame( this->pFormatContext_.get(), this->pStream_->index, internalPos, AVSEEK_FLAG_ANY | AVSEEK_FLAG_BACKWARD );
 	if( ret >= 0 ) {
 		avcodec_flush_buffers( this->pCodecContext_.get() );
@@ -372,11 +368,4 @@ bool FfmpegReader::seek( qint64 pos ) {
 		this->curPos_ = pos;
 	}
 	return succeed && ret >= 0;
-}
-
-qint64 FfmpegReader::pos( qint64 msec ) const {
-	auto frequency = this->pCodecContext_->sample_rate;
-	auto channels = this->pCodecContext_->channels;
-	auto sampleBytes = av_get_bytes_per_sample( this->pCodecContext_->sample_fmt );
-	return msec * frequency * channels * sampleBytes / 1000;
 }
