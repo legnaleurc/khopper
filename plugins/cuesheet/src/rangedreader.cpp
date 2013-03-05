@@ -27,13 +27,9 @@
 
 namespace {
 
-	inline static qint64 posFromMs( qint64 ms, const khopper::codec::AudioFormat & format ) {
-		return ms * format.frequency() * format.channels() * format.sampleSize() / 8 / 1000;
-	}
-
-	inline static qint64 msFromPos( qint64 pos, const khopper::codec::AudioFormat & format ) {
-		return pos * 8 * 1000 / format.frequency() / format.channels() / format.sampleSize();
-	}
+inline static qint64 posFromMs( qint64 ms, const khopper::codec::AudioFormat & format ) {
+	return ms * format.frequency() * format.channels() * format.sampleSize() / 8 / 1000;
+}
 
 }
 
