@@ -114,11 +114,6 @@ public:
 	unsigned int getBitRate() const;
 	ChannelLayout getChannelLayout() const;
 	/**
-	 * @brief Get channels
-	 * @sa setChannels
-	 */
-	//unsigned int getChannels() const;
-	/**
 	 * @brief Get comment
 	 * @sa setComment
 	 */
@@ -143,12 +138,6 @@ public:
 	 * @sa setIndex
 	 */
 	unsigned int getIndex() const;
-	//SampleFormat getSampleFormat() const;
-	/**
-	 * @brief Get sample rate
-	 * @sa setSampleRate
-	 */
-	//unsigned int getSampleRate() const;
 	/**
 	 * @brief Get title
 	 * @sa setTitle
@@ -190,11 +179,6 @@ protected:
 	void setBitRate( unsigned int bitRate );
 	void setChannelLayout( ChannelLayout channelLayout );
 	/**
-	 * @brief Set channels
-	 * @sa getChannels
-	 */
-	//void setChannels( unsigned int channels );
-	/**
 	 * @brief Set comment
 	 * @sa getComment
 	 */
@@ -219,12 +203,6 @@ protected:
 	 * @sa getIndex
 	 */
 	void setIndex( unsigned int index );
-	//void setSampleFormat( SampleFormat sampleFormat );
-	/**
-	 * @brief Set sample rate
-	 * @sa getSampleRate
-	 */
-	//void setSampleRate( unsigned int sampleRate );
 	/**
 	 * @brief Set track title
 	 * @sa getTitle
