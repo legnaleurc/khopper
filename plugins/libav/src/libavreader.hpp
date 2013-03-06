@@ -77,7 +77,6 @@ private:
 	std::shared_ptr< AVAudioResampleContext > pArContext_;
 	AVPacket packet_;
 	AVStream * pStream_;
-	qint64 curPos_;
 	bool eof_;
 	QByteArray buffer_;
 };
