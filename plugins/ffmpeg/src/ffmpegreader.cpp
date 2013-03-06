@@ -29,9 +29,9 @@ extern "C" {
 #include <libavutil/opt.h>
 }
 
+#ifdef Q_OS_WIN
 #include <QtCore/QFile>
-#include <QtCore/QBuffer>
-#include <QtCore/QtDebug>
+#endif
 
 #include "khopper/codecerror.hpp"
 #include "khopper/ioerror.hpp"
@@ -74,7 +74,6 @@ pFrame_( avcodec_alloc_frame(), []( AVFrame * p )->void {
 pSwrContext_(),
 packet_(),
 pStream_( NULL ),
-curPos_( 0LL ),
 eof_( true ),
 buffer_() {
 	av_init_packet( &this->packet_ );
@@ -246,7 +245,6 @@ void FfmpegReader::readMetadata_( AVDictionary * metadata ) {
 
 void FfmpegReader::closeResource_() {
 	// clear native information
-	this->curPos_ = 0LL;
 	this->pStream_ = NULL;
 	this->pSwrContext_.reset();
 	// free the members in packet, not itself
@@ -281,78 +279,73 @@ QByteArray FfmpegReader::readFrame_() {
 		return QByteArray();
 	}
 
+	QByteArray pcm;
+	auto data = this->packet_.data;
+	auto size = this->packet_.size;
 	int gotFrame = 0;
-	ret = avcodec_decode_audio4( this->pCodecContext_.get(), this->pFrame_.get(), &gotFrame, &this->packet_ );
-	if( ret < 0 ) {
-		throw CodecError( AVUNERROR( ret ), __FILE__, __LINE__ );
-	}
+	while( this->packet_.size > 0 ) {
+		ret = avcodec_decode_audio4( this->pCodecContext_.get(), this->pFrame_.get(), &gotFrame, &this->packet_ );
+		if( ret < 0 ) {
+			throw CodecError( AVUNERROR( ret ), __FILE__, __LINE__ );
+		}
 
-	if( !gotFrame ) {
-		return QByteArray();
-	}
-	auto channels = this->pFrame_->channels;
-	auto nbSamples = this->pFrame_->nb_samples;
-	auto sampleRate = this->pFrame_->sample_rate;
-	auto format = static_cast< AVSampleFormat >( this->pFrame_->format );
-	auto nbPlanes = av_sample_fmt_is_planar( format ) ? channels : 1;
-	auto sampleSize = av_get_bytes_per_sample( format );
+		if( !gotFrame ) {
+			break;
+		}
 
-	std::shared_ptr< uint8_t * > audioData( static_cast< uint8_t ** >( av_mallocz( sizeof( uint8_t * ) * nbPlanes ) ), []( uint8_t ** p )->void {
-		av_freep( &p[0] );
-		av_free( p );
-	} );
-	int lineSize = 0;
-	ret = av_samples_alloc( audioData.get(), &lineSize, channels, nbSamples, format, 1 );
-	if( ret < 0 ) {
-		throw CodecError( AVUNERROR( ret ), __FILE__, __LINE__ );
-	}
-	int bufferSize = av_samples_get_buffer_size( nullptr, channels, nbSamples, format, 1 );
-	av_samples_copy( audioData.get(), this->pFrame_->data, 0, 0, nbSamples, channels, format );
+		this->packet_.data += ret;
+		this->packet_.size -= ret;
 
-	// resampling
-	if( this->pSwrContext_ && ( format != AV_SAMPLE_FMT_S16 || sampleRate != 44100 ) ) {
-		auto dstChannels = channels;
-		auto dstSampleRate = 44100;
-		auto dstFormat = AV_SAMPLE_FMT_S16;
-		auto dstNbSamples = av_rescale_rnd( swr_get_delay( this->pSwrContext_.get(), sampleRate ) + nbSamples, dstSampleRate, sampleRate, AV_ROUND_UP );
-		std::shared_ptr< uint8_t * > dstAudioData( static_cast< uint8_t ** >( av_mallocz( sizeof( uint8_t * ) ) ), []( uint8_t ** p )->void {
+		auto channels = this->pFrame_->channels;
+		auto nbSamples = this->pFrame_->nb_samples;
+		auto sampleRate = this->pFrame_->sample_rate;
+		auto format = static_cast< AVSampleFormat >( this->pFrame_->format );
+		auto nbPlanes = av_sample_fmt_is_planar( format ) ? channels : 1;
+		auto sampleSize = av_get_bytes_per_sample( format );
+
+		std::shared_ptr< uint8_t * > audioData( static_cast< uint8_t ** >( av_mallocz( sizeof( uint8_t * ) * nbPlanes ) ), []( uint8_t ** p )->void {
 			av_freep( &p[0] );
 			av_free( p );
 		} );
-		ret = av_samples_alloc( dstAudioData.get(), &lineSize, dstChannels, dstNbSamples, dstFormat, 1 );
+		int lineSize = 0;
+		ret = av_samples_alloc( audioData.get(), &lineSize, channels, nbSamples, format, 1 );
 		if( ret < 0 ) {
 			throw CodecError( AVUNERROR( ret ), __FILE__, __LINE__ );
 		}
-		ret = swr_convert( this->pSwrContext_.get(), dstAudioData.get(), dstNbSamples, (const uint8_t **)audioData.get(), nbSamples );
-		if( ret < 0 ) {
-			throw CodecError( AVUNERROR( ret ), __FILE__, __LINE__ );
-		}
-		int dstBufferSize = av_samples_get_buffer_size( &lineSize, dstChannels, ret, dstFormat, 1 );
-		bufferSize = dstBufferSize;
-		nbPlanes = 1;
-		audioData = dstAudioData;
-		sampleSize = 2;
-	}
+		int bufferSize = av_samples_get_buffer_size( nullptr, channels, nbSamples, format, 1 );
+		av_samples_copy( audioData.get(), this->pFrame_->data, 0, 0, nbSamples, channels, format );
 
-	this->curPos_ += toMS( this->pFrame_->pkt_duration );
-	av_free_packet( &this->packet_ );
-
-	QByteArray pcm( bufferSize, '\0' );
-	if( nbPlanes > 1 ) {
-		auto tmp = audioData.get();
-		QBuffer pcmWriter( &pcm );
-		pcmWriter.open( QIODevice::ReadWrite );
-		for( int i = 0; i < lineSize; i += sampleSize ) {
-			for( int c = 0; c < channels; ++c ) {
-				// NOTE little endian
-				pcmWriter.write( reinterpret_cast< char * >( &tmp[c][i] ), sampleSize );
+		// resampling
+		if( this->pSwrContext_ && ( format != AV_SAMPLE_FMT_S16 || sampleRate != 44100 ) ) {
+			auto dstChannels = channels;
+			auto dstSampleRate = 44100;
+			auto dstFormat = AV_SAMPLE_FMT_S16;
+			auto dstNbSamples = av_rescale_rnd( swr_get_delay( this->pSwrContext_.get(), sampleRate ) + nbSamples, dstSampleRate, sampleRate, AV_ROUND_UP );
+			std::shared_ptr< uint8_t * > dstAudioData( static_cast< uint8_t ** >( av_mallocz( sizeof( uint8_t * ) ) ), []( uint8_t ** p )->void {
+				av_freep( &p[0] );
+				av_free( p );
+			} );
+			ret = av_samples_alloc( dstAudioData.get(), &lineSize, dstChannels, dstNbSamples, dstFormat, 1 );
+			if( ret < 0 ) {
+				throw CodecError( AVUNERROR( ret ), __FILE__, __LINE__ );
 			}
+			ret = swr_convert( this->pSwrContext_.get(), dstAudioData.get(), dstNbSamples, const_cast< const uint8_t ** >( audioData.get() ), nbSamples );
+			if( ret < 0 ) {
+				throw CodecError( AVUNERROR( ret ), __FILE__, __LINE__ );
+			}
+			int dstBufferSize = av_samples_get_buffer_size( &lineSize, dstChannels, ret, dstFormat, 1 );
+			bufferSize = dstBufferSize;
+			nbPlanes = 1;
+			audioData = dstAudioData;
+			sampleSize = 2;
 		}
-		pcmWriter.close();
-	} else {
+
 		// frame already interleaved
-		memcpy( pcm.data(), audioData.get()[0], bufferSize );
+		pcm.append( reinterpret_cast< const char * >( audioData.get()[0] ), bufferSize );
 	}
+	this->packet_.data = data;
+	this->packet_.size = size;
+	av_free_packet( &this->packet_ );
 
 	return pcm;
 }
@@ -370,7 +363,6 @@ bool FfmpegReader::seek( qint64 pos ) {
 	if( ret >= 0 ) {
 		avcodec_flush_buffers( this->pCodecContext_.get() );
 		this->buffer_.clear();
-		this->curPos_ = pos;
 	}
 	return succeed && ret >= 0;
 }

@@ -77,7 +77,6 @@ private:
 	std::shared_ptr< SwrContext > pSwrContext_;
 	AVPacket packet_;
 	AVStream * pStream_;
-	qint64 curPos_;
 	bool eof_;
 	QByteArray buffer_;
 };
