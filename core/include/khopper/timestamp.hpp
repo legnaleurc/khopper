@@ -31,84 +31,82 @@
 #include <memory>
 
 namespace khopper {
+namespace album {
 
-	namespace album {
+/**
+ * @brief Track index information
+ */
+class KHOPPER_DLL Timestamp {
+public:
+	/**
+	 * @brief Convert from int
+	 * @param [in] millisecond Time stamp in millisecond
+	 */
+	static Timestamp fromMillisecond( int64_t millisecond );
+	/**
+	 * @brief Convert from double
+	 * @param [in] second Time stamp in second
+	 */
+	static Timestamp fromSecond( double second );
 
-		/**
-		 * @brief Track index information
-		 */
-		class KHOPPER_DLL Timestamp {
-		public:
-			/**
-			 * @brief Default constructor
-			 *
-			 * Initialize to 0:0.0.
-			 */
-			Timestamp();
-			/**
-			 * @brief Custom constructor
-			 * @param [in] m minute
-			 * @param [in] s second
-			 * @param [in] ms millisecond
-			 *
-			 * Initialize to m:s.ms.
-			 */
-			Timestamp( int m, int s, int ms );
-			Timestamp( const Timestamp & that );
+	/**
+	 * @brief Default constructor
+	 *
+	 * Initialize to invalid state.
+	 */
+	Timestamp();
+	/**
+	 * @brief Custom constructor
+	 * @param [in] m minute
+	 * @param [in] s second
+	 * @param [in] ms millisecond
+	 *
+	 * Initialize to m:s.ms.
+	 */
+	Timestamp( int m, int s, int ms );
+	Timestamp( const Timestamp & that );
 
-			int getMillisecond() const;
-			int getMinute() const;
-			int getSecond() const;
-			/// if equals to zero
-			bool isValid() const;
-			bool isZero() const;
-			void swap( Timestamp & that );
-			/// Convert to millisecond
-			int64_t toMillisecond() const;
-			/// Convert to second
-			double toSecond() const;
-			QString toString() const;
+	int getMillisecond() const;
+	int getMinute() const;
+	int getSecond() const;
+	/// if equals to zero
+	bool isValid() const;
+	bool isZero() const;
+	void swap( Timestamp & that );
+	/// Convert to millisecond
+	int64_t toMillisecond() const;
+	/// Convert to second
+	double toSecond() const;
+	QString toString() const;
 
-			bool operator !=( const Timestamp & that ) const;
-			Timestamp operator +( const Timestamp & that ) const;
-			Timestamp & operator +=( const Timestamp & that );
-			/**
-			 * @brief Subtract operator
-			 * @param that Subtrahend
-			 * @return result
-			 */
-			Timestamp operator -( const Timestamp & that ) const;
-			/**
-			 * @brief Subtract assign operator
-			 * @param that Subtrahend
-			 * @return self
-			 */
-			Timestamp & operator -=( const Timestamp & that );
-			bool operator <( const Timestamp & that ) const;
-			bool operator <=( const Timestamp & that ) const;
-			Timestamp & operator =( const Timestamp & that );
-			bool operator ==( const Timestamp & that ) const;
-			bool operator >( const Timestamp & that ) const;
-			bool operator >=( const Timestamp & that ) const;
+	bool operator !=( const Timestamp & that ) const;
+	Timestamp operator +( const Timestamp & that ) const;
+	Timestamp & operator +=( const Timestamp & that );
+	/**
+	 * @brief Subtract operator
+	 * @param that Subtrahend
+	 * @return result
+	 */
+	Timestamp operator -( const Timestamp & that ) const;
+	/**
+	 * @brief Subtract assign operator
+	 * @param that Subtrahend
+	 * @return self
+	 */
+	Timestamp & operator -=( const Timestamp & that );
+	bool operator <( const Timestamp & that ) const;
+	bool operator <=( const Timestamp & that ) const;
+	Timestamp & operator =( const Timestamp & that );
+	bool operator ==( const Timestamp & that ) const;
+	bool operator >( const Timestamp & that ) const;
+	bool operator >=( const Timestamp & that ) const;
 
-			/**
-			 * @brief Convert from int
-			 * @param [in] millisecond Time stamp in millisecond
-			 */
-			static Timestamp fromMillisecond( int64_t millisecond );
-			/**
-			 * @brief Convert from double
-			 * @param [in] second Time stamp in second
-			 */
-			static Timestamp fromSecond( double second );
+private:
+	class Private;
+	std::shared_ptr< Private > p_;
+};
 
-		private:
-			class TimestampPrivate;
-			std::shared_ptr< TimestampPrivate > p_;
-		};
-
-	}
-
+}
 }
 
 Q_DECLARE_METATYPE( khopper::album::Timestamp )

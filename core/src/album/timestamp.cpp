@@ -20,46 +20,84 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "timestamp.hpp"
-#include "timestampprivate.hpp"
 
 #include <cmath>
 #include <sstream>
 
-using namespace khopper::album;
+#include "runtimeerror.hpp"
 
-Timestamp::TimestampPrivate::TimestampPrivate( int min, int sec, int ms ):
+namespace khopper {
+namespace album {
+
+class Timestamp::Private {
+public:
+	Private( int min, int second, int ms );
+
+	bool operator ==( const Private & that ) const;
+
+	int millisecond;
+	int minute;
+	int second;
+};
+
+}
+}
+
+using khopper::album::Timestamp;
+using khopper::error::RunTimeError;
+
+Timestamp::Private::Private( int min, int sec, int ms ):
 millisecond( ms ),
 minute( min ),
 second( sec ) {
 }
 
-Timestamp::Timestamp() : p_( new TimestampPrivate( 0, 0, 0 ) ) {
+bool Timestamp::Private::operator==( const Private & that ) const {
+	return this->minute == that.minute && this->second == that.second && this->millisecond == that.millisecond;
 }
 
-Timestamp::Timestamp( int m, int s, int ms ) : p_( new TimestampPrivate( m, s, ms ) ) {
+Timestamp::Timestamp(): p_() {
 }
 
-Timestamp::Timestamp( const Timestamp & that ) : p_( new TimestampPrivate( *that.p_ ) ) {
+Timestamp::Timestamp( int m, int s, int ms ): p_( new Private( m, s, ms ) ) {
+}
+
+Timestamp::Timestamp( const Timestamp & that ): p_() {
+	if( that.p_ ) {
+		this->p_.reset( new Private( *that.p_ ) );
+	}
 }
 
 int Timestamp::getMinute() const {
+	if( !this->isValid() ) {
+		throw RunTimeError( "invalid timestamp", __FILE__, __LINE__ );
+	}
 	return this->p_->minute;
 }
 
 int Timestamp::getSecond() const {
+	if( !this->isValid() ) {
+		throw RunTimeError( "invalid timestamp", __FILE__, __LINE__ );
+	}
 	return this->p_->second;
 }
 
 int Timestamp::getMillisecond() const {
+	if( !this->isValid() ) {
+		throw RunTimeError( "invalid timestamp", __FILE__, __LINE__ );
+	}
 	return this->p_->millisecond;
 }
 
 bool Timestamp::isZero() const {
+	if( !this->isValid() ) {
+		return false;
+	}
 	return ( this->p_->minute == 0 ) && ( this->p_->second == 0 ) && ( this->p_->millisecond == 0 );
 }
 
 bool Timestamp::isValid() const {
-	return ( this->p_->minute >= 0 ) && ( this->p_->second >= 0 ) && ( this->p_->millisecond >= 0 );
+	return this->p_.use_count() >= 1;
 }
 
 bool Timestamp::operator !=( const Timestamp & that ) const {
@@ -71,6 +109,9 @@ Timestamp Timestamp::operator +( const Timestamp & that ) const {
 }
 
 Timestamp & Timestamp::operator +=( const Timestamp & that ) {
+	if( !this->isValid() || !that.isValid() ) {
+		throw RunTimeError( "invalid timestamp", __FILE__, __LINE__ );
+	}
 	this->p_->millisecond += that.p_->millisecond;
 	if( this->p_->millisecond >= 1000 ) {
 		this->p_->millisecond -= 1000;
@@ -91,6 +132,9 @@ Timestamp Timestamp::operator -( const Timestamp & that ) const {
 }
 
 Timestamp & Timestamp::operator -=( const Timestamp & that ) {
+	if( !this->isValid() || !that.isValid() ) {
+		throw RunTimeError( "invalid timestamp", __FILE__, __LINE__ );
+	}
 	if( this->p_->millisecond < that.p_->millisecond ) {
 		--this->p_->second;
 		this->p_->millisecond += 1000 - that.p_->millisecond;
@@ -110,6 +154,9 @@ Timestamp & Timestamp::operator -=( const Timestamp & that ) {
 }
 
 bool Timestamp::operator <( const Timestamp & that ) const {
+	if( !this->isValid() || !that.isValid() ) {
+		throw RunTimeError( "invalid timestamp", __FILE__, __LINE__ );
+	}
 	if( this->p_->minute == that.p_->minute ) {
 		if( this->p_->second == that.p_->second ) {
 			return this->p_->millisecond < that.p_->millisecond;
@@ -122,21 +169,36 @@ bool Timestamp::operator <( const Timestamp & that ) const {
 }
 
 bool Timestamp::operator <=( const Timestamp & that ) const {
+	if( !this->isValid() || !that.isValid() ) {
+		throw RunTimeError( "invalid timestamp", __FILE__, __LINE__ );
+	}
 	return *this < that || *this == that;
 }
 
 Timestamp & Timestamp::operator =( const Timestamp & that ) {
 	if( this != &that ) {
-		*this->p_ = *that.p_;
+		if( this->isValid() && that.isValid() ) {
+			*this->p_ = *that.p_;
+		} else if( this->isValid() ) {
+			this->p_.reset();
+		} else {
+			this->p_.reset( new Private( *that.p_ ) );
+		}
 	}
 	return *this;
 }
 
 bool Timestamp::operator ==( const Timestamp & that ) const {
-	return ( this->p_->minute >= that.p_->minute ) && ( this->p_->second >= that.p_->second ) && ( this->p_->millisecond >= that.p_->millisecond );;
+	if( this->isValid() && that.isValid() ) {
+		return *this->p_ == *that.p_;
+	}
+	return this->p_ == that.p_;
 }
 
 bool Timestamp::operator >( const Timestamp & that ) const {
+	if( !this->isValid() || !that.isValid() ) {
+		throw RunTimeError( "invalid timestamp", __FILE__, __LINE__ );
+	}
 	if( this->p_->minute == that.p_->minute ) {
 		if( this->p_->second == that.p_->second ) {
 			return this->p_->millisecond > that.p_->millisecond;
@@ -153,25 +215,33 @@ bool Timestamp::operator >=( const Timestamp & that ) const {
 }
 
 int64_t Timestamp::toMillisecond() const {
+	if( !this->isValid() ) {
+		throw RunTimeError( "invalid timestamp", __FILE__, __LINE__ );
+	}
 	return ( static_cast< int64_t >( this->p_->minute ) * 60 + this->p_->second ) * 1000 + this->p_->millisecond;
 }
 
 double Timestamp::toSecond() const {
+	if( !this->isValid() ) {
+		throw RunTimeError( "invalid timestamp", __FILE__, __LINE__ );
+	}
 	return 60 * this->p_->minute + this->p_->second + this->p_->millisecond / 1000.0;
 }
 
 QString Timestamp::toString() const {
+	if( !this->isValid() ) {
+		throw RunTimeError( "invalid timestamp", __FILE__, __LINE__ );
+	}
 	return QString( "%1:%2.%3" ).arg( this->p_->minute ).arg( this->p_->second, 2L, 10L, QChar( '0' ) ).arg( this->p_->millisecond, 3L, 10L, QChar( '0' ) );
 }
 
 Timestamp Timestamp::fromMillisecond( int64_t millisecond ) {
-	Timestamp tmp;
-	tmp.p_->millisecond = millisecond % 1000;
+	auto ms = millisecond % 1000;
 	millisecond /= 1000;
-	tmp.p_->second = millisecond % 60;
+	auto sec = millisecond % 60;
 	millisecond /= 60;
-	tmp.p_->minute = millisecond;
-	return tmp;
+	auto min = millisecond;
+	return Timestamp( min, sec, ms );
 }
 
 Timestamp Timestamp::fromSecond( double second ) {
