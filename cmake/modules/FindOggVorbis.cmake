@@ -24,6 +24,7 @@ if(NOT OGGVORBIS_INCLUDE_DIRS)
     find_path(VORBIS_INCLUDE_DIR vorbis/vorbisenc.h
         HINTS ${OGGVORBIS_ROOT}
         PATH_SUFFIXES "include")
+    set(OGGVORBIS_INCLUDE_DIRS ${VORBIS_INCLUDE_DIR})
 endif()
 
 if(NOT OGGVORBIS_LIBRARIES)
@@ -44,7 +45,6 @@ if(NOT OGGVORBIS_LIBRARIES)
     select_library_configurations(OGG)
     select_library_configurations(VORBIS)
 
-    set(OGGVORBIS_INCLUDE_DIRS ${VORBIS_INCLUDE_DIR})
     set(OGGVORBIS_LIBRARIES ${OGG_LIBRARIES} ${VORBIS_LIBRARIES})
 endif()
 
