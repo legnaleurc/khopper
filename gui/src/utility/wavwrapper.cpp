@@ -43,6 +43,10 @@ void WavWrapper::close() {
 	this->reader_->close();
 }
 
+bool WavWrapper::isSequential() const {
+	return this->reader_->isSequential();
+}
+
 bool WavWrapper::open( OpenMode mode ) {
 	bool ret = this->QIODevice::open( mode );
 	ret &= this->reader_->open( mode );

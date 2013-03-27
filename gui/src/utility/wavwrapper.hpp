@@ -35,6 +35,7 @@ public:
 
 	virtual bool atEnd() const;
 	virtual void close();
+	virtual bool isSequential() const;
 	virtual bool open( OpenMode mode );
 	virtual bool seek( qint64 pos );
 	virtual qint64 size() const;
