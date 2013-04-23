@@ -15,7 +15,7 @@ function(KHOPPER_ADD_PLUGIN target)
         LIBRARY DESTINATION "lib/khopper/plugins")
 endfunction()
 
-option(KHOPPER_USE_LIBAV "Use Libav instead of FFmpeg. (imply disable ffmpeg)" FALSE)
+option(KHOPPER_USE_LIBAV "Use Libav instead of FFmpeg. (imply disable ffmpeg)" OFF)
 
 add_subdirectory(cuesheet)
 if(NOT KHOPPER_USE_LIBAV)
