@@ -27,8 +27,8 @@
 
 #include "ui_player.h"
 
-#include <Phonon/AudioOutput>
-#include <Phonon/BackendCapabilities>
+#include <AudioOutput>
+#include <BackendCapabilities>
 
 #include <algorithm>
 

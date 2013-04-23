@@ -24,7 +24,7 @@
 
 #include "khopper/playlist.hpp"
 
-#include <Phonon/MediaObject>
+#include <MediaObject>
 #include <QtCore/QModelIndex>
 #include <QtGui/QWidget>
 
