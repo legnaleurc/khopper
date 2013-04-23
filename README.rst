@@ -63,8 +63,7 @@ Required
 Optional
 ~~~~~~~~
 
-* `FFmpeg`_ >= 1.1 [LGPL, GPL]
-* `Libav`_ >= 9 [LGPL, GPL]
+* `FFmpeg`_ >= 1.1 [LGPL, GPL] or `Libav`_ >= 9 [LGPL, GPL]
 * `libFLAC`_ >= 1.2.1 [BSD-3]
 * `libvorbis`_ and `libogg`_ [BSD-3]
 * `LAME`_ [LGPL, patent]
@@ -81,7 +80,16 @@ GNU/Linux or Mac OS X
   mkdir build
   cd build
   cmake -DCMAKE_BUILD_TYPE=Release ..
-  make -j
+  make
+
+For `Libav`_ users (e.g.: Debian, Ubuntu):
+
+.. code:: bash
+
+  mkdir build
+  cd build
+  cmake -DCMAKE_BUILD_TYPE=Release -DKHOPPER_USE_LIBAV=ON ..
+  make
 
 Microsoft Windows
 ~~~~~~~~~~~~~~~~~
