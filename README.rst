@@ -63,7 +63,12 @@ Required
 Optional
 ~~~~~~~~
 
-* `FFmpeg`_ >= 1.1 [LGPL, GPL] or `Libav`_ >= 9 [LGPL, GPL]
+* `FFmpeg`_ or `Libav`_
+
+  * `FFmpeg`_ >= 1.1 [LGPL, GPL]
+  * `Libav`_ >= 9 [LGPL, GPL]
+  * `Libav`_ == 0.8 [LGPL, GPL]
+
 * `libFLAC`_ >= 1.2.1 [BSD-3]
 * `libvorbis`_ and `libogg`_ [BSD-3]
 * `LAME`_ [LGPL, patent]
@@ -71,6 +76,10 @@ Optional
 
 How To Build
 ------------
+
+You should choose `FFmpeg`_ or `Libav`_ by option
+``KHOPPER_USE_FFMPEG_OR_LIBAV``. There are three choices: ``ffmpeg``,
+``libav``, ``libav_0_8``. Default value is ``ffmpeg``.
 
 GNU/Linux or Mac OS X
 ~~~~~~~~~~~~~~~~~~~~~
@@ -82,13 +91,13 @@ GNU/Linux or Mac OS X
   cmake -DCMAKE_BUILD_TYPE=Release ..
   make
 
-For `Libav`_ users (e.g.: Debian, Ubuntu):
+For `Libav`_ == 0.8 users (e.g.: Debian, Ubuntu):
 
 .. code:: bash
 
   mkdir build
   cd build
-  cmake -DCMAKE_BUILD_TYPE=Release -DKHOPPER_USE_LIBAV=ON ..
+  cmake -DCMAKE_BUILD_TYPE=Release -DKHOPPER_USE_FFMPEG_OR_LIBAV=libav_0_8 ..
   make
 
 Microsoft Windows
