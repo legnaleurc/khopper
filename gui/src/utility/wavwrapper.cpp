@@ -20,11 +20,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "wavwrapper.hpp"
-#include "khopper/codecerror.hpp"
 
 #include <cstring>
 
-using namespace khopper::utility;
+#include "khopper/codecerror.hpp"
+
+using khopper::utility::WavWrapper;
 using khopper::codec::ReaderSP;
 using khopper::error::CodecError;
 
@@ -94,6 +95,9 @@ qint64 WavWrapper::readData( char * data, qint64 maxlen ) {
 	if( this->reader_->atEnd() && !this->QIODevice::atEnd() ) {
 		// NOTE hack for PCM fragment
 		const qint64 len = std::min( maxlen, this->size() - this->pos() );
+		if( len < 0LL ) {
+			return -1LL;
+		}
 		std::fill_n( data, len, '\0' );
 		return len;
 	} else if( this->pos() < 44LL ) {
