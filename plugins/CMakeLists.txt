@@ -15,7 +15,7 @@ function(KHOPPER_ADD_PLUGIN target)
         LIBRARY DESTINATION "lib/khopper/plugins")
 endfunction()
 
-set(KHOPPER_USE_FFMPEG_OR_LIBAV "Use FFmpeg or Libav" CACHE STRING "ffmpeg")
+set(KHOPPER_USE_FFMPEG_OR_LIBAV "ffmpeg" CACHE STRING "Use FFmpeg or Libav")
 set_property(CACHE KHOPPER_USE_FFMPEG_OR_LIBAV PROPERTY STRINGS "ffmpeg" "libav" "libav_0_8")
 
 add_subdirectory(cuesheet)
