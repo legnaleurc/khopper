@@ -98,7 +98,7 @@ qint64 WavWrapper::readData( char * data, qint64 maxlen ) {
 		if( len < 0LL ) {
 			return -1LL;
 		}
-		std::fill_n( data, len, '\0' );
+		std::fill( data, data + len, '\0' );
 		return len;
 	} else if( this->pos() < 44LL ) {
 		const qint64 len = 44LL - this->pos();
