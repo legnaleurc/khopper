@@ -113,7 +113,23 @@ PlayList PlayList::fromURI( const QUrl & uri ) {
 PlayList::PlayList(): p_( new Private ) {
 }
 
+PlayList::PlayList( const PlayList & that ): p_( new Private( *that.p_ ) ) {
+}
+
+PlayList & PlayList::operator =( const PlayList & that ) {
+	if( this == &that ) {
+		return *this;
+	}
+	*this->p_ = *that.p_;
+	return *this;
+}
+
 PlayList::PlayList( PlayList && that ): p_( std::move( that.p_ ) ) {
+}
+
+PlayList & PlayList::operator =( PlayList && that ) {
+	this->p_.swap( that.p_ );
+	return *this;
 }
 
 void PlayList::append( const PlayList & that ) {
