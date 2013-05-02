@@ -352,7 +352,7 @@ QByteArray FfmpegReader::readFrame_() {
 
 bool FfmpegReader::seek( qint64 pos ) {
 	bool succeed = this->Reader::seek( pos );
-	// NOTE: @pos is in ENTERNAL format (i.e.: PCMS16LE), so I am not using native format here
+	// NOTE: @pos is in EXTERNAL format (i.e.: PCMS16LE), so I am not using native format here
 	// internal position = @pos / frequency / channels / sample_size_in_byte / AVStream::time_base
 	auto frequency = this->getAudioFormat().frequency();
 	auto channels = this->getAudioFormat().channels();
