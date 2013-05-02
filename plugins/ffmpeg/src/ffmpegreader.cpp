@@ -190,13 +190,15 @@ void FfmpegReader::setupDecoder_() {
 	this->pCodecContext_.reset( pCC, avcodec_close );
 
 	// resampling
-	if( pCC->channel_layout > 0 ) {
+	if( pCC->channel_layout > 0 || pCC->sample_fmt != AV_SAMPLE_FMT_S16 || pCC->sample_rate != 44100 ) {
 		this->pSwrContext_.reset( swr_alloc(), []( SwrContext * p )->void {
 			swr_free( &p );
 		} );
+		av_opt_set_int( this->pSwrContext_.get(), "in_channel_count", pCC->channels, 0 );
 		av_opt_set_int( this->pSwrContext_.get(), "in_channel_layout", pCC->channel_layout, 0 );
 		av_opt_set_int( this->pSwrContext_.get(), "in_sample_rate", pCC->sample_rate, 0 );
 		av_opt_set_sample_fmt( this->pSwrContext_.get(), "in_sample_fmt", pCC->sample_fmt, 0 );
+		av_opt_set_int( this->pSwrContext_.get(), "out_channel_count", format.channels(), 0 );
 		av_opt_set_int( this->pSwrContext_.get(), "out_channel_layout", this->getChannelLayout(), 0);
 		av_opt_set_int( this->pSwrContext_.get(), "out_sample_rate", format.frequency(), 0);
 		av_opt_set_sample_fmt( this->pSwrContext_.get(), "out_sample_fmt", AV_SAMPLE_FMT_S16, 0);
@@ -316,9 +318,9 @@ QByteArray FfmpegReader::readFrame_() {
 		av_samples_copy( audioData.get(), this->pFrame_->data, 0, 0, nbSamples, channels, format );
 
 		// resampling
-		if( this->pSwrContext_ && ( format != AV_SAMPLE_FMT_S16 || sampleRate != 44100 ) ) {
-			auto dstChannels = channels;
-			auto dstSampleRate = 44100;
+		if( this->pSwrContext_ ) {
+			auto dstChannels = this->getAudioFormat().channels();
+			auto dstSampleRate = this->getAudioFormat().frequency();
 			auto dstFormat = AV_SAMPLE_FMT_S16;
 			auto dstNbSamples = av_rescale_rnd( swr_get_delay( this->pSwrContext_.get(), sampleRate ) + nbSamples, dstSampleRate, sampleRate, AV_ROUND_UP );
 			std::shared_ptr< uint8_t * > dstAudioData( static_cast< uint8_t ** >( av_mallocz( sizeof( uint8_t * ) ) ), []( uint8_t ** p )->void {
