@@ -192,8 +192,8 @@ void LibavReader::setupDecoder_() {
 	this->pCodecContext_.reset( pCC, avcodec_close );
 
 	// resampling
-	if( pCC->channel_layout > 0 ) {
-		auto rsc = av_audio_resample_init( 2, 2, format.frequency(), pCC->sample_rate, AV_SAMPLE_FMT_S16, pCC->sample_fmt, 16, 10, 0, 0.8 );
+	if( pCC->channel_layout > 0 || format.frequency() != pCC->sample_rate || pCC->sample_fmt != AV_SAMPLE_FMT_S16 ) {
+		auto rsc = av_audio_resample_init( format.channels(), pCC->channels, format.frequency(), pCC->sample_rate, AV_SAMPLE_FMT_S16, pCC->sample_fmt, 16, 10, 0, 0.8 );
 		if( !rsc ) {
 			throw CodecError( QObject::tr( "ReSampleContext open failed" ), __FILE__, __LINE__ );
 		}
@@ -300,7 +300,7 @@ QByteArray LibavReader::readFrame_() {
 		int bufferSize = av_samples_get_buffer_size( nullptr, channels, nbSamples, format, 1 );
 
 		// resampling
-		if( this->pArContext_ && ( format != AV_SAMPLE_FMT_S16 || sampleRate != 44100 ) ) {
+		if( this->pArContext_ ) {
 			auto dstChannels = channels;
 			auto dstSampleRate = 44100;
 			auto dstFormat = AV_SAMPLE_FMT_S16;
