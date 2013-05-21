@@ -21,8 +21,11 @@
  */
 #include "ffmpegplugin.hpp"
 
+#include <cassert>
+
 #include <QtCore/QtDebug>
 #include <QtCore/QtPlugin>
+#include <QtCore/QMutex>
 
 extern "C" {
 #include <libavformat/avformat.h>
@@ -36,6 +39,29 @@ extern "C" {
 #endif
 
 Q_EXPORT_PLUGIN2( KHOPPER_PLUGIN_ID, khopper::plugin::FfmpegPlugin )
+
+namespace {
+
+int locker( void ** mutex, AVLockOp op ) {
+	if( op == AV_LOCK_CREATE ) {
+		*mutex = new QMutex;
+	} else if( op == AV_LOCK_OBTAIN ) {
+		auto m = static_cast< QMutex * >( *mutex );
+		m->lock();
+	} else if( op == AV_LOCK_RELEASE ) {
+		auto m = static_cast< QMutex * >( *mutex );
+		m->unlock();
+	} else if( op == AV_LOCK_DESTROY ) {
+		auto m = static_cast< QMutex * >( *mutex );
+		delete m;
+		*mutex = nullptr;
+	} else {
+		assert( !"undefined AVLockOp" );
+	}
+	return 0;
+}
+
+}
 
 using khopper::codec::Reader;
 #ifdef Q_OS_WIN32
@@ -59,6 +85,7 @@ void FfmpegPlugin::doInstall() {
 
 	av_register_all();
 	avformat_network_init();
+	av_lockmgr_register( locker );
 
 	Reader::install( this->getID(), []( const QUrl & uri )->unsigned int {
 		AVFormatContext * pFC = NULL;
