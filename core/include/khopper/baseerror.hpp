@@ -66,6 +66,7 @@ public:
 	 * @brief Construct with an error message
 	 */
 	BaseError( const QString & msg, const char * file, long line );
+	virtual ~BaseError() throw();
 
 	/// Get error message
 	virtual const char * what() const throw();

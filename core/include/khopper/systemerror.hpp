@@ -56,6 +56,7 @@ public:
 	 * @brief Construct with an error message
 	 */
 	SystemError( const QString & msg, const char * file, long line );
+	virtual ~SystemError() throw();
 };
 
 }

@@ -56,6 +56,7 @@ public:
 	 * @brief Construct with an error message
 	 */
 	CodecError( const QString & msg, const char * file, long line );
+	virtual ~CodecError() throw();
 };
 
 }
