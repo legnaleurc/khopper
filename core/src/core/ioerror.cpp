@@ -46,3 +46,6 @@ BaseError( msg, file, line ) {
 IOError::IOError( const QString & msg, const char * file, long line ):
 BaseError( msg, file, line ) {
 }
+
+IOError::~IOError() throw() {
+}

@@ -54,7 +54,7 @@ choise_( new QButtonGroup( this ) ) {
 	this->ui_->quality->addItem( "-1 (Lowest)", QVariant( -1 ) );
 
 	this->ui_->channels->addItem( tr( "Mono" ), QVariant( 1 ) );
-	this->ui_->channels->addItem( tr( "Streao" ), QVariant( 2 ) );
+	this->ui_->channels->addItem( tr( "Stereo" ), QVariant( 2 ) );
 	this->ui_->channels->setCurrentIndex( 1 );
 	this->ui_->sampleRate->addItem( tr( "44100 Hz" ), QVariant( 44100 ) );
 	this->ui_->sampleRate->addItem( tr( "48000 Hz" ), QVariant( 48000 ) );

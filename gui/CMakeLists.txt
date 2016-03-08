@@ -28,6 +28,7 @@ include_directories(
 "src/widget"
 "${CMAKE_CURRENT_BINARY_DIR}"
 "${CMAKE_SOURCE_DIR}/core/include"
+"${QT_QTGUI_INCLUDE_DIR}"
 "${QT_PHONON_INCLUDE_DIR}")
 
 find_moc_headers(KHOPPER_GUI_MOC_HEADERS ${KHOPPER_GUI_HEADERS})
@@ -52,6 +53,6 @@ set_target_properties(khopper_gui PROPERTIES VERSION ${KHOPPER_VERSION})
 install(TARGETS khopper_gui DESTINATION "bin")
 if(UNIX)
 install(FILES share/applications/khopper.desktop DESTINATION "share/applications")
-install(FILES share/pixmap/logo.png DESTINATION "share/pixmap" RENAME "khopper.png")
+install(FILES share/pixmap/logo.png DESTINATION "share/pixmaps" RENAME "khopper.png")
 install(SCRIPT postinstall.cmake)
 endif()

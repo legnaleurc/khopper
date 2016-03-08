@@ -73,6 +73,9 @@ BaseError::BaseError( const QString & msg, const char * file, long line ):
 p_( new Private( msg, file, line ) ) {
 }
 
+BaseError::~BaseError () throw() {
+}
+
 const char * BaseError::what() const throw() {
 	return this->p_->msg.toUtf8().constData();
 }

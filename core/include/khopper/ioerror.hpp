@@ -56,6 +56,7 @@ public:
 	 * @brief Construct with an error message
 	 */
 	IOError( const QString & msg, const char * file, long line );
+	virtual ~IOError() throw();
 };
 
 }

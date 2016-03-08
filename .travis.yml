@@ -1,0 +1,10 @@
+language: cpp
+compiler:
+  - gcc
+before_script:
+  - sudo apt-get update
+  - sudo apt-get install libavcodec-dev libavformat-dev libflac-dev libvorbis-dev libmp3lame-dev libtag1-dev libphonon-dev
+  - cmake . -DCMAKE_INSTALL_PREFIX=/tmp/khopper -DKHOPPER_USE_FFMPEG_OR_LIBAV=libav_0_8
+script:
+  - make
+  - make install

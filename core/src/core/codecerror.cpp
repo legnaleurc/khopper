@@ -46,3 +46,6 @@ BaseError( msg, file, line ) {
 CodecError::CodecError( const QString & msg, const char * file, long line ):
 BaseError( msg, file, line ) {
 }
+
+CodecError::~CodecError() throw() {
+}
