@@ -1,6 +1,6 @@
 # root
 
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.0)
 
 project(Khopper)
 set(KHOPPER_VERSION_MAJOR "0")
